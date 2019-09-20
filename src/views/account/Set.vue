@@ -59,9 +59,9 @@
 				</el-table-column>
 				<el-table-column prop='roleStatus' width='120' label='人员状态' align='center'>
 				</el-table-column>
-				<el-table-column prop='email' width='170' label='手机号' align='center'>
+				<el-table-column prop='mobile' width='170' label='手机号' align='center'>
 				</el-table-column>
-				<el-table-column prop='mobile' width='170' label='邮箱' align='center'>
+				<el-table-column prop='email' width='200' label='邮箱' align='center'>
 				</el-table-column>
 				<el-table-column prop='role.name' width='120' label='角色名称' align='center'>
 				</el-table-column>
@@ -414,8 +414,11 @@
 								description:this.editForm.description,
 //								usable:this.editForm.usable
 							}
-							this.$ajax.put('/admin/edit_admin/'+para.id+'?token='+this.token,para)
+								this.$ajax.put('/admin/edit_admin/'+para.id+'?token='+this.token,para)
 							.then( res => {
+
+								console.log(res)
+								// debugger
 								if(res.status=='200'){
 									if(res.data.status=='0'){
 										this.loading=false;
@@ -428,12 +431,14 @@
 										this.getUsers();
 									}else if(res.data.status){
 										this.$message({
-											message:'修改失败',
+											message:res.data.messaeg,
 											type:'danger'
 										})
 									}
 								}
 							})
+							
+							
 						})
 						.catch( e => {
 							console.log(e)

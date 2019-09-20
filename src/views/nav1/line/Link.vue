@@ -672,7 +672,7 @@
 		    		})
 		    	}else if(command=='current'){
 		    		//导出当前
-		    		this.$confirm('缺点要导出当前页数据吗?','提示',{
+		    		this.$confirm('确定要导出当前页数据吗?','提示',{
 		    			confirmButtonText:'确定',
 		    			cancelButtonText:'取消',
 		    			type:'warning'

@@ -515,7 +515,7 @@
                 			});
 			    	}else if(command=='current'){
 			    		//导出当前
-			    		this.$confirm('缺点要导出当前页数据吗?','提示',{
+			    		this.$confirm('确定要导出当前页数据吗?','提示',{
 			    			type:'warning'
 			    		}).then(() => {
 			    			this.exportData()

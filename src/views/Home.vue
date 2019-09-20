@@ -45,7 +45,7 @@
 					<template v-for="(item,index) in $router.options.routes" v-if="!item.hidden">
 						<el-submenu :index="index+''" v-if="!item.leaf"  >
 							<template slot="title"><i :class="item.iconCls" ></i>{{item.name}}</template>
-							<el-menu-item-group v-for='(child,indexs)  in item.children' :index="child.path" :key="child.path"  v-if="!child.hidden">
+							 <el-menu-item-group v-for='(child,indexs)  in item.children' :index="child.path" :key="child.path"  v-if="!child.hidden">
 								<el-submenu :index='child.path' v-if='!child.leaf'>
 									<template slot="title" class="child_title"><i :class="child.iconCls"></i>{{child.name}}</template>
 									<el-menu-item  v-for="(sun,i)  in child.children" :index="sun.path" :key="sun.path" >

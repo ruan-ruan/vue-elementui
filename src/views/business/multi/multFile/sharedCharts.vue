@@ -254,7 +254,7 @@
 								staIndex=arrayPro.findIndex(newData,this.trafficData[0]);
 								endIndex=arrayPro.findIndex(newData,this.trafficData[this.trafficData.length-1]);
 								selData=newData.slice(staIndex,endIndex);//获取截取后的数组
-								//后根据不同的时间间隔获取不同的数据间隔既可：
+								//后根据不同的时间间隔获取不同的数据间隔即可：
 								for (var i=0;i<selData.length;i+= strType) {
 									sliData.push(selData.slice(i,i+strType))   //获取分割后的对象
 								}

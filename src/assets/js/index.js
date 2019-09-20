@@ -20,7 +20,14 @@ export function datedialogFormat(value){
     let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
     return Y + M + D + h + m + s;
 }
-
+export function getTime(value) {
+    if (value == "") {
+      return "";
+    }
+    //解析中国标准时间
+    let time = new Date(value);
+    return parseInt(time.getTime());
+  }
 /**
  * chart里面的传参所需的时间格式
  * */

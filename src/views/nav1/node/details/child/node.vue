@@ -48,7 +48,7 @@
 								<el-form-item label='端口区间:' prop='port_section0'>
 									<template>						
 										<el-input v-model='seeForm.port_section0':disabled='StaNot'class='ipt' placeholder='请输入设备1的端口'></el-input>
-										<span class="cli_toTip":title='portRules' @click="cli_toTip">*?</span>
+										<span class="cli_toTip":title='portRules'>*?</span>
 									</template>
 								</el-form-item>
 								<el-form-item label='设备型号:'prop='devices0_model'>
@@ -148,7 +148,7 @@
 				}
 			}
 			return{
-				portRules:'规则:n-m,代表是n-m之间所有的整数代表的端口，且包含n和m,如需断点，请使用","逗号隔开既可，只能输入数字和-，请按照规则输入！！！',
+				portRules:'规则:n-m,代表是n-m之间所有的整数代表的端口，且包含n和m,如需断点，请使用","逗号隔开即可，只能输入数字和-，请按照规则输入！！！',
 				//获取用户的权限信息
 				token:'',
 				//这是在节点编辑的时候传过来的值
@@ -348,7 +348,7 @@
 				})
 			},
 			cli_toTip(){
-				this.$confirm('规则:n-m,代表是n-m之间所有的整数代表的端口，且包含n和m,如需断点，请使用","逗号隔开既可，只能输入数字和-，请按照规则输入！！！','警告',{type:'warning'})
+				this.$confirm('规则:n-m,代表是n-m之间所有的整数代表的端口，且包含n和m,如需断点，请使用","逗号隔开即可，只能输入数字和-，请按照规则输入！！！','警告',{type:'warning'})
 				.then(()=>{})
 				.catch(() =>{})
 			},

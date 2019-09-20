@@ -55,7 +55,7 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop='usableText' width='150' align='center' label='租户状态'></el-table-column>
-				<el-table-column prop='company_name	' width='150' align='center' label='公司名称'></el-table-column>
+				<el-table-column prop='company_name' width='150' align='center' label='公司名称'></el-table-column>
 				<el-table-column prop='contact' width='150' align='center' label='租户联系人'></el-table-column>
 				<el-table-column prop='mobile' width='100' align='center' label='手机号'></el-table-column>
 				<el-table-column prop='email' width='100' align='center' label='邮箱'></el-table-column>
