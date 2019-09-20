@@ -163,7 +163,7 @@
           align='center'
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.level=='notice'?'产品信息':'警告信息'}}</span>
+            <span>{{ scope.row.type=='notice'?'产品信息':'警告信息'}}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -240,23 +240,23 @@ export default {
       levelList: [
         {
           name: "一级",
-          value: "1"
+          value: "1级"
         },
         {
           name: "二级",
-          value: "2"
+          value: "2级"
         },
         {
           name: "三级",
-          value: "3"
+          value: "3级"
         },
         {
           name: "四级",
-          value: "4"
+          value: "4级"
         },
         {
           name: "五级",
-          value: "5"
+          value: "5级"
         }
       ],
       //时间戳的转换

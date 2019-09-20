@@ -255,7 +255,7 @@
 				
 				this.$ajax.get('/manager/managers'+'?token='+this.token,para)
 				.then(res => {
-
+					console.log(res)
 					if(res.status=='200'){
 						if(res.data.status=='0'){
 							this.loading=false;

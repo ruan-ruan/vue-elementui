@@ -164,7 +164,7 @@
           align='center'
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.level=='notice'?'产品信息':'警告信息'}}</span>
+            <span>{{ scope.row.type=='notice'?'产品信息':'警告信息'}}</span>
           </template>
         </el-table-column>
       </el-table>

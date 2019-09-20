@@ -26,7 +26,7 @@ export function getTime(value) {
     }
     //解析中国标准时间
     let time = new Date(value);
-    return parseInt(time.getTime());
+    return parseInt(time.getTime()/1000);
   }
 /**
  * chart里面的传参所需的时间格式

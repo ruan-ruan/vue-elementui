@@ -187,8 +187,8 @@
 				for( let key in sles){
 					sles[key]=''
 				}
+				this.filters.status='true';
 			},
-
 			handleSta(index,row){
 				//禁用和启用切换
 				var cusSta=document.getElementsByClassName('cusSta');
