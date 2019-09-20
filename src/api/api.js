@@ -44,9 +44,11 @@ const ajax={
         return new Promise((resolve,reject) => {
             axios.delete(url,data)
             .then( (response) => {
-            	resolve(response) 
+            	return response
+//          	resolve(response) 
             }).catch ( (error) => {
-                reject(error)
+            	return error
+//              reject(error)
             })
         })
     }

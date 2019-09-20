@@ -506,19 +506,20 @@
 			    			cancelButtonText:'取消',
 			    			type:'warning'
 			    		}).then(() => {
+			    			
+			    			this.exportData()
+			    		}).catch(() => {
+                			});
+			    	}else if(command=='current'){
+			    		//导出当前
+			    		this.$confirm('确定要导出当前页数据吗?','提示',{
+			    			type:'warning'
+			    		}).then(() => {
 			    			var para={
 			    				page:this.currentPage,
 			    				per_page:this.pagesize
 			    			}
 			    			this.exportData(para)
-			    		}).catch(() => {
-                			});
-			    	}else if(command=='current'){
-			    		//导出当前
-			    		this.$confirm('缺点要导出当前页数据吗?','提示',{
-			    			type:'warning'
-			    		}).then(() => {
-			    			this.exportData()
 			    		}).catch(() => {
             				});
 			    	}
@@ -531,6 +532,9 @@
 			    				this.$message({
 			    					message:'正在下载，请稍等!',
 			    					type:'success'
+			    				})
+			    				res.data.data.items.forEach(ele => {
+			    					ele.region_name=ele.region.name;
 			    				})
 			    				this.excelData=res.data.data.items;
 								this.export2Excel();
@@ -548,7 +552,7 @@
 				let that=this;
 				require.ensure([],() => {
 					const {export_json_to_excel} =require('@/excel/export2Excel');
-					const tHeader=['id','区域名称','所属区域','备注'];
+					const tHeader=['id','名称','所属区域','备注'];
 					const filterVal=['id','name','region_name','description'];
 					const list=that.excelData;
 					const data=that.formatJson(filterVal,list);

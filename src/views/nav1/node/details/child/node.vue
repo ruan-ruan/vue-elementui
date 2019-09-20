@@ -372,6 +372,7 @@
 					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
+							console.log(res)
 							this.loading=false
 							var strData=res.data.data;
 							let str=[];

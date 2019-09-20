@@ -171,7 +171,7 @@ var router = new Router({
     		{path:'/customer/addCus',component:() => import ('@/views/customer/Details/cusOperation'),name:'租户添加',leaf:true,hidden:true},
     		//租户的编辑
     		{path:'/customer/editCus',component:() => import ('@/views/customer/Details/cusOperation'),name:'租户编辑',leaf:true,hidden:true},
-    		{path:'/customer/details/tenant/:id',component:() => import ('@/views/customer/Details/tenant'),name:'租户详情',leaf:true},
+    		{path:'/customer/details/tenant/:id',component:() => import ('@/views/customer/Details/tenant'),name:'租户详情',leaf:true,hidden:true},
     		
     		//租户的详情和信息部分
 //  		{path:'/customer/details/tenant/:id',component:() => import ('@/views/customer/Details/tenant'),leaf:true,hidden:true},

@@ -34,11 +34,16 @@
 							  		active-text="显示带宽标签"
 							  		v-model='filters.bandwidthLogo'>
 								</el-switch>
-							    	<el-checkbox 
-							    		v-model='filters.bandwidth'
-							    		v-for='item in bandwidthData' 
+								<template>
+									
+								
+								<el-radio-group v-model='filters.bandwidth'>
+								    <el-radio  v-for='(item,index) in bandwidthData' 
 								  	 	:label="item" 
-								  	 	:key="item">{{item}}</el-checkbox>
+								  	 	:key="index"
+								  	 	class='rad'></el-radio>
+								</el-radio-group>
+								</template>
 							  </el-dropdown-menu>
 							</el-dropdown>
 				      	</li>
@@ -143,7 +148,7 @@
 				filters:{
 					checkboxGroup1: ['显示标签'],
 					bandwidthLogo:true,//是否显示宽带标签
-					bandwidth:['显示1G带宽链路','显示10G带宽链路','显示40G带宽链路','显示100G带宽链路','显示其他带宽链路'],
+					bandwidth:'显示所有带宽链路',
 					network:['显示骨干节点','显示公有云节点','显示骨干链接'],
 				},
               	cities: cityOptions,             	
@@ -189,7 +194,27 @@
 				],
 				//网元的显示的控制
 				networkData:['显示骨干节点','显示公有云节点','显示骨干链接'],
-				bandwidthData:['显示1G带宽链路','显示10G带宽链路','显示40G带宽链路','显示100G带宽链路','显示其他带宽链路'],
+				bandwidthData:['显示所有带宽链路','显示1G带宽链路','显示10G带宽链路','显示40G带宽链路','显示100G带宽链路','显示其他带宽链路'],
+//				bandwidthData:[
+//				{
+//					label:'显示所有带宽链路',
+//					value:1000
+//				},{
+//					label:'显示1G带宽链路',
+//					value:1
+//				},{
+//					label:'显示10G带宽链路',
+//					value:10
+//				},{
+//					label:'显示40G带宽链路',
+//					value:40
+//				},{
+//					label:'显示100G带宽链路',
+//					value:100
+//				},{
+//					label:'显示其他带宽链路',
+//					value:0
+//				}],
 			}
 		},
 		watch:{
@@ -409,5 +434,9 @@
 }
 .el-switch{
 	margin-left: 10px;
+}
+.rad{
+	margin-left: 15px;
+	margin-top: 13px;
 }
 </style>

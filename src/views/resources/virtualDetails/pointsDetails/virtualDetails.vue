@@ -163,6 +163,10 @@
 						if(res.data.status==0){
 							console.log(res);
 							let str=res.data.data;
+							let status='';
+							status=res.data.data.status==='serving'?'运行中':"stopping"?'停止中':'failure'?'创建失败':'creating'?'创建中':''
+//							if(str.status===''){}
+							
 							this.seeForm={
 								charge_mode:str.charge_mode,
 								public_cloud:str.public_cloud,
@@ -174,7 +178,7 @@
 								type:str.type,
 								id:str.id,
 								name:str.name,
-								status:str.status,
+								status:status,
 								tenant_name:str.tenant.name,
 								endpoints:str.endpoints
 							}

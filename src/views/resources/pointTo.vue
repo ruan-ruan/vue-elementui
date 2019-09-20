@@ -32,12 +32,6 @@
 									:value='item.value'
 									:key='index'></el-option>
 							</el-select>
-							<!--<el-select v-model='filters.search_type' class='sel'>
-								<el-option v-for='(item,index) in specialTypeData1'
-									:label='item.label'
-									:value='item.value'
-									:key='index'></el-option>
-							</el-select>-->
 						</el-form-item>
 						<el-form-item label='带宽(Mbps)'>
 							<el-input v-model='filters.search_start_bandwidth' class='ipts'placeholder='起始'></el-input>至
@@ -110,7 +104,7 @@
 						<span>{{scope.row.typeName}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='endpoints.name' label='A端' width='120'  align='center'>
+				<el-table-column prop='endpoints[0].name' label='A端' width='120'  align='center'>
 					<template slot-scope='scope'>
 						<span class="cli_spn" @click="handleSeeA(scope.$index,scope.row)">
 							{{scope.row.endpoints[0].logic_port.name}}
@@ -121,10 +115,10 @@
 				</el-table-column>
 				<el-table-column  label='A逻辑口状态' width='120'  align='center'>
 					<template slot-scope='scope'>
-						<!--<span :class='scope.row.endpoints[1].statusColor'> {{scope.row.endpoints[1].portStatus}}</span>-->
+						<span> {{scope.row.endpoints[0].statusVal}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='endpoints.name' label='Z端' width='120'  align='center'>
+				<el-table-column prop='endpoints[1].name' label='Z端' width='120'  align='center'>
 					<template slot-scope='scope'>
 						<span class="cli_spn" @click="handleSeeZ(scope.$index,scope.row)">
 							
@@ -135,6 +129,9 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop='endpoints.ports.status' label='Z逻辑口状态' width='120'  align='center'>
+					<!--<template slot-scope='scope'>
+						<span> {{scope.row.endpoints[1].statusVal}}</span>
+					</template>-->
 				</el-table-column>
 				<el-table-column prop='creation_time' label='创建时间' width='120'  :formatter='dateFormat' align='center'>
 				</el-table-column>
@@ -397,12 +394,12 @@
 				console.log(para)
 				this.$ajax.get('/vll/p2p_vlls'+'?token='+this.token,para)
 				.then(res => {
-					console.log(res)
 					if(res.status==200){
 						
 						if(res.data.status==0){
-							this.users=res.data.data.items;
+//							this.users=res.data.data.items;
 //							this.total=res.data.data.page.total;
+							console.log(res)
 							res.data.data.items.forEach(ele => {
 								
 								if(ele.type=='d2d'){
@@ -432,9 +429,10 @@
 									ele.statusColor='ServerVal'
 									ele.creat=true
 								}
+								
 //								console.log(ele);
 								ele.endpoints.forEach((element) => {
-									console.log(element)
+//									console.log(element)
 									if(element.vlan=='-1'){
 										element.vlanHTML='透传'
 									}else if(element.vlan=='0'){
@@ -449,7 +447,10 @@
 										element.statusVal='UP'
 									}
 								})
+								
 							})
+							console.log(res)
+							this.users=res.data.data.items;
 						}
 					}
 				}).catch(e => {console.log(e)})	

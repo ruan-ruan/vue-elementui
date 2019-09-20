@@ -45,7 +45,7 @@
 			var validatePass=(rule,value,callback)=> {
 				if(value===''){
 					callback(new Error('请输入旧密码'))
-				}else if(value!==this.editForm.oldPsd){
+				}else if(value!==this.oldPsd){
 					callback(new Error('请输入正确的旧密码'))
 				}else{
 					callback()
@@ -90,14 +90,19 @@
 		created(){
 			this.token=sessionStorage.getItem('token');
 			this.userName=sessionStorage.getItem('user');
+			this.oldPsd=sessionStorage.getItem('psd');
 		},
 		methods:{
 			editFormCon(){
-				this.$confirm('确认要修改吗?','提示',{})
-				.then(() => {
-					console.log('修改密码部分')
-					this.$router.push({path:'/login'})
-				}).catch((e) => {})
+				this.$refs.editForm.validate(valid => {
+					if(valid){
+						this.$confirm('确认要修改吗?','提示',{})
+						.then(() => {
+							console.log('修改密码部分')
+							this.$router.push({path:'/login'})
+						}).catch((e) => {})
+					}
+				})
 			},
 			reset(){
 				this.$refs['editForm'].resetFields()

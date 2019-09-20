@@ -5,7 +5,7 @@
 					<el-form>
 						<el-form-item>
 							<template>
-								<el-button @click='Save' id='save'>保存布局</el-button>
+								<el-button @click='Save' >保存布局</el-button>
 								<el-button @click='reset' id='reset'>还原布局</el-button>
 							</template>
 						</el-form-item>
@@ -30,22 +30,17 @@
 
 <script>
 
-	import * as d3 from 'd3'
-//var width = 890,
-//height = 470;
-//var text_dx = -20;
-//var text_dy = 20;
-//var img_w=16,img_h=16;
-//var radius=16;
-// let svg = d3.select('svg')
-//.attr('width',width)
-//.attr('height',height)
-//
-//let g = svg.append('g');     	
+
+
+
+	import * as d3 from 'd3' 	
+	import {isTopo} from '@/assets/js/index'
 	export default{
 		name:'Topo',
+		props:['leftData'],
 		data(){
 			return{
+				svg:null,
 				token:'',
 				nodesData:[],
 				linksData:[],
@@ -63,51 +58,48 @@
 				nodeId:'',
 				linkId:'',
 				linkType:'',
-				selectForm:{},
+				selectForm:{
+					checkboxGroup1: ['显示标签'],
+					bandwidthLogo:true,//是否显示宽带标签
+					bandwidth:'显示所有带宽链路',
+					network:['显示骨干节点','显示公有云节点','显示骨干链接'],
+				},
 				networkStatus:false,//流量默认的时候是隐藏的
 				logoStatus:true,//标签默认是显示的
 				tagStatus:true,//默认的是显示的
-				defaultObj:{
-					checkboxGroup1: ['显示标签'],
-					bandwidthLogo:true,//是否显示宽带标签
-					bandwidth:['显示1G带宽链路','显示10G带宽链路','显示40G带宽链路','显示100G带宽链路','显示其他带宽链路'],
-					network:['显示骨干节点','显示公有云节点','显示骨干链接'],
-				},
-				backupNode:[],
-				backupLink:[],
+
+//				backupNode:[],
+//				backupLink:[],
 			}
 		},
 //		watch:{
 //			selectForm:{
 //				handler(newVal,oldVal){
-//					console.log(newVal)
-//					this.reset()
-//					this.dealForm(newVal)
+//					this.dealForm(newVal,this.nodesData,this.linksData)
+////					this.linksData=[];//在这里来   修改获取到的nodes的数据和links数据
+//					this.setTopo(this.nodesData,this.linksData)
+////					this.dealForm(newVal,this.nodesData,this.linksData)
+//this.getNodesData(newVal);
 //				},
-//				deep:true
+//				deep:true,
 //			}
 //		},
 		created(){
 			this.token=sessionStorage.getItem('token');
-//			this.selectForm=this.$store.state.filters;
-//			var sels=this.$store.state.filters;
+			this.getNodesData(this.selectForm);
+
+		},
+		mounted(){
+			
 			let that=this;
 			this.bus.$on('sendType',(msg) => {
-				console.log(msg);
 				that.selectForm=msg;
-				that.reset()
-				that.dealForm(msg)
+				that.getNodesData(msg);
 			})
-			this.getLinksData();
-			this.getNodesData();
-		},
-		updated(){
-			this.dealForm(this.defaultObj)
-			
-//			console.log(this.selectForm)
-//			this.setTopo();
+
 		},
 		methods:{
+
 			Save(){//保存布局
 				this.$ajax.put('/topology/edit_node_location'+'?token='+this.token,this.saveData)
 				.then(res => {
@@ -132,158 +124,165 @@
 			reset(){//重新加载还原
 				this.$emit('reset',this.dis)
 			},
-			dealForm(obj){//处理  传值过来的对象
-				console.log(obj);
-				let nodes=this.nodesData;
-				let links=this.linksData;
-//				let setObj={
-//					nodeData:this.nodesData,
-//					linkData:this.linksData
-//				}
-				console.log(nodes);
-				console.log(links);
-				console.log(obj['checkboxGroup1'])
-				
-				let str=obj['checkboxGroup1']
-				if(str.length !==0){
-					//进入判断模式
-					if(str.indexOf('显示标签') === -1){
-						this.nodesData.forEach(ele => {
-							ele.node.name=''
-						})
-					}else{
-						this.nodesData=this.backupNode;
-					}
-					if(str.indexOf('显示流量') === -1){
-						this.linksData.forEach(ele => {
-							ele.bandwidth=''
-						})
-					}else{
-						this.linksData=this.backupLink;
-					}
-				}
-				else{
-					this.linksData.forEach(ele => {
-						ele.bandwidth=''
-					})
-					this.nodesData.forEach(ele => {
-						ele.node.name=''
-					})
-				}
-//				for (let index in obj) {
-//					if(index ==='checkboxGroup1'){
-//
-//						if(obj['checkboxGroup1'].length !==0){//里面存在   标签或者流量
-//						let str=obj['checkboxGroup1']
-//							if(str.indexOf('显示标签') !== -1){
-//								console.log('cunzau ')
-//								setObj.nodeData=nodes;
-//								console.log(setObj.nodeData)
-//							}else{
-//								nodes.forEach(ele => {
-//									ele.node.name=''
-//								})
-//								setObj.nodeData=nodes;
-////								links.forEach(ele =>{
-////									ele.bandwidth=''
-////								})
-////								setObj.linkData=links
-//							}
-//							if(str.indexOf("显示流量") !== -1){
-//								setObj.linkData=links;
-//								console.log(setObj.linkData)
-//							}else{
-//								console.log('hhhh')
-//								links.forEach(ele =>{
+			dealForm(obj,nodeVals,linkVals){//处理  传值过来的对象 obj   对象   node节点的数据  link线路的数据
+				let newNode=JSON.parse(JSON.stringify(nodeVals))
+				let newLink=JSON.parse(JSON.stringify(linkVals))  //上面的这两 用来保存  
+				let nodesData=JSON.parse(JSON.stringify(nodeVals))
+				let linksData=JSON.parse(JSON.stringify(linkVals))
+
+				var nodeVal=new Array();
+				var linkVal=new Array();
+				for(let item in obj){
+//					console.log(item);
+					if(item ==='checkboxGroup1'){//进入显示标签和显示流量的控制部分   
+						let str=obj['checkboxGroup1'];//用来查找对应的值
+						if(str.length !=0){
+//							if(str.indexOf('显示流量') ===-1){//未找到流量
+//								linksData.forEach(ele => {       // 暂时没有字段       后期添加后在更新流量的数据
 //									ele.bandwidth=''
 //								})
-//								setObj.linkData=links
+//								linkVal=linksData;
+//							}else if(str.indexOf('显示流量') !==-1){
+//								linkVal=newLink;
 //							}
-//						}else{//传递来的都是隐藏的
-//							nodes.forEach( item => {
-//								item.node.name=''
-//							})
-//							links.forEach(val => {
-//								val.bandwidth=''
-//							})
-//							setObj={
-//								nodeData:nodes,
-//								linkData:links
-//							}
-//						}
-//						
-//					}
-//				}
-				let setObj={
-					nodeData:this.nodesData,
-					linkData:this.linksData
+							
+							if(str.indexOf('显示标签') ===-1){//未找标签
+								nodesData.forEach(ele => {
+									ele.node.name=''
+								})
+								nodeVal=nodesData;
+							}else if(str.indexOf('显示标签') !== -1){
+								nodeVal=newNode;
+							}
+
+						}else{
+							nodesData.forEach(ele => {
+								ele.node.name=''
+							})
+							linksData.forEach(ele => {
+								ele.bandwidth=''
+							})
+							nodeVal=nodesData;
+							linkVal=linksData;
+
+						}
+					}
+					
+					if(item ==='bandwidthLogo'){//控制流量的显示和隐藏
+						let str=obj['bandwidthLogo'];
+						if(str){  //显示流量
+							linkVal=newLink;
+						}else{//隐藏的流量
+							linksData.forEach(ele => {
+								ele.bandwidth=''
+							})
+							linkVal=linksData;
+						}
+					}
+					
+					if(item ==='bandwidth'){//筛选带宽的显示和隐藏
+						let str=obj['bandwidth']
+						if(str === '显示所有带宽链路'){
+							linkVal=linksData;
+						}
+						else{
+							if(str === '显示1G带宽链路'){
+								linkVal=isTopo.isBandWidth(linksData,'bandwidth',1);
+							}
+								
+							if(str === '显示10G带宽链路'){
+								linkVal=isTopo.isBandWidth(linksData,'bandwidth',10);
+							}
+							
+							if(str === '显示40G带宽链路'){
+								linkVal=isTopo.isBandWidth(linksData,'bandwidth',40);
+							}
+							
+							if(str  === '显示100G带宽链路'){
+								linkVal=isTopo.isBandWidth(linksData,'bandwidth',100);
+							}
+							if(str  === '显示其他带宽链路'){
+								linkVal=isTopo.dealBandWidth(linksData,'bandwidth',100);//的所有的数据
+							}	
+						}			
+					}
+					
+					if(item ==='network'){
+						let arr=obj['network'];
+						if(arr.length !==0){
+							if(arr.indexOf('显示骨干节点') ===-1){
+								nodeVal=nodesData.filter(item => {
+									return item.type!=='node';
+								})
+							}else if(arr.indexOf('显示公有云节点') === -1){
+								nodeVal=nodesData.filter(item => {
+									return item.type!=='cloun';
+								})
+							}else if(arr.indexOf('显示骨干链接') === -1){
+								linkVal=linksData.filter(item => {
+									return item.type !=='link';
+								})
+							}else {
+								nodeVal=nodesData;
+								linkVal=linksData;
+							}
+						}else {
+							nodeVal=[];
+							linkVal=linksData.filter(item => {
+								return item.type !=='link';
+							})
+						}
+					}
+					
 				}
-				console.log(setObj)
-				this.setTopo(setObj.nodeData,setObj.linkData)
+				let setObj={
+					nodeData:nodeVal,
+					linkData:linkVal
+				}
+				console.log(setObj);
+				this.setTopo(nodeVal,linkVal)
 			},
-			getNodesData:function(){//获取topo的节点的数据集合
+			getNodesData:function(obj){//获取topo的节点的数据集合
 				this.topoLoading=true;
 				this.$ajax.get('/topology/node_location_list'+'?token='+this.token)
 				.then(res => {
 					this.topoLoading=false;
 					if(res.status==200){
 						if(res.data.status==0){
+							console.log(res)
 							this.nodesData=res.data.data;
-							this.backupNode=res.data.data;
-							
-//							backupNode:[],
-//				backupLink:[],
-//							this.getLinksData(this.nodesData);
+//							this.backupNode=res.data.data;
+//							sawedata=res.data.data;
+							this.getLinksData(this.nodesData,obj);
 						}
 					}
 				}).catch(e => {console.log(e)})			
 			},
-			getLinksData:function( ){   //获取链路的信息数据集合nodesData
+			getLinksData:function(nodesData,obj ){   //获取链路的信息数据集合
+				this.linksData=[];
+				let that=this;
 				this.$ajax.get('/topology/links'+'?token='+this.token)
 				.then(res => {
-					if(res.status==200){
-						if(res.data.status==0){
-							this.linksData=res.data.data;	
-							this.backupLink=res.data.data;
-//							this.setTopo(nodesData,this.linksData)
-						}
+					if(res.status==200 && res.data.status==0){
+							console.log(res)
+							
+							that.linksData=res.data.data;	
+//							that.backupLink=res.data.data;
+
+						this.dealForm(obj,nodesData,that.linksData)
+//						this.setTopo(nodesData,this.linksData)
 					}
 				}).catch(e => {console.log(e)})
 			},
-			
-			setNode(nodesData,g){
-				var nodes_text = g.selectAll('.node_text')
-	            .data(nodesData)
-	            .enter()
-	            .append('text')
-	            .attr('class','font')
-	            .text(function(d){
-	            	return d.node.name
-	            })
-	            return nodes_text;
-			},
-			setLink(linksData,g){
-				var links_text=g.selectAll('.link_text')
-	            .data(linksData)
-	            .enter()
-	            .append('text')
-	            .attr('class','links_text')
-				.text(function(d){
-					return d.bandwidth
-	           })
-				return links_text;
-			},
 			setTopo:function(nodesData,linksData){//设置拓扑图的展示
-				
+				d3.select('svg').select('g').remove()
 				var width = 890,
 				  height = 470;
 				var text_dx = -20;
 				var text_dy = 20;
 				var img_w=16,img_h=16;
 				var radius=16;
-				
-//				let nodesData=this.nodesData;
-//				let linksData=this.linksData;
+
 				linksData.some(function(v, i) {
 			        nodesData.some(function(w, j) {
 			            if (v.source_node == w.node.id) {
@@ -313,15 +312,13 @@
 		      	.force('links', linkForce)
 
 				simulation.on('tick', tickActions)
-				let svg = d3.select('svg')
+				
+				var  svg = d3.select('svg')
 	            .attr('width',width)
 	            .attr('height',height)
 //	            
-	            let g = svg.append('g');
+	            var g = svg.append('g');
 
-//				var  nodes_text=that.setNode(nodesData,g);
-//				var links_text=that.setLink(linksData,g)
-//	            
 	            var nodes_text = g.selectAll('.node_text')
 	            .data(nodesData)
 	            .enter()
@@ -338,6 +335,7 @@
 				.text(function(d){
 					return d.bandwidth
 	           })
+			
 	        let link = g.append('g')
 			    .attr('class', 'link')
 			    .selectAll('line')
@@ -380,6 +378,7 @@
 					}
 				}
 				
+				
 				let node = g.append('g')
 			    	.attr('class', 'nodes')
 			      	.selectAll('circle')
@@ -396,13 +395,14 @@
 					.attr('y',function(d){
 						return d.y-img_h/2
 					})
-				//节点的拖拽	
+//				节点的拖拽	
 		       let dragHandler = d3.drag()
 			      	.on('start', dragStart)
 			      	.on('drag', dragDrag)
 			      	.on('end', dragEnd)
 			
 			    dragHandler(node)  
+			    
 		        node.on('click',function(d){
 
 					that.$store.commit('newAuthor',d.node.id)  //向数据仓库传值
@@ -430,21 +430,15 @@
 					zoomHandler.scaleBy(svg, 0.9); // 执行该方法后 会触发zoomHandler事件
             		let tran = d3.zoomTransform(svg.node());
 				})
-//				let newData=[];//用来保存拖拽后的所有的节点
+				let newData=[];//用来保存拖拽后的所有的节点
 				let newObj={};//保存拖拽后的每个节点数据
-				
-//				d3.select('#save').on('click',function(d){
-//					console.log('执行保存布局');
-//					console.log(newData);
-//				})
-
 				function tickActions () {
 		            node.attr("x", function(d) { return d.x-img_w/2; })
 				        .attr("y", function(d) { return d.y-img_h/2; });
-					nodesData.forEach((d,i) => {
-						d.x= d.x - img_w/2 < 0 ? img_w/2 : d.x;
-						d.y=d.y - img_h/2 < 0? img_h/2 : d.y;
-					});
+//					nodesData.forEach((d,i) => {
+//						d.x= d.x - img_w/2 < 0 ? img_w/2 : d.x;
+//						d.y=d.y - img_h/2 < 0? img_h/2 : d.y;
+//					});
 					link.attr("x1", function(d) {return d.source_val.x;})
 		                .attr("y1", function(d) {return d.source_val.y; })
 		                .attr("x2", function(d) {return d.target_val.x; })
@@ -499,12 +493,6 @@
 			      that.saveData.push(newObj);
 			    }
 			},
-			filters:function(arr,target_id){
-				var obj=arr.find(function(x){
-					return x.id===target_id
-				})
-				return obj;
-			}
 		},
 	}
 </script>

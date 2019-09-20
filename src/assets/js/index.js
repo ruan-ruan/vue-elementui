@@ -252,6 +252,27 @@ export var arrayPro={
 };
 
 
+export var isTopo={
+	//根据带宽的大小筛选   获取
+	dealBandWidth(a,property,value){// a  是数组     property 是属性    value是要比对的值
+		var b=a.filter(item => {
+			return item[property]==value;
+		})
+		return a= a.filter(item => {
+			 let idList= b.map(v => v[property])
+			 return !idList.includes(item[property])
+		 })
+	} ,
+	isBandWidth(a,property,value){
+		 return a.filter(item => {
+		 	return item[property]==value;
+		 })
+	 }
+}
+
+
+
+
 
 
 
@@ -268,18 +289,18 @@ export 	function getPortStatus(arr){
 	let statusVal='';
 	if(arr.length>1){
 //		console.log('进入两个端口');
-		if(arr[0].port.status==='UP'&& arr[1].port.status==="UP"){
+		if(arr[0].status==='UP'&& arr[1].status==="UP"){
 			statusVal='UP';
-		}else if(arr[0].port.status==='DOWN'&& arr[1].port.status==="DOWN"){
+		}else if(arr[0].status==='DOWN'&& arr[1].status==="DOWN"){
 			statusVal='DOWN';
 		}else{
 			statusVal='异常';
 		}
 	}else if(arr.length==1){
 //		console.log('进入一个端口')
-		if(arr[0].port.status==='UP'){
+		if(arr[0].status==='UP'){
 			statusVal='UP';
-		}else if(arr[0].port.status==='DOWN'){
+		}else if(arr[0].status==='DOWN'){
 			statusVal='DOWN';
 		}
 	}
@@ -291,5 +312,8 @@ export function isValidinteger(str){
 	let reg=/^[1-9]\d*$/;
 	return reg.test(str);
 }
-
+export function isStatus(str){//根据endpoints   来判断的额端口的状态
+	
+	
+}
 
