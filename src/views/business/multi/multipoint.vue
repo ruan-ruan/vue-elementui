@@ -221,7 +221,7 @@
 								tenant_id:this.editForm.tenant_id,
 								description:this.editForm.des
 							}
-							this.$ajax.post('/'+'?token='+this.token,para)
+							this.$ajax.post('/vll/add_virtual_host'+'?token='+this.token,para)
 							.then(res => {
 								console.log(res)
 								if(res.status==200){
