@@ -414,7 +414,6 @@ export default {
     selsChange(sels) {
       this.sels = sels;
     },
-
     batchRemove: function(rows) {
       //批量删除
       var ids = [];
