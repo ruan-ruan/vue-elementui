@@ -569,7 +569,7 @@
 		    		let para={
 		    			ids:ids
 		    		}
-		    		this.$ajax.del('/vll/del_vlls'+'?token='+this.token,{data:para})
+		    		this.$ajax.del('/vll/del_vlls'+'?token='+this.token,para)
 		    		.then(res => {
 		    			if(res.status==200){
 		    				if(res.data.status==0){
