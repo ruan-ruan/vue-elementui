@@ -5,7 +5,7 @@
 			<el-row>
 				<el-col :span='24'>
 					<el-col :span='24'>
-						<Topo @sendlink='setLink' @reset='getVal' v-if='topoVal' @parentDelta='setmon' @sendType='getLink'></Topo>
+						<Topo :leftData='nodesData' @sendlink='setLink' @reset='getVal' v-if='topoVal' @parentDelta='setmon' @sendType='getLink'></Topo>
 					</el-col>
 					<el-col :span='6' class='vir'>
 						<monitor v-if='monStatus'></monitor>
@@ -43,11 +43,24 @@
 		},
 		data(){
 			return{
+				token:'',
 				topoVal:true,
 				monStatus:true,
 				linkStatus:false,
-				nodeStatus:false
+				nodeStatus:false,
+				nodesData:[],
+				linksData:[],
 			}
+		},
+		mounted(){
+			this.token=sessionStorage.getItem('token');
+			this.getLinksData();
+			this.getNodesData()
+			console.log(this.nodesData)
+		},
+		updated(){
+			console.log(this.nodesData)
+			
 		},
 		methods:{
 			getLink(data){
@@ -79,7 +92,48 @@
 			    this.$nextTick(function(){
 			        this.topoVal = true
 			    })
-			}
+			},
+			getNodesData:function(){//获取topo的节点的数据集合
+//				this.nodesData=[];
+//				let sawedata=[];
+				this.topoLoading=true;
+				this.$ajax.get('/topology/node_location_list'+'?token='+this.token)
+				.then(res => {
+					this.topoLoading=false;
+					if(res.status==200){
+						if(res.data.status==0){
+//							console.log(res)
+							this.nodesData=res.data.data;
+//							this.backupNode=res.data.data;
+//							sawedata=res.data.data;
+//							this.getLinksData(this.nodesData);
+						}
+					}
+				}).catch(e => {console.log(e)})			
+			},
+			getLinksData:function( ){   //获取链路的信息数据集合nodesData
+				this.linksData=[];
+				let that=this;
+				this.$ajax.get('/topology/links'+'?token='+this.token)
+				.then(res => {
+					if(res.status==200 && res.data.status==0){
+//							console.log(res)
+							
+							that.linksData=res.data.data;	
+//							that.backupLink=res.data.data;
+//							this.dealForm(that.selectForm,nodesData,that.linksData)
+							//添加数据的处理setObj={
+//					nodeData:nodesData,
+//					linkData:linksData
+//				}
+
+//						let node=this.dealForm(that.selectForm,nodesData,that.linksData).nodeData;
+//						let link=this.dealForm(that.selectForm,nodesData,that.linksData).linkData
+//						this.setTopo(node,link)
+						console.log('hello')
+					}
+				}).catch(e => {console.log(e)})
+			},
 		}
 	}
 </script>

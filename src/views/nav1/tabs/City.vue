@@ -483,11 +483,8 @@
 			    			cancelButtonText:'取消',
 			    			type:'warning'
 			    		}).then(() => {
-			    			var para={
-			    				page:this.currentPage,
-			    				per_page:this.pagesize
-			    			}
-			    			this.exportData(para)
+			    			
+			    			this.exportData()
 			    		}).catch(() => {
 			    			
 			    		})
@@ -498,7 +495,11 @@
 			    			cancelButtonText:'取消',
 			    			type:'warning'
 			    		}).then(() => {
-			    			this.exportData()
+			    			var para={
+			    				page:this.currentPage,
+			    				per_page:this.pagesize
+			    			}
+			    			this.exportData(para)
 			    		}).catch(() => {
 			    			
 			    		})
@@ -515,6 +516,9 @@
 		    					message:'导出成功!',
 		    					type:'success'
 		    				})
+		    				res.data.data.items.forEach(ele => {
+			    					ele.region_name=ele.region.name;
+			    				})
 		    				this.excelData=res.data.data.items;
 							this.export2Excel();
 		    			}else{
@@ -534,8 +538,8 @@
 				let that=this;
 				require.ensure([],() => {
 					const {export_json_to_excel} =require('@/excel/export2Excel');
-					const tHeader=['id','区域名称','备注','所属区域'];
-					const filterVal=['id','name','description','region_id'];
+					const tHeader=['id','区域名称','所属区域','备注'];
+					const filterVal=['id','name','region_name','description'];
 					const list=that.excelData;
 					const data=that.formatJson(filterVal,list);
 					export_json_to_excel(tHeader,data,'下载数据excel')

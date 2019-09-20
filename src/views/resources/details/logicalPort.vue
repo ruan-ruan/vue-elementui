@@ -394,6 +394,7 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.tenantLogo=res.data.data.items;
+							console.log(res)
 						}
 					}
 				}).catch(e => {
@@ -419,9 +420,14 @@
 				})
 				//将选择的骨干的id的名字保存下来
 				this.editForm.node_name=findVal.name;
-				this.editForm.dc_name=findVal.dc.name;
-				this.editForm.dc_id=findVal.dc.id;
-				console.log(findVal.name);
+				if(!findVal.dc && typeof(findVal.dc)!='undefined' && findVal.dc!=0){//此时的数据类型为null
+					console.log('hello')
+				}else{
+					this.editForm.dc_name=findVal.dc.name;
+					this.editForm.dc_id=findVal.dc.id;
+				}
+
+//				console.log(findVal);
 				//根据节点选取对应的设备
 				
 				this.$ajax.get('/node/node_info/'+ids+'?token='+this.token)

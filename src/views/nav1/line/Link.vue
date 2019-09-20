@@ -534,11 +534,12 @@
 			},
 			//节点a的点击详情
 			handleNode_a(index,row){
-				this.$router.push({path:'/location/index/details/'+row.a_node.id});
+				
+				this.$router.push({path:'/location/index/unknown/nodedetails/'+row.a_node.id});
 			},
 			//节点z的详情
 			handleNode_z(index,row){
-				this.$router.push({path:'/location/index/details/'+row.z_node.id});
+				this.$router.push({path:'/location/index/unknown/nodedetails/'+row.z_node.id});
 			},
 			//详情
 			handleSee(index,row){

@@ -194,7 +194,13 @@
 	  	},
 	  	created(){
 			this.token=sessionStorage.getItem('token');
+			this.getUsers();
 	  	},
+	  			
+		mounted() {
+//		    console.log(this.users)
+		    this.bus.$emit('Area',this.users);
+		},
 		methods: { 	
 		//改变的时候
 			handleSizeChange(val){
@@ -237,25 +243,35 @@
 		    handleDel: function(index, row) {
 		    	this.$confirm('确定要删除该记录吗？','提示',{})
 		    	.then(()=> {
-		    		this.$ajax.del('/location/del_region/'+row.id+'?token='+this.token)
-		    		.then(res =>{
-		    			if(res.status==200){
-		    				if(res.data.status==0){
-		    					this.$message({
-		    						message:'删除成功!',
-		    						type:'success'
-		    					})
-		    					this.getUsers()
-		    				}else{
-		    					this.$message({
-		    						message:res.data.message,
-		    						type:'warning'
-		    					})
-		    				}
-		    			}
-		    		}).catch(e => {
-		    			cosnole.log(e)
+		    		this.$axios({
+		    			method:'delete',
+		    			url:'/location/del_region/'+row.id+'?token='+this.token
 		    		})
+		    		.then((res) => {
+		    			console.log(res)
+		    		}).catch((e) => {
+		    			console.log(e)
+		    		})
+//		    		this.$ajax.del('/location/del_region/'+row.id+'?token='+this.token)
+//		    		.then(res =>{
+//		    			if(res.status==200){
+////		    				if(res.data.status==0){
+////		    					console.log(res)
+////		    					this.$message({
+////		    						message:'删除成功!',
+////		    						type:'success'
+////		    					})
+////		    					this.getUsers()
+////		    				}else{
+////		    					this.$message({
+////		    						message:res.data.message,
+////		    						type:'warning'
+////		    					})
+////		    				}
+//		    			}
+//		    		}).catch(e => {
+//		    			console.log(e)
+//		    		})
 		    	}).catch(() => {
 		    		console.log()
 		    	})
@@ -418,9 +434,9 @@
 		    },
 			handleExport(command){
 				var _this=this
-				if(command=='current'){
+				if(command=='current'){//当前页的数据
 		    		//导出所有的数据
-		    		this.$confirm('确定要导出当前的数据吗?','提示',{
+		    		this.$confirm('确定要导出当前页的数据吗?','提示',{
 		    			confirmButtonText:'确定',
 		    			cancelButtonText:'取消',
 		    			type:'warning'
@@ -475,10 +491,7 @@
 				return jsonData.map(v => filterVal.map (j => v[j]))
 			}
 		},
-		mounted() {
-		    this.getUsers();
-		    this.bus.$emit('Area',this.users);
-		},
+
 	};
 </script>
 

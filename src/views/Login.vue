@@ -94,6 +94,7 @@
 									});
 									this.$store.commit(types.LOGIN, res.data.data.token)
 									sessionStorage.setItem('user',loginParams.name);
+									sessionStorage.setItem('psd',loginParams.password)
 									sessionStorage.setItem('token',res.data.data.token);
 //									let redirect = decodeURIComponent( this.$route.query.redirect ||'/topology' );
 									let redirect = decodeURIComponent('/topology' || this.$route.query.redirect);
