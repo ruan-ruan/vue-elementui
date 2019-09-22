@@ -14,18 +14,15 @@ config => {
     return config
 },
 err => {
-    return Promise.reject(err)
+    return Promise.error(err)
 },
 )
 
-// http response 拦截器
+// http response 响应拦截器
 axios.interceptors.response.use(
   response => {
-//  return response
 	if(response.status===200){
-		if(response.data.status==0){
-			return Promise.resolve(response)
-		}else if(response.data.status==101){
+		if(response.data.status==101){//如果返回的状态码是101的时候  ，直接返回到登录界面，否则返回对应信息
 			store.commit(types.LOGOUT)   
 	          // 只有在当前路由不是登录页面才跳转
 	        router.currentRoute.path !== '/login' &&
@@ -33,6 +30,8 @@ axios.interceptors.response.use(
 	          path: '/login',
 	          query: { redirect: router.currentRoute.path },
 	        })
+		}else{
+			return response
 		}
 	}
 	//下面的也可以实现拦截
