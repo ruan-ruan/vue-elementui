@@ -203,7 +203,7 @@
 //			let timeAge=[];
 //			for(let index in this.timeData){
 //				if(this.timeData[index]=='' ){
-//					//如果存在空的值时候，这个时候取前后的两个值平均值既可    判断第一个值和最后一个值不存在的时候
+//					//如果存在空的值时候，这个时候取前后的两个值平均值即可    判断第一个值和最后一个值不存在的时候
 //					if(index=0){
 //						this.timeData[index]=(this.timeData.index+1)/2;
 //					}else if(index=this.timeData.length-1){

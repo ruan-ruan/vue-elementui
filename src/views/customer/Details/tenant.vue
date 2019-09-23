@@ -10,7 +10,7 @@
 				
 			</el-tab-pane>
 			<el-tab-pane label='点到点专线'name='three'>
-				<points-to :customerID='cusSeeID'></points-to>  <!--向子组件传id既可    根据id在子组件内进行判断-->
+				<points-to :customerID='cusSeeID'></points-to>  <!--向子组件传id即可    根据id在子组件内进行判断-->
 			</el-tab-pane>
 			<el-tab-pane label='虚拟组网专线'name='four'>
 				<virtualNetwork :customerID='cusSeeID'></virtualNetwork>

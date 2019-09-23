@@ -128,7 +128,7 @@
 				let endIndex='';
 				var obj={};
 				var ChartsData=[];
-				var sortID=[];//将id相同的部分里面flow合并既可
+				var sortID=[];//将id相同的部分里面flow合并即可
 
 //				//遍历以后再进行树的排序
 				let time={};

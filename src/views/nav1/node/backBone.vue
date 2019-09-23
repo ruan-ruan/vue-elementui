@@ -128,7 +128,7 @@
 					start_time:'',
 					end_time:'',
 					//选择时间
-					timeVal:'',
+					timeVal:[],
 				},
 				
 				//列表的数据
@@ -224,12 +224,13 @@
 				if(this.filters.start_time==''&& this.filters.start_time!=''){
 					this.filters.start_time='';
 					this.filters.start_time=Number(this.filters.timeVal[0]);
+					console.log(this.filters.start_time)
 				}else if(this.filters.start_time=='' && this.filters.start_time!=''){
 					this.filters.start_time='';
 					this.filters.end_time=Number(this.filters.timeVal[1]);
 				}else if(this.filters.start_time ==''&& this.filters.start_time==''){
 					this.filters.start_time='';
-					this.filters.start_time='';
+					this.filters.end_time='';
 				}else{
 					this.filters.start_time=Number(this.filters.timeVal[0]);
 					this.filters.end_time=Number(this.filters.timeVal[1]);
@@ -241,8 +242,8 @@
 					search_name:this.filters.name,
 					search_dc:this.filters.search_dc,
 					search_status:this.filters.search_status,
-					start_time:this.filters.start_time,
-					end_time:this.filters.end_timec,
+					search_start_time:this.filters.start_time,
+					search_end_time:this.filters.end_time,
 				}
 				this.$ajax.get('/node/nodes'+'?token='+this.token,para)
 				.then(res => {

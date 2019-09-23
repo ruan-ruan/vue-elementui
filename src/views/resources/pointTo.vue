@@ -539,7 +539,7 @@
 		    	this.$confirm('确定要删除吗?','提示',{})
 		    	.then(() => {
 		    		
-		    		this.$ajax.del('/vll/del_p2p_vll/'+row.id+'?token='+this.token)
+		    		this.$ajax.del('/vll​/del_vll​/'+row.id+'?token='+this.token)
 		    		.then(res => {
 		    			if(res.status==200){
 		    				if(res.data.status==0){
@@ -563,13 +563,14 @@
 		    	var ids=[];
 		    	rows.forEach(ele => {
 		    		ids.push(ele.id)
-		    	})
+				})
+				console.log(ids)
 		    	this.$confirm('确定要删除选中的数据吗?','提示',{})
 		    	.then(() => {
 		    		let para={
 		    			ids:ids
 		    		}
-		    		this.$ajax.del('/vll/del_p2p_vlls'+'?token='+this.token,para)
+		    		this.$ajax.del('/vll/del_vlls'+'?token='+this.token,para)
 		    		.then(res => {
 		    			if(res.status==200){
 		    				if(res.data.status==0){

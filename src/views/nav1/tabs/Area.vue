@@ -243,11 +243,18 @@
 		    handleDel: function(index, row) {
 		    	this.$confirm('确定要删除该记录吗？','提示',{})
 		    	.then(()=> {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5b740847ca35294f15f873631bf141eaef8d67c5
 		    		this.$ajax.del('/location/del_region/'+row.id+'?token='+this.token)
 		    		.then(res =>{
 		    			if(res.status==200){
 		    				if(res.data.status==0){
+<<<<<<< HEAD
 		    					console.log(res)
+=======
+>>>>>>> 5b740847ca35294f15f873631bf141eaef8d67c5
 		    					this.$message({
 		    						message:'删除成功!',
 		    						type:'success'
@@ -348,7 +355,11 @@
 		          this.$confirm("确认提交吗？", "提示", {})
 		            .then(() => {
 		                this.editLoading = true;
+<<<<<<< HEAD
 		              	let para = Object.assign({}, this.editForm);
+=======
+		              let para = Object.assign({}, this.editForm);
+>>>>>>> 5b740847ca35294f15f873631bf141eaef8d67c5
 						this.$ajax.post('/location/add_region'+'?token='+this.token,para)
 						.then((res) => {
 							if(res.status=='200'){
@@ -387,17 +398,21 @@
 				rows.forEach(element =>{
 					ids.push(element.id);
 				})
-		      this.$confirm("确认删除选中记录吗？", "提示", {
-		        type: "warning"
-		      })
+			    this.$confirm("确认删除选中记录吗？", "提示", {
+			        type: "warning"
+			    })
 		        .then(() => {
+<<<<<<< HEAD
 		
 		          let para = { ids: ids };
+=======
+		          	let para = { ids: ids };
+>>>>>>> 5b740847ca35294f15f873631bf141eaef8d67c5
 					this.$ajax.del('/location/del_regions'+'?token='+this.token,para)
 		          	.then(res => {
 		          		console.log(res)
 			          	if(res.status=='200'){
-			          		if(res.data.status=='0'){
+			          		if(res.data.status=='0'){			
 					            this.$message({
 					              message: "批量删除成功",
 					              type: "success"

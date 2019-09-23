@@ -51,7 +51,26 @@ var router = new Router({
         component: NotFound,
         name: '',
         hidden: true
-    },{
+	},
+	{		
+		path: '/',
+		component: Home,
+		name: '个人中心',
+		iconCls: 'fa fa-user-circle-o',
+		leaf:false,
+		meta:{
+			requireAuth:true
+		},
+		children: [
+			//站内信
+			{path:'/message',component: () => import ('@/views/parent'), name: '站内信',leaf:false,children:[
+				{path:'/message/unreadMessage',component: () => import ('@/views/message/unreadMessage'), name: '未读消息',leaf:true},
+				{path:'/message/allMessage',component: () => import ('@/views/message/allMessage'), name: '全部消息',leaf:true}
+			]}
+			
+		]
+	},
+	{
         path: '/',
         component: Home,
 		name:'骨干管理',
