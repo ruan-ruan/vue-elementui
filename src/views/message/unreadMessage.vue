@@ -324,7 +324,6 @@ export default {
             this.$ajax
               .put("/public/read_news" + "?token=" + this.token, para)
               .then(res => {
-                debugger;
                 if (res.status == 200) {
                   if (res.data.status == 0) {
                     this.$message({
