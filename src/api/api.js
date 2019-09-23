@@ -1,7 +1,10 @@
 import axios from 'axios'
+import qs from 'qs'
 import { Message } from 'element-ui';
 //let base = '';
 axios.defaults.baseURL='http://api.tianchic.com'
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+//axios.defaults.baseURL = $core.use('http://api.tianchic.com'); //确认协议和地址
 const ajax={
     post:function(url,data ={}){
         return new Promise( (resolve ,reject) => {
@@ -40,15 +43,16 @@ const ajax={
         })
     },
 
-    del:function(url ,data={}){
+    del:function(url ,params={}){
         return new Promise((resolve,reject) => {
-            axios.delete(url,data)
+          axios.delete(url,{
+                params:params
+            })
             .then( (response) => {
-            	return response
-//          	resolve(response) 
-            }).catch ( (error) => {
-            	return error
-//              reject(error)
+                resolve(response)
+            })
+            .catch ((error)=> {
+                reject(error)
             })
         })
     }
