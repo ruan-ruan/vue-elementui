@@ -4,14 +4,14 @@
    	 <section>
    	 	<el-row class='toollbar' style='width: 100%;'>
    	 		<el-col :span='24'>
-   	 			<el-form :inline='true' :model='filters' ref='model'>
-   	 				<el-form-item label='名称'>
+   	 			<el-form :inline='true' :model='filters' ref='filters'>
+   	 				<el-form-item label='名称' prop='name'>
    	 					<el-input v-model='filters.name' placeholder="请输入逻辑端口名称" class='sel'></el-input>
    	 				</el-form-item>
-   	 				<el-form-item label='租户标识'>
+   	 				<el-form-item label='租户标识' prop='nameLogo'>
    	 					<el-input v-model='filters.nameLogo' placeholder="请输入逻辑端口名称" class='sel'></el-input>
    	 				</el-form-item>
-   	 				<el-form-item label='状态'>
+   	 				<el-form-item label='状态' prop='status'>
    	 					<!--<el-input v-model='filters.name' placeholder="请输入逻辑端口名称"></el-input>-->
    	 					<el-select v-model='filters.status'placeholder="请选择逻辑端口状态" class='sel'>
    	 						<el-option v-for=' (item,index) in PortStatus'
@@ -162,9 +162,17 @@
 			},
 			getUsers(){
 				this.loading=true;
+//				filters:{
+//					nameLogo:'',
+//					name:'',
+//					status:''
+//				},
 				let para={
 					page:this.currentPage,
 					per_page:this.pagesize,
+					search_name:this.filters.name,
+					search_tenant:this.filters.nameLogo,
+//					search_usable:this.filters.status,
 				}
 				this.$ajax.get('/port/logic_ports'+'?token='+this.token,para)
 				.then(res => {
@@ -204,35 +212,21 @@
 									this.statusDel=false
 								}
 							})
-							this.users=res.data.data.items;
+								//对数据状态的遍历  
+							if(this.filters.status !=''){
+									this.users=res.data.data.items.filters(item => {
+										return item.usableText==this.filters.status;
+									})
+							}else{
+								this.users=res.data.data.items;
+							}
+
 						}
 					}
 				}).catch(e => {
 					console.log(e)
 				})
 			},
-//			getPortStatus:function(arr){
-//				let statusVal;
-//				if(arr.length>1){
-//					console.log('进入两个端口');
-//					if(arr[0].port.status==='UP'&& arr[1].port.status==="UP"){
-//						statusVal='UP';
-//					}else if(arr[0].port.status==='DOWN'&& arr[1].port.status==="DOWN"){
-//						statusVal='DOWN';
-//					}else{
-//						statusVal='异常';
-//					}
-//				}else if(arr.length==1){
-//					console.log('进入一个端口')
-//					if(arr[0].port.status==='UP'){
-//						statusVal='UP';
-//					}else if(arr[0].port.status==='DOWN'){
-//						statusVal='DOWN';
-//					}
-//				}
-//			console.log(statusVal)
-//			return statusVal
-//			},
 			reset(sel){
 				for (let index in sel) {
 					sel[index]=''

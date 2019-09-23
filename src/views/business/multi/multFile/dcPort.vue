@@ -265,7 +265,7 @@
 								}else if(getPortStatus(ele.physical_ports)=='异常'){
 									strVal.statusColor='statusAbno'
 								}
-								portObj={
+								let portObj={
 									id:ele.id,
 									name:ele.name,
 									status:getPortStatus(ele.physical_ports),

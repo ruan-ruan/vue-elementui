@@ -271,9 +271,16 @@ export var isTopo={
 		 })
 	} ,
 	isBandWidth(a,property,value){
-		 return a.filter(item => {
-		 	return item[property]==value;
-		 })
+		if(value !=='显示其他带宽链路'){
+			 return a.filter(item => {
+			 	return item[property]==value;
+			 })
+		}else{
+			return a.filter(item => {
+			 	return item[property]!=1&&item[property]!=10&&item[property]!=40&&item[property]!=100;
+			})
+		}
+		
 	 }
 }
 

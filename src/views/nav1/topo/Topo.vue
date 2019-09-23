@@ -159,8 +159,11 @@
 							nodesData.forEach(ele => {
 								ele.node.name=''
 							})
+							linksData.forEach(ele => {
+								ele.bandwidth=''
+							})
 							nodeVal=nodesData;
-//							linkVal=linksData;
+							linkVal=linksData;
 
 						}
 					}
@@ -199,7 +202,7 @@
 								linkVal=isTopo.isBandWidth(linksData,'bandwidth',100);
 							}
 							if(str  === '显示其他带宽链路'){
-								linkVal=isTopo.dealBandWidth(linksData,'bandwidth',100);//的所有的数据
+								linkVal=isTopo.dealBandWidth(linksData,'bandwidth','显示其他带宽链路');//的所有的数据
 							}	
 						}			
 					}
