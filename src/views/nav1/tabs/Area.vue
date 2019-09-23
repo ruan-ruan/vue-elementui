@@ -243,35 +243,26 @@
 		    handleDel: function(index, row) {
 		    	this.$confirm('确定要删除该记录吗？','提示',{})
 		    	.then(()=> {
-		    		this.$axios({
-		    			method:'delete',
-		    			url:'/location/del_region/'+row.id+'?token='+this.token
-		    		})
-		    		.then((res) => {
-		    			console.log(res)
-		    		}).catch((e) => {
+		    		this.$ajax.del('/location/del_region/'+row.id+'?token='+this.token)
+		    		.then(res =>{
+		    			if(res.status==200){
+		    				if(res.data.status==0){
+		    					console.log(res)
+		    					this.$message({
+		    						message:'删除成功!',
+		    						type:'success'
+		    					})
+		    					this.getUsers()
+		    				}else{
+		    					this.$message({
+		    						message:res.data.message,
+		    						type:'warning'
+		    					})
+		    				}
+		    			}
+		    		}).catch(e => {
 		    			console.log(e)
 		    		})
-//		    		this.$ajax.del('/location/del_region/'+row.id+'?token='+this.token)
-//		    		.then(res =>{
-//		    			if(res.status==200){
-////		    				if(res.data.status==0){
-////		    					console.log(res)
-////		    					this.$message({
-////		    						message:'删除成功!',
-////		    						type:'success'
-////		    					})
-////		    					this.getUsers()
-////		    				}else{
-////		    					this.$message({
-////		    						message:res.data.message,
-////		    						type:'warning'
-////		    					})
-////		    				}
-//		    			}
-//		    		}).catch(e => {
-//		    			console.log(e)
-//		    		})
 		    	}).catch(() => {
 		    		console.log()
 		    	})
@@ -321,11 +312,6 @@
 		            .then(() => {
 		            	this.editLoading = true;
 		            	let para = Object.assign({}, this.editForm);
-//					this.$axios({
-//						method:'put',
-//						url:base+'/location/edit_region/'+para.id+'?token='+this.token,
-//						data:para
-//					})
 					this.$ajax.put('/location/edit_region/'+para.id+'?token='+this.token,para)
 		              .then( (res) => {             	
 		              	if(res.status=='200'){
@@ -362,12 +348,7 @@
 		          this.$confirm("确认提交吗？", "提示", {})
 		            .then(() => {
 		                this.editLoading = true;
-		              let para = Object.assign({}, this.editForm);
-//						this.$axios({
-//							method:'post',
-//							url:base+'/location/add_region'+'?token='+this.token,
-//							data:para,
-//						})
+		              	let para = Object.assign({}, this.editForm);
 						this.$ajax.post('/location/add_region'+'?token='+this.token,para)
 						.then((res) => {
 							if(res.status=='200'){
@@ -412,9 +393,9 @@
 		        .then(() => {
 		
 		          let para = { ids: ids };
-		        
 					this.$ajax.del('/location/del_regions'+'?token='+this.token,para)
 		          	.then(res => {
+		          		console.log(res)
 			          	if(res.status=='200'){
 			          		if(res.data.status=='0'){
 					            this.$message({

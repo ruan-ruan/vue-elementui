@@ -159,11 +159,8 @@
 							nodesData.forEach(ele => {
 								ele.node.name=''
 							})
-							linksData.forEach(ele => {
-								ele.bandwidth=''
-							})
 							nodeVal=nodesData;
-							linkVal=linksData;
+//							linkVal=linksData;
 
 						}
 					}

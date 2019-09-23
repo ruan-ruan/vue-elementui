@@ -21,19 +21,15 @@ err => {
 // http response 拦截器
 axios.interceptors.response.use(
   response => {
-//  return response
-	if(response.status===200){
-		if(response.data.status==0){
-			return Promise.resolve(response)
-		}else if(response.data.status==101){
-			store.commit(types.LOGOUT)   
-	          // 只有在当前路由不是登录页面才跳转
-	        router.currentRoute.path !== '/login' &&
-	        router.replace({
-	          path: '/login',
-	          query: { redirect: router.currentRoute.path },
-	        })
-		}
+    return response
+    if(response.data.status==101){
+		store.commit(types.LOGOUT)   
+          // 只有在当前路由不是登录页面才跳转
+        router.currentRoute.path !== '/login' &&
+        router.replace({
+          path: '/login',
+          query: { redirect: router.currentRoute.path },
+        })
 	}
 	//下面的也可以实现拦截
 //	if(response.data.status==101){

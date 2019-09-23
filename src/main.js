@@ -19,6 +19,9 @@ import moment from 'moment'
 import *as types from '@/api/types'
 import '@/assets/css/bus.css'
 import ajax from '@/api/api'
+//import VueAxios from 'vue-axios'
+
+//Vue.use(VueAxios,axios)
 
 Vue.use(Vuex)
 Vue.use(ElementUI)
