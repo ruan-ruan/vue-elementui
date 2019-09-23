@@ -383,8 +383,8 @@ export default {
             this.$ajax
               .del("/public/del_news" + "?token=" + this.token, {data:para})
               .then(res => {
-                if (res.status == "200") {
-                  if (res.data.status == "0") {
+                if (res.status == 200) {
+                  if (res.data.status == 0) {
                     this.$message({
                       message: "删除成功!",
                       type: "success"
