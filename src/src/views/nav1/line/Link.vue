@@ -86,7 +86,7 @@
 				<el-table-column  label='操作' align='center' width='400'>
 					<template slot-scope='scope'>
 						<el-button size='small' type='primary' @click='handleStatus(scope.$index, scope.row)' v-if='maintenanceStatus'>
-							{{scope.row.maintenance_type?'关闭维护':'开启维护'}}
+							{{scope.row.maintain_type?'关闭维护':'开启维护'}}
 						</el-button>
 						<el-button size='small' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
 						<el-button size='small' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
@@ -469,9 +469,7 @@
 			//开启维护
 			handleStatus(index,row){
 				var _this=this;
-				var mainVal=document.getElementsByClassName('maintenance');
-
-				if(mainVal[index].innerHTML=='开启维护 '){
+				if(row.maintain_type==false){
 					this.$confirm('确认将此链路开启，开启维护状态!','提示',{
 						confirmButtonText:'确定',
 						cancelButtonText:'取消',
@@ -489,7 +487,6 @@
 										type:'success'
 									})
 									this.editForm.maintenance_type=true;
-									mainVal[index].textContent='关闭维护';
 									this.getUsers();
 								}else{
 									this.$message({
@@ -500,7 +497,7 @@
 							}
 						})
 					})
-				}else if(mainVal[index].innerHTML=='关闭维护 '){
+				}else if(row.maintain_type==true){
 					this.$confirm('确认将此链路关闭，关闭维护状态!','提示',{
 						confirmButtonText:'确定',
 						cancelButtonText:'取消',
@@ -517,7 +514,6 @@
 										type:'success'
 									})
 									this.editForm.maintenance_type=false;
-									mainVal[index].textContent='开启维护';
 									this.getUsers();
 								}else{
 									this.$message({
