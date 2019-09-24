@@ -36,7 +36,7 @@
 			<!--列表数据部分-->
 			<el-col :span='24'>
 				<el-dropdown split-button type='success'@command="handleExport">
-					导出数据
+					导出
 					<el-dropdown-menu slot='dropdown'>
 						<el-dropdown-item command="current">当前页 </el-dropdown-item>									
 						<el-dropdown-item command="all">所有页</el-dropdown-item>																				
@@ -85,13 +85,12 @@
 				</el-table-column>
 				<el-table-column  label='操作' align='center' width='400'>
 					<template slot-scope='scope'>
-						<el-button size='small' type='primary' @click='handleStatus(scope.$index, scope.row)'v-if='maintenanceStatus' class='maintenance'>
-							
+						<el-button size='small' type='primary' @click='handleStatus(scope.$index, scope.row)' v-if='maintenanceStatus'>
+							{{scope.row.maintenance_type?'关闭维护':'开启维护'}}
 						</el-button>
 						<el-button size='small' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
 						<el-button size='small' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
-						<el-button size='small' v-if='LinkStatus' type='danger' @click='handleDel(scope.$index, scope.row)'>删除</el-button>
-						
+						<el-button size='small' v-if="scope.row.status=='down'" type='danger' @click='handleDel(scope.$index, scope.row)'>删除</el-button>
 					</template>
 				</el-table-column>
 
@@ -389,16 +388,16 @@
 						_this.total=res.data.data.page.total;	
 						//控制删除按钮的显示与隐藏
 						_this.users.forEach(ele => {
-							if(ele.status=='down'){
-								_this.LinkStatus=true;
-							}else{
-								_this.LinkStatus=false;
-							}
-							if(ele.maintenance_type){
-								this.maintenance.textContent='关闭维护'
-							}else{
-								this.maintenance.textContent='开启维护'
-							}
+							// if(ele.status=='down'){
+							// 	_this.LinkStatus=true;
+							// }else{
+							// 	_this.LinkStatus=false;
+							// }
+							// if(ele.maintenance_type){
+							// 	this.maintenance.textContent='关闭维护'
+							// }else{
+							// 	this.maintenance.textContent='开启维护'
+							// }
 							
 							//添加新的属性，作为是否维护和故障的字段
 							if(ele.maintenance_type&&ele.status=='DOWN'){
