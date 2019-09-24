@@ -56,19 +56,32 @@
 				</el-dropdown>
 			</el-col>
 			<!--列表-->
-			<el-table :data='users' highlight-current-row @select-change='selsChange(sels)' style='width: 100%;' v-loading='loading'>
+			<el-row>
+				<el-col :span="24">
+					<el-table :data='users' highlight-current-row @select-change='selsChange(sels)' style='width: 100%;' v-loading='loading'>
 				<el-table-column type='selection' width='60'></el-table-column>
 				<el-table-column type='index' width='60' label='序号' align='center'></el-table-column>
 				<el-table-column prop='creation_time' :formatter='dateFormat' width='160' label='创建时间'align='center'></el-table-column>
 				<el-table-column prop='name' width='100' label='节点名称' align='center'></el-table-column>
-				<el-table-column prop='vtep' width='100' label='vtep' align='center'></el-table-column>				
+				<el-table-column prop='exist_status' width='100' label='节点状态' align='center'>
+					<template slot-scope="scope">
+						{{scope.row.exist_status=='normal'?'运行中':scope.row.exist_status=='found'?'离线':'单一运行中'}}
+					</template>
+				</el-table-column>
 				<el-table-column  width='100' label='设备名称' align='center'>
 					<template slot-scope="scope">
 						<ul v-for='item in scope.row.devices'>
 							<li v-text="item.hostname"></li>
 						</ul>
 					</template>
-				</el-table-column>				
+				</el-table-column>	
+				<el-table-column prop='exist_status' width='100' label='设备状态' align='center'>
+					<template slot-scope="scope">
+						<ul v-for='item in scope.row.devices'>
+							<li>{{item.exist_status=='normal'?'运行':'离线'}}</li>
+						</ul>
+					</template>
+				</el-table-column>			
 				<el-table-column  width='100' label='SN号' align='center'>
 					<template slot-scope="scope">
 						<ul v-for='item in scope.row.devices'>
@@ -83,9 +96,10 @@
 						</ul>
 					</template>
 				</el-table-column>
+				<el-table-column prop='vtep' width='110' label='vtep' align='center'></el-table-column>				
 				<el-table-column prop='dc.name' width='100' label='设备中心' align='center'></el-table-column>
-				<el-table-column prop='description' width='100' label='备注' align='center'></el-table-column>
-				<el-table-column  width='300' label='操作' align='center'>
+				<el-table-column prop='description' width='80' label='备注' align='center'></el-table-column>
+				<el-table-column  width='240' label='操作' align='center'>
 					<template slot-scope='scope'>
 						<el-button type='info'size='small' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
 						<el-button type='success' size='small' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>
@@ -93,6 +107,10 @@
 					</template>
 				</el-table-column>
 			</el-table>
+				</el-col>
+				
+			</el-row>
+			
 			
 			<!--底部工具条-分页-数据的导出等-->
 			<el-col :span='24' class='toolbar'>				
