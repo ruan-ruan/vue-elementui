@@ -1,14 +1,14 @@
 <template>
 	<div>
-		<el-tabs v-model='activeName'  >
+		<el-tabs v-model='activeName' @tab-click="handleClick">
 			<el-tab-pane label='区域' name='first'>
-				<Area ></Area>
+				<Area v-if='activeName=="first"'></Area>
 			</el-tab-pane>
 			<el-tab-pane label='城市' name='second'>
-				<City ></City>
+				<City v-if='activeName=="second"'></City>
 			</el-tab-pane>
 			<el-tab-pane label='数据中心' name='third'>
-				<Data ></Data>
+				<Data v-if='activeName=="third"'></Data>
 			</el-tab-pane>		
 		</el-tabs>
 	
@@ -30,9 +30,15 @@ export default {
 	data(){
 		return{
 			activeName:'first',
+//			name:'first'
 		}
 		
 	},
+	methods:{
+		handleClick(tab) {
+			this.activeName=tab.name;
+        }
+	}
 };
 </script>
 

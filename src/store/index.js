@@ -15,7 +15,8 @@ const store = new Vuex.Store({
     		name:'',
     		psd:'',
     		token:'',
-    	},
+        },
+        message:0,
     	//获取角色里面的数据
         roles : [],
         //保存骨干位置节点的编辑的时候，所选数据的复制

@@ -26,16 +26,14 @@
 		},
 		methods:{
 			handleClick(tab) {
-            if(tab.name == "first") {
-//          	console.log('111')
-                this.isChildUpdate1 = true;
-                this.isChildUpdate2 = false;
-            } else if(tab.name == "second") {
-//          	console.log('hhhh')
-                this.isChildUpdate1 = false;
-                this.isChildUpdate2 = true;
-            }
-        }
+	            if(tab.name == "first") {
+	                this.isChildUpdate1 = true;
+	                this.isChildUpdate2 = false;
+	            } else if(tab.name == "second") {
+	                this.isChildUpdate1 = false;
+	                this.isChildUpdate2 = true;
+	            }
+	        }
 		},
 		components:{
 			backBone,

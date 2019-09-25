@@ -98,8 +98,31 @@
 					if(valid){
 						this.$confirm('确认要修改吗?','提示',{})
 						.then(() => {
-							console.log('修改密码部分')
-							this.$router.push({path:'/login'})
+							let para={
+								old_pass:this.editForm.oldPassword,
+								new_pass:this.editForm.newPassword
+							}
+							this.$ajax.put('/public/edit_my_password'+'?token='+this.token,para)
+							.then(res => {
+								if(res.status==200){
+									if(res.data.status==0){
+										this.$message({
+											message:'密码修改成功!',
+											type:'success'
+										})
+										this.$router.push({path:'/login'})
+									}else{
+										this.$message({
+											message:res.data.message,
+											type:'warning'
+										})
+									}
+								}
+								console.log(res)
+							})
+							.catch(e =>{
+								conso;le.log(e)
+							})
 						}).catch((e) => {})
 					}
 				})

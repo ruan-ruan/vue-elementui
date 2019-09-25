@@ -22,7 +22,14 @@
 								<el-input v-model='customer.email' class='ipt_sels'placeholder='请输入租户邮箱':disabled='!btnStatus'></el-input>
 							</el-form-item>
 							<el-form-item label='租户标识' prop='name'>
-								<el-input v-model='customer.name' class='ipt_sels':disabled='!btnStatus'placeholder='请输入租户标识'></el-input>
+								<!--<el-input v-model='customer.name' class='ipt_sels':disabled='!btnStatus'placeholder='请输入租户标识'></el-input>-->
+								<el-select v-model='customer.name'class='ipt_sels' filterable  :disabled='!btnStatus'placeholder='请输入租户标识'>
+									<el-option v-for='(item ,index) in tenantData'
+										:value='item.value'
+										:label='item.name'
+										:key='index'></el-option>
+								</el-select>
+								
 							</el-form-item>
 							<el-form-item label='公司行业类型'>
 								<el-select v-model='customer.company_type':disabled='!btnStatus'class='ipt_sels'>
@@ -158,6 +165,7 @@
 				btnStatus:true,
 				//时间默认的时候是隐藏的额
 //				cusTimeStatus:false,
+				tenantData:[]
 			}
 		},
 		created(){
@@ -173,6 +181,7 @@
 				this.btnStatus=true;
 				this.addOpera=true;
 				this.editOpera=false;
+//				this.getTenant()
 			}else if(typeof this.cusEditID !='undefined'&&(typeof this.tit =='undefined'&&this.addCustome !=='添加')){
 				console.log('进入编辑的界面');
 				this.btnStatus=true;
@@ -181,6 +190,7 @@
 				//传入对应的实参
 				this.getCusDetails(this.cusEditID)
 			}
+			this.getTenant()
 		},
 		methods:{
 			addressChange(arr) {
@@ -191,6 +201,17 @@
 		    },
 			goback(){
 				this.$router.go(-1);
+			},
+			getTenant(){
+				this.$ajax.get('/tenant/tenants'+'?token='+this.token)
+				.then(res => {
+					console.log(res)
+					if(res.status==200){
+						if(res.data.status==0){
+							this.tenantData=res.data.data.items
+						}
+					}
+				}).catch(e => {console.log(e)})
 			},
 			handleAdd(){
 				//添加租户的时候保存按钮

@@ -27,15 +27,12 @@
 				  <template slot-scope="{ item }">
 				    <div >{{ item}}</div>
 				  </template>
-				  <!--<template v-for="(item,index) in clounData"  >
-				  	<span :key='index'>{{item}}</span>
-				  </template>-->
 				</el-autocomplete>
 				
 				<span class="cli_toTip" title="请选择本次链接云的类型">?</span>
 			</el-form-item>
 			<el-form-item label='目标Region' prop='targetRegion'>
-				<el-select v-model='editForm.targetRegion' class='ipt'>
+				<el-select v-model='editForm.targetRegion' class='ipt'@change='selRegion(editForm.targetRegion)'>
 					<el-option v-for='(item ,index) in targetRegionData'
 						:label='item'
 						:value='item'
@@ -140,18 +137,44 @@
 			},
 			addData(item){//失去焦点的时候，公有云添加新的数据
 				this.clounData.unshift(item);
-//				if(this.clounData.length>5){
-//					this.clounData=this.clounData.slice(0,5);
-//				}
-				console.log(this.clounData)
-//				str=this.clounData;
 				localStorage.setItem("temp",this.clounData); 
-				console.log(localStorage.getItem("temp"))
 			},
 			handleSelect(item) {
-//		        console.log(item);
-//				(editForm.cloun)
+
 				this.editForm.cloun=item;
+				let para={
+					search_cloud:item
+				}
+				//获取目标region
+				this.$ajax.get('/vll/get_cloud_region'+"?token="+this.token,para)
+				.then(res => {
+					if(res.status==200){
+						if(res.data.status==0){
+							this.targetRegionData=res.data.data;
+						}
+					}
+				}).catch(e => {console.log(e)})
+				
+		    },
+		    selRegion(ids){
+		    	let para={
+		    		search_cloud:this.editForm.cloun,
+		    		search_region:ids,
+		    	}
+		    	
+		    	this.$ajax.get('/link/cloud_links'+'?token='+this.token,para)
+				.then(res => {
+					console.log(res);
+					if(res.status==200){
+						if(res.data.status==0){
+							console.log(res)
+							this.clounDockData=res.data.data.items;
+							this.clounDockData.unshift({interface_driver:'自动分配',name:'自动分配',id:'Automatically',logic_port:{name:''}})
+						}
+					}
+				}).catch(e => {
+					console.log(e)
+				})
 		    },
 			handleIconClick(ev) {
 		        console.log(ev);
@@ -181,31 +204,21 @@
 				}).catch(e => {
 					console.log(e)
 				})
-				
-				//获取目标region
-				this.$ajax.get('/vll/get_cloud_region'+"?token="+this.token)
-				.then(res => {
-					if(res.status==200){
-						if(res.data.status==0){
-							this.targetRegionData=res.data.data;
-						}
-					}
-				}).catch(e => {console.log(e)})
-				
+
 				//获取云对接的链路
-				this.$ajax.get('/link/cloud_links'+'?token='+this.token)
-				.then(res => {
-					console.log(res);
-					if(res.status==200){
-						if(res.data.status==0){
-							console.log(res)
-							this.clounDockData=res.data.data.items;
-							this.clounDockData.unshift({interface_driver:'自动分配',name:'自动分配',id:'Automatically',logic_port:{name:''}})
-						}
-					}
-				}).catch(e => {
-					console.log(e)
-				})
+//				this.$ajax.get('/link/cloud_links'+'?token='+this.token)
+//				.then(res => {
+//					console.log(res);
+//					if(res.status==200){
+//						if(res.data.status==0){
+//							console.log(res)
+//							this.clounDockData=res.data.data.items;
+//							this.clounDockData.unshift({interface_driver:'自动分配',name:'自动分配',id:'Automatically',logic_port:{name:''}})
+//						}
+//					}
+//				}).catch(e => {
+//					console.log(e)
+//				})
 			},
 			selectCloun(clounName){
 				var para={

@@ -93,10 +93,12 @@
         <span>
           <el-button
             type="success"
+            :disabled="this.sels.length===0"
             @click='markTap'
           >标记已读</el-button>
           <el-button
             type='danger'
+            :disabled="this.sels.length===0"
             @click='delMes'
           >删除</el-button>
         </span>
@@ -379,12 +381,11 @@ export default {
           type: "warning"
         })
           .then(() => {
-          
             this.$ajax
-              .del("/public/del_news" + "?token=" + this.token, {data:paras})
+              .del("/public/del_news" + "?token=" + this.token, paras)
               .then(res => {
-                if (res.status == "200") {
-                  if (res.data.status == "0") {
+                if (res.status == 200) {
+                  if (res.data.status == 0) {
                     this.$message({
                       message: "删除成功!",
                       type: "success"
@@ -475,11 +476,11 @@ export default {
     // 消息详情-弹窗
     handleClick(index, row) {
       this.mesdetail.dialogVisible = true;
-      this.mesdetail.header = row.content;
+      this.mesdetail.header = row.title;
       this.mesdetail.title = row.type == "notice" ? "产品信息" : "警告信息";
       this.mesdetail.type = row.level + "级";
       this.mesdetail.timeVal = row.time;
-      this.mesdetail.text = row.title;
+      this.mesdetail.text = row.content;
     }
   }
 };

@@ -4,14 +4,20 @@
 			<el-col :span='24'>
 				<el-form :model='editForm'label-width='120px ' ref='editForm' :rules='editFormRules'>
 					<el-form-item label='付费方式'>
-						<el-input v-model='editForm.billingType' disabled class='ipt'></el-input>
+						<!--<el-input v-model='editForm.billingType' disabled class='ipt'></el-input>-->
+						<el-radio-group v-model="editForm.billingType">
+							<el-radio-button border size='small'
+								v-for='(item,index) in billingData'
+								:label='item.label'
+								:key='index'></el-radio-button>
+					    </el-radio-group>
 					</el-form-item>
 					<el-form-item label='专线名称' prop='specialName'>
 						<el-input v-model='editForm.specialName'class='ipt'></el-input>									
 					</el-form-item>
 					<el-form-item label='租户标识 'prop='tenant_id'>
 						<template>
-							<el-select v-model='editForm.tenant_id' class='ipt'>
+							<el-select v-model='editForm.tenant_id' filterable class='ipt'>
 								<el-option v-for='(item,index) in tenantData'
 									:label='item.name'
 									:value='item.id'
@@ -45,6 +51,8 @@
 					callback(new Error('请输入带宽'))
 				}else if(!isValidinteger(value)){
 					callback(new Error('请输入正确的带宽'))
+				}else if(value>1000000){
+					callback(new Error('带宽最大不超过1000000Mbps'))
 				}else{
 					callback()
 				}
@@ -65,6 +73,12 @@
 					tenant_id:[ { required: true, message: '请选择租户', trigger: 'change' }],
 					bandwidth:[ { required: true,  validator: isValidNumber, trigger: 'blur' }],
 				},
+				billingData:[
+					{
+						label:'包年包月',
+						value:'包年包月'
+					}
+				],
 				tenantData:[],//租户的数据
 			}
 		},

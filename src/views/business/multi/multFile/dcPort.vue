@@ -3,7 +3,7 @@
 		<!--数据中心的端口-->
 		<el-form :model='editForm' ref='editForm':rules='editFormRules' v-loading='editLoading' label-width='100px'>
 			<el-form-item label='节点名称' prop='nodeName'>
-				<el-select v-model='editForm.nodeName' @change='selectNode(editForm.nodeName)' class='ipt'>
+				<el-select v-model='editForm.nodeName' filterable  @change='selectNode(editForm.nodeName)' class='ipt'>
 					<el-option v-for='(item ,index) in nodeData'
 						:label='item.name'
 						:value='item.id'
@@ -11,7 +11,7 @@
 				</el-select>
 			</el-form-item>
 			<el-form-item label='逻辑口' prop='logic'>
-				<el-select v-model='editForm.logic' @change='selecLogic(editForm.logic)' class='ipt'>
+				<el-select v-model='editForm.logic' filterable @change='selecLogic(editForm.logic)' class='ipt'>
 					<el-option v-for='(item,index) in logicPort'
 						:value='item.id'
 						:key='index'
@@ -54,12 +54,12 @@
 				<el-form-item>
 					<template>
 						<span>逻辑口:</span>
-						<span>{{logicDetails.logicPort_name}}</span>
+						<span>{{logicDetails.name}}</span>
 					</template>
 					<br />
 					<template>
 						<span>逻辑口状态:</span>
-						<span>{{logicDetails.logicPort_status}}</span>
+						<span>{{logicDetails.portStatus}}</span>
 					</template>
 					<template>
 						<el-input v-model='portVlan.vlanName' placeholder='请输入vlan号'class='details'></el-input>
@@ -77,14 +77,27 @@
 				</el-form-item>
 				<el-form-item >
 					<template slot-scope='scope'>
-						<div  v-model='portVlan.vlanVal' id="idData" style="height: 300px; overflow-y: auto;">
-							<span class="bor_data" v-for='(item ,index) in vlanData' 
+						<!--<div  v-model='portVlan.vlanVal' id="idData" style="height: 300px; overflow-y: auto;">
+							<span class="bor_data" 
+								v-for='(item ,index) in vlanData' 
 								:key='index'
+								:value='item'
 								@click='cliData(index,item)'
 								:class='timeIndex===index ? "active" :"" '
-								>
-								{{item }}</span>
+								>{{item }}</span>
+						</div>-->
+						<div  v-model='portVlan.vlanVal' id="idData" style="height: 300px; overflow-y: auto;">
+							<el-button	 class="bor_data" 
+								v-for='(item ,index) in disVlan' 
+								:key='index'
+								:value='item.value'
+								@click='cliData(index,item.value)'
+								:class='item.clas'
+								:disabled=' item.clas==="active" ? true : false'
+								>{{item.value}}</el-button>
 						</div>
+						
+						
 						<div id="barcon">
 							<span class='spn_tit'>共{{vlanData.length}}条记录{{totalPage}}页</span>
 							<span @click='goPaseSize(1,100)' class="spn">首页</span>
@@ -102,13 +115,14 @@
 				 <el-button size='small' type='primary' @click='creatVlan'>保存</el-button>
 			</div>
 		</el-dialog>
+		<!--<button @click="conversion(vlanData)">kkkk</button>-->
 	</div>
 </template>
 
 <script>
+//var itable= document.getElementById('idData').getElementsByTagName("span");	
 	
-	
-	import {datedialogFormat,getPortStatus} from '@/assets/js/index.js'
+	import {datedialogFormat,getPortStatus ,isPortStatus} from '@/assets/js/index.js'
 	export default{
 		name:'dcPort',
 		props:['tit',],
@@ -167,17 +181,24 @@
 				logicPort:[],//逻辑口的数据
 				logicDetails:{},//获取逻辑口的详情
 				nodeVal:[],
+				disabeldData:[],//vlan不可用的数据
+				disVlan:[],
+				itable:null
 			}
 		},
 		watch:{
-
+			
 			'portVlan.selVlanVal':function(newVal,oldVal){
 				this.vlanVal=this.portVlan.selVlanVal.split('-');
 				this.vlanData=this.getData(parseInt(this.vlanVal[0]),parseInt(this.vlanVal[1]));
+
+				
+				
+				
+//				this.disVlan=this.conversion(this.vlanData)
 			},
 			editForm:{
 				handler(newVal,oldVal){
-					console.log(newVal);
 					if(newVal.endpoints_vlan){
 						if(newVal.endpoints_vlan=='透传'){
 							this.editForm.vlan='-1'  //透传模式的时候，vlan的值为-1
@@ -211,9 +232,6 @@
 			sendForm:{
 				handler(newVal,oldVal){
 					this.$emit('sendFormData',newVal)
-//					this.$emit('sendFormData_a',newVal)
-//					this.$emit('sendFormData_z',newVal)
-					
 				},
 				deep:true,
 			}
@@ -227,33 +245,48 @@
 				this.textMap.title=this.tit;
 			}
 		},
-
+//		beforeUpdate(){
+//            this.$nextTick(()=>{
+//                setTimeout(() =>{
+//                    this.itable= document.getElementById('idData').getElementsByTagName("span");
+//                    console.log(this.itable)
+//                },0)
+//                this.goPaseSize(1,100)
+//            })
+//        },
 		methods:{
+			conversion(data){
+				let disData=this.disabeldData
+				var str=data.map(item => {
+					return {value:item,clas:""}
+				})
+				str.forEach(item => {
+					if(disData.indexOf(item['value'])  !==-1){
+						item.clas='active'
+					}else{
+						item.clas=''
+					}
+				})
+				return str;
+				
+			},
 			getformData(){
 				this.$ajax.get('/node/nodes'+'?token='+this.token)   //获取节点的数据
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-//							let obj={}
-//							res.data.data.items.forEach(ele => {
-//								obj={
-//									id:ele.id,
-//									name:ele.name
-//								}
-//								this.nodeData.push(obj)
-//							})
 							this.nodeData=res.data.data.items;
 						}
 					}
 				}).catch(e => {console.log(e)})
 			},
 			selectNode(ids){//根据选择的节点获取逻辑口的数据
+				this.logicPort=[]
 				var para={
 					search_node:ids
 				}
 				this.$ajax.get('/port/logic_ports'+'?token='+this.token,para)
 				.then(res => {
-					console.log(res);
 					if(res.status==200){
 						if(res.data.status==0){
 							res.data.data.items.forEach(ele => {
@@ -280,15 +313,34 @@
 			selecLogic(ids){//获取逻辑口的id，可用与选择的vlan的时候里面的信息的展示
 				this.$ajax.get('/port/logic_port_info/'+ids+'?token='+this.token)
 				.then(res => {
-					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
+//							isPortStatus
+							let str=res.data.data;
+							for(let item in str){
+								str.portStatus=isPortStatus(str.physical_ports)
+							}
 							this.logicDetails=Object.assign({},res.data.data);
 						}
 					}
 				}).catch(e => {
 					console.log(e)
 				})
+				
+				//获取逻辑口下的vlan的信息
+				this.$ajax.get('/vll/get_disable_vlan/'+ids+'?token='+this.token)
+				.then(res => {
+					if(res.status==200){
+						if(res.data.status==0){
+							this.disabeldData=res.data.data;
+							this.disVlan=JSON.parse(JSON.stringify(this.conversion(this.vlanData))); 
+						}
+					}
+				})
+				.catch(e =>{
+					console.log(e)
+				})
+				
 			},
 			addVlan(){//选择vlan
 				this.dialogStatus='title'
@@ -306,14 +358,26 @@
 				
 				return strVal
 			},
-			cliData:function(index,val){
-				this.timeIndex=index;
-				this.portVlan.vlanVal=val;
-				this.editForm.selVlan=val
-				this.editForm.vlan=val;
+			cliData:function(index,val){//activeCla   disVlan   disabeldData
+				this.disVlan.forEach(ele => {
+					if(ele.value===val && ele.clas !=="active"){
+						ele.clas='activeCla'
+//						this.timeIndex=index;
+						this.portVlan.vlanVal=val;
+						this.editForm.selVlan=val
+						this.editForm.vlan=val;
+					}else if(ele.value!==val && ele.clas !=="active"){
+						ele.clas=''
+					}else{
+						ele.clas='active'
+					}
+				})
+
 			},
 			goPaseSize(pno=1,psize=100){
-				let itable=document.getElementById('idData').getElementsByTagName("span");
+//				let itable=document.getElementById('idData').getElementsByTagName("span");//bor_data
+				let itable=document.getElementById('idData').getElementsByClassName('bor_data');
+//				let itable=this.itable;
 				this.totalPage=0;
 				this.pageSize=psize;
 				let num=itable.length;
@@ -351,7 +415,6 @@
 				let numVla=parseInt(this.portVlan.vlanName);
 				let str=['1-600','601-1200','1201-1800','1801-2400','2401-3000','3001-3600','3601-4094'];
 				if(parseInt(this.portVlan.vlanName)>=1&&parseInt(this.portVlan.vlanName)<=4094){
-//					console.log('正确');
 					for(let index in str){
 						if(numVla>=parseInt(str[index].split('-')[0])&&numVla<=parseInt(str[index].split('-')[1])){
 							this.portVlan.selVlanVal=str[index];
@@ -371,13 +434,12 @@
 				if(this.portVlan.vlanVal){
 					this.editForm.selVlan=this.portVlan.vlanVal;
 					this.editForm.vlan=this.portVlan.vlanVal;
-
 					this.$message({
 						message:'选择成功！',
 						type:'success'
 					})
 					this.dialogFormVisible=false;
-//					this.$emit('getVlan',this.editForm.vlan);
+					
 				}else{
 					this.$message({
 						message:'vlan值不能为空!',
@@ -410,7 +472,10 @@
 
 <style>
 	.active{
-		background: #737272;
+		background: #737272 !important;
+	}
+	.activeCla{
+		background: #737272 !important;
 	}
 	.v-modal{
 		z-index: 2000 !important;
@@ -433,18 +498,11 @@
 		margin-right: 5px;
 	}
 	.bor_data{
-		float: left;
-	    display: inline-block;
-	    border: 2px solid #CCCCCC;
-	    width: 40px;
-	    height: 30px;
-	    line-height: 30px;
-	    text-align: center;
-	    /*margin: 10px auto;*/
-	   margin-left: 10px;
-	   margin-bottom: 10px;
-	   border-radius: 3px;
-	   cursor: pointer;
+		width: 60px;
+		margin: 2px 1px !important;
+		/*margin-left: 1px !important;
+		margin-top:2px !important;*/
+		
 	}
 	.details{
 		width: 150px;

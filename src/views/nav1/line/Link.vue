@@ -86,11 +86,11 @@
 				<el-table-column  label='操作' align='center' width='400'>
 					<template slot-scope='scope'>
 						<el-button size='small' type='primary' @click='handleStatus(scope.$index, scope.row)'v-if='maintenanceStatus' class='maintenance'>
-							
+							{{scope.row.maintenanceBtn}}
 						</el-button>
 						<el-button size='small' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
 						<el-button size='small' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
-						<el-button size='small' v-if='LinkStatus' type='danger' @click='handleDel(scope.$index, scope.row)'>删除</el-button>
+						<el-button size='small' v-if='scope.row.status==="DOWN"?true:false' type='danger' @click='handleDel(scope.$index, scope.row)'>删除</el-button>
 						
 					</template>
 				</el-table-column>
@@ -168,10 +168,7 @@
 						<el-input v-model='editForm.physical_bandwidth' :disabled='editFormStatue' class='ipt_sels'></el-input>
 					</el-form-item>
 					<el-form-item label='剩余带宽'>
-						<el-input  :disabled='disb' class='ipt_sels'>
-							<template slot-scope='scope'>
-								{{scope.row.bandwidth-scope.row.physical_bandwidth}}
-							</template>
+						<el-input  :disabled='disb' class='ipt_sels' v-model='editForm.bandwidth-editForm.physical_bandwidth'>
 						</el-input>
 					</el-form-item>
 					<el-form-item label='链路开销'>
@@ -197,7 +194,7 @@
 						<el-input v-model='editForm.monitoring_param':disabled='editFormStatue'></el-input>
 					</el-form-item>
 					<el-form-item  label='流量获取键入值'>
-						<el-input v-model='editForm.monitoring_param' class='ipt'></el-input>
+						<el-input v-model='editForm.monitoring_param' :disabled='editFormStatue' class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item label='备注'>
 						<!--<textarea name="" rows="" cols="7"></textarea>-->
@@ -260,7 +257,7 @@
 				//设置维护
 				maintenanceStatus:true,
 				//当链路的状态的为down的时候，显示删除按钮
-				LinkStatus:false,
+//				LinkStatus:false,
 				//编辑界面的数据
 				editForm:{
 					id:'',
@@ -286,11 +283,11 @@
 					monitoring:'',
 					monitoring_type:'',
 					monitoring_param:'',
-					maintenance_type:'',
+//					maintenance_type:'',
 					status:'',
 					creation_time:'',
 					description:'',
-					maintenance_value:'',
+//					maintenance_value:'',
 //					token:''
 				},
 				//链路是否开启部分
@@ -313,9 +310,7 @@
 					}
 				],	
 				//校验
-				editFormRules:{
-					
-				},
+      			editFormRules: {},
 				textMap:{
 					update:'编辑',
 					details:'详情'
@@ -331,8 +326,10 @@
 				//导出的时候保存数据
 				excelData:[],
 				//控制检测类型和检测参数的显示隐藏，默认的时候是隐藏的
-				detectionStatus:false,
-			}
+				detectionStatus:false,	
+				}
+				
+			// }
 		},
 		created(){
 			//获取用户的权限
@@ -388,31 +385,27 @@
 						_this.users=res.data.data.items;
 						_this.total=res.data.data.page.total;	
 						//控制删除按钮的显示与隐藏
-						_this.users.forEach(ele => {
-							if(ele.status=='down'){
-								_this.LinkStatus=true;
-							}else{
-								_this.LinkStatus=false;
-							}
-							if(ele.maintenance_type){
-								this.maintenance.textContent='关闭维护'
-							}else{
-								this.maintenance.textContent='开启维护'
-							}
-							
-							//添加新的属性，作为是否维护和故障的字段
-							if(ele.maintenance_type&&ele.status=='DOWN'){
-								_this.users.maintenance_value='维护'
-							}else if(!ele.maintenance_type&&ele.status=='DOWN'){
-								_this.users.maintenance_value='故障'
-							}else if(!ele.maintenance_type&&ele.status=='UP'){
-								_this.users.maintenance_value=''
-							}
-						})
-						}else{
-							this.loading=false;
+						
+						if(res.data.data.items){
+							res.data.data.items.forEach(ele => {
+								//添加新的属性，作为是否维护和故障的字段
+								if(ele.maintenance_type&&ele.status=='DOWN'){
+									ele.maintenance_value='维护'
+									ele.maintenanceBtn='关闭维护'
+//									_this.users.maintenance_value='维护'
+								}else if(!ele.maintenance_type&&ele.status=='DOWN'){
+									ele.maintenanceBtn='关闭维护'
+									ele.maintenance_value='故障'
+//									_this.users.maintenance_value='故障'
+								}else if(!ele.maintenance_type&&ele.status=='UP'){
+									ele.maintenance_value=''
+									ele.maintenanceBtn='开启维护'
+//									_this.users.maintenance_value=''
+								}
+							})
 						}
-
+						
+						}
 					}
 				})
 				.catch( e => {
@@ -470,9 +463,9 @@
 			//开启维护
 			handleStatus(index,row){
 				var _this=this;
-				var mainVal=document.getElementsByClassName('maintenance');
-
-				if(mainVal[index].innerHTML=='开启维护 '){
+				console.log(row)
+				if(row.maintenanceBtn==="开启维护"){
+					console.log('进入开发')
 					this.$confirm('确认将此链路开启，开启维护状态!','提示',{
 						confirmButtonText:'确定',
 						cancelButtonText:'取消',
@@ -489,8 +482,9 @@
 										message:'开启成功!',
 										type:'success'
 									})
-									this.editForm.maintenance_type=true;
-									mainVal[index].textContent='关闭维护';
+//									this.editForm.maintenance_type=true;
+//									mainVal[index].textContent='关闭维护';
+									row.maintenanceBtn="关闭维护"
 									this.getUsers();
 								}else{
 									this.$message({
@@ -501,7 +495,7 @@
 							}
 						})
 					})
-				}else if(mainVal[index].innerHTML=='关闭维护 '){
+				}else if(row.maintenanceBtn==="关闭维护"){
 					this.$confirm('确认将此链路关闭，关闭维护状态!','提示',{
 						confirmButtonText:'确定',
 						cancelButtonText:'取消',
@@ -517,8 +511,9 @@
 										message:'关闭成功!',
 										type:'success'
 									})
-									this.editForm.maintenance_type=false;
-									mainVal[index].textContent='开启维护';
+									row.maintenanceBtn="开启维护"
+//									this.editForm.maintenance_type=false;
+//									mainVal[index].textContent='开启维护';
 									this.getUsers();
 								}else{
 									this.$message({
@@ -544,9 +539,10 @@
 			//详情
 			handleSee(index,row){
 				this.editLoading=true;
-				this.dialogStatus='see';
+				this.dialogStatus='details';
 				this.dialogFormVisible=true;
 				this.dialogStatus=true;
+				this.editFormStatue=true;
 				var _this=this;
 
 				this.$ajax.get('/link/link_info/'+row.id+'?token='+this.token)
@@ -610,9 +606,9 @@
 									this.$refs["editForm"].resetFields();
 					                this.dialogFormVisible = false;
 					                this.getUsers();
-								}else if (res.data.status){
+								}else{
 									this.$message({
-										message:res.data.msg,
+										message:res.data.message,
 										type:'warning'
 									})
 								}
@@ -728,7 +724,7 @@
 </script>
 
 <style scoped>
-	.sel{
-		width: 100px;
-	}
+.sel {
+  width: 100px;
+}
 </style>

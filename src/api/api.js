@@ -46,8 +46,8 @@ const ajax={
     del:function(url ,params={}){
         return new Promise((resolve,reject) => {
           axios.delete(url,{
-                params:params
-            })
+              data:params
+          })
             .then( (response) => {
                 resolve(response)
             })

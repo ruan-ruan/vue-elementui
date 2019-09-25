@@ -150,9 +150,13 @@
 			this.token=sessionStorage.getItem('token');
 			if(typeof this.id !=='undefined'){
 				this.getDetails(this.id);
-			}else{
-				this.getTenant()
 			}
+			if(typeof this.detailsID !=='undefined'){
+				this.getDetails(this.id);
+			}
+//			else{
+				this.getTenant()
+//			}
 			
 		},
 		methods:{
@@ -325,7 +329,7 @@
 				console.log(this.basicObj)
 			},
 			getDetails(ids){//获取数据
-				this.$ajax.get('/vll/mutli_vll_info/'+ids+'?token='+this.token)
+				this.$ajax.get('/vll/multi_vll_info/'+ids+'?token='+this.token)
 				.then(res => {
 					console.log(res);
 					if(res.status==200){
@@ -340,14 +344,24 @@
 							}
 							this.users=str.endpoints;
 							//将dc的数据和云的数据整合后在一个新的数组里面        是两个数组   
-							str.endpoints.forEach(ele => {
-								ele.dataType='endpoints';//添加新的字段判断  改数据是dc还是云  该数据是dc的
-								this.users.push(ele);
+							if(str.endpoints){
+								str.endpoints.forEach(ele => {
+									ele.dataType='endpoints';//添加新的字段判断  改数据是dc还是云  该数据是dc的
+									this.users.push(ele);
+								})
+							}
+							if(str.cloud_endpoints){
+								str.cloud_endpoints.forEach(ele => {
+									ele.dataType='cloud_endpoints';//数据为云的数据
+									this.users.push(ele);
+								})
+							}
+						}else{
+							this.$message({
+								message:res.data.message,
+								type:'warning'
 							})
-							str.cloud_endpoints.forEach(ele => {
-								ele.dataType='cloud_endpoints';//数据为云的数据
-								this.users.push(ele);
-							})
+							this.$replace('/business/multipoint')
 						}
 					}
 				})

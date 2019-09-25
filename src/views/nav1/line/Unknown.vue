@@ -173,10 +173,13 @@
 						<el-input v-model.number='editForm.link_cost'  :disabled='seeStatus' placeholder="请输入正整数"  class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item label='链路检测' prop='monitoring'>
+						
 						<el-radio-group v-model='editForm.monitoring' :disabled='seeStatus'>
-							<template v-for='item in detectionStatue'>
-								<el-radio :value='item.value' :key='item.value' :label='item.value' >{{item.name}}</el-radio>
-							</template>					
+								<el-radio 
+									v-for='(item,index) in detectionStatue'
+									:key='index' 
+									:label='item.label' >{{item.name}}
+								</el-radio>				
 						</el-radio-group>
 					</el-form-item>
 					<el-form-item v-show='detectionStatus' label='检测类型'>
@@ -217,6 +220,9 @@
 				</div>
 			</el-dialog>
 		</section>
+		
+		
+		
 	</div>
 </template>
 
@@ -227,6 +233,7 @@
 		name:'Unknown',
 		data(){
 			return{
+				radio: '1',
 				//获取用户的权限token
 				token:'',
 				//顶部分工具栏的搜索部分
@@ -298,18 +305,20 @@
 					z_desc:[{ required:true , message:'请输入Z端端口描述',trigger:'blur'}],
 					physical_bandwidth:[{ required:true ,message:'请输入物理带宽',trigger:'blur'}],
 					bandwidth:[{ required:true , message:'请输入总带宽',trigger:'blur'}],
+					
 					monitoring:[{required:true ,message:'请选择链路检测类型', trigger:'change'}],
+					
 					link_cost:[{ required:true ,message:'请输入链路开销',trigger:'blur'}]	
 				},
 				//链路检测是否开启部分
 				detectionStatue:[
 					{
-						value:true,
-						label:true,
+//						value:true,
+						label:'true',
 						name:'开启'
 					},{
-						value:false,
-						label:false,
+//						value:false,
+						label:'false',
 						name:'关闭'
 					}
 				],
@@ -480,7 +489,9 @@
 					z_desc:'',
 					physical_bandwidth:'',
 					bandwidth:'',
-					monitoring:'',
+					
+					monitoring:'false',
+					
 					monitoring_type:'',
 					monitoring_param:'',
 					link_cost:'',

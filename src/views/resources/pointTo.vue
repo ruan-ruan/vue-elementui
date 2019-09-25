@@ -3,8 +3,8 @@
 	<div>
 		<!--点到点专线-->
 		<section>
-			<el-row class='toollbar' style='width: 100%;'>
-				<el-col :span='24'>
+			<el-row class='toollbar' >
+				<el-col :sm='24' :md='24' :lg='24'>
 					<el-form :model='filters' :inline='true' ref='filters' >
 						<el-form-item label='名称'>
 							<el-input v-model='filters.search_name' class='sel'placeholder='名称'></el-input>
@@ -59,19 +59,29 @@
 						</el-form-item>
 						<el-form-item >
 							<el-button @click='getUsers' type='primary'>搜索</el-button>
-							<el-button type='info'>重置</el-button>
+							<el-button type='info'  @click='reset(filters)'>重置</el-button>
 						</el-form-item>
 					</el-form>
 				</el-col>
 			</el-row>
 			
-			<el-row >
-				<el-col :span='24'>
-					<el-col :span='4' >
+			<div style="text-align: right;">
+				<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0" v-if='parentStatus'>
+					批量删除</el-button>
+				<el-dropdown split-button type='success'@command="handleExport">
+					导出数据
+					<el-dropdown-menu slot='dropdown'>
+						<el-dropdown-item command="current">当前页 </el-dropdown-item>									
+						<el-dropdown-item command="all">所有页</el-dropdown-item>																				
+					</el-dropdown-menu>
+				</el-dropdown>
+			</div>
+			<!--<el-row >
+					<el-col :sm='20':md='20':lg='20' >
+					</el-col>
+					<el-col :sm='4':md='4':lg='4' >
 						<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0" v-if='parentStatus'>
 							批量删除</el-button>
-					</el-col>
-					<el-col :span='20'>
 						<el-dropdown split-button type='success'@command="handleExport">
 							导出数据
 							<el-dropdown-menu slot='dropdown'>
@@ -80,70 +90,72 @@
 							</el-dropdown-menu>
 						</el-dropdown>
 					</el-col>
-				</el-col>
-			</el-row>
+			</el-row>-->
 			
-			<el-table :data = "users" @selection-change="selsChange" highlight-current-row style='width: 100%; ' v-loading='getLoading'>
-				
-				<el-table-column type='selection' width='55' align='center' v-if='parentStatus'></el-table-column>
-				<el-table-column type='index' label='序号' width='55' align='center'></el-table-column>
-				<el-table-column label='专线名称' width='120'  align='center'>
+			<el-row>
+				<el-col :sm='24':md='24':lg='24'>
+					
+
+			<el-table :data = "users" @selection-change="selsChange" highlight-current-row   v-loading='getLoading'>
+				<el-table-column type='selection' width='30' align='center' v-if='parentStatus'></el-table-column>
+				<el-table-column type='index' label='序号' width='50' align='center'></el-table-column>
+				<el-table-column label='专线名称' width='80'  align='center'>
 					<template slot-scope='scope'>
 						<span class="cli_spn" @click='handleSeePoint(scope.$index,scope.row)'>{{scope.row.name}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column label='专线状态' width='120'  align='center'>
+				<el-table-column label='专线状态' width='70'  align='center'>
 					<template slot-scope='scope'>
 						<span :class="scope.row.statusColor">{{scope.row.statusHTML}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='bandwidth' label='带宽(Mbps)' width='120'  align='center'>
+				<el-table-column prop='bandwidth' label='带宽(Mbps)' width='80'  align='center'>
 				</el-table-column>
-				<el-table-column  label='专线类型' width='120'  align='center'>
+				<el-table-column  label='专线类型' width='60'  align='center'>
 					<template slot-scope='scope'>
 						<span>{{scope.row.typeName}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='endpoints[0].name' label='A端' width='120'  align='center'>
+				<el-table-column  label='A端' width='70'  align='center'>
 					<template slot-scope='scope'>
 						<span class="cli_spn" @click="handleSeeA(scope.$index,scope.row)">
-							{{scope.row.endpoints[0].logic_port.name}}
+							{{scope.row.logicPortA}}
 						
-						</span>-
-						<span>{{scope.row.endpoints[0].vlanHTML}}</span>
+						</span> <br />
+						<span>{{scope.row.vlanHTMLA}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column  label='A逻辑口状态' width='120'  align='center'>
+				<el-table-column  label='A逻辑口状态' width='65'  align='center'>
 					<template slot-scope='scope'>
-						<span> {{scope.row.endpoints[0].statusVal}}</span>
+						<span> {{scope.row.statusValA}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='endpoints[1].name' label='Z端' width='120'  align='center'>
+				<el-table-column  label='Z端' width='70'  align='center'>
 					<template slot-scope='scope'>
 						<span class="cli_spn" @click="handleSeeZ(scope.$index,scope.row)">
 							
-							{{scope.row.endpoints[0].logic_port.name}}
+							{{scope.row.logicPortZ}}
 						
-						</span>-
-						<span>{{scope.row.endpoints[0].vlanHTML}}</span>
+						</span> <br />
+						<span>{{scope.row.vlanHTMLZ}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='endpoints.ports.status' label='Z逻辑口状态' width='120'  align='center'>
-					<!--<template slot-scope='scope'>
-						<span> {{scope.row.endpoints[1].statusVal}}</span>
-					</template>-->
+				<el-table-column  label='Z逻辑口状态' width='65'  align='center'>
+					<template slot-scope='scope'>
+						<span> {{scope.row.statusValZ}}</span>
+					</template>
 				</el-table-column>
-				<el-table-column prop='creation_time' label='创建时间' width='120'  :formatter='dateFormat' align='center'>
+				<el-table-column prop='creation_time' label='创建时间' width='95'  :formatter='dateFormat' align='center'>
 				</el-table-column>
-				<el-table-column prop='charge_time' label='计费时间' width='120'  :formatter='dateFormat' align='center'>
+				<el-table-column prop='charge_time' label='计费时间' width='95'  :formatter='dateFormat' align='center'>
 				</el-table-column>
-				<el-table-column prop='expiration_time' label='过期时间' width='120'  :formatter='dateFormat' align='center'>
+				<el-table-column prop='expiration_time' label='过期时间' width='95'  :formatter='dateFormat' align='center'>
 				</el-table-column>
-				<el-table-column prop='tenant.name' label='租户标识' width='120'  align='center'>
+				<el-table-column prop='tenant.name' label='租户标识' width='60'  align='center'>
 				</el-table-column>
-				<el-table-column prop='description' label='备注' width='120'  align='center'>
+				<el-table-column prop='description' label='备注' width='80'  align='center'>
 				</el-table-column>
-				<el-table-column  label='操作' width='260'  align='center' v-if='parentStatus'>
+				<el-table-column  label='操作' width='200'  align='center' v-if='parentStatus'>
 					<template slot-scope='scope'>
 						<el-button size='small' type='info' @click='handleStatus(scope.$index,scope.row)' v-if='false'>{{scope.row.specialName}}</el-button>
 						<el-button size='small' type='primary' @click='handleEdit(scope.$index,scope.row)' >编辑</el-button>
@@ -151,7 +163,8 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			
+				</el-col>
+			</el-row>
 			<el-row v-if='parentStatus'>
 				<el-col :span='24'>
 				   	<el-pagination
@@ -167,7 +180,7 @@
 			     	:next-text='next'></el-pagination>
 				</el-col>
 			</el-row>
-
+			
 			<el-dialog :title='textMap[dialogStatus]' :visible.sync='dialogFormVisible' :close-on-click-modal='false' v-loading='editLoading'>
 				<el-form :model='editForm'ref='editForm' label-width='120px' :rules='editFormRules'>
 					<el-form-item label='专线名称' prop='name'>
@@ -226,7 +239,7 @@
 
 <script>
 	
-	import {datedialogFormat,isValidinteger,getPortStatus} from '@/assets/js/index'
+	import {datedialogFormat,isValidinteger, getPortStatus} from '@/assets/js/index'
 	export default{
 		name:'pointsTo',
 		props:['customer','nodeID','customerID'],// customer 逻辑口的id   nodeID节点的id
@@ -319,6 +332,7 @@
              	endDatePicker: this.processDate(),
 				tenantData:[],//租户数据
 				parentStatus:true,//该组件被调用的S时候，上面控制部分隐藏
+				isid:[]
 			}
 		},
 		created(){
@@ -398,8 +412,9 @@
 						
 						if(res.data.status==0){
 //							this.users=res.data.data.items;
-//							this.total=res.data.data.page.total;
+							this.total=res.data.data.page.total;
 							console.log(res)
+
 							res.data.data.items.forEach(ele => {
 								
 								if(ele.type=='d2d'){
@@ -429,25 +444,66 @@
 									ele.statusColor='ServerVal'
 									ele.creat=true
 								}
-								
-//								console.log(ele);
-								ele.endpoints.forEach((element) => {
-//									console.log(element)
-									if(element.vlan=='-1'){
-										element.vlanHTML='透传'
-									}else if(element.vlan=='0'){
-										element.vlanHTML='trunk'
-									}else{
-										element.vlanHTML=element.vlan
-									}
-									
-									if(getPortStatus(element.ports)=='DOWN'){
-										element.statusVal='DOWN'
-									}else if(getPortStatus(element.ports)=='UP'){
-										element.statusVal='UP'
-									}
-								})
-								
+//								console.log(ele)
+								var str=ele.endpoints;
+								if(str){
+									if(str.length!==0){
+										if(str.length==1){
+											console.log(ele)
+											ele.statusValA=getPortStatus(str[0].ports);
+											ele.logicPortA=str[0].logic_port.name
+											if(str[0].vlan){
+												if(str[0].vlan=='-1'){
+													ele.vlanHTMLA='透传'
+												}else if(str[0].vlan=='0'){
+													ele.vlanHTMLA='trunk'
+												}else{
+													ele.vlanHTMLA=str[0].vlan
+												}
+											}else{
+												return ;
+											}
+										}else if(str.length===2){
+											ele.statusValA=getPortStatus(str[0].ports);
+											ele.statusValZ=getPortStatus(str[1].ports);
+											ele.logicPortA=ele.endpoints[0].logic_port.name
+											ele.logicPortZ=ele.endpoints[1].logic_port.name
+											if(str[0].vlan){
+												if(str[0].vlan=='-1'){
+													ele.vlanHTMLA='透传'
+												}else if(str[0].vlan=='0'){
+													ele.vlanHTMLA='trunk'
+												}else{
+													ele.vlanHTMLA=str[0].vlan
+												}
+											}else if(str[1].vlan){
+												if(str[1].vlan=='-1'){
+													ele.vlanHTMLZ='透传'
+												}else if(str[1].vlan=='0'){
+													ele.vlanHTMLZ='trunk'
+												}else{
+													ele.vlanHTMLZ=str[1].vlan
+												}
+											}	
+										}else{
+											return ;
+										}
+										
+//									ele.endpoints.forEach(item => {
+//										if(item.vlan){
+//											if(item.vlan=='-1'){
+//												ele.vlanHTML='透传'
+//											}else if(item.vlan=='0'){
+//												ele.vlanHTML='trunk'
+//											}else{
+//												ele.vlanHTML=item.vlan
+//											}
+//										}
+//										
+//										item.statusVal=getPortStatus(item.ports);
+//									})
+								}
+								}
 							})
 							console.log(res)
 							this.users=res.data.data.items;
@@ -501,6 +557,12 @@
 					charge_time:new Date(datedialogFormat(row.charge_time)),
 					expiration_time:new Date(datedialogFormat(row.expiration_time)),
 					description:row.description
+				}
+			},
+			reset(sles) {
+				//重置
+				for (let key in sles) {
+					sles[key] = "";
 				}
 		    },
 		    UpdateData:function(){
@@ -558,18 +620,18 @@
 		    		}).catch(e => {console.log(e)})
 		    	}).catch(() => {})
 		    },
-		    batchRemove:function(rows){
+		    batchRemove:function(){
 		    	//批量删除
-		    	var ids=[];
-		    	rows.forEach(ele => {
-		    		ids.push(ele.id)
-				})
-				console.log(ids)
+				let ids = "";
+				for (let item of this.sels) {
+					ids += item.id + ",";
+				}
+				console.log(ids);
 		    	this.$confirm('确定要删除选中的数据吗?','提示',{})
 		    	.then(() => {
-		    		let para={
-		    			ids:ids
-		    		}
+					const id = ids.substring(0, ids.lastIndexOf(","));
+					this.isid = id.split(",");
+					let para ={ ids: this.isid };
 		    		this.$ajax.del('/vll/del_vlls'+'?token='+this.token,para)
 		    		.then(res => {
 		    			if(res.status==200){

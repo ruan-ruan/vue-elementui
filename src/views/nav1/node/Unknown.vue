@@ -50,18 +50,18 @@
 			
 			<!--列表部分-->
 			<el-table :data='users'  highlight-current-row style='width: 100%;'@selection-change="selsChange" v-loading='loading'>
-				<el-table-column type="selection" width="55" align='center'></el-table-column>
-				<el-table-column type='index' width='60' label='序号' align='center'></el-table-column>
+				<el-table-column type="selection" width="40" align='center'></el-table-column>
+				<el-table-column type='index' width='50' label='序号' align='center'></el-table-column>
 				<el-table-column prop='creation_time'width='100'label='申请时间'align='center' :formatter='dateFormat'></el-table-column>
-				<el-table-column prop='name' width='150' label='节点名称' align='center'></el-table-column>
-				<el-table-column  width='150' label='设备名称' align='center'>
+				<el-table-column prop='name' width='80' label='节点名称' align='center'></el-table-column>
+				<el-table-column  width='80' label='设备名称' align='center'>
 					<template slot-scope='scope'>
 						<ul v-for='item in scope.row.devices'>
 							<li>{{item.hostname}}</li>
 						</ul>
 					</template>
 				</el-table-column>
-				<el-table-column  width='100' label='SN号' align='center'> 
+				<el-table-column  width='70' label='SN号' align='center'> 
 					<!--prop='devices[0].sn'-->
 					<template slot-scope="scope">
 						<ul v-for='item in scope.row.devices'>
@@ -69,16 +69,16 @@
 						</ul>
 					</template>
 				</el-table-column>			
-				<el-table-column width='150' label='管理IP' align='center'>
+				<el-table-column width='70' label='管理IP' align='center'>
 					<template slot-scope="scope">
 						<ul v-for='item in scope.row.devices'>
 							<li>{{item.ip}}</li>
 						</ul>
 					</template>
 				</el-table-column>
-				<el-table-column prop='vtep' width='150' label='Vtep' align='center'></el-table-column>		
-				<el-table-column prop='dc.name' width='100' label='数据中心' align='center'></el-table-column>
-				<el-table-column prop='description' width='100' label='备注' align='center'></el-table-column>
+				<el-table-column prop='vtep' width='80' label='Vtep' align='center'></el-table-column>		
+				<el-table-column prop='dc.name' width='80' label='设备中心' align='center'></el-table-column>
+				<el-table-column prop='description' width='60' label='备注' align='center'></el-table-column>
 				<el-table-column width='300' align='center'label='操作'>
 					<template slot-scope='scope'>
 						<el-button type='info' size='small' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
@@ -204,14 +204,38 @@
 	    	},
 	    	//查询方法
 	    	getUsers(){
-	    		this.loading=true;
-				this.$ajax.get('/node/unknown_nodes'+'?token='+this.token)
+				this.loading=true;
+				if(this.filters.start_time==''&& this.filters.start_time!=''){
+					this.filters.start_time='';
+					this.filters.start_time=Number(this.filters.timeVal[0]);
+					console.log(this.filters.start_time)
+				}else if(this.filters.start_time=='' && this.filters.start_time!=''){
+					this.filters.start_time='';
+					this.filters.end_time=Number(this.filters.timeVal[1]);
+				}else if(this.filters.start_time ==''&& this.filters.start_time==''){
+					this.filters.start_time='';
+					this.filters.end_time='';
+				}else{
+					this.filters.start_time=Number(this.filters.timeVal[0]);
+					this.filters.end_time=Number(this.filters.timeVal[1]);
+				}
+				var para={
+					page:this.currentPage,
+					per_page:this.pagesize,
+					search_name:this.filters.name,
+					search_dc:this.filters.search_dc,
+					search_status:this.filters.search_status,
+					search_start_time:this.filters.start_time,
+					search_end_time:this.filters.end_time,
+				}
+				this.$ajax.get('/node/unknown_nodes'+'?token='+this.token,para)
 	    		.then(res => {
 	    			if(res.status==200){
 	    				if(res.data.status==0){
 	    					this.loading=false;
 			    			console.log(res);
 							this.users=res.data.data.items
+							this.total = res.data.data.page.total;
 	    				}else{
 	    					this.loading=false
 	    				}
@@ -382,7 +406,7 @@
 		          	if(res.status=='200'){
 		          		if(res.data.status=='0'){
 				            this.$message({
-				              message: "批量删除成功",
+				              message: "删除成功",
 				              type: "success"
 				            });
 				            this.getUsers();

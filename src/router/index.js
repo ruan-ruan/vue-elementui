@@ -56,7 +56,8 @@ var router = new Router({
 		path: '/',
 		component: Home,
 		name: '个人中心',
-		iconCls: 'fa fa-user-circle-o',
+//		iconCls: 'fa fa-user-circle-o',  '../assets/images/aside/left.png'
+		iconCls: require('../assets/images/aside/myself.png'),
 		leaf:false,
 		meta:{
 			requireAuth:true
@@ -74,7 +75,7 @@ var router = new Router({
         path: '/',
         component: Home,
 		name:'骨干管理',
-        iconCls: 'el-icon-message',//图标样式class    
+        iconCls: require('../assets/images/aside/backbone.png'),//图标样式class    
         leaf:false,
         meta:{
         	requireAuth:true
@@ -114,7 +115,7 @@ var router = new Router({
         path: '/',
         component: Home,
         name: '资源管理',
-        iconCls: 'fa fa-id-card-o',
+        iconCls: require('../assets/images/aside/resource.png'),
         leaf:false,
         meta:{
         	requireAuth:true
@@ -142,7 +143,7 @@ var router = new Router({
         path: '/',
         component: Home,
         name: '业务开通',
-        iconCls: 'fa fa-address-card',
+        iconCls: require('../assets/images/aside/business.png'),
 //      leaf: true,//只有一个节点
  		leaf:false,
    		meta:{
@@ -179,7 +180,7 @@ var router = new Router({
     	path:'/',
     	component:Home,
     	name:'租户管理',
-    	iconCls:'fa fa-user-circle-o',
+    	iconCls:require('../assets/images/aside/tenant.png'),
     	 leaf:false,
     	 meta:{
         	requireAuth:true
@@ -200,7 +201,7 @@ var router = new Router({
     	path:'/',
     	component:Home,
     	name:'账户管理',
-    	iconCls:'fa fa-blind',
+    	iconCls:require('../assets/images/aside/account.png'),
     	leaf:false,
     	meta:{
         	requireAuth:true
@@ -222,7 +223,7 @@ var router = new Router({
 			path:'/',
 			component:Home,
 			name:'日志',
-			iconCls:'fa fa-file',
+			iconCls:require('../assets/images/aside/updateLog.png'),
 			leaf:false,
 			meta:{
         		requireAuth:true

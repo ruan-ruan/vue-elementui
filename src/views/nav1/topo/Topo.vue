@@ -25,6 +25,8 @@
 				</el-col>
 			</el-col>
 		</el-row>
+		
+		<!--<img src="../../../assets/images/newTopo/node.png"/>-->
 	</div>
 </template>
 
@@ -72,18 +74,6 @@
 //				backupLink:[],
 			}
 		},
-//		watch:{
-//			selectForm:{
-//				handler(newVal,oldVal){
-//					this.dealForm(newVal,this.nodesData,this.linksData)
-////					this.linksData=[];//在这里来   修改获取到的nodes的数据和links数据
-//					this.setTopo(this.nodesData,this.linksData)
-////					this.dealForm(newVal,this.nodesData,this.linksData)
-//this.getNodesData(newVal);
-//				},
-//				deep:true,
-//			}
-//		},
 		created(){
 			this.token=sessionStorage.getItem('token');
 			this.getNodesData(this.selectForm);
@@ -179,6 +169,8 @@
 							linkVal=linksData;
 						}
 					}
+						
+					
 					
 					if(item ==='bandwidth'){//筛选带宽的显示和隐藏
 						let str=obj['bandwidth']
@@ -202,11 +194,10 @@
 								linkVal=isTopo.isBandWidth(linksData,'bandwidth',100);
 							}
 							if(str  === '显示其他带宽链路'){
-								linkVal=isTopo.dealBandWidth(linksData,'bandwidth','显示其他带宽链路');//的所有的数据
+								linkVal=isTopo.isBandVal(linksData);
 							}	
 						}			
 					}
-					
 					if(item ==='network'){
 						let arr=obj['network'];
 						if(arr.length !==0){
@@ -219,18 +210,18 @@
 									return item.type!=='cloun';
 								})
 							}else if(arr.indexOf('显示骨干链接') === -1){
+								console.log(linksData)
 								linkVal=linksData.filter(item => {
 									return item.type !=='link';
 								})
-							}else {
+							}
+							else {
 								nodeVal=nodesData;
-								linkVal=linksData;
+//								linkVal=linksData;
 							}
 						}else {
 							nodeVal=[];
-							linkVal=linksData.filter(item => {
-								return item.type !=='link';
-							})
+							linkVal=[]
 						}
 					}
 					
@@ -249,10 +240,9 @@
 					this.topoLoading=false;
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
+
 							this.nodesData=res.data.data;
 //							this.backupNode=res.data.data;
-//							sawedata=res.data.data;
 							this.getLinksData(this.nodesData,obj);
 						}
 					}
@@ -264,13 +254,10 @@
 				this.$ajax.get('/topology/links'+'?token='+this.token)
 				.then(res => {
 					if(res.status==200 && res.data.status==0){
-							console.log(res)
-							
 							that.linksData=res.data.data;	
 //							that.backupLink=res.data.data;
 
 						this.dealForm(obj,nodesData,that.linksData)
-//						this.setTopo(nodesData,this.linksData)
 					}
 				}).catch(e => {console.log(e)})
 			},
@@ -282,7 +269,6 @@
 				var text_dy = 20;
 				var img_w=16,img_h=16;
 				var radius=16;
-
 				linksData.some(function(v, i) {
 			        nodesData.some(function(w, j) {
 			            if (v.source_node == w.node.id) {
@@ -334,8 +320,8 @@
 	            .attr('class','links_text')
 				.text(function(d){
 					return d.bandwidth
-	           })
-			
+	          })
+				
 	        let link = g.append('g')
 			    .attr('class', 'link')
 			    .selectAll('line')
@@ -430,40 +416,62 @@
 					zoomHandler.scaleBy(svg, 0.9); // 执行该方法后 会触发zoomHandler事件
             		let tran = d3.zoomTransform(svg.node());
 				})
-				let newData=[];//用来保存拖拽后的所有的节点
+//				let newData=[];//用来保存拖拽后的所有的节点
 				let newObj={};//保存拖拽后的每个节点数据
 				function tickActions () {
 		            node.attr("x", function(d) { return d.x-img_w/2; })
 				        .attr("y", function(d) { return d.y-img_h/2; });
-//					nodesData.forEach((d,i) => {
+//					nodesData.forEach((d,i) => {   //设置边界
 //						d.x= d.x - img_w/2 < 0 ? img_w/2 : d.x;
 //						d.y=d.y - img_h/2 < 0? img_h/2 : d.y;
 //					});
-					link.attr("x1", function(d) {return d.source_val.x;})
-		                .attr("y1", function(d) {return d.source_val.y; })
-		                .attr("x2", function(d) {return d.target_val.x; })
-		                .attr("y2", function(d) {return d.target_val.y;})
+					link.attr("x1", function(d) {
+						if(d.source_val){
+							return d.source_val.x;
+						}
+					})
+		                .attr("y1", function(d) {
+		                	if(d.source_val){
+		                		return d.source_val.y;
+		                	}
+		                	 })
+		                .attr("x2", function(d) {
+		                	if(d.target_val){
+		                		return d.target_val.x;
+		                	}
+		                	 })
+		                .attr("y2", function(d) {
+		                	if(d.target_val){
+		                		return d.target_val.y;
+		                	}
+		                	})
 				   nodes_text.attr('x',function(d){d.fx=d.x;return d.x-12})
 				            .attr("y", function(d) { d.fy=d.y;return d.y-12 });
-		           links_text.attr("x", function(d) { return (d.source_val.x+d.target_val.x)/2; })
-		                .attr("y", function(d) { return (d.source_val.y+d.target_val.y)/2; })
+		           links_text.attr("x", function(d) { 
+		           	if(d.source_val && d.target_val){
+		           		return (d.source_val.x+d.target_val.x)/2;
+		           	}
+		           	 })
+		                .attr("y", function(d) {
+		                	if(d.source_val && d.target_val){
+		                		return (d.source_val.y+d.target_val.y)/2;
+		                	}
+		                	 })
 			   	}
 				function nodeTypeImage(nodes){
 					if(nodes.type==='node'){
 						return require('../../../assets/images/newTopo/node.png')
-					}else if(nodes.type==='ali'){
+					}else if(nodes.type==='阿里云'){
 						return require('../../../assets/images/newTopo/ali.png')					
-					}else if(nodes.type==='tencent'){
+					}else if(nodes.type==='腾讯云'){
 						return require('../../../assets/images/newTopo/tencent.png')
 						
-					}else if(nodes.type==='huawei'){
+					}else if(nodes.type==='华为云'){
 						return require('../../../assets/images/newTopo/huawei.png')
 									
 					}else if(nodes.type==='UCloud'){
 						return require('../../../assets/images/newTopo/ucloud.png')
 								
-					}else if(nodes.type==='huawei'){
-						return require('../../../assets/images/newTopo/huawei.png')
 					}else{
 						return require('../../../assets/images/newTopo/error.png')
 					}

@@ -9,11 +9,11 @@
         <div>
           <h4>{{mesdetail.header}}</h4>
           <br>
-          <p>类型：{{mesdetail.type}}</p>
+          <p>类型：{{mesdetail.title}}</p>
           <p>时间：{{timestamp(mesdetail.timeVal)}}</p>
         </div>
         <h3>
-          {{mesdetail.title}}
+          {{mesdetail.type}}
         </h3>
       </div>
       <div class="cener">

@@ -18,7 +18,7 @@ export function datedialogFormat(value){
     let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
     let m = date.getMinutes()  < 10 ? '0' + date.getMinutes() + ':' : date.getMinutes() + ':';
     let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-    return Y + M + D + h + m + s;
+    return Y + M + D +'</br>'+ h + m + s;
 }
 export function getTime(value) {
     if (value == "") {
@@ -270,18 +270,21 @@ export var isTopo={
 			 return !idList.includes(item[property])
 		 })
 	} ,
-	isBandWidth(a,property,value){
-		if(value !=='显示其他带宽链路'){
-			 return a.filter(item => {
-			 	return item[property]==value;
-			 })
-		}else{
-			return a.filter(item => {
-			 	return item[property]!=1&&item[property]!=10&&item[property]!=40&&item[property]!=100;
-			})
-		}
-		
-	 }
+	isBandWidth(a,property,value){//设置现在目前的带宽
+		 return a.filter(item => {
+		 	return item[property]==value;
+		 })
+	},
+	isBandVal(str){//显示其他的带宽
+		let arr=[];
+		str.forEach(ele => {
+			if(ele.bandwidth !==1&& ele.bandwidth!==10&&ele.bandwidth!==40&&ele.bandwidth!==100){
+				arr.push(ele)
+			}
+		})
+		console.log(arr)
+		return arr;
+	}
 }
 
 
@@ -318,8 +321,28 @@ export 	function getPortStatus(arr){
 			statusVal='DOWN';
 		}
 	}
-//console.log(statusVal)
-return statusVal
+	return statusVal
+}
+export function isPortStatus(arr){//针对于 单个逻辑口内的时候数据处理
+	let statusVal='';
+	if(arr.length>1){
+//		console.log('进入两个端口');
+		if(arr[0].port.status==='UP'&& arr[1].port.status==="UP"){
+			statusVal='UP';
+		}else if(arr[0].port.status==='DOWN'&& arr[1].port.status==="DOWN"){
+			statusVal='DOWN';
+		}else{
+			statusVal='异常';
+		}
+	}else if(arr.length==1){
+//		console.log('进入一个端口')
+		if(arr[0].port.status==='UP'){
+			statusVal='UP';
+		}else if(arr[0].port.status==='DOWN'){
+			statusVal='DOWN';
+		}
+	}
+	return statusVal
 }
 //正整数的验证
 export function isValidinteger(str){

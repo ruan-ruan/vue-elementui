@@ -36,9 +36,9 @@
 				<el-table-column prop='name'label='关联断点数' align='center'width='120' ></el-table-column>
 				<el-table-column prop='name'label='租户标识' align='center'width='120' ></el-table-column>
 				<el-table-column prop='name'label='备注' align='center'width='120' ></el-table-column>
-				<el-table-column label='操作' width='200' align='center'>
+				<el-table-column label='操作' width='260' align='center'>
 					<template slot-scope='scope'>
-						<el-button size='small' type='primary' @click='handleDetails(scope.$index,scope.row)'>详情</el-button>
+						<el-button size='small' type='info' @click='handleDetails(scope.$index,scope.row)'>详情</el-button>
 						<el-button size='small' type='primary' @click='handleEdit(scope.$index,scope.row)' v-if='(typeof clounID !=="undefined"?false:true)'>
 							编辑</el-button>
 						<el-button size='small' type='danger'@click='handleDel(scope.$index,scope.row)'v-if='(typeof clounID !=="undefined"?false:true)'>

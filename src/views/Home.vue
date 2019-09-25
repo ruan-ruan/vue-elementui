@@ -5,16 +5,49 @@
 				<img :src="(collapsed?sysImg:sysName)" :class="collapsed?'':'Img_left'" />
 			</el-col>
 			<el-col :span="8">
-				<div class="tools" @click.prevent="collapse">
-					<i class="fa fa-align-justify" ></i>
-				</div>
+				<!--<div class="tools" @click.prevent="collapse">-->
+					<!--<i class="fa fa-align-justify" ></i>-->  
+					<!--../assets/images/aside/left.png-->
+					<img :src="collapsed?asideRigth:asideLeft" class="tools asideLeft"  @click.prevent="collapse"/>
+				<!--</div>-->
 			</el-col>
 			<el-col :span="6" class="userinfo">
 				<el-row>
 					<el-col :span='24'>
 						<el-col :span='7'>
-							<span>消息</span>
+              <span style="cursor:pointer;" @click="tapmes" v-popover:visible>消息</span>
+              <el-badge
+                :value="this.$store.state.message"
+                :max="99"
+                class="item"
+              >
+                <i class="el-icon-bell"></i>
+              </el-badge>
 						</el-col>
+             <el-popover
+                placement="left-start"
+                ref="visible"
+                title="站内消息通知列表"
+                width="300"
+                trigger="hover">
+                <ul v-if="tableData.length>0" style="border-top:1px solid #ccc;">
+                  <li style="border-top:1px solid #ccc;padding:8px 0;padding-bottom:2px;" v-for="(item,is) in tableData" :key="is">
+                    <span><img
+                      src="../assets/images/message/unread.png.png"
+                      alt=""
+                      style="width:12px;height:12px;"
+                    ></span>
+                    <span>{{item.content}}</span>
+                    <div style="margin-top:6px;">
+                      <span>{{timestamp(item.time)}}</span>
+                      <span style="float:right;font-size:14px;font-weight:700;">{{item.level}}级</span>
+                    </div>
+                  </li>
+                </ul>
+                <div v-else>
+                  暂无消息
+                </div>
+              </el-popover>
 						<el-col :span='7'>
 							<el-dropdown trigger="click">
 								<span class="el-dropdown-link userinfo-inner">语言</span>
@@ -41,13 +74,19 @@
 			<aside :class="collapsed?'menu-collapsed':'menu-expanded'">
 				<!--导航菜单-->
 				<el-menu :default-active="$route.path" class="el-menu-vertical-demo el-menus" 
-					 unique-opened router v-show="!collapsed" id="menuClass" background='#EEEEEE'>
+					 unique-opened router v-show="!collapsed" id="menuClass">
 					<template v-for="(item,index) in $router.options.routes" v-if="!item.hidden">
 						<el-submenu :index="index+''" v-if="!item.leaf"  >
-							<template slot="title"><i :class="item.iconCls" ></i>{{item.name}}</template>
+							<template slot="title">
+								<!--<i :class="item.iconCls" ></i>-->
+								<img :src="item.iconCls" class='asideLogo'/>
+								{{item.name}}</template>
 							 <el-menu-item-group v-for='(child,indexs)  in item.children' :index="child.path" :key="child.path"  v-if="!child.hidden">
 								<el-submenu :index='child.path' v-if='!child.leaf'>
-									<template slot="title" class="child_title"><i :class="child.iconCls"></i>{{child.name}}</template>
+									<template slot="title" class="child_title">
+										<i :class="child.iconCls"></i>
+										<!--<img :src="child.iconCls" class='asideLogo'/>-->
+										{{child.name}}</template>
 									<el-menu-item  v-for="(sun,i)  in child.children" :index="sun.path" :key="sun.path" >
 		                                {{sun.name}}
 		                            </el-menu-item>
@@ -55,21 +94,30 @@
 								<el-menu-item :index="child.path" v-else-if="child.leaf" :key="child.path"> {{child.name}}  </el-menu-item>
 							</el-menu-item-group>
 						</el-submenu>
-						<el-menu-item v-if="item.leaf&&item.children.length>0" :index="item.children[0].path"><i :class="item.iconCls"></i>{{item.children[0].name}}</el-menu-item>
+						<el-menu-item v-if="item.leaf&&item.children.length>0" :index="item.children[0].path">
+							<!--<i :class="item.iconCls"></i>-->
+							<img :src="item.iconCls" class='asideLogo'/>
+							{{item.children[0].name}}</el-menu-item>
 					</template>
 				</el-menu>
 				<!--导航菜单-折叠后-->
 				<ul class="el-menu el-menu-vertical-demo collapsed" v-show="collapsed" ref="menuCollapsed">
-					<li v-for="(item,index) in $router.options.routes" v-if="!item.hidden" class="el-submenu item">
+					<li v-for="(item,index) in $router.options.routes" v-if="!item.hidden" class="el-submenu item"style="padding-top: 0px;">
 						<template v-if="!item.leaf">
-							<div class="el-submenu__title" style="padding-left: 20px;" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)"><i :class="item.iconCls"></i></div>
+							<div class="el-submenu__title"  @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)">
+								<!--<i :class="item.iconCls"></i>-->
+								<img :src="item.iconCls" class='asideLogo'/>
+							</div>
 							<ul class="el-menu submenu" :class="'submenu-hook-'+index" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)"> 
-								<li v-for="child in item.children" v-if="!child.hidden" :key="child.path" class="el-menu-item" style="padding-left: 40px;" :class="$route.path==child.path?'is-active':''" @click="$router.push(child.path)">{{child.name}}</li>
+								<li v-for="child in item.children" v-if="!child.hidden" :key="child.path" class="el-menu-item" style="padding-left: 40px ;padding-top: 0px;" :class="$route.path==child.path?'is-active':''" @click="$router.push(child.path)">{{child.name}}</li>
 							</ul>
 						</template>
 						<template v-else>
 							<li class="el-submenu">
-								<div class="el-submenu__title el-menu-item" style="padding-left: 20px;height: 56px;line-height: 56px;padding: 0 20px; " :class="$route.path==item.children[0].path?'is-active':''" @click="$router.push(item.children[0].path)"><i :class="item.iconCls"></i></div>
+								<div class="el-submenu__title el-menu-item" style="padding-left: 20px;height: 56px;line-height: 56px;padding-top: 0; " :class="$route.path==item.children[0].path?'is-active':''" @click="$router.push(item.children[0].path)">
+									<!--<i :class="item.iconCls"></i>-->
+									<img :src="item.iconCls" class='asideLogo'/>
+								</div>
 							</li>
 						</template>
 					</li>
@@ -97,38 +145,67 @@
 </template>
 
 <script>
-import *as types from '@/api/types'
-import {base} from '@/api/api'
-	export default {
-		data() {
-			return {
-				sysImg:require('../assets/images/logo.png'),
-				sysName:require('../assets/images/LOG.png'),				
-				collapsed:false,
-				sysUserName: '',
-				sysUserAvatar: require('../assets/images/touxiang.jpg'),
-//				sysLanguage:[{title:'CH'},{title:'English'}],
-				form: {
-					name: '',
-					region: '',
-					date1: '',
-					date2: '',
-					delivery: false,
-					type: [],
-					resource: '',
-					desc: '',
-					
-				},
-				cen:this.$router.options.routes
-			}
-		},
-		methods: {
-			psd:function(row){
-				this.$confirm('确认要修改密码吗?','提示',{})
-				.then(() => {
-					this.$router.push({path:'/changepassword'})
-				}).catch(() => {
-					
+import * as types from "@/api/types";
+import { base } from "@/api/api";
+export default {
+  data() {
+    return {
+      sysImg: require("../assets/images/logo.png"),
+      sysName: require("../assets/images/LOG.png"),
+      collapsed: false,
+      sysUserName: "",
+      sysUserAvatar: require("../assets/images/touxiang.jpg"),
+      //				sysLanguage:[{title:'CH'},{title:'English'}],
+      form: {
+        name: "",
+        region: "",
+        date1: "",
+        date2: "",
+        delivery: false,
+        type: [],
+        resource: "",
+        desc: ""
+      },
+      cen: this.$router.options.routes,
+      tableData:[]
+    };
+  },
+  methods: {
+    psd: function(row) {
+      this.$confirm("确认要修改密码吗?", "提示", {})
+        .then(() => {
+          this.$router.push({ path: "/changepassword" });
+        })
+        .catch(() => {});
+  },
+    timestamp(timestamp){
+      let timestampString = null;
+      if(String(timestamp).length==10) {
+        timestampString = timestamp*1000;
+      }else {
+        timestampString = timestamp;
+      }
+      var date = new Date(Number(timestampString));
+
+      var Y = date.getFullYear() +'-';
+      var M = (date.getMonth() +1<10 ?'0'+(date.getMonth() +1 +'-'):(date.getMonth()+1)+'-');
+      var D = this.timeChange(date.getDate()) +'';
+      var h = this.timeChange(date.getHours()) +':';
+      var m = this.timeChange(date.getMinutes()) +':';
+      var s = date.getSeconds();
+      return Y + M + D + '  '+ h + m + this.timeChange(s);
+    },
+    timeChange(time){
+      time = String(time);
+      if(time.length ==1) {
+        return '0' +time;
+      }else {
+        return time;
+      }
+    },
+	tapmes(){
+		this.$router.push({
+			path:'/message/unreadMessage'
 				})
 			},
 			//退出登录
@@ -164,16 +241,49 @@ import {base} from '@/api/api'
 			if (user) {
 				this.sysUserName = user || '';
 			}
-		}
-	}
-
+    var para = {
+      page: '',
+      per_page: '',
+      search_title: '',
+      search_type: '',
+      search_level: '',
+      search_start_time: '',
+      search_end_time: '',
+    };
+    this.$ajax
+      .get("/public/get_news" + "?token=" + tokenkey, para)
+      .then(res => {
+        console.log(res);
+        if (res.status == 200) {
+          if (res.data.status == 0) {
+            let ress = res.data.data.items;
+            let datas=[];
+            ress.map(items =>{
+              if(items.is_read==false) {
+                datas.push(items);
+              }
+            })
+            console.log(datas)
+            this.$store.state.message=datas.length;
+            this.tableData = res.data.data.items?res.data.data.items.slice(0,5):[];
+            console.log(this.tableData)
+          }
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }
+};
 </script>
 
 <style scoped lang="scss">
 
 	@import '~scss_vars';
 /*@import '~scss_vars';*/
-	
+.el-popover__title{
+  font-weight: 700;
+}
 	.container {
 		position: absolute;
 		top: 0px;
@@ -226,11 +336,19 @@ import {base} from '@/api/api'
 				width:60px
 			}
 			.tools{
-				padding: 0px 23px;
-				width:14px;
-				height: 60px;
-				line-height: 60px;
+				padding: 0px 10px;
+				width:30px;
+				height: 30px;
+				line-height: 30px;
+				position: absolute;
+				top: 30px;
+				margin-top: -15px;
 				cursor: pointer;
+				
+				/*.asideLeft{
+					width: 30px;
+					
+				}*/
 			}
 		}
 		.main {
@@ -289,6 +407,8 @@ import {base} from '@/api/api'
 						width: 200px;
 						float: left;
 						color: #475669;
+						font-size: 20px;
+						margin-bottom: 20px;
 					}
 					.breadcrumb-inner {
 						float: right;
@@ -306,5 +426,12 @@ import {base} from '@/api/api'
 	    height: 40px !important; 
 	    margin-left: -23px !important;
 	    margin-top: 11px !important;
+	}
+	.el-menu-item-group__title{
+		padding-top: 0px !important;
+	}
+	.asideLogo{
+		width: 22px;
+		height: 22px;
 	}
 </style>
