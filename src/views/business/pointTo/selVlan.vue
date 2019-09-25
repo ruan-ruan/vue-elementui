@@ -2,7 +2,7 @@
 	<div >
 		<!--vlan的选择-->
 		<el-form :model='editForm' ref='editForm' label-width='100px' :rules='editFormRules'>
-			<el-form-item label='vlan'prop='vlan'>
+			<el-form-item label='vlan' prop='vlan'>
 				<template>
 					<el-input v-model='editForm.vlan' v-show='false'></el-input>
 					<el-switch v-model='editForm.chooseVlan'
@@ -12,9 +12,9 @@
 							size='small' 
 							@click='addVlan' 
 							title='请先选择节点和逻辑口'
-							:disabled='titA?logicStatusA:logicStatusZ'
 							v-if='!editForm.chooseVlan'></el-button>
-				</template>		
+				</template>	
+				<!-- :disabled='titA?logicStatusA:logicStatusZ'	 -->
 			</el-form-item>
 		</el-form>
 		<el-dialog style='width: 120%;' :title='textMap[dialogStatus]' :visible.sync="dialogFormVisible":close-on-click-modal="false" v-loading='vlanLoading' >
@@ -35,11 +35,11 @@
 					</template>
 					<template>
 						<span>VLAN区间</span>
-						<el-select v-model='portVlan.selVlanVal'placeholder='请选择vlan区间'class='details'>
-							<el-option v-for='(item,index) in vlanInterval'
+						<el-select v-model='portVlan.selVlanVal' placeholder='请选择vlan区间' class='details'>
+							<el-option v-for='item in vlanInterval'
 								:value='item.value'
 								:label='item.label'
-								:key='index'></el-option>
+								:key='item.value'></el-option>
 						</el-select>
 					</template>
 				</el-form-item>
@@ -54,13 +54,13 @@
 								{{item }}</span>
 						</div>
 						<div id="barcon">
-							<span class='spn_tit'>共{{vlanData.length}}条记录{{totalPage}}页</span>
+							<span class='spn_tit'>共600条记录6页</span>
 							<span @click='goPaseSize(1,100)' class="spn">首页</span>
 							<span @click='goPaseSize(currentPage-1>0?currentPage-1:1,100)' class="spn" >上一页</span>
 							<span v-for='(item,index) in pageVal'
-								:key='index' @click='goPaseSize(item,100)'class="spn">{{item}}</span>
+								:key='index' @click='goPaseSize(item,100)' class="spn">{{item}}</span>
 							<span @click='goPaseSize(currentPage+1<totalPage+1?currentPage+1:totalPage,100)'class="spn">下一页</span>
-							<span @click='goPaseSize(6,100)'class="spn">尾页</span>
+							<span @click='goPaseSize(6,100)' class="spn">尾页</span>
 						</div>
 					</template>
 				</el-form-item>
@@ -77,7 +77,7 @@
 //	:empty='empty'
 	export default{
 		name:'vlan',
-		props:[],
+		props:['logic','titA','titZ','logicA','logicZ','statusA','statusZ','empty','logicId'],//logic当逻辑口存在的时候才可以选择vlan, 'titA','titZ'是数据互联的时候，选在的两个节点情况
 		data(){
 			return{
 				token:'',
@@ -122,22 +122,89 @@
 				pageVal:[1,2,3,4,5,6],
 				logicStatusA:true,
 				logicStatusZ:true,
-				
+				itable:null
 			}
 		},
 		watch:{
-			
+			'portVlan.selVlanVal':function(newVal,oldVal){
+				this.vlanVal=this.portVlan.selVlanVal.split('-');
+				this.vlanData=this.getData(parseInt(this.vlanVal[0]),parseInt(this.vlanVal[1]));
+			},
+			'editForm.chooseVlan':function(newVal){
+				if(newVal){
+					this.editForm.vlan='0'
+					this.$emit('getVlan',this.editForm.vlan);
+				}
+			},
+			empty:function(newVal,oldVal){
+				if(newVal){
+//					this.$refs['editForm'].resetFields();
+					this.editForm.selVlan=''
+				}
+			},
+			statusA:function(newVal,oldVal){
+				if(newVal){
+					this.logicStatusA=true
+				}else{
+					this.logicStatusA=false
+				}
+			},
+			statusZ:function(newVal,oldVal){
+				if(newVal){
+					this.logicStatusZ=true
+				}else{
+					this.logicStatusZ=false
+				}
+			},
+			logicId:function(newVal){//检测id的变化的时候，获取不同的可用vlan
+				this.takeUp(newVal);
+			}
 		},
 		created(){
-			this.token=sessionStorage.getItem('token')
+			this.token=sessionStorage.getItem('token');
+			console.log(this.vlanData)
+			this.takeUp(this.logicId)//获取该id下的所有的可用的vlan
 			this.vlanVal=this.portVlan.selVlanVal.split('-');
 			this.vlanData=this.getData(parseInt(this.vlanVal[0]),parseInt(this.vlanVal[1]));
-			this.takeUp(this.logicId)//获取该id下的所有的可用的vlan
+			console.log(this.vlanData)
 		},
-		mounted(){
-			this.goPaseSize(1,100)
+		beforeUpdate(){
+			this.$nextTick(()=>{
+				setTimeout(() =>{
+					this.itable= document.getElementById('idData').getElementsByTagName("span");
+					console.log(this.itable)
+				},0)
+				this.goPaseSize(1,100)
+			})
 		},
 		methods:{
+			goPaseSize(pno,psize){
+				this.itable= document.getElementById('idData').getElementsByTagName("span");
+				console.log(this.itable)
+				this.totalPage=0;
+				this.pageSize=psize;
+				let num=this.itable.length;
+				console.log(num)
+					//总共分几页 
+				if(num/this.pageSize > parseInt(num/this.pageSize)){   
+					this.totalPage=parseInt(num/this.pageSize)+1; 
+				}else{   
+					this.totalPage=parseInt(num/this.pageSize);   
+				}
+				this.currentPage=pno;//当前页数
+				var startRow = (this.currentPage - 1) * this.pageSize+1;//开始显示的行  31 
+				var endRow = this.currentPage * this.pageSize;//结束显示的行   40
+				endRow = (endRow > num)? num : endRow;    //40
+				for(var i=1;i<(num+1);i++){    
+					var irow = this.itable[i-1];
+					if(i>=startRow && i<=endRow){
+						irow.style.display = "inline-block";    
+					}else{
+						irow.style.display = "none";
+					}
+				}
+				
+			},
 			addVlan(){
 				if(typeof this.titA!='undefined'){
 					this.dialogStatus='port_a'
@@ -186,6 +253,7 @@
 				.then(res => {
 					console.log(res)
 				}).catch(e => console.log(e))
+				
 			},
 			getData(start,end){
 				//获取选择的vlan的区间的时候转换为数据
@@ -194,7 +262,6 @@
 					strVal.push(i)
 				}
 				//将获取的vlan的不可用的区间标识出来
-				
 				return strVal
 			},
 			creatVlan(){
@@ -216,31 +283,6 @@
 						type:'warning'
 					})
 				}
-			},
-			goPaseSize(pno,psize){
-				let itable=document.getElementById('idData').getElementsByTagName("span");
-				this.totalPage=0;
-				this.pageSize=psize;
-				let num=itable.length;
-			        //总共分几页 
-			    if(num/this.pageSize > parseInt(num/this.pageSize)){   
-			        this.totalPage=parseInt(num/this.pageSize)+1; 
-					
-			    }else{   
-			        this.totalPage=parseInt(num/this.pageSize);   
-			    }
-			    this.currentPage=pno;//当前页数
-			    var startRow = (this.currentPage - 1) * this.pageSize+1;//开始显示的行  31 
-			    var endRow = this.currentPage * this.pageSize;//结束显示的行   40
-			    endRow = (endRow > num)? num : endRow;    //40
-			    for(var i=1;i<(num+1);i++){    
-			        var irow = itable[i-1];
-			        if(i>=startRow && i<=endRow){
-			            irow.style.display = "inline-block";    
-			        }else{
-			            irow.style.display = "none";
-			        }
-			    }
 			},
 		}
 	}

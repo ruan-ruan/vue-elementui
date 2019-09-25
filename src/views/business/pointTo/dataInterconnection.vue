@@ -22,6 +22,8 @@
 							
 						</el-col>
 					</el-row>
+					<h3 class="title_h3">第三步:其他配置</h3>
+					<billing @getTime='getTime' ref='billingForm'></billing>
 				</el-col>
 				<el-col :span='5' class='pos_row'>
 					<h3 class="tit_h3" >配置详情概览</h3>

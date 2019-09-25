@@ -135,4 +135,6 @@
 .statusAbno{
 	color: #E6A23C;
 }
-
+.el-badge__content.is-fixed{
+	top:18px;
+}

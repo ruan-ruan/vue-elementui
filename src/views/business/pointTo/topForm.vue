@@ -27,7 +27,7 @@
 						</template>			
 					</el-form-item>
 					<el-form-item label='带宽'prop='bandwidth'>
-						<el-input v-model='editForm.bandwidth'class='ipt'></el-input>
+						<el-input v-model='editForm.bandwidth'class='ipt'></el-input> <span>&nbsp;&nbsp;Mbps</span>
 					</el-form-item>
 					<el-form-item label='备注'prop='describe'>
 						<el-input type='textarea' v-model='editForm.describe'class='ipt'></el-input>

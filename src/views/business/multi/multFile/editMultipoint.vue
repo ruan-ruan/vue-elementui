@@ -150,6 +150,13 @@
 			this.token=sessionStorage.getItem('token');
 			if(typeof this.id !=='undefined'){
 				this.getDetails(this.id);
+<<<<<<< HEAD
+=======
+				console.log(1111)
+			}else{
+				this.getTenant()
+				console.log(33333)
+>>>>>>> 7c9a1445ad4b1b5c7d70be3392d56f4ac45f789f
 			}
 			if(typeof this.detailsID !=='undefined'){
 				this.getDetails(this.id);
@@ -185,7 +192,7 @@
 				
 				let that=this;
 				var str=[this.$refs.clounForm.$refs.editForm,this.$refs.basicForm.$refs.basicForm];
-//				,this.$refs.clounForm.$refs.dockListObj
+				//				,this.$refs.clounForm.$refs.dockListObj
 				let obj={};
 				str.forEach(ele => {
 					
@@ -342,6 +349,7 @@
 								tenant_id:str.tenant.id,
 								dec:str.description,
 							}
+							console.log(this.editForm)
 							this.users=str.endpoints;
 							//将dc的数据和云的数据整合后在一个新的数组里面        是两个数组   
 							if(str.endpoints){

@@ -65,6 +65,7 @@
 				</el-col>
 			</el-row>
 			
+<<<<<<< HEAD
 			<div style="text-align: right;">
 				<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0" v-if='parentStatus'>
 					批量删除</el-button>
@@ -81,6 +82,12 @@
 					</el-col>
 					<el-col :sm='4':md='4':lg='4' >
 						<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0" v-if='parentStatus'>
+=======
+			<el-row >
+				<el-col :span='24'>
+					<el-col :span='4' >
+						<el-button type="danger" @click="batchRemove()" :disabled="this.sels.length===0" v-if='parentStatus'>
+>>>>>>> 7c9a1445ad4b1b5c7d70be3392d56f4ac45f789f
 							批量删除</el-button>
 						<el-dropdown split-button type='success'@command="handleExport">
 							导出数据
@@ -140,10 +147,17 @@
 						<span>{{scope.row.vlanHTMLZ}}</span>
 					</template>
 				</el-table-column>
+<<<<<<< HEAD
 				<el-table-column  label='Z逻辑口状态' width='65'  align='center'>
 					<template slot-scope='scope'>
 						<span> {{scope.row.statusValZ}}</span>
 					</template>
+=======
+				<el-table-column prop='endpoints.ports.status' label='Z逻辑口状态' width='120'  align='center'>
+					<!-- <template slot-scope='scope'>
+						<span> {{scope.row.endpoints[1].statusVal}}</span>
+					</template> -->
+>>>>>>> 7c9a1445ad4b1b5c7d70be3392d56f4ac45f789f
 				</el-table-column>
 				<el-table-column prop='creation_time' label='创建时间' width='95'  :formatter='dateFormat' align='center'>
 				</el-table-column>
@@ -350,8 +364,6 @@
 //				}
 //				this.parentStatus=true;
 //			})
-			
-			
 			this.getUsers();
 		},
 		methods:{
@@ -409,10 +421,15 @@
 				this.$ajax.get('/vll/p2p_vlls'+'?token='+this.token,para)
 				.then(res => {
 					if(res.status==200){
-						
 						if(res.data.status==0){
+<<<<<<< HEAD
 //							this.users=res.data.data.items;
 							this.total=res.data.data.page.total;
+=======
+							console.log(res.data.data.items)
+							// this.users=res.data.data.items;
+							// this.total=res.data.data.page.total;
+>>>>>>> 7c9a1445ad4b1b5c7d70be3392d56f4ac45f789f
 							console.log(res)
 
 							res.data.data.items.forEach(ele => {
@@ -427,7 +444,6 @@
 								if(ele.status=='failure'){
 									ele.statusHTML='创建失败'
 									ele.statusColor='creatFie'
-//									ele.specialName='删除'
 									ele.creat=true
 								}else if(ele.status=='creating'){
 									ele.statusHTML='创建中'
@@ -564,7 +580,11 @@
 				for (let key in sles) {
 					sles[key] = "";
 				}
+<<<<<<< HEAD
 		    },
+=======
+			},
+>>>>>>> 7c9a1445ad4b1b5c7d70be3392d56f4ac45f789f
 		    UpdateData:function(){
 		    	//编辑保存按钮
 		    	this.$refs.editForm.validate(valid => {
