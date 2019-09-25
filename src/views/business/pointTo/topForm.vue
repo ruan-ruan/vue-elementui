@@ -21,7 +21,7 @@
 						</template>			
 					</el-form-item>
 					<el-form-item label='带宽'prop='bandwidth'>
-						<el-input v-model='editForm.bandwidth'class='ipt'></el-input>
+						<el-input v-model='editForm.bandwidth'class='ipt'></el-input> <span>&nbsp;&nbsp;Mbps</span>
 					</el-form-item>
 					<el-form-item label='备注'prop='describe'>
 						<el-input type='textarea' v-model='editForm.describe'class='ipt'></el-input>
@@ -45,6 +45,8 @@
 					callback(new Error('请输入带宽'))
 				}else if(!isValidinteger(value)){
 					callback(new Error('请输入正确的带宽'))
+				}else if(value>1000000){
+					callback(new Error('带宽最大不超过1000000Mbps'))
 				}else{
 					callback()
 				}

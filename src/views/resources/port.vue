@@ -70,7 +70,7 @@
    	 			<template slot-scope='scope'>
    	 				<el-button size='small' type='info' @click='handleStatus(scope.$index, scope.row)'>{{scope.row.btnStatus}}</el-button>
 	   	 			<el-button size='small' type='success' @click='handleEdit(scope.$index,scope.row)'>编辑</el-button>
-	   	 			<el-button size='small' type='danger' @click='handleDel(scope.$index,scope.row)'v-if='statusDel'>删除</el-button>
+	   	 			<el-button size='small' type='danger' @click='handleDel(scope.$index,scope.row)' v-if="scope.row.btnStatus=='启用'">删除</el-button>
    	 			</template>
    	 		</el-table-column>
    	 		
@@ -204,13 +204,13 @@
 									ele.btnStatus='启用';
 									ele.usableTextColor='portAbnor'
 								}
-								if(ele.usableText=='禁用'){
-									//禁用的是可以显示删除按钮部分
-									this.statusDel=true
-								}else{
-									//否则的时候是隐藏
-									this.statusDel=false
-								}
+								// if(ele.usableText=='禁用'){
+								// 	//禁用的是可以显示删除按钮部分
+								// 	this.statusDel=true
+								// }else{
+								// 	//否则的时候是隐藏
+								// 	this.statusDel=false
+								// }
 							})
 								//对数据状态的遍历  
 							if(this.filters.status !=''){

@@ -94,10 +94,12 @@
           <el-button
             type="success"
             @click='markTap'
+            :disabled="this.sels.length===0"
           >标记已读</el-button>
           <el-button
             type='danger'
             @click='delMes'
+            :disabled="this.sels.length===0"
           >删除</el-button>
         </span>
       </el-col>
@@ -380,7 +382,7 @@ export default {
             let para ={ ids: this.isid };
             console.log(para);
             this.$ajax
-              .del("/public/del_news" + "?token=" + this.token, {data:para})
+              .del("/public/del_news" + "?token=" + this.token, para)
               .then(res => {
                 if (res.status == 200) {
                   if (res.data.status == 0) {
@@ -389,6 +391,10 @@ export default {
                       type: "success"
                     });
                     this.getData();
+                    this.$store.state.message = this.$store.state.message - 1;
+                    if (this.$store.state.message < 0) {
+                      this.$store.state.message = 0;
+                    }
                   } else if (res.data.status) {
                     this.$message({
                       messaeg: res.data.message,
@@ -479,11 +485,11 @@ export default {
     // 消息详情-弹窗
     handleClick(index, row) {
       this.mesdetail.dialogVisible = true;
-      this.mesdetail.header = row.content;
+      this.mesdetail.header = row.title;
       this.mesdetail.title = row.type == "notice" ? "产品信息" : "警告信息";
       this.mesdetail.type = row.level + "级";
       this.mesdetail.timeVal = row.time;
-      this.mesdetail.text = row.title;
+      this.mesdetail.text = row.content;
     }
   }
 };

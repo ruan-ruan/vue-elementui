@@ -59,7 +59,7 @@
 						</el-form-item>
 						<el-form-item >
 							<el-button @click='getUsers' type='primary'>搜索</el-button>
-							<el-button type='info'>重置</el-button>
+							<el-button type='info'  @click='reset(filters)'>重置</el-button>
 						</el-form-item>
 					</el-form>
 				</el-col>
@@ -68,7 +68,7 @@
 			<el-row >
 				<el-col :span='24'>
 					<el-col :span='4' >
-						<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0" v-if='parentStatus'>
+						<el-button type="danger" @click="batchRemove()" :disabled="this.sels.length===0" v-if='parentStatus'>
 							批量删除</el-button>
 					</el-col>
 					<el-col :span='20'>
@@ -129,9 +129,9 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop='endpoints.ports.status' label='Z逻辑口状态' width='120'  align='center'>
-					<!--<template slot-scope='scope'>
+					<!-- <template slot-scope='scope'>
 						<span> {{scope.row.endpoints[1].statusVal}}</span>
-					</template>-->
+					</template> -->
 				</el-table-column>
 				<el-table-column prop='creation_time' label='创建时间' width='120'  :formatter='dateFormat' align='center'>
 				</el-table-column>
@@ -319,6 +319,7 @@
              	endDatePicker: this.processDate(),
 				tenantData:[],//租户数据
 				parentStatus:true,//该组件被调用的S时候，上面控制部分隐藏
+				isid:[]
 			}
 		},
 		created(){
@@ -336,8 +337,6 @@
 //				}
 //				this.parentStatus=true;
 //			})
-			
-			
 			this.getUsers();
 		},
 		methods:{
@@ -395,10 +394,10 @@
 				this.$ajax.get('/vll/p2p_vlls'+'?token='+this.token,para)
 				.then(res => {
 					if(res.status==200){
-						
 						if(res.data.status==0){
-//							this.users=res.data.data.items;
-//							this.total=res.data.data.page.total;
+							console.log(res.data.data.items)
+							// this.users=res.data.data.items;
+							// this.total=res.data.data.page.total;
 							console.log(res)
 							res.data.data.items.forEach(ele => {
 								
@@ -412,7 +411,6 @@
 								if(ele.status=='failure'){
 									ele.statusHTML='创建失败'
 									ele.statusColor='creatFie'
-//									ele.specialName='删除'
 									ele.creat=true
 								}else if(ele.status=='creating'){
 									ele.statusHTML='创建中'
@@ -502,7 +500,13 @@
 					expiration_time:new Date(datedialogFormat(row.expiration_time)),
 					description:row.description
 				}
-		    },
+			},
+			reset(sles) {
+				//重置
+				for (let key in sles) {
+					sles[key] = "";
+				}
+			},
 		    UpdateData:function(){
 		    	//编辑保存按钮
 		    	this.$refs.editForm.validate(valid => {
@@ -558,18 +562,18 @@
 		    		}).catch(e => {console.log(e)})
 		    	}).catch(() => {})
 		    },
-		    batchRemove:function(rows){
+		    batchRemove:function(){
 		    	//批量删除
-		    	var ids=[];
-		    	rows.forEach(ele => {
-		    		ids.push(ele.id)
-				})
-				console.log(ids)
+				let ids = "";
+				for (let item of this.sels) {
+					ids += item.id + ",";
+				}
+				console.log(ids);
 		    	this.$confirm('确定要删除选中的数据吗?','提示',{})
 		    	.then(() => {
-		    		let para={
-		    			ids:ids
-		    		}
+					const id = ids.substring(0, ids.lastIndexOf(","));
+					this.isid = id.split(",");
+					let para ={ ids: this.isid };
 		    		this.$ajax.del('/vll/del_vlls'+'?token='+this.token,para)
 		    		.then(res => {
 		    			if(res.status==200){

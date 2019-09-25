@@ -28,7 +28,7 @@
 						<el-col :span='24'>		
 							<el-col :span='12' class='equipment'>
 								<el-button size='small' type='success' @click='StatusDisplay' v-show='addEquipStatus'>添加物理设备2</el-button>
-								<h3>物理设备1:</h3>
+								<h4>物理设备1:</h4>
 								<el-form-item label='设备名称:'prop='devices0_hostname'>
 									<el-input v-model='seeForm.devices0_hostname':disabled='StaNot' class='ipt'placeholder='请输入设备名称'></el-input>
 								</el-form-item>
@@ -68,7 +68,7 @@
 								</el-form-item>
 							</el-col>
 							<el-col :span='12' class='equipment'v-if='equStatusTwo'>
-								<h3>物理设备2:</h3>
+								<h4>物理设备2:</h4>
 								<el-form-item label='设备名称:' prop='devices1_hostname'>
 									<el-input v-model='seeForm.devices1_hostname':disabled='StaNot' class='ipt'></el-input>
 								</el-form-item>

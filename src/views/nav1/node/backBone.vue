@@ -58,48 +58,48 @@
 			<!--列表-->
 			<el-row>
 				<el-col :span="24">
-					<el-table :data='users' highlight-current-row @select-change='selsChange(sels)' style='width: 100%;' v-loading='loading'>
-				<el-table-column type='selection' width='60'></el-table-column>
-				<el-table-column type='index' width='60' label='序号' align='center'></el-table-column>
-				<el-table-column prop='creation_time' :formatter='dateFormat' width='160' label='创建时间'align='center'></el-table-column>
-				<el-table-column prop='name' width='100' label='节点名称' align='center'></el-table-column>
-				<el-table-column prop='exist_status' width='100' label='节点状态' align='center'>
+					<el-table :data='users' highlight-current-row @selection-change='selsChange' style='width: 100%;' v-loading='loading'>
+				<el-table-column type='selection' width='40'></el-table-column>
+				<el-table-column type='index' width='50' label='序号' align='center'></el-table-column>
+				<el-table-column prop='creation_time' :formatter='dateFormat' width='100' label='创建时间'align='center'></el-table-column>
+				<el-table-column prop='name' width='80' label='节点名称' align='center'></el-table-column>
+				<el-table-column prop='exist_status' width='80' label='节点状态' align='center'>
 					<template slot-scope="scope">
 						{{scope.row.exist_status=='normal'?'运行中':scope.row.exist_status=='found'?'离线':'单一运行中'}}
 					</template>
 				</el-table-column>
-				<el-table-column  width='100' label='设备名称' align='center'>
+				<el-table-column  width='80' label='设备名称' align='center'>
 					<template slot-scope="scope">
 						<ul v-for='item in scope.row.devices'>
 							<li v-text="item.hostname"></li>
 						</ul>
 					</template>
 				</el-table-column>	
-				<el-table-column prop='exist_status' width='100' label='设备状态' align='center'>
+				<el-table-column prop='exist_status' width='80' label='设备状态' align='center'>
 					<template slot-scope="scope">
 						<ul v-for='item in scope.row.devices'>
 							<li>{{item.exist_status=='normal'?'运行':'离线'}}</li>
 						</ul>
 					</template>
 				</el-table-column>			
-				<el-table-column  width='100' label='SN号' align='center'>
+				<el-table-column  width='70' label='SN号' align='center'>
 					<template slot-scope="scope">
 						<ul v-for='item in scope.row.devices'>
 							<li v-text="item.sn"></li>
 						</ul>
 					</template>
 				</el-table-column>
-				<el-table-column  width='100' label='管理IP' align='center'>
+				<el-table-column  width='70' label='管理IP' align='center'>
 					<template slot-scope="scope">
 						<ul v-for='item in scope.row.devices'>
 							<li v-text="item.ip"></li>
 						</ul>
 					</template>
 				</el-table-column>
-				<el-table-column prop='vtep' width='110' label='vtep' align='center'></el-table-column>				
-				<el-table-column prop='dc.name' width='100' label='设备中心' align='center'></el-table-column>
-				<el-table-column prop='description' width='80' label='备注' align='center'></el-table-column>
-				<el-table-column  width='240' label='操作' align='center'>
+				<el-table-column prop='vtep' width='80' label='vtep' align='center'></el-table-column>				
+				<el-table-column prop='dc.name' width='80' label='设备中心' align='center'></el-table-column>
+				<el-table-column prop='description' width='60' label='备注' align='center'></el-table-column>
+				<el-table-column  width='220' label='操作' align='center'>
 					<template slot-scope='scope'>
 						<el-button type='info'size='small' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
 						<el-button type='success' size='small' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>
@@ -113,7 +113,11 @@
 			
 			
 			<!--底部工具条-分页-数据的导出等-->
-			<el-col :span='24' class='toolbar'>				
+			<el-col :span='24' class='toolbar'>	
+				<el-col :span='3'>
+					<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">批量删除</el-button>
+				</el-col>
+				<el-col :span='21'>
 					<el-pagination
 						:total="total"
 				     	@size-change="handleSizeChange"
@@ -125,6 +129,8 @@
 				     	:pager-count="pagecount"
 				     	:prev-text='prev'
 				     	:next-text='next'></el-pagination>
+				</el-col>			
+					
 			</el-col>
 		</section>
 	</div>
@@ -345,7 +351,7 @@
 								this.getUsers()
 							}else if(res.data.status){
 								this.$message({
-									messaeg:res.data.message,
+									message:res.data.message,
 									type:'warning'
 								})
 							}
@@ -357,6 +363,41 @@
 				})
 				.catch( () => {})
 			},
+			 //批量删除
+		    batchRemove: function(rows) {
+				var ids=[];
+				rows.forEach(element =>{
+					ids.push(element.id);
+				})
+		      this.$confirm("确认删除选中记录吗？", "提示", {
+		        type: "warning"
+		      })
+		        .then(() => {
+		
+		          let para = { 
+		          	ids: ids,
+		          };
+		          this.$ajax.del('/node/del_nodes'+'?token='+this.token,para)
+		          .then(res => {
+		          	if(res.status=='200'){
+		          		if(res.data.status=='0'){
+				            this.$message({
+				              message: "删除成功",
+				              type: "success"
+				            });
+				          this.getUsers()
+		          		}else if(res.data.status){
+		          			this.$message({
+		          				message:res.data.message,
+		          				type:'warning'
+		          			})
+		          		}
+		          	}
+		              
+		          });
+		        })
+		        .catch(() => {});
+		    },
 			 handleExport(command){
 		    	if(command=='all'){
 		    		//导出所有的数据

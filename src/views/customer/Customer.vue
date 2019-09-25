@@ -23,6 +23,7 @@
               <el-select
                 v-model='filters.status'
                 class='ipt_sta'
+                placeholder="请选择"
               >
                 <el-option
                   v-for='(item,index) in staData'
@@ -32,9 +33,6 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <!--<el-form-item label='租户联系人：'>
-							<el-input v-model='filters.pho'class='sel'></el-input>
-						</el-form-item>-->
             <el-form-item label='租户手机号：'>
               <el-input
                 v-model='filters.pho'
@@ -207,9 +205,8 @@ export default {
       token: "",
       filters: {
         name: "",
-        status: "true",
+        status: "",
         pho: ""
-        //					ema:''
       },
       staData: [
         {
@@ -254,14 +251,24 @@ export default {
     getUsers() {
       //搜索
       this.laoding = true;
-      var para = {
-        page: this.currentPage,
-        per_page: this.pagesize,
-        search_name: this.filters.name,
-        search_usable: this.filters.status,
-        search_email: this.filters.ema,
-        search_mobile: this.filters.pho
-      };
+      if(this.filters.status=='') {
+         var para = {
+          page: this.currentPage,
+          per_page: this.pagesize,
+          search_name: this.filters.name,
+          search_email: this.filters.ema,
+          search_mobile: this.filters.pho
+        };
+      }else {
+          var para = {
+          page: this.currentPage,
+          per_page: this.pagesize,
+          search_name: this.filters.name,
+          search_usable: this.filters.status,
+          search_email: this.filters.ema,
+          search_mobile: this.filters.pho
+        };
+      }
 
       this.$ajax
         .get("/tenant/tenants" + "?token=" + this.token, para)
@@ -293,13 +300,13 @@ export default {
       for (let key in sles) {
         sles[key] = "";
       }
-      this.filters.status = "true";
+      // this.filters.status = "true";
     },
     handleSta(index, row) {
       //禁用和启用切换
       var cusSta = document.getElementsByClassName("cusSta");
       if (cusSta[index].innerText === "启用") {
-        this.$confirm("确定要启用该设备吗?", "提示", {
+        this.$confirm("确定要启用该租户吗?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "primary"
@@ -325,7 +332,7 @@ export default {
             });
         });
       } else if (cusSta[index].innerText === "禁用") {
-        this.$confirm("确认要禁用该设备吗?", "提示", {
+        this.$confirm("确认要禁用该租户吗?", "提示", {
           confirmButtontText: "确定",
           cancelButtonText: "取消",
           type: "warning"
@@ -391,7 +398,7 @@ export default {
             this.$ajax
               .del("/tenant/del_tenant/" + row.id + "?token=" + this.token)
               .then(res => {
-				console.log(res);
+				        console.log(res);
                 if (res.status == "200") {
                   if (res.data.status == "0") {
                     this.$message({
