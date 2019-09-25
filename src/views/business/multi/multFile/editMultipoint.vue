@@ -150,13 +150,10 @@
 			this.token=sessionStorage.getItem('token');
 			if(typeof this.id !=='undefined'){
 				this.getDetails(this.id);
-<<<<<<< HEAD
-=======
 				console.log(1111)
 			}else{
 				this.getTenant()
 				console.log(33333)
->>>>>>> 7c9a1445ad4b1b5c7d70be3392d56f4ac45f789f
 			}
 			if(typeof this.detailsID !=='undefined'){
 				this.getDetails(this.id);

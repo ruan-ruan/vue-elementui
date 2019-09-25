@@ -1,22 +1,4 @@
 <template>
-<<<<<<< HEAD
-	<el-row class="container">
-		<el-col :span="24" class="header">
-			<el-col :span="10" class="logo" :class="collapsed?'logo-collapse-width':'logo-width'">
-				<img :src="(collapsed?sysImg:sysName)" :class="collapsed?'':'Img_left'" />
-			</el-col>
-			<el-col :span="8">
-				<!--<div class="tools" @click.prevent="collapse">-->
-					<!--<i class="fa fa-align-justify" ></i>-->  
-					<!--../assets/images/aside/left.png-->
-					<img :src="collapsed?asideRigth:asideLeft" class="tools asideLeft"  @click.prevent="collapse"/>
-				<!--</div>-->
-			</el-col>
-			<el-col :span="6" class="userinfo">
-				<el-row>
-					<el-col :span='24'>
-						<el-col :span='7'>
-=======
   <el-row class="container">
     <el-col
       :span="24"
@@ -47,7 +29,6 @@
         <el-row>
           <el-col :span='24'>
             <el-col :span='7'>
->>>>>>> 7c9a1445ad4b1b5c7d70be3392d56f4ac45f789f
               <span style="cursor:pointer;" @click="tapmes" v-popover:visible>消息</span>
               <el-badge
                 :value="this.$store.state.message"
@@ -56,11 +37,7 @@
               >
                 <i class="el-icon-bell"></i>
               </el-badge>
-<<<<<<< HEAD
-						</el-col>
-=======
             </el-col>
->>>>>>> 7c9a1445ad4b1b5c7d70be3392d56f4ac45f789f
              <el-popover
                 placement="left-start"
                 ref="visible"
@@ -85,102 +62,6 @@
                   暂无消息
                 </div>
               </el-popover>
-<<<<<<< HEAD
-						<el-col :span='7'>
-							<el-dropdown trigger="click">
-								<span class="el-dropdown-link userinfo-inner">语言</span>
-								<el-dropdown-menu slot="dropdown">
-									<el-dropdown-item >中文</el-dropdown-item>
-									<el-dropdown-item >English</el-dropdown-item>
-								</el-dropdown-menu>
-							</el-dropdown>
-						</el-col>
-						<el-col :span='10'>
-							<el-dropdown trigger="click">
-								<span class="el-dropdown-link userinfo-inner" :title='sysUserName'><img :src="sysUserAvatar" alt="头像"/> {{sysUserName}}</span>
-								<el-dropdown-menu slot="dropdown">
-									<el-dropdown-item  @click.native="logout">退出登录</el-dropdown-item>
-									<el-dropdown-item  @click.native='psd'>修改密码</el-dropdown-item>
-								</el-dropdown-menu>
-							</el-dropdown>
-						</el-col>
-					</el-col>
-				</el-row>
-			</el-col>
-		</el-col>
-		<el-col :span="24" class="main">
-			<aside :class="collapsed?'menu-collapsed':'menu-expanded'">
-				<!--导航菜单-->
-				<el-menu :default-active="$route.path" class="el-menu-vertical-demo el-menus" 
-					 unique-opened router v-show="!collapsed" id="menuClass">
-					<template v-for="(item,index) in $router.options.routes" v-if="!item.hidden">
-						<el-submenu :index="index+''" v-if="!item.leaf"  >
-							<template slot="title">
-								<!--<i :class="item.iconCls" ></i>-->
-								<img :src="item.iconCls" class='asideLogo'/>
-								{{item.name}}</template>
-							 <el-menu-item-group v-for='(child,indexs)  in item.children' :index="child.path" :key="child.path"  v-if="!child.hidden">
-								<el-submenu :index='child.path' v-if='!child.leaf'>
-									<template slot="title" class="child_title">
-										<i :class="child.iconCls"></i>
-										<!--<img :src="child.iconCls" class='asideLogo'/>-->
-										{{child.name}}</template>
-									<el-menu-item  v-for="(sun,i)  in child.children" :index="sun.path" :key="sun.path" >
-		                                {{sun.name}}
-		                            </el-menu-item>
-								</el-submenu>
-								<el-menu-item :index="child.path" v-else-if="child.leaf" :key="child.path"> {{child.name}}  </el-menu-item>
-							</el-menu-item-group>
-						</el-submenu>
-						<el-menu-item v-if="item.leaf&&item.children.length>0" :index="item.children[0].path">
-							<!--<i :class="item.iconCls"></i>-->
-							<img :src="item.iconCls" class='asideLogo'/>
-							{{item.children[0].name}}</el-menu-item>
-					</template>
-				</el-menu>
-				<!--导航菜单-折叠后-->
-				<ul class="el-menu el-menu-vertical-demo collapsed" v-show="collapsed" ref="menuCollapsed">
-					<li v-for="(item,index) in $router.options.routes" v-if="!item.hidden" class="el-submenu item"style="padding-top: 0px;">
-						<template v-if="!item.leaf">
-							<div class="el-submenu__title"  @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)">
-								<!--<i :class="item.iconCls"></i>-->
-								<img :src="item.iconCls" class='asideLogo'/>
-							</div>
-							<ul class="el-menu submenu" :class="'submenu-hook-'+index" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)"> 
-								<li v-for="child in item.children" v-if="!child.hidden" :key="child.path" class="el-menu-item" style="padding-left: 40px ;padding-top: 0px;" :class="$route.path==child.path?'is-active':''" @click="$router.push(child.path)">{{child.name}}</li>
-							</ul>
-						</template>
-						<template v-else>
-							<li class="el-submenu">
-								<div class="el-submenu__title el-menu-item" style="padding-left: 20px;height: 56px;line-height: 56px;padding-top: 0; " :class="$route.path==item.children[0].path?'is-active':''" @click="$router.push(item.children[0].path)">
-									<!--<i :class="item.iconCls"></i>-->
-									<img :src="item.iconCls" class='asideLogo'/>
-								</div>
-							</li>
-						</template>
-					</li>
-				</ul>
-			</aside>
-			<section class="content-container">
-				<div class="grid-content bg-purple-light">
-					<el-col :span="24" class="breadcrumb-container">
-						<strong class="title">{{$route.name}}</strong>
-						<el-breadcrumb separator="/" class="breadcrumb-inner">
-							<el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
-								{{ item.name }}
-							</el-breadcrumb-item>
-						</el-breadcrumb>
-					</el-col>
-					<el-col :span="24" class="content-wrapper">
-						<transition name="fade" mode="out-in">
-							<router-view></router-view>
-						</transition>
-					</el-col>
-				</div>
-			</section>
-		</el-col>
-	</el-row>
-=======
             <el-col :span='7'>
               <el-dropdown trigger="click">
                 <span class="el-dropdown-link userinfo-inner">语言</span>
@@ -350,7 +231,6 @@
 </section>
 </el-col>
 </el-row>
->>>>>>> 7c9a1445ad4b1b5c7d70be3392d56f4ac45f789f
 </template>
 
 <script>
@@ -415,43 +295,6 @@ export default {
 	tapmes(){
 		this.$router.push({
 			path:'/message/unreadMessage'
-<<<<<<< HEAD
-				})
-			},
-			//退出登录
-			logout: function () {
-				var _this = this;
-				this.$confirm('确认退出吗?', '提示', {})
-				.then(() => {
-					sessionStorage.removeItem('user');
-					sessionStorage.removeItem('token')
-				    this.$store.commit(types.LOGOUT)
-				    this.$router.push({
-				        path: '/login',
-				    })
-				}).catch(() => {
-
-				});
-			},
-			//折叠导航栏
-			  collapse:function(){
-			    this.collapsed=!this.collapsed;
-			    var menuWidth = document.getElementById('menuClass');
-			    if(menuWidth.offsetWidth===0){
-			      menuWidth.style.width = "230px";
-			    }
-			  },
-			showMenu(i,status){
-				this.$refs.menuCollapsed.getElementsByClassName('submenu-hook-'+i)[0].style.display=status?'block':'none';
-			}
-		},
-		mounted() {
-			var tokenkey = sessionStorage.getItem('token');
-			var user=sessionStorage.getItem('user');
-			if (user) {
-				this.sysUserName = user || '';
-			}
-=======
 		})
 	},
     //退出登录
@@ -488,7 +331,6 @@ export default {
     if (user) {
       this.sysUserName = user || "";
     }
->>>>>>> 7c9a1445ad4b1b5c7d70be3392d56f4ac45f789f
     var para = {
       page: '',
       per_page: '',
@@ -531,77 +373,6 @@ export default {
 .el-popover__title{
   font-weight: 700;
 }
-<<<<<<< HEAD
-	.container {
-		position: absolute;
-		top: 0px;
-		bottom: 0px;
-		width: 100%;
-		.header {
-			height: 60px;
-			line-height: 60px;
-			background: $color-primary;
-			color:#fff;
-			.userinfo {
-				text-align: right;
-				padding-right: 35px;
-				float: right;
-				.userinfo-inner {
-					cursor: pointer;
-					color:#fff;
-					img {
-						width: 40px;
-						height: 40px;
-						border-radius: 20px;
-						margin: 10px 0px 10px 10px;
-						float: right;
-					}
-				}
-			}
-			.logo {
-				height:60px;
-				font-size: 22px;
-				padding-left:20px;
-				padding-right:20px;
-				border-color: rgba(238,241,146,0.3);
-				border-right-width: 1px;
-				border-right-style: solid;
-				img {
-					width: 70px;
-					height: 70px;
-					margin-left: -23px;
-					margin-top: -7px;
-				}
-				.txt {
-					color:#fff;
-				}
-			}
-			.logo-width{
-				width:230px;
-				text-align: center;
-			}
-			.logo-collapse-width{
-				width:60px
-			}
-			.tools{
-				padding: 0px 10px;
-				width:30px;
-				height: 30px;
-				line-height: 30px;
-				position: absolute;
-				top: 30px;
-				margin-top: -15px;
-				cursor: pointer;
-				
-				/*.asideLeft{
-					width: 30px;
-					
-				}*/
-			}
-		}
-		.main {
-			display: flex;
-=======
 .container {
   position: absolute;
   top: 0px;
@@ -667,7 +438,6 @@ export default {
     position: absolute;
     top: 60px;
     bottom: 0px;
->>>>>>> 7c9a1445ad4b1b5c7d70be3392d56f4ac45f789f
 
     overflow: auto;
     aside {
@@ -709,39 +479,6 @@ export default {
       overflow-y: scroll;
       padding: 20px;
 
-<<<<<<< HEAD
-					.title{
-						width: 200px;
-						float: left;
-						color: #475669;
-						font-size: 20px;
-						margin-bottom: 20px;
-					}
-					.breadcrumb-inner {
-						float: right;
-					}
-				}
-				.content-wrapper {
-					background-color: #fff;
-					box-sizing: border-box;
-				}
-			}
-		}
-	}
-	.Img_left{
-	    width: 140px !important;
-	    height: 40px !important; 
-	    margin-left: -23px !important;
-	    margin-top: 11px !important;
-	}
-	.el-menu-item-group__title{
-		padding-top: 0px !important;
-	}
-	.asideLogo{
-		width: 22px;
-		height: 22px;
-	}
-=======
       .breadcrumb-container {
         .title {
           width: 200px;
@@ -765,5 +502,4 @@ export default {
   margin-left: -23px !important;
   margin-top: 11px !important;
 }
->>>>>>> 7c9a1445ad4b1b5c7d70be3392d56f4ac45f789f
 </style>
