@@ -3,32 +3,12 @@
 		<!--公有云部分-->
 		<el-form :model='editForm':rules='editFormRules' ref='editForm'label-width='100px' v-loading='editLoading'>
 			<el-form-item label='公有云'prop='cloun'>
-				<!--<el-select v-model='editForm.cloun' class='ipt' >
+				<el-select v-model='editForm.cloun' filterable  class='ipt' >
 					<el-option v-for='(item ,index) in clounData'
 						:label='item'
 						:value='item'
 						:key='index'></el-option>
-				</el-select>-->
-				
-				<el-autocomplete
-				  popper-class="my-autocomplete"
-				  v-model="editForm.cloun"
-				  :fetch-suggestions="querySearch"
-				  placeholder="请输入内容"
-				   class='ipt'
-				   @blur='addData(editForm.cloun)'
-				    @select="handleSelect"
-				    @focus='sel'>
-				  <i
-				    class="el-icon-edit el-input__icon"
-				    slot="suffix"
-				    @click="handleIconClick">
-				  </i>
-				  <template slot-scope="{ item }">
-				    <div >{{ item}}</div>
-				  </template>
-				</el-autocomplete>
-				
+				</el-select>
 				<span class="cli_toTip" title="请选择本次链接云的类型">?</span>
 			</el-form-item>
 			<el-form-item label='目标Region' prop='targetRegion'>
@@ -135,25 +115,6 @@
 			}
 		},
 		methods:{
-			sel(item){
-//				console.log(item);
-//				console.log(localStorage.getItem("temp"))
-			},
-			addData(item){//失去焦点的时候，公有云添加新的数据
-				
-				
-				this.clounData.unshift(item);
-				let str=JSON.parse(JSON.stringify(this.clounData))
-				var srr=[]
-				str.forEach(ele => {
-					if(srr.indexOf(ele) ===-1){
-						srr.push(ele)
-					}
-				})
-				
-				
-				localStorage.setItem("temp",srr); 
-			},
 			handleSelect(item) {
 
 				this.editForm.cloun=item;
@@ -190,22 +151,7 @@
 				}).catch(e => {
 					console.log(e)
 				})
-		    },
-			handleIconClick(ev) {
-		        console.log(ev);
-		    },
-			querySearch(queryString, cb) {
-//				this.clounData
-		        var restaurants = this.clounData;
-		        var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
-		        // 调用 callback 返回建议列表的数据
-		        cb(results);
-		    },
-		    createFilter(queryString) {
-		        return (restaurant) => {
-		          return (restaurant.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-		        };
-		    },
+		   },
 			getFormData(){
 				//获取公有云的列表
 				this.$ajax.get('/vll/get_public_cloud'+'?token='+this.token)

@@ -89,7 +89,8 @@
 				</el-table-column>
 				<el-table-column  label='操作' align='center' width='400'>
 					<template slot-scope='scope'>
-						<el-button size='small' type='primary' @click='handleStatus(scope.$index, scope.row)'v-if='maintenanceStatus' class='maintenance'>
+						<el-button size='small' type='primary' @click='handleStatus(scope.$index, scope.row)'
+							v-if='scope.row.maintenance_value==="故障" ? false : true ' class='maintenance'> <!--当状态为故障的时候   这个时候的该按钮银行 -->
 							{{scope.row.maintenanceBtn}}
 						</el-button>
 						<el-button size='small' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
@@ -264,7 +265,7 @@
 				next:'下一页',
 				prev:'上一页',
 				//设置维护
-				maintenanceStatus:true,
+//				maintenanceStatus:true,
 				//当链路的状态的为down的时候，显示删除按钮
 //				LinkStatus:false,
 				//编辑界面的数据
@@ -404,19 +405,22 @@
 								}else if(ele.monitoring){
 									ele.monitorHTML='开启'
 								}
-								if(ele.maintenance_type&&ele.status=='DOWN'){
-									ele.maintenance_value='维护'
-									ele.maintenanceBtn='关闭维护'
-//									_this.users.maintenance_value='维护'
-								}else if(!ele.maintenance_type&&ele.status=='DOWN'){
-									ele.maintenanceBtn='关闭维护'
-									ele.maintenance_value='故障'
-//									_this.users.maintenance_value='故障'
-								}else if(!ele.maintenance_type&&ele.status=='UP'){
-									ele.maintenance_value=''
-									ele.maintenanceBtn='开启维护'
-//									_this.users.maintenance_value=''
-								}
+								if(ele.status=='UP'){
+									if(ele.maintain_type){
+										ele.maintenance_value=''
+										ele.maintenanceBtn='开启维护'
+									}else{
+										ele.maintenance_value='维护'
+										ele.maintenanceBtn='关闭维护'
+									}
+								}else if(ele.status=='DOWN'){
+									if(!ele.maintain_type){
+										ele.maintenance_value='维护'
+										ele.maintenanceBtn='关闭维护'
+									}else{
+										ele.maintenance_value='故障'
+									}
+								}	
 							})
 						}
 						

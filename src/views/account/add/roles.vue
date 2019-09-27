@@ -224,6 +224,7 @@
 								this.$refs.organizationData.setCheckedNodes(this.roleDetails);
 							}
 							 this.editForm={
+							 	id:res.data.data.id,
 								name:res.data.data.name,
 								usable:this.editForm.statusName,
 								description:res.data.data.description,
@@ -268,35 +269,33 @@
 				this.$refs.editForm.validate(valid => {
 					if(valid){
 						//编辑的角色的时候按钮
-						this.$confirm('确认要修改吗?','提示 ',{})
-						.then( () => {
-							var para={
-								name:this.editForm.name,
-								rights:this.editForm.rights.join(','),
-								usable:this.editForm.usableStatus,
-								description:this.editForm.description
-							}
-							this.$ajax.put('/role/edit_role/'+this.editForm.id+'?token='+this.token,para)
-							.then(res => {
-								console.log(res)
-								if(res.status==200){
-									if(res.data.status==0){
-										this.$message({
-											message:'修改成功!',
-											type:'success'
-										})
-										this.$router.place('/account')
-									}else{
-										this.$message({
-											message:res.data.message,
-											type:'warning'
-										})
-									}
+						var para={
+							name:this.editForm.name,
+							rights:this.editForm.dataCen.join(','),
+							usable:this.editForm.usableStatus,
+							description:this.editForm.description
+						}
+						console.log(para)
+						this.$ajax.put('/role/edit_role/'+this.editForm.id+'?token='+this.token,para)
+						.then(res => {
+							console.log(res)
+							if(res.status==200){
+								if(res.data.status==0){
+									this.$message({
+										message:'修改成功!',
+										type:'success'
+									})
+									this.$router.replace('/account')
+								}else{
+									this.$message({
+										message:res.data.message,
+										type:'warning'
+									})
 								}
-							}).catch(e => {
-								console.log(e)
-							})
-						}).catch( () => {})
+							}
+						}).catch(e => {
+							console.log(e)
+						})
 					}
 				})
 			},

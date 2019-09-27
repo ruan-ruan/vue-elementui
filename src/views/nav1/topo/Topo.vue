@@ -91,15 +91,19 @@
 		methods:{
 
 			Save(){//保存布局
-				this.$ajax.put('/topology/edit_node_location'+'?token='+this.token,this.saveData)
+				let para={
+					locations:this.saveData
+				}
+				this.$ajax.put('/topology/edit_node_location'+'?token='+this.token,para)
 				.then(res => {
+					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
 							this.$message({
 								message:'修改成功!',
-								type:'warning'
+								type:'success'
 							})
-							this.getNodesData()
+							this.getNodesData(this.selectForm)
 						}else{
 							this.$message({
 								message:res.data.message,

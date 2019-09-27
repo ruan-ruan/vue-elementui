@@ -41,6 +41,7 @@
 			}
 		},
 		created(){
+			console.log(this.title)
 			this.token=sessionStorage.getItem('token');
 			this.getUsers(this.title)
 		},
@@ -48,6 +49,7 @@
 			getUsers(id){
 				this.$ajax.get('/node/device_info/'+id+'/ports'+'?token='+this.token)
 				.then(res => {
+					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
 							this.physicalData=res.data.data.items;

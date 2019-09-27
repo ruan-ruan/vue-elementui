@@ -17,7 +17,7 @@
 							</el-col>
 							<el-col :span='12'>
 								<h4 class="title_h4"title='虚拟专线受控的终止端'>Z端配置<span class="cli_toTip">?</span></h4>
-								<dc-port @sendFormData_z='getFormData_z' :tit='vlanSel.label2'  ref='dc_z' ></dc-port>
+								<dcPortz @sendFormData_z='getFormData_z' :tit='vlanSel.label2'  ref='dc_z' ></dcPortz>
 							</el-col>
 							
 						</el-col>
@@ -62,6 +62,9 @@
 <script >
 	
 	import dcPort from'@/views/business/multi/multFile/dcPort'
+	import dcPortz from'@/views/business/multi/multFile/dcPortz'
+	
+//	dcPortz
 	
 	import {datedialogFormat,getPortStatus} from '@/assets/js/index.js'
 	
@@ -70,7 +73,7 @@
 //	import selVlan from '@/views/business/pointTo/selVlan'	//vlan的弹窗的选择
 	export default{
 		name:'dataInterconnection',
-		components:{topForm,billing,dcPort},
+		components:{topForm,billing,dcPort,dcPortz},
 		data(){
 			return{
 				token:'',
@@ -101,7 +104,14 @@
 
 			}
 		},
-
+		watch:{
+			editForm:{
+				handler(newVal,oldVal){
+					console.log(newVal)
+				},
+				deep:true
+			}
+		},
 		created(){
 			this.token=sessionStorage.getItem('token');
 			
@@ -109,18 +119,26 @@
 		methods:{
 
 			getFormData_a(msg){
-				this.editForm={
-					nodeName_a:msg.nodeName,
-					endpoints_logic_port_id_a:msg.logic,
-					vlan_a:msg.vlan,
-				}
+				console.log(msg)
+					
+				this.editForm.nodeName_a=msg.nodeName
+				this.editForm.endpoints_logic_port_id_a=msg.logic
+				this.editForm.vlan_a=msg.vlan
+
 			},
 			getFormData_z(msg){
-				this.editForm={
-					nodeName_a:msg.nodeName,
-					endpoints_logic_port_id_a:msg.logic,
-					vlan_a:msg.vlan,
-				}
+				console.log(msg)
+				
+				
+				this.editForm.nodeName_z=msg.nodeName
+				this.editForm.endpoints_logic_port_id_z=msg.logic
+				this.editForm.vlan_z=msg.vlan
+				
+//				this.editForm={
+//					nodeName_z:msg.nodeName,
+//					endpoints_logic_port_id_z:msg.logic,
+//					vlan_z:msg.vlan,
+//				}
 			},
 			getVal(data){
 				//获取基本的信息配置    topForm组件内的信息
@@ -172,6 +190,8 @@
 						if(valid){
 							this.$confirm('确定要提交吗?','提示',{})
 							.then(() => {
+								console.log(this.editForm);
+								console.log(this.basic)
 								let para={
 									name:this.basic.name,
 									tenant_id:this.basic.tenant_id,
@@ -194,6 +214,7 @@
 										}
 									]
 								}
+								console.log(para)
 								this.$ajax.post('/vll/add_d2d_vll'+'?token='+this.token,para)
 								.then(res => {
 									if(res.status==200){
