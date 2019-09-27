@@ -43,7 +43,7 @@
 					</el-table-column>
 					<el-table-column label="操作" width="260" align='center'>
 						<template slot-scope="scope" style="width: 100%;">
-							<el-button size='small' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
+							<el-button size='small' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
 							<el-button size="small"type='success' @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
 							<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
 						</template>
@@ -308,8 +308,8 @@
 		      this.$refs.editForm.validate(valid => {
 		//    	var str=JSON.stringify()
 		        if (valid) {
-		          this.$confirm("确认提交吗？", "提示", {})
-		            .then(() => {
+		        //   this.$confirm("确认提交吗？", "提示", {})
+		        //     .then(() => {
 		            	this.editLoading = true;
 		            	let para = Object.assign({}, this.editForm);
 					this.$ajax.put('/location/edit_region/'+para.id+'?token='+this.token,para)
@@ -336,8 +336,8 @@
 		              .catch(e => {
 		              	console.log(e);
 		              })
-		            })
-		            .catch(() => { });
+		            // })
+		            // .catch(() => { });
 		        }
 		      });
 		    },
@@ -345,8 +345,8 @@
 		    createData: function(index,row) {
 		      this.$refs.editForm.validate(valid => {
 		        if (valid) {
-		          this.$confirm("确认提交吗？", "提示", {})
-		            .then(() => {
+		        //   this.$confirm("确认提交吗？", "提示", {})
+		        //     .then(() => {
 		                this.editLoading = true;
 		              let para = Object.assign({}, this.editForm);
 						this.$ajax.post('/location/add_region'+'?token='+this.token,para)
@@ -371,8 +371,8 @@
 						.catch(e => {
 							console.log(e)
 						})
-		            })
-		            .catch(() => {});
+		            // })
+		            // .catch(() => {});
 		        }
 		      });
 		

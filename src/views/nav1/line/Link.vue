@@ -133,7 +133,7 @@
         </el-table-column>
         <el-table-column
           prop='maintenance_value'
-          label='故障/维护'
+          label='维护状态'
           align='center'
           width='80'
         >
@@ -812,8 +812,8 @@ export default {
     updateData() {
       this.$refs.editForm.validate(valid => {
         if (valid) {
-          this.$confirm("确认要提交吗？ ", "提示", {})
-            .then(() => {
+          // this.$confirm("确认要提交吗？ ", "提示", {})
+          //   .then(() => {
               this.editLoading = true;
               let para = {
                 id: this.edtiForm.id,
@@ -858,8 +858,8 @@ export default {
                     });
                   }
                 });
-            })
-            .catch(() => {});
+            // })
+            // .catch(() => {});
         }
       });
     },

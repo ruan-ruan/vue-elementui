@@ -20,7 +20,7 @@
             <!--搜索对应的名字-->
             <el-input
               v-model='formList.name'
-              class='sel'
+              class="sel"
             ></el-input>
           </el-form-item>
           <el-form-item
@@ -146,8 +146,8 @@
         </el-table-column>
         <el-table-column
           prop='time'
-          :formatter='dateFormat'
           label='时间'
+          :formatter="dateFormat"
           align='center'
         ></el-table-column>
         <el-table-column

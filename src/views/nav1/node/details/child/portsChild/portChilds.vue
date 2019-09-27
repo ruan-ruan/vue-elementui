@@ -156,10 +156,10 @@
 			updateData(){
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-						this.$confirm('确认要提交吗?','提示',{
-							type:'info'
-						})
-						.then( () => {
+						// this.$confirm('确认要提交吗?','提示',{
+						// 	type:'info'
+						// })
+						// .then( () => {
 							var para={
 								note:this.editForm.note,
 							}
@@ -186,10 +186,10 @@
 										type:'warning'
 									})
 								}
-							})
-							.catch(e => {
-								console.log(e)
-							})
+							// })
+							// .catch(e => {
+							// 	console.log(e)
+							// })
 						})
 					}
 				})

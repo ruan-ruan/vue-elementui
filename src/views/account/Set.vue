@@ -270,11 +270,11 @@
 				editFormRules:{
 					name:[
 						{ required: true, message: '请输入账号', trigger: 'blur' },
-            			{ min: 3, max: 30, message: '长度在 3 到 30 个字符', trigger: 'blur' }
+            			{ min: 3, max: 30, message: '长度在 2 到 30 个字符', trigger: 'blur' }
 					],
 					real_name:[
 						{ required: true, message: '请输入姓名', trigger: 'blur' },
-            			{ min: 3, max: 30, message: '长度在 3 到 30 个字符', trigger: 'blur' }
+            			{ min: 3, max: 30, message: '长度在 2 到 30 个字符', trigger: 'blur' }
 					],
 					password:[ { validator: validatePass,required: true, trigger: 'blur' }],
 					password_confirm:[ { validator: validatePass2,required: true, trigger: 'blur' }],
@@ -395,8 +395,8 @@
 				//编辑
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-						this.$confirm('确认要提交吗?','提示',{})
-						.then(() => {
+						// this.$confirm('确认要提交吗?','提示',{})
+						// .then(() => {
 //							this.loading=true;
 //							let para=Object.assign({} ,this.editForm)
 							if(this.editForm.usable=='禁用'){
@@ -437,12 +437,10 @@
 									}
 								}
 							})
-							
-							
-						})
-						.catch( e => {
-							console.log(e)
-						})
+						// })
+						// .catch( e => {
+						// 	console.log(e)
+						// })
 					}else{
 						return false;
 					}
@@ -479,8 +477,8 @@
 				//添加
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-						this.$confirm('确认要添加吗?','提示',{})
-						.then( () => {
+						// this.$confirm('确认要添加吗?','提示',{})
+						// .then( () => {
 							let para={
 //								token:this.token,
 								name:this.editForm.name,
@@ -511,10 +509,10 @@
 										})
 									}
 								}
-							})
-							.catch(e => {
-								console.log(e)
-							})
+							// })
+							// .catch(e => {
+							// 	console.log(e)
+							// })
 						})
 					}
 				})

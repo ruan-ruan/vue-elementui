@@ -195,8 +195,8 @@
 					
 					ele.validate(valid => {
 						if(valid) {
-							this.$confirm('确定要提交吗?','提示',{})
-							.then(() => {
+							// this.$confirm('确定要提交吗?','提示',{})
+							// .then(() => {
 								this.editLoading=true;
 								var colun={
 									cloud_type:this.clounBasic.cloun,
@@ -236,7 +236,7 @@
 									console.log(e)
 								})
 								
-							}).catch(() => {})
+							// }).catch(() => {})
 						}
 					})
 				})
@@ -251,8 +251,8 @@
 					console.log(ele)
 					ele.validate(valid => {
 						if(valid){
-							this.$confirm('确定要添加吗?','提示',{})
-							.then(() => {
+							// this.$confirm('确定要添加吗?','提示',{})
+							// .then(() => {
 								this.editLoading=true;
 								obj={
 									node_id:that.dcObj.nodeName,
@@ -282,7 +282,7 @@
 												}
 											})
 										}else{
-											this.$messsage({
+										this.$message({
 												message:res.data.message,
 												type:'warning'
 											})
@@ -290,7 +290,7 @@
 									}
 								})
 								.catch(e => {console.log(e)})
-							}).catch(() => {})
+							// }).catch(() => {})
 							
 						}
 					})

@@ -81,9 +81,9 @@
 				<el-table-column prop='description' width='60' label='备注' align='center'></el-table-column>
 				<el-table-column width='300' align='center'label='操作'>
 					<template slot-scope='scope'>
+						<el-button type='primary':diasbled='RunStatus' size='small' @click='run(scope.$index, scope.row)' class='run'>运行</el-button>
 						<el-button type='info' size='small' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
 						<el-button type='success' size='small' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>
-						<el-button type='primary':diasbled='RunStatus' size='small' @click='run(scope.$index, scope.row)' class='run'>运行</el-button>
 						<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
@@ -280,8 +280,8 @@
 	    		//发现节点保存按钮
 	    		this.$refs.foundForm.validate(valid => {
 	    			if(valid){
-	    				this.$confirm('提交后稍等获取输入参数后的数据','提示',{})
-	    				.then(() => {
+	    				// this.$confirm('提交后稍等获取输入参数后的数据','提示',{})
+	    				// .then(() => {
 	    					this.$ajax.post('/node/find_node'+'?token='+this.token)
 	    					.then(res => {
 	    						console.log(res);
@@ -301,8 +301,8 @@
 	    							}
 	    						}
 	    					}).catch((e ) => {console.log(e)})
-	    				}).catch( () => {
-	    				})
+	    				// }).catch( () => {
+	    				// })
 	    			}
 	    		})
 	    	},

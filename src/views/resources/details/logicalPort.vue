@@ -648,8 +648,8 @@
 				//关联-添加保存按钮
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-						this.$confirm('确认要添加吗?','提示',{})
-						.then(() => {
+						// this.$confirm('确认要添加吗?','提示',{})
+						// .then(() => {
 							let para={
 								node_id:this.editForm.node_id,
 								device_id:this.editForm.device_id,
@@ -694,7 +694,7 @@
 							this.$refs["editForm"].resetFields();
 							this.dialogFormVisible=false;
 							console.log(this.physical_ports)
-						}).catch(() => {})
+						// }).catch(() => {})
 					}
 				})
 			},
@@ -728,8 +728,8 @@
 				//关联-编辑保存按钮
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-						this.$confirm('确定要修改吗?','提示',{})
-						.then(() => {
+						// this.$confirm('确定要修改吗?','提示',{})
+						// .then(() => {
 							this.filters.physical_ports[this.editForm.index]=Object.assign({},this.editForm);
 							this.physical_ports[this.editForm.index]={
 								description:this.editForm.description,
@@ -755,7 +755,7 @@
 							this.$refs["editForm"].resetFields();
 							this.dialogFormVisible = false;
 							console.log(this.physical_ports)
-						}).catch(() => {})
+						// }).catch(() => {})
 					}
 				})
 			},

@@ -214,8 +214,8 @@
 			addSubmit(){
 				this.$refs.editForm.validate(valid => {
 					if(valid) {
-						this.$confirm('确定要添加吗?','提示',{})
-						.then(() => {
+						// this.$confirm('确定要添加吗?','提示',{})
+						// .then(() => {
 							var para={
 								name:this.editForm.name,
 								tenant_id:this.editForm.tenant_id,
@@ -241,7 +241,7 @@
 									}
 								}
 							}).catch(e => {console.log(e)})
-						}).catch(() => {})
+						// }).catch(() => {})
 					}
 				})
 			},
