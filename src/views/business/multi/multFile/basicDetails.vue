@@ -53,6 +53,8 @@
 					callback(new Error('请输入带宽'))
 				}else if(!isValidinteger(value)){
 					callback(new Error('请输入正确的带宽'))
+				}if(value>1000000){
+					callback(new Error('带宽最大不超过1000000Mbps'))
 				}else{
 					callback()
 				}

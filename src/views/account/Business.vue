@@ -291,9 +291,9 @@
 				//添加的保存
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-						this.$confirm('确认要添加吗?','提示',{
-							type:'success'
-						}).then(() => {
+						// this.$confirm('确认要添加吗?','提示',{
+						// 	type:'success'
+						// }).then(() => {
 							let para={
 								name:this.editForm.name,
 								password:this.editForm.passwd,
@@ -323,9 +323,9 @@
 							}).catch(e => {
 								console.log(e)
 							})
-						}).catch((e) => {
-							console.log(e)
-						})
+						// }).catch((e) => {
+						// 	console.log(e)
+						// })
 					}
 				})
 			},

@@ -31,8 +31,6 @@
 				</el-table-column>
 				<el-table-column prop='usableText' width='120' label='角色状态' align='center'>
 				</el-table-column>
-				<el-table-column prop='rights' width='150' label='角色权限' align='center'>
-				</el-table-column>
 				<el-table-column prop='description' width='160' label='描述' align='center'>
 				</el-table-column>
 				<el-table-column  width='300' label='操作' align='center'>
@@ -96,7 +94,6 @@
 							this.users=res.data.data.items;
 							//将数据同步到 store里面
 							this.$store.state.roles=this.users;
-							
 							this.users.forEach(ele => {
 								if(ele.usable){
 									ele.usableText='可用';

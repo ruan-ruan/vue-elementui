@@ -423,7 +423,9 @@ export default {
         callback(new Error("请输入带宽"));
       } else if (!isValidinteger(value)) {
         callback(new Error("请输入正确的带宽"));
-      } else {
+      }if(value>1000000){
+					callback(new Error('带宽最大不超过1000000Mbps'))
+				} else {
         callback();
       }
     };
@@ -752,8 +754,8 @@ export default {
       //编辑保存按钮
       this.$refs.editForm.validate(valid => {
         if (valid) {
-          this.$confirm("确定要修改 吗?", "提示", {})
-            .then(() => {
+        //   this.$confirm("确定要修改 吗?", "提示", {})
+        //     .then(() => {
               let para = Object.assign({}, this.editForm);
 
               this.$ajax
@@ -785,8 +787,8 @@ export default {
                 .catch(e => {
                   console.log(e);
                 });
-            })
-            .catch(() => {});
+            // })
+            // .catch(() => {});
         } else {
           return;
         }

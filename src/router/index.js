@@ -215,8 +215,7 @@ var router = new Router({
     			//角色编辑
     			{path:'/account/roles/editForm',component:() => import('@/views/account/add/roles'),name:'角色编辑',hidden:true},
     			
-    			{path:'/account/set',component:() => import('@/views/account/Set'),name:'人员设置',leaf:true,},
-    			{path:'/account/business',component:() => import('@/views/account/Business'),name:'业务经理',leaf:true}	,
+    			{path:'/account/set',component:() => import('@/views/account/Set'),name:'人员设置',leaf:true,}
     	]
     },
 		{

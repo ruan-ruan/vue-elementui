@@ -20,7 +20,7 @@
             <!--搜索对应的名字-->
             <el-input
               v-model='formList.name'
-              class='sel'
+              class="sel"
             ></el-input>
           </el-form-item>
           <el-form-item

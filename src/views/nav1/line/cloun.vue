@@ -219,7 +219,11 @@
 			},
 			handleSeeLogic(index,row){
 				//详情， 逻辑口
+<<<<<<< HEAD
 				this.$router.push({
+=======
+			this.$router.push({
+>>>>>>> 1505d515345ba881f213149da15b93eef63090aa
 					path:'/resource/see/logicalPort',
 					query:{
 						detailsID:row.id

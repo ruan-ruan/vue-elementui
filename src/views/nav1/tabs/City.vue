@@ -14,7 +14,7 @@
 									:key='index'
 									:label='item.name'
 									:value='item.id'
-									>										
+									>								
 								</el-option>
 							</el-select>
 						</el-form-item>
@@ -54,7 +54,7 @@
 				</el-table-column>
 				<el-table-column label="操作" width="260" align='center'>
 					<template slot-scope="scope">
-						<el-button size='small'  @click='handleSee(scope.$index,scope.row)'>详情</el-button>
+						<el-button size='small' type='info'  @click='handleSee(scope.$index,scope.row)'>详情</el-button>
 						<el-button size="small"type='success' @click="handleEdit(scope.$index, scope.row)" >编辑</el-button>
 						<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)"  >删除</el-button>
 					</template>

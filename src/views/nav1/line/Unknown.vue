@@ -88,9 +88,9 @@
 				</el-table-column>
 				<el-table-column  label='操作' align='center' width='400'>
 					<template slot-scope='scope'>
+						<el-button size='small' type='primary' @click='handleStart(scope.$index, scope.row)'>运行</el-button>
 						<el-button size='small' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
 						<el-button size='small' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
-						<el-button size='small' type='primary' @click='handleStart(scope.$index, scope.row)'>运行</el-button>
 						<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)"  >删除</el-button>
 					</template>
 				</el-table-column>
@@ -729,13 +729,13 @@
 				//保存的时候提交请求
 				this.$refs.foundForm.validate(valid => {
 					if(valid){
-						this.$confirm('确定要提交吗?','提示',{})
-						.then(() => {
+						// this.$confirm('确定要提交吗?','提示',{})
+						// .then(() => {
 							var para={
 								
 							};
 							this.foundFormVisible=false;
-						}).catch(() => {})
+						// }).catch(() => {})
 //						this.foundFormVisible=false;
 					}else{
 						this.foundFormVisible=false;
