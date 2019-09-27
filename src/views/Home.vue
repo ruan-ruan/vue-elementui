@@ -1,31 +1,13 @@
 <template>
   <el-row class="container">
-    <el-col
-      :span="24"
-      class="header"
-    >
-      <el-col
-        :span="10"
-        class="logo"
-        :class="collapsed?'logo-collapse-width':'logo-width'"
-      >
-        <img
-          :src="(collapsed?sysImg:sysName)"
-          :class="collapsed?'':'Img_left'"
-        />
+    <el-col :span="24" class="header">
+      <el-col :span="10" class="logo" :class="collapsed?'logo-collapse-width':'logo-width'">
+        <img  :src="(collapsed?sysImg:sysName)" :class="collapsed?'':'Img_left'"/>
       </el-col>
       <el-col :span="8">
-        <div
-          class="tools"
-          @click.prevent="collapse"
-        >
-          <i class="fa fa-align-justify"></i>
-        </div>
+          <img :src="collapsed?asideRigth:asideLeft" class="tools asideLeft"  @click.prevent="collapse"/>
       </el-col>
-      <el-col
-        :span="6"
-        class="userinfo"
-      >
+      <el-col  :span="6"class="userinfo">
         <el-row>
           <el-col :span='24'>
             <el-col :span='7'>
@@ -90,6 +72,7 @@
         </el-row>
       </el-col>
     </el-col>
+    
     <el-col
       :span="24"
       class="main"
@@ -113,7 +96,10 @@
               :index="index+''"
               v-if="!item.leaf"
             >
-              <template slot="title"><i :class="item.iconCls"></i>{{item.name}}</template>
+              <template slot="title">
+                <!-- <i :class="item.iconCls"></i> -->
+                <img :src="item.iconCls" class='asideLogo'/>
+                {{item.name}}</template>
               <el-menu-item-group
                 v-for='(child,indexs)  in item.children'
                 :index="child.path"
@@ -146,7 +132,10 @@
             <el-menu-item
               v-if="item.leaf&&item.children.length>0"
               :index="item.children[0].path"
-            ><i :class="item.iconCls"></i>{{item.children[0].name}}</el-menu-item>
+            >
+            <!-- <i :class="item.iconCls"></i> -->
+            <img :src="item.iconCls" class='asideLogo'/>
+            {{item.children[0].name}}</el-menu-item>
           </template>
         </el-menu>
         <!--导航菜单-折叠后-->
@@ -166,7 +155,10 @@
                 style="padding-left: 20px;"
                 @mouseover="showMenu(index,true)"
                 @mouseout="showMenu(index,false)"
-              ><i :class="item.iconCls"></i></div>
+              >
+              <!-- <i :class="item.iconCls"></i> -->
+              <img :src="item.iconCls" class='asideLogo'/>
+            </div>
               <ul
                 class="el-menu submenu"
                 :class="'submenu-hook-'+index"
@@ -191,12 +183,16 @@
               style="padding-left: 20px;height: 56px;line-height: 56px;padding: 0 20px; "
               :class="$route.path==item.children[0].path?'is-active':''"
               @click="$router.push(item.children[0].path)"
-            ><i :class="item.iconCls"></i></div>
+            >
+            <!-- <i :class="item.iconCls"></i> -->
+            <img :src="item.iconCls" class='asideLogo'/>
+          </div>
           </li>
 </template>
 </li>
 </ul>
 </aside>
+
 <section class="content-container">
   <div class="grid-content bg-purple-light">
     <el-col
@@ -229,6 +225,8 @@
     </el-col>
   </div>
 </section>
+
+
 </el-col>
 </el-row>
 </template>
@@ -239,6 +237,8 @@ import { base } from "@/api/api";
 export default {
   data() {
     return {
+      asideLeft:require('../assets/images/aside/left.png'),
+			asideRigth:require('../assets/images/aside/right.png'),
       sysImg: require("../assets/images/logo.png"),
       sysName: require("../assets/images/LOG.png"),
       collapsed: false,
@@ -343,7 +343,7 @@ export default {
     this.$ajax
       .get("/public/get_news" + "?token=" + tokenkey, para)
       .then(res => {
-        console.log(res);
+        // console.log(res);
         if (res.status == 200) {
           if (res.data.status == 0) {
             let ress = res.data.data.items;
@@ -353,10 +353,10 @@ export default {
                 datas.push(items);
               }
             })
-            console.log(datas)
+            // console.log(datas)
             this.$store.state.message=datas.length;
             this.tableData = res.data.data.items?res.data.data.items.slice(0,5):[];
-            console.log(this.tableData)
+            // console.log(this.tableData)
           }
         }
       })
@@ -425,11 +425,14 @@ export default {
       width: 60px;
     }
     .tools {
-      padding: 0px 23px;
-      width: 14px;
-      height: 60px;
-      line-height: 60px;
-      cursor: pointer;
+        padding: 0px 10px;
+				width:30px;
+				height: 30px;
+				line-height: 30px;
+				position: absolute;
+				top: 30px;
+				margin-top: -15px;
+				cursor: pointer;
     }
   }
   .main {
@@ -480,6 +483,7 @@ export default {
       padding: 20px;
 
       .breadcrumb-container {
+        
         .title {
           width: 200px;
           float: left;
@@ -502,4 +506,11 @@ export default {
   margin-left: -23px !important;
   margin-top: 11px !important;
 }
+.el-menu-item-group__title{
+		padding-top: 0px !important;
+	}
+.asideLogo{
+		width: 22px;
+		height: 22px;
+	}
 </style>

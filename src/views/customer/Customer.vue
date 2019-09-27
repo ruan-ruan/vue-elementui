@@ -93,18 +93,11 @@
           align='center'
           label='序号'
         ></el-table-column>
-        <!--<el-table-column prop='name' width='100' align='center' label='创建时间':formatter='dateTableFormat'></el-table-column>-->
-        <el-table-column
-          prop='email'
-          width='150'
-          align='center'
-          label='租户标识'
-        >
+        <el-table-column  width='90'align='center'label='租户标识(公司名称)' >
           <template slot-scope='scope'>
-            <span
-              class="tem_span"
-              @click="handleSee(scope.$index, scope.row)"
-            >{{scope.row.name}}</span>
+            <span class="tem_span" @click="handleSee(scope.$index, scope.row)"
+            >{{scope.row.name}}</span>  <br />
+            <span>{{scope.row.company_name}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -113,12 +106,12 @@
           align='center'
           label='租户状态'
         ></el-table-column>
-        <el-table-column
+        <!--<el-table-column
           prop='company_name'
           width='150'
           align='center'
           label='公司名称'
-        ></el-table-column>
+        ></el-table-column>-->
         <el-table-column
           prop='contact'
           width='150'

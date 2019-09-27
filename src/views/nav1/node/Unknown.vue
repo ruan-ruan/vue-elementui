@@ -50,7 +50,7 @@
 			
 			<!--列表部分-->
 			<el-table :data='users'  highlight-current-row style='width: 100%;'@selection-change="selsChange" v-loading='loading'>
-				<el-table-column type="selection" width="40" align='center'></el-table-column>
+				<el-table-column type="selection" width="50" align='center'></el-table-column>
 				<el-table-column type='index' width='50' label='序号' align='center'></el-table-column>
 				<el-table-column prop='creation_time'width='100'label='申请时间'align='center' :formatter='dateFormat'></el-table-column>
 				<el-table-column prop='name' width='80' label='节点名称' align='center'></el-table-column>

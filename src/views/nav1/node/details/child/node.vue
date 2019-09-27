@@ -28,10 +28,6 @@
 						<el-button size='small' type='success' @click='equStatusTwo = !equStatusTwo' v-show='addEquipStatus' v-text='equStatusTwo?"收起物理设备2":"添加物理设备2"' ></el-button>
 						<el-col :span='24'>		
 							<el-col :span='12' class='equipment'>
-<<<<<<< HEAD
-=======
-								<el-button size='small' type='success' @click='StatusDisplay' v-show='addEquipStatus'>添加物理设备2</el-button>
->>>>>>> 7c9a1445ad4b1b5c7d70be3392d56f4ac45f789f
 								<h4>物理设备1:</h4>
 								<el-form-item label='设备名称:'prop='devices0_hostname'>
 									<el-input v-model='seeForm.devices0_hostname':disabled='StaNot' class='ipt'placeholder='请输入设备名称'></el-input>

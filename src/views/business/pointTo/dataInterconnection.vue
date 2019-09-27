@@ -13,17 +13,17 @@
 						<el-col :span='24'>
 							<el-col :span='12'>
 								<h4 class="title_h4"title="虚拟专线受控的起始端">A端配置<span class="cli_toTip" >?</span></h4>
-								<dc-port @sendFormData_a='getFormData_a':tit='vlanSel.label1'></dc-port>
+								<dc-port @sendFormData_a='getFormData_a':tit='vlanSel.label1' ref='dc_a'></dc-port>
 							</el-col>
 							<el-col :span='12'>
 								<h4 class="title_h4"title='虚拟专线受控的终止端'>Z端配置<span class="cli_toTip">?</span></h4>
-								<dc-port @sendFormData_z='getFormData_z' :tit='vlanSel.label2'  ></dc-port>
+								<dc-port @sendFormData_z='getFormData_z' :tit='vlanSel.label2'  ref='dc_z' ></dc-port>
 							</el-col>
 							
 						</el-col>
 					</el-row>
 					<h3 class="title_h3">第三步:其他配置</h3>
-					<billing @getTime='getTime' ref='billingForm'></billing>
+					<billing @sendTime='getTimeVal' ref='billingForm'></billing>
 				</el-col>
 				<el-col :span='5' class='pos_row'>
 					<h3 class="tit_h3" >配置详情概览</h3>
@@ -137,67 +137,87 @@
 				};
 				console.log(this.basic)
 			},
-			getTime(val){
+			getTimeVal(val){
+				console.log(val)
 				//获取子组件传过来的时间
-				this.editForm.charge_time=val.billing_time/1000
-				this.editForm.expiration_time=val.overdue_time/1000
+				this.editForm.charge_time=val.billing_time/1000;
+				this.editForm.expiration_time=val.overdue_time/1000;
+				if( !val['billing_time'] && typeof (val['billing_time'] !='undefined' && val['billing_time'] !=0)){
+					this.creatFormDetails.details_charge_time=''
+				}else{
+					this.creatFormDetails.details_charge_time=val.billing_time ===''?'':datedialogFormat(val.billing_time/1000)
+				}
+				
+				if( !val['overdue_time'] && typeof (val['overdue_time'] !='undefined' && val['overdue_time'] !=0)){
+					this.creatFormDetails.details_expiration_time=''
+				}else{
+					this.creatFormDetails.details_expiration_time=val.overdue_time ===''?'':datedialogFormat(val.overdue_time/1000)
+				}
 			},
 			reset(){
-				this.$refs['editForm'].resetFields();
 				this.$refs['creatFormDetails'].resetFields();
 				this.$refs['newForm'].$refs['editForm'].resetFields()
 				this.$refs['billingForm'].$refs['editForm'].resetFields();
+				this.$refs['dc_a'].$refs['editForm'].resetFields();
+				this.$refs['dc_z'].$refs['editForm'].resetFields();
 
 			},
 			submitBtn(){
-				this.$refs.editForm.validate(valid => {
-					if(valid){
-						this.$confirm('确定要提交吗?','提示',{})
-						.then(() => {
-							let para={
-								name:this.basic.name,
-								tenant_id:this.basic.tenant_id,
-								charge_mode:this.basic.charge_mode,
-								bandwidth:this.basic.bandwidth,
-								charge_time:this.editForm.charge_time,
-								expiration_time:this.editForm.expiration_time,
-								description:this.basic.description,
-								endpoints:[
-									{
-										name:'A端',
-										node_id:this.editForm.nodeName_a,
-										logic_port_id:this.editForm.endpoints_logic_port_id_a,
-										vlan:this.editForm.vlan_a
-									},{
-										name:'Z端',
-										node_id:this.editForm.nodeName_z,
-										logic_port_id:this.editForm.endpoints_logic_port_id_z,
-										vlan:this.editForm.vlan_z
-									}
-								]
-							}
-							this.$ajax.post('/vll/add_d2d_vll'+'?token='+this.token,para)
-							.then(res => {
-								if(res.status==200){
-									if(res.data.status==0){
-										this.$message({
-											message:'开通成功!',
-											type:'success'
-										})
-										this.reset();
-									}else{
-										this.$message({
-											message:res.data.message,
-											type:'warning'
-										})
-									}
+				// newForm     基础的信息  dc_a   a端   dc_z   editForm
+				let str=[this.$refs.dc_a.$refs.editForm,this.$refs.dc_z.$refs.editForm,this.$refs.newForm.$refs.editForm]
+				
+				
+				str.forEach(ele => {
+					ele.validate(valid => {
+						if(valid){
+							this.$confirm('确定要提交吗?','提示',{})
+							.then(() => {
+								let para={
+									name:this.basic.name,
+									tenant_id:this.basic.tenant_id,
+									charge_mode:this.basic.charge_mode,
+									bandwidth:this.basic.bandwidth,
+									charge_time:this.editForm.charge_time,
+									expiration_time:this.editForm.expiration_time,
+									description:this.basic.description,
+									endpoints:[
+										{
+											name:'A端',
+											node_id:this.editForm.nodeName_a,
+											logic_port_id:this.editForm.endpoints_logic_port_id_a,
+											vlan:this.editForm.vlan_a
+										},{
+											name:'Z端',
+											node_id:this.editForm.nodeName_z,
+											logic_port_id:this.editForm.endpoints_logic_port_id_z,
+											vlan:this.editForm.vlan_z
+										}
+									]
 								}
-							}).catch(e => {
-								console.log(e)
-							})
-						}).catch(() => {})
-					}
+								this.$ajax.post('/vll/add_d2d_vll'+'?token='+this.token,para)
+								.then(res => {
+									if(res.status==200){
+										if(res.data.status==0){
+											this.$message({
+												message:'开通成功!',
+												type:'success'
+											})
+											this.reset();
+										}else{
+											this.$message({
+												message:res.data.message,
+												type:'warning'
+											})
+										}
+									}
+								}).catch(e => {
+									console.log(e)
+								})
+							}).catch(() => {})
+						}
+					})
 				})
+				
 			},
 		}
 	}

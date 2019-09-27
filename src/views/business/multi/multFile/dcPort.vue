@@ -191,7 +191,7 @@
 			'portVlan.selVlanVal':function(newVal,oldVal){
 				this.vlanVal=this.portVlan.selVlanVal.split('-');
 				this.vlanData=this.getData(parseInt(this.vlanVal[0]),parseInt(this.vlanVal[1]));
-
+				this.disVlan=JSON.parse(JSON.stringify(this.conversion(this.vlanData))); 
 				
 				
 				
@@ -240,6 +240,7 @@
 			this.token=sessionStorage.getItem('token');
 			this.vlanVal=this.portVlan.selVlanVal.split('-');
 			this.vlanData=this.getData(parseInt(this.vlanVal[0]),parseInt(this.vlanVal[1]));
+			this.disVlan=JSON.parse(JSON.stringify(this.conversion(this.vlanData))); 
 			this.getformData();
 			if(typeof this.tit !=='undefined'){
 				this.textMap.title=this.tit;

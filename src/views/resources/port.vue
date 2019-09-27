@@ -9,10 +9,14 @@
    	 					<el-input v-model='filters.name' placeholder="请输入逻辑端口名称" class='sel'></el-input>
    	 				</el-form-item>
    	 				<el-form-item label='租户标识' prop='nameLogo'>
-   	 					<el-input v-model='filters.nameLogo' placeholder="请输入逻辑端口名称" class='sel'></el-input>
+   	 					<el-select v-model='filters.nameLogo' class='sel' placeholder="请选择租户">
+   	 						<el-option v-for='(item,index ) in tenantData'
+   	 							:value='item.id'
+   	 							:label='item.name'
+   	 							:key='index'></el-option>
+   	 					</el-select>
    	 				</el-form-item>
    	 				<el-form-item label='状态' prop='status'>
-   	 					<!--<el-input v-model='filters.name' placeholder="请输入逻辑端口名称"></el-input>-->
    	 					<el-select v-model='filters.status'placeholder="请选择逻辑端口状态" class='sel'>
    	 						<el-option v-for=' (item,index) in PortStatus'
    	 							:value='item.value'
@@ -22,7 +26,7 @@
    	 				</el-form-item>
    	 				<el-form-item>
    	 					<el-button type='primary' @click='getUsers'>搜索</el-button>
-   	 					<el-button type='info' @click='reset(filters)'>重置</el-button>
+   	 					<el-button type='info' @click='reset'>重置</el-button>
    	 				</el-form-item>
    	 			</el-form>
    	 		</el-col>
@@ -48,25 +52,25 @@
    	 	
    	 	<!--表格数据部分-->
    	 	<el-table :data='users' highlight-current-row style='width: 100%;' v-loading='loading'>
-   	 		<el-table-column type='index' width='60' align='center'></el-table-column>
-   	 		<el-table-column prop='creation_time' label='创建时间' width='120'align='center':formatter='dateFormat'></el-table-column>
-   	 		<el-table-column prop='name' label='逻辑端口名称' width='120'align='center'>
+   	 		<el-table-column type='index' width='50' align='center'></el-table-column>
+   	 		<el-table-column prop='creation_time' label='创建时间' width='95'align='center':formatter='dateFormat'></el-table-column>
+   	 		<el-table-column prop='name' label='逻辑端口名称' width='80'align='center'>
    	 			<template slot-scope='scope'>
    	 				<span class='cli_spn' @click="handleSee(scope.$index,scope.row)">{{scope.row.name}}</span>
    	 			</template>
    	 		</el-table-column>
-   	 		<el-table-column prop='tenant.name' label='租户标识' width='120'align='center'></el-table-column>
-   	 		<el-table-column  label='逻辑口状态' width='120'align='center'>
+   	 		<el-table-column prop='tenant.name' label='租户标识' width='80'align='center'></el-table-column>
+   	 		<el-table-column  label='逻辑口状态' width='60'align='center'>
    	 			<template slot-scope='scope'>
    	 				<span :class='scope.row.usableTextColor'>{{scope.row.usableText}}</span>
    	 			</template>
    	 		</el-table-column>
-   	 		<el-table-column prop='physical_ports_len' label='端口组合数' width='120'align='center'></el-table-column>
-   	 		<el-table-column prop='access_type' label='用户连接方式' width='120'align='center'></el-table-column>
-   	 		<el-table-column prop='creation_time' label='合同开始时间' width='120'align='center':formatter='dateFormat'></el-table-column>
-   	 		<el-table-column prop='creation_time' label='合同结束时间' width='120'align='center':formatter='dateFormat'></el-table-column>
-   	 		<el-table-column prop='creation_time' label='备注' width='120'align='center'></el-table-column>
-   	 		<el-table-column  label='操作' width='260'  v-if=' !tit'>
+   	 		<el-table-column prop='physical_ports_len' label='端口组合数' width='50'align='center'></el-table-column>
+   	 		<el-table-column prop='access_type' label='用户连接方式' width='60'align='center'></el-table-column>
+   	 		<el-table-column prop='creation_time' label='合同开始时间' width='95'align='center':formatter='dateFormat'></el-table-column>
+   	 		<el-table-column prop='creation_time' label='合同结束时间' width='95'align='center':formatter='dateFormat'></el-table-column>
+   	 		<el-table-column prop='creation_time' label='备注' width='100'align='center'></el-table-column>
+   	 		<el-table-column  label='操作' width='230'  v-if=' !tit'>
    	 			<template slot-scope='scope'>
    	 				<el-button size='small' type='info' @click='handleStatus(scope.$index, scope.row)'>{{scope.row.btnStatus}}</el-button>
 	   	 			<el-button size='small' type='success' @click='handleEdit(scope.$index,scope.row)'>编辑</el-button>
@@ -137,6 +141,7 @@
 				excelData:[],
 				//用来控制删除按钮的显示和隐藏
 				statusDel:null,
+				tenantData:[],//租户数据
 			}
 		},
 		created(){
@@ -147,9 +152,21 @@
 			}else{
 				this.getUsers();
 			}
-			
+			this.getTenantData()
 		},
 		methods:{
+			getTenantData(){
+				//tenantData
+				this.$ajax.get('/tenant/tenants'+'?token='+this.token)
+				.then(res => {
+					console.log(res);
+					if(res.status==200&& res.data.status==0){
+						this.tenantData=res.data.data.items;
+					}
+				}).catch(e => {
+					console.log(e)
+				})
+			},
 			handleSizeChange(val){
 //				console.log(`每页${val}条`);
 				this.pagesize=val;
@@ -176,8 +193,6 @@
 						if(res.data.status==0){
 							console.log(res);
 							res.data.data.items.forEach(ele => {
-								console.log(ele)
-								console.log(getPortStatus(ele.physical_ports));
 								ele.physical_ports_len=ele.physical_ports.length;
 								let portColor=document.getElementsByClassName('portColor');
 								if(ele.usable){
@@ -199,17 +214,11 @@
 									ele.btnStatus='启用';
 									ele.usableTextColor='portAbnor'
 								}
-								// if(ele.usableText=='禁用'){
-								// 	//禁用的是可以显示删除按钮部分
-								// 	this.statusDel=true
-								// }else{
-								// 	//否则的时候是隐藏
-								// 	this.statusDel=false
-								// }
 							})
+							console.log(res)
 								//对数据状态的遍历  
 							if(this.filters.status !=''){
-									this.users=res.data.data.items.filters(item => {
+									this.users=res.data.data.items.filter(item => {
 										return item.usableText==this.filters.status;
 									})
 							}else{
@@ -222,10 +231,11 @@
 					console.log(e)
 				})
 			},
-			reset(sel){
-				for (let index in sel) {
-					sel[index]=''
-				}
+			reset(){
+				this.$refs['filters'].resetFields();
+//				for (let index in sel) {
+//					sel[index]=''
+//				}
 			},
 			addUsers(){
 				//添加  逻辑端口

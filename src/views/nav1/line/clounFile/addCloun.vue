@@ -8,16 +8,21 @@
 						<!--<el-col :span='12'>-->
 							<h3 class="tit_h3" v-if='clounStatus'>云链路基础信息配置</h3>
 							<el-form-item label='公有云' prop='type'>
-								<el-autocomplete class='ipt' :disabled='!clounStatus'
-								  	popper-class="my-autocomplete"
-								  	v-model="editForm.type"
-								  	:fetch-suggestions="querySearch"
-								  	placeholder="请输入内容"
-								  	@select="handleSelect" @blur='gethistory(editForm.type)'>
-								  	<template slot-scope="{ item }">
-                      					<span v-text="item "></span>
-								  	</template>
-								</el-autocomplete>
+								<template>
+									
+								
+									<el-autocomplete class='ipt' :disabled='!clounStatus'
+									  	popper-class="my-autocomplete"
+									  	v-model="editForm.type"
+									  	:fetch-suggestions="querySearch"
+									  	placeholder="请输入内容"
+									  	@select="handleSelect" >
+									  	<template slot-scope="{ item }">
+	                      					<span >{{item.value}}</span>
+									  	</template>
+									</el-autocomplete>
+									<span class="cli_toTip" title="请正确填写公有云名称，否则将会影响拓扑图的效果展示">?</span>	
+								</template>
 							</el-form-item>
 							<el-form-item label='云链路名称'prop='name'>
 								<el-input v-model='editForm.name'class='ipt' :disabled='!clounStatus'></el-input>
@@ -134,7 +139,9 @@
 
 				},
 				editLoading:false,
-				sharedCloun:[],
+//				sharedCloun:['阿里云','腾讯云','百度云','华为云','金山云','AWS','Ucloud'],
+				
+				sharedCloun:[{value:'阿里云'},{value:'腾讯云'},{value:'百度云'},{value:'华为云'},{value:'金山云'},{value:'AWS'},{value:'Ucloud'}],
 				clounData:[],//对接的节点名称
 				logicData:[],//对接的逻辑口名称
 				driveData:[],//接口驱动的数据
@@ -231,19 +238,7 @@
 					}
 				}).catch(e => {console.log(e)})
 			},
-			gethistory(item){ //公有云的时候，默认的显示前面几条数据
-				// console.log(item);
-				// let obj={
-				// 	label:item,
-				// 	value:item
-				// }
-				this.sharedCloun.unshift(item)
-				if(this.sharedCloun.length<6){
-					 this.sharedCloun=this.sharedCloun
-				}else{
-					this.sharedCloun=this.sharedCloun.slice(0,5);
-				}
-			},
+			
 			handleSelect(){
 
 			},
@@ -256,7 +251,7 @@
 		      createFilter(queryString) {
 		        return (restaurant) => {
 		          // return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-              	return (restaurant.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+              	return (restaurant.value.indexOf(queryString.toLowerCase()) === 0);
 		        };
 		     },
 			getCloun(ids){

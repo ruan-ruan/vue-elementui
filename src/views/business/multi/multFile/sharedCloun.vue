@@ -100,6 +100,10 @@
 							}
 						}
 						
+						if(newVal.cloun){
+							
+						}
+						
 					this.$emit('sendClounbasic',this.editForm)//发送基本的云选择的列表
 					this.$emit('sendClounbasic_a',this.editForm)
 					this.$emit('sendClounbasic_z',this.editForm)
@@ -136,8 +140,19 @@
 //				console.log(localStorage.getItem("temp"))
 			},
 			addData(item){//失去焦点的时候，公有云添加新的数据
+				
+				
 				this.clounData.unshift(item);
-				localStorage.setItem("temp",this.clounData); 
+				let str=JSON.parse(JSON.stringify(this.clounData))
+				var srr=[]
+				str.forEach(ele => {
+					if(srr.indexOf(ele) ===-1){
+						srr.push(ele)
+					}
+				})
+				
+				
+				localStorage.setItem("temp",srr); 
 			},
 			handleSelect(item) {
 

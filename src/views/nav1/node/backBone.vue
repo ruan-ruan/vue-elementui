@@ -3,10 +3,10 @@
 		
 		<section>
 			<!--工具条-->
+			<el-row>
 			<el-col :span='24' class='toolbar' style='padding-bottom: 0px;'>
-				<el-form :inline='true' :model='filters'  @submit.native.prevent >
+				<el-form :inline='true' :model='filters' ref='filters' >
 					<el-form-item label='名称' prop='name'>
-						<!--搜索对应的名字-->
 						<el-input v-model='filters.name' class='sel'></el-input>
 					</el-form-item>
 					<el-form-item label='数据中心'prop='search_dc'>
@@ -41,11 +41,13 @@
 					<el-form-item>
 						<el-button type='primary' v-on:click='getUsers'>查询</el-button>
 						<el-button type='info' @click='reset(filters)'>重置</el-button>
-						
 					</el-form-item>
 				</el-form>
 			</el-col>
-			
+			</el-row>
+			<el-row>
+				
+		
 			<el-col :span='24'>
 				<el-dropdown split-button type='success'@command="handleExport">
 					导出数据
@@ -55,11 +57,12 @@
 					</el-dropdown-menu>
 				</el-dropdown>
 			</el-col>
+				</el-row>
 			<!--列表-->
-			<el-row>
-				<el-col :span="24">
-					<el-table :data='users' highlight-current-row @selection-change='selsChange' style='width: 100%;' v-loading='loading'>
-				<el-table-column type='selection' width='40'></el-table-column>
+			<!--<el-row>
+				<el-col :span="24">-->
+				<el-table :data='users' highlight-current-row @selection-change='selsChange' style='width: 100%;' v-loading='loading'>
+				<el-table-column type="selection" width="50" align='center'></el-table-column>
 				<el-table-column type='index' width='50' label='序号' align='center'></el-table-column>
 				<el-table-column prop='creation_time' :formatter='dateFormat' width='100' label='创建时间'align='center'></el-table-column>
 				<el-table-column prop='name' width='80' label='节点名称' align='center'></el-table-column>
@@ -107,12 +110,15 @@
 					</template>
 				</el-table-column>
 			</el-table>
-				</el-col>
+				<!--</el-col>
 				
-			</el-row>
+			</el-row>-->
 			
 			
 			<!--底部工具条-分页-数据的导出等-->
+			<el-row>
+				
+			
 			<el-col :span='24' class='toolbar'>	
 				<el-col :span='3'>
 					<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">批量删除</el-button>
@@ -132,6 +138,7 @@
 				</el-col>			
 					
 			</el-col>
+			</el-row>
 		</section>
 	</div>
 </template>

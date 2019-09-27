@@ -219,7 +219,12 @@
 			},
 			handleSeeLogic(index,row){
 				//详情， 逻辑口
-				
+				this.$router.push({
+					path:'/resource/see/logicalPort',
+					query:{
+						detailsID:row.id
+					}
+				})
 			},
 			handleSeeLink(index,row){
 				//详情   云莲路详情

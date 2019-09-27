@@ -5,12 +5,12 @@
 			<el-row>
 				<el-col :span='24'style='margin-left: 40px;'>
 					<!--<el-col :span='12'>-->
-						<el-form :model='customer' ref='customer' :rules='customerRules' v-loading='editLoading' label-width='120px'>
-							<!--<el-form-item label='创建时间' v-show='cusTimeStatus'>
-								<el-input v-model='customer.creat_time'class='ipt_sels' disabled></el-input>
-							</el-form-item>-->
-							<el-form-item label='公司名称' prop='company_name'>
-								<el-input v-model='customer.company_name' class='ipt_sels'placeholder='请输入公司名称' :disabled='!btnStatus'></el-input>
+						<el-form :model='customer' ref='customer' :rules='customerRules' v-loading='editLoading' label-width='95px'>
+							<el-form-item label='租户标识(公司名称)' prop='company_name'>
+								<template>
+									<el-input v-model='customer.company_name' class='ipt_sels'placeholder='请输入公司名称' :disabled='!btnStatus'></el-input>
+									<span class="cli_toTip" title="公司名称应该与客户签订合同的主题名称一致">?</span>	
+								</template>
 							</el-form-item>
 							<el-form-item label='租户联系人'prop='contact'>
 								<el-input v-model='customer.contact' class='ipt_sels'placeholder='请输入租户联系人':disabled='!btnStatus'></el-input>
@@ -21,8 +21,10 @@
 							<el-form-item label='租户邮箱'prop='email'>
 								<el-input v-model='customer.email' class='ipt_sels'placeholder='请输入租户邮箱':disabled='!btnStatus'></el-input>
 							</el-form-item>
-							<el-form-item label='租户标识' prop='name'>
-								<!--<el-input v-model='customer.name' class='ipt_sels':disabled='!btnStatus'placeholder='请输入租户标识'></el-input>-->
+							<el-form-item label='关联租户标识' v-show='false'>
+								<el-input v-model='customer.name' class='ipt_sels' disabled></el-input>
+							</el-form-item>
+							<!--<el-form-item label='租户标识' prop='name'>
 								<el-select v-model='customer.name'class='ipt_sels' filterable  :disabled='!btnStatus'placeholder='请输入租户标识'>
 									<el-option v-for='(item ,index) in tenantData'
 										:value='item.value'
@@ -30,15 +32,18 @@
 										:key='index'></el-option>
 								</el-select>
 								
-							</el-form-item>
+							</el-form-item>-->
 							<el-form-item label='公司行业类型'>
-								<el-select v-model='customer.company_type':disabled='!btnStatus'class='ipt_sels'>
-									<el-option v-for='(item,index) in industryType'
-										:value='item.value'
-										:label='item.label'
-										:key='index'>									
-									</el-option>
-								</el-select>
+								<template>
+									<el-select v-model='customer.company_type':disabled='!btnStatus'class='ipt_sels'>
+										<el-option v-for='(item,index) in industryType'
+											:value='item.value'
+											:label='item.label'
+											:key='index'>									
+										</el-option>
+									</el-select>
+									<span class="cli_toTip" title="按类型列表选择客户公司行业类型">?</span>
+								</template>		
 							</el-form-item>
 							<el-form-item label='公司电话'>
 								<el-input v-model='customer.phone' class='ipt_sels':disabled='!btnStatus'></el-input>
@@ -165,7 +170,7 @@
 				btnStatus:true,
 				//时间默认的时候是隐藏的额
 //				cusTimeStatus:false,
-				tenantData:[]
+//				tenantData:[]
 			}
 		},
 		created(){
@@ -190,7 +195,7 @@
 				//传入对应的实参
 				this.getCusDetails(this.cusEditID)
 			}
-			this.getTenant()
+//			this.getTenant()
 		},
 		methods:{
 			addressChange(arr) {
@@ -202,17 +207,17 @@
 			goback(){
 				this.$router.go(-1);
 			},
-			getTenant(){
-				this.$ajax.get('/tenant/tenants'+'?token='+this.token)
-				.then(res => {
-					console.log(res)
-					if(res.status==200){
-						if(res.data.status==0){
-							this.tenantData=res.data.data.items
-						}
-					}
-				}).catch(e => {console.log(e)})
-			},
+//			getTenant(){
+//				this.$ajax.get('/tenant/tenants'+'?token='+this.token)
+//				.then(res => {
+//					console.log(res)
+//					if(res.status==200){
+//						if(res.data.status==0){
+//							this.tenantData=res.data.data.items
+//						}
+//					}
+//				}).catch(e => {console.log(e)})
+//			},
 			handleAdd(){
 				//添加租户的时候保存按钮
 				console.log('执行添加保存的按钮');

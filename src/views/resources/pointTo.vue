@@ -8,11 +8,7 @@
           :md='24'
           :lg='24'
         >
-          <el-form
-            :model='filters'
-            :inline='true'
-            ref='filters'
-          >
+          <el-form :model='filters':inline='true' ref='filters'>
             <el-form-item label='名称'>
               <el-input
                 v-model='filters.search_name'
@@ -586,10 +582,8 @@ export default {
         search_status: this.filters.search_status,
         search_start_bandwidth: this.filters.search_start_bandwidth,
         search_end_bandwidth: this.filters.search_end_bandwidth,
-        search_start_charge_time:
-          typeof this.filters.billingTime[0] == "undefined"
-            ? ""
-            : Number(this.filters.billingTime[0]) / 1000,
+        
+        search_start_charge_time: typeof this.filters.billingTime[0] == "undefined" ? "": Number(this.filters.billingTime[0]) / 1000,
         search_end_charge_time:
           typeof this.filters.billingTime[1] == "undefined"
             ? ""
@@ -614,7 +608,7 @@ export default {
             if (res.data.status == 0) {
               console.log(res.data.data.items);
               // this.users=res.data.data.items;
-              // this.total=res.data.data.page.total;
+                 this.total=res.data.data.page.total;
               console.log(res);
 
               res.data.data.items.forEach(ele => {

@@ -33,8 +33,6 @@
 				</el-form>
 			</el-col>
 		</el-row>
-		
-		
 	</div>
 </template>
 
@@ -55,15 +53,13 @@
 		watch:{
 			editForm:{
 				handler(newVal,oldVal){
-					this.$emit('getTime',this.editForm);
-//					if(newVal!=''){
-//						this.$emit('getTime',this.editForm);
-//					}
+					console.log(newVal)
+					this.$emit('sendTime',newVal)
 				},
 				deep:true,
-				immediate:true,
-			}
+			},
 		},
+		
 		methods:{
 			//计费时间和结束时间
 			beginDate(){

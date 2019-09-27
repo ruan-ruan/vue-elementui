@@ -178,6 +178,7 @@
 								<el-radio 
 									v-for='(item,index) in detectionStatue'
 									:key='index' 
+									:value='item.label'
 									:label='item.label' >{{item.name}}
 								</el-radio>				
 						</el-radio-group>
@@ -313,12 +314,12 @@
 				//链路检测是否开启部分
 				detectionStatue:[
 					{
-//						value:true,
-						label:'true',
+
+						label:true,
 						name:'开启'
 					},{
-//						value:false,
-						label:'false',
+
+						label:false,
 						name:'关闭'
 					}
 				],
@@ -364,6 +365,7 @@
 				detectionStatus:false,
 				seeStatus:false,	
 				seeStatusCreatime:true,
+				 
 			}
 		},
 		watch:{
@@ -566,6 +568,7 @@
 				this.seeStatus=false;
 				//显示时间
 				this.editFormStatus=true;
+//				console.log(typeof row.monitoring)
 				this.editForm={
 					id:row.id,
 					a_node_id:row.a_node.id,
@@ -589,6 +592,7 @@
 					creation_time:'',
 					description:row.description,
 				}
+
 				this.editForm.creation_time=datedialogFormat(row.creation_time)
 			},
 			updateData(){
@@ -600,22 +604,22 @@
 						.then( () => {
 							let para={
 								a_node_id:this.editForm.a_node_id,
-								a_node_ip:this.editForm.a_node_ip,
-								a_node_vlan:this.editForm.a_node_vlan,
-								a_node_desc:this.editForm.a_node_desc,
+								a_ip:this.editForm.a_ip,
+								a_vlan:this.editForm.a_vlan,
+								a_desc:this.editForm.a_desc,
 								z_node_id:this.editForm.z_node_id,
-								z_node_ip:this.editForm.z_node_ip,
-								z_node_vlan:this.editForm.z_node_vlan,
-								z_node_desc:this.editForm.z_node_desc,
+								z_ip:this.editForm.z_ip,
+								z_vlan:this.editForm.z_vlan,
+								z_desc:this.editForm.z_desc,
 								physical_bandwidth:this.editForm.physical_bandwidth,
 								bandwidth:this.editForm.bandwidth,
 								monitoring:this.editForm.monitoring,
 								monitoring_type:this.editForm.monitoring_type,
+								monitoring_param:this.editForm.monitoring_param,
 								link_cost:this.editForm.link_cost,
 								description:this.editForm.description,	
 							}
-
-							this.$ajax.put('/link/edit_unknown_link/'+para.id+'?token='+this.token,para)
+							this.$ajax.put('/link/edit_unknown_link/'+this.editForm.id+'?token='+this.token,para)
 							.then( res => {
 								console.log(res);
 								if(res.status==200){

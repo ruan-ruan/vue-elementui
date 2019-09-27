@@ -18,7 +18,7 @@ export function datedialogFormat(value){
     let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
     let m = date.getMinutes()  < 10 ? '0' + date.getMinutes() + ':' : date.getMinutes() + ':';
     let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-    return Y + M + D +'</br>'+ h + m + s;
+    return Y + M + D + h + m + s;
 }
 export function getTime(value) {
     if (value == "") {
@@ -349,8 +349,49 @@ export function isValidinteger(str){
 	let reg=/^[1-9]\d*$/;
 	return reg.test(str);
 }
-export function isStatus(str){//根据endpoints   来判断的额端口的状态
+export function deepClone(data){  //设置权限的时候  给按钮添加控制部分
+	data.forEach(ele => {
+		ele.disabled=false;
+		if(ele.list){
+			if( ele.list.length>0){
+				deepClone(ele.list);
+			}
+		}
+	})
+}
+
+export function Clone(data){  //设置权限的时候  给按钮添加控制部分
+	data.forEach(ele => {
+		// console.log(ele)
+		ele.disabled=true;
+		if(ele.list){
+				deepClone(ele.list);
+		}
+	})
+}
+export function CloneVal(data){//当权限是  all的时候   默认的是全部选中的
+	var arr=[];
+	if(data.list){
+		data.list.forEach(ele => {
+			if(ele.code){
+				arr.push(ele.code)
+			}
+			else{
+				var temp=CloneVal(ele.list)
+				arr=arr.concat(temp)
+			}
+			
+		})
+		return arr
+	}
 	
-	
+//	data.forEach(ele => {
+//		ele.disabled='false';
+//		if(ele.code && !ele.list){
+//			return ele.code
+//		}else if(data.list && !data.code){
+//			return deep(ele.list)
+//		}
+//	})
 }
 

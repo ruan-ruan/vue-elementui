@@ -21,7 +21,7 @@
 					</el-row>
 
 					<h3 class="title_h3">第三步:其他配置</h3>
-					<billing @getTime='getTime' ref='billingForm'></billing>
+					<billing  @sendTime='getTimeVal' ref='billingForm'></billing>
 				</el-col>
 				<el-col :span='5'  class='pos_row'>
 					<!--<el-row>
@@ -234,10 +234,28 @@
 					description:data.describe,
 				}
 			},
-			getTime(val){
+//			getTime(val){
+//				//获取子组件传过来的时间
+//				this.editForm.charge_time=val.billing_time/1000
+//				this.editForm.expiration_time=val.overdue_time/1000
+//			},
+			getTimeVal(val){
+				console.log(val)
 				//获取子组件传过来的时间
-				this.editForm.charge_time=val.billing_time/1000
-				this.editForm.expiration_time=val.overdue_time/1000
+				this.editForm.charge_time=val.billing_time/1000;
+				this.editForm.expiration_time=val.overdue_time/1000;
+				if( !val['billing_time'] && typeof (val['billing_time'] !='undefined' && val['billing_time'] !=0)){
+					this.creatFormDetails.details_charge_time=''
+				}else{
+					this.creatFormDetails.details_charge_time=val.billing_time ===''?'':datedialogFormat(val.billing_time/1000)
+				}
+				
+				if( !val['overdue_time'] && typeof (val['overdue_time'] !='undefined' && val['overdue_time'] !=0)){
+					this.creatFormDetails.details_expiration_time=''
+				}else{
+					this.creatFormDetails.details_expiration_time=val.overdue_time ===''?'':datedialogFormat(val.overdue_time/1000)
+				}
+				
 			},
 		}
 	}

@@ -19,7 +19,7 @@ import moment from 'moment'
 import *as types from '@/api/types'
 import '@/assets/css/bus.css'
 import ajax from '@/api/api'
-
+//import 'element-ui/lib/theme-chalk/display.css';
 Vue.use(Vuex)
 Vue.use(ElementUI)
 Vue.prototype.$axios=axios

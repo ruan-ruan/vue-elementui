@@ -106,7 +106,7 @@ var router = new Router({
 			{path:'/location/line/cloun',component:() => import('@/views/nav1/line/cloun.vue'),name:'云对接链路',leaf:true},
 			]},
 			//云对接的部分
-			{path:'/location/line/addcloun',component:() => import('@/views/nav1/line/clounFile/addCloun.vue'),name:'添加',hidden:true,leaf:true},
+			{path:'/location/line/addcloun',component:() => import('@/views/nav1/line/clounFile/addCloun.vue'),name:'添加云',hidden:true,leaf:true},
 			{path:'/location/line/editcloun',component:() => import('@/views/nav1/line/clounFile/addCloun.vue'),name:'编辑',hidden:true,leaf:true},
 			{path:'/location/line/clounDetails',component:() => import('@/views/nav1/line/clounFile/clounsTab.vue'),name:'云对接详情',hidden:true,leaf:true},
         ]
@@ -143,7 +143,7 @@ var router = new Router({
         path: '/',
         component: Home,
         name: '业务开通',
-        iconCls: require('../assets/images/aside/business.png'),
+        iconCls: require('../assets/images/aside/business1.png'),
 //      leaf: true,//只有一个节点
  		leaf:false,
    		meta:{

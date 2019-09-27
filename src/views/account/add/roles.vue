@@ -8,7 +8,7 @@
 			<goback></goback>
 			<el-form  :model='editForm' label-width='100px' :rules='editFormRules' ref='editForm' v-loading='Loading'>
 				<el-form-item label='名称' prop='name'>
-					<el-input v-model='editForm.name' class='sel' :disabled='disUp'></el-input>
+					<el-input v-model='editForm.name'  class='sel' :disabled='disUp'></el-input>
 				</el-form-item>
 				<el-form-item label='角色状态' prop='usable'>
 					<template>
@@ -31,7 +31,6 @@
 					<el-tree v-model='editForm.rights'
 						ref='organizationData'
 						:data='organizationData'
-						show-checkbox
 						:props="defaultProps"
 						node-key="code"
 						show-checkbox					
@@ -59,6 +58,8 @@
 </template>
 
 <script>
+
+	import {deepClone,Clone} from '@/assets/js/index'
 	import goback from '@/components/goback'
 	export default{
 		token:'',
@@ -91,9 +92,6 @@
 				this.roleBtnStatus=true;
 			}
 		},
-//		mounted(){
-//			this.getRoles();
-//		},
 		data(){
 			return{
 //				isOk:false,
@@ -124,10 +122,10 @@
 				editFormRules:{
 					name:[
 						{ required: true, message: '请输入名称', trigger: 'blur' },
-            			{ min: 3, max: 30, message: '长度在 3 到 30 个字符', trigger: 'blur' }
+            			{  max: 30, message: '长度能超过30个字符', trigger: 'blur' }
 					],
 					usable:[{ required: true, message: '请输选择状态', trigger: 'change' }],
-					rights:[{ required: true, message: '权限集合不能为空', trigger: 'change' }]
+					rights:[{ required: true, message: '权限不能为空', trigger: 'change' }]
 				},
 				//角色的状态
 				Sta:[
@@ -142,17 +140,20 @@
 				Loading:false,
 				//角色的添加按钮默认的时候是显示，编辑的时候按钮是隐藏的
 				roleBtnStatus:true,
+				backUpdata:[],//权限列表数据的备份
 			}
 		},
 		methods:{
-			getRoles(){
-
+			getRoles(){   //获取权限的列
 				this.$ajax.get('/role/permissions'+'?token='+this.token)
 				.then( res => {
 					if(res.status==200){
 						if(res.data.status==0){
-							
-							this.organizationData=res.data.data;
+							var str=res.data.data;
+							deepClone(str);
+
+							this.organizationData=str;
+							this.backUpdata=JSON.parse(JSON.stringify(str))
 							
 						}
 					}
@@ -165,7 +166,7 @@
 			},
 			//角色添加的时候显示
 			addUsers(editForm){
-				console.log('添加按钮')
+
 				this.$refs.editForm.validate((valid) => {
 					if(valid){
 						let para={
@@ -209,7 +210,7 @@
 					console.log(res);
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res.data.data.rights)
+							this.roleDetails=res.data.data.rights.split(',');
 							if(res.data.data.usable){
 								this.editForm.statusName='启用'
 							}else{
@@ -217,13 +218,10 @@
 							}
 							if(res.data.data.rights==='all'){
 								console.log(this.organizationData)
-								this.getAllRole()
-								this.roleDetails=this.organizationData
-								this.$refs.organizationData.setCheckedNodes(this.roleDetails)
-//								this.roleDetails=res.data.data.rights.split(',');
+								this.getALl()//当时超级管理员的时候   这个时候直接获取所有的底层的数据既可
 							}else{
+//								this.$refs.organizationData.setCheckedNodes(this.roleDetails);
 								this.$refs.organizationData.setCheckedNodes(this.roleDetails);
-								
 							}
 							 this.editForm={
 								name:res.data.data.name,
@@ -239,7 +237,33 @@
 					console.log(e);
 				})
 			},
-			handleEdit(){
+			getALl(){//当存在超级管理员的时候   获取所有底层的数据    
+				this.$ajax.get('/role/permissions'+'?token='+this.token)
+				.then( res => {
+					if(res.status==200){
+						if(res.data.status==0){
+							var arr=res.data.data;
+							var str=[]
+							 function gethref(dt) {
+								  dt.forEach((ev)=>{
+									 if(ev.code) {
+										 // 在这里打印出结果
+										str.push(ev.code)	 
+										 
+									 } else if(ev.list) {
+										 gethref(ev.list)
+									 } 
+								 })
+							 }
+							gethref(arr);
+							this.roleDetails=str;
+						}
+					}
+				}).catch(e => {
+					console.log(e)
+				})
+			},
+			handleEdit(){//编辑的保存界面
 				console.log('执行编辑');
 				this.$refs.editForm.validate(valid => {
 					if(valid){
@@ -276,27 +300,7 @@
 					}
 				})
 			},
-			getAllRole(data){
-
-				this.$ajax.get('/role/permissions'+'?token='+this.token)
-				.then( res => {
-					console.log(res)
-					if(res.status==200){
-						if(res.data.status==0){
-							this.organizationData=res.data.data;
-							function rolesFor(data){
-								data.forEach(item => {
-									console.log(item)
-								})
-							}
-							
-						}
-					}
-				}).catch(e => {
-					console.log(e)
-				})
-			},
-			getRoleDetails(rows){
+			getRoleDetails(rows){  //详情的界面
 				console.log('详情部分数据')
 				this.Loading=true;
 				//详情的界面的进来的时候显示
@@ -307,14 +311,17 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.roleDetails=res.data.data.rights.split(',');
-							console.log( this.roleDetails);
+//							Clone(this.organizationData)
+							this.Clone(this.organizationData)
 							if(res.data.data.usable){
 								this.editForm.statusName='启用'
 							}else{
 								this.editForm.statusName='禁用'
 							}
 							if(res.data.data.rights=='all'){
-								this.roleDetails=this.organizationData;
+//								this.roleDetails=this.organizationData;
+								this.getALl()
+								
 							}else{
 								this.$refs.organizationData.setCheckedNodes(this.roleDetails);
 							}
@@ -322,7 +329,6 @@
 								name:res.data.data.name,
 								usable:this.editForm.statusName,
 								description:res.data.data.description,
-//								rights:res.data.data.rights,
 								rights:this.roleDetails
 							}
 						}
@@ -331,10 +337,18 @@
 					console.log(e)
 				})
 			},
+			Clone(data){  //设置权限的时候  给按钮添加控制部分
+				data.forEach(ele => {
+					// console.log(ele)
+					ele.disabled=true;
+					if(ele.list){
+						if( ele.list.length>0){
+							this.Clone(ele.list);
+						}
+					}
+				})
+			},
 			setrole(data,checked){
-
-				console.log(data);
-				console.log(checked)
 				this.editForm.dataCen=checked.checkedKeys;
 				this.editForm.rights=this.editForm.dataCen.join(',');
 			},
