@@ -7,7 +7,6 @@
 			</el-tab-pane>
 			<el-tab-pane label='逻辑端口列表'name='second'>
 				<logicPort :tit='cusPortData'></logicPort>
-				
 			</el-tab-pane>
 			<el-tab-pane label='点到点专线'name='three'>
 				<points-to :customerID='cusSeeID'></points-to>  <!--向子组件传id即可    根据id在子组件内进行判断-->

@@ -225,10 +225,14 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 
 
 	
 	import {datedialogFormat ,descriptionValue,getTime} from '@/assets/js/index.js'
+=======
+	import {datedialogFormat,getTime} from '@/assets/js/index.js'
+>>>>>>> 18056f2c0ca13d4d8b077af685a79e0c9ae4466e
 	export default{
 		name:'Data',
 		data(){
@@ -386,7 +390,10 @@
 					search_status:this.filters.search_status,
 					start_time:getTime(this.filters.start_time),
 					end_time:getTime(this.filters.end_time),
+<<<<<<< HEAD
 					
+=======
+>>>>>>> 18056f2c0ca13d4d8b077af685a79e0c9ae4466e
 				}
 				this.$ajax.get('/link/links'+'?token='+this.token,para)
 				.then( res => {

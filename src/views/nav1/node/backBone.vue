@@ -240,8 +240,12 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 	
 		import {descriptionValue,getTime} from '@/assets/js/index.js'
+=======
+import { getTime } from "@/assets/js/index.js";
+>>>>>>> 18056f2c0ca13d4d8b077af685a79e0c9ae4466e
 export default {
   name: "Service",
   data() {
