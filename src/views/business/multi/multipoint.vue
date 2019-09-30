@@ -7,8 +7,8 @@
 						<el-form-item label='组网名称' prop='name'>
 							<el-input v-model='filters.name' class='sel_chart'></el-input>
 						</el-form-item>
-						<el-form-item label='租户标识'prop='tenant'>
-							<el-select v-model='filters.tenant' class='sel_chart'>
+						<el-form-item label='租户标识'prop='tenant_id'>
+							<el-select v-model='filters.tenant_id' class='sel_chart'>
 								<el-option v-for='(item,index) in tenantData'
 									:label='item.name'
 									:value='item.id'

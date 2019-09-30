@@ -22,6 +22,7 @@
 					      v-model="filters.timeVal"
 					      type="daterange"
 					      range-separator="至"
+						  @change="timeValSearchBtn"
 					      start-placeholder="开始日期"
 					      end-placeholder="结束日期" class='ipt'>
 					    </el-date-picker>
@@ -220,7 +221,7 @@
 </template>
 
 <script>
-	import {datedialogFormat} from '@/assets/js/index.js'
+	import {datedialogFormat,getTime} from '@/assets/js/index.js'
 	export default{
 		name:'Data',
 		data(){
@@ -246,7 +247,7 @@
 					start_time:'',
 					end_time:'',
 					//接收总的时间
-					timeVal:'',
+					timeVal:[],
 				},
 				
 				//接收数据
@@ -364,27 +365,20 @@
 				var _this=this;
 				var maintenance=document.getElementsByClassName('maintenance');
 				this.loading=true
-				if(this.filters.start_time==''&& this.filters.start_time!=''){
-					this.filters.start_time='';
-					this.filters.start_time=Number(this.filters.timeVal[0]);
-				}else if(this.filters.start_time=='' && this.filters.start_time!=''){
-					this.filters.start_time='';
-					this.filters.end_time=Number(this.filters.timeVal[1]);
-				}else if(this.filters.start_time ==''&& this.filters.start_time==''){
-					this.filters.start_time='';
-					this.filters.start_time='';
-				}else{
-					this.filters.start_time=Number(this.filters.timeVal[0]);
-					this.filters.end_time=Number(this.filters.timeVal[1]);
-				}
+				this.filters.start_time = this.filters.timeVal[0]
+					? this.filters.timeVal[0]
+					: "";
+				this.filters.end_time = this.filters.timeVal[1]
+					? this.filters.timeVal[1]
+					: "";
 				
 				var para={
 					page:this.currentPage,
 					per_page:this.pagesize,
 					search_name:this.filters.search_name,
 					search_status:this.filters.search_status,
-					start_time:this.filters.start_time,
-					end_time:this.filters.end_time,
+					start_time:getTime(this.filters.start_time),
+					end_time:getTime(this.filters.end_time),
 				}
 				this.$ajax.get('/link/links'+'?token='+this.token,para)
 				.then( res => {
@@ -474,7 +468,11 @@
 		          });
 		        })
 		        .catch(() => {});
-		    },
+			},
+			timeValSearchBtn(value) {
+				this.filters.start_time = this.filters.timeVal[0];
+				this.filters.end_time = this.filters.timeVal[1];
+			},
 			//开启维护
 			handleStatus(index,row){
 				var _this=this;

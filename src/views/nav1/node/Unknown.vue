@@ -22,6 +22,7 @@
 							<el-date-picker
 								v-model='filters.timeVal'
 								type='daterange'
+								@change="timeValSearchBtn"
 								range-separator='至'
 								start-placeholder='开始日期'
 								end-placeholder='结束日期'>
@@ -130,7 +131,7 @@
 </template>
 
 <script>
-
+	import { getTime } from "@/assets/js/index.js";
 	export default{
 		name:'Unknown',
 //		props:['data'],
@@ -147,7 +148,7 @@
 	 				start_time:'',
 	 				end_time:'',
 	 				//日期的接收
-	 				timeVal:'',
+	 				timeVal:[],
 	 			},
 	 			
 	 			//接收数据
@@ -205,28 +206,20 @@
 	    	//查询方法
 	    	getUsers(){
 				this.loading=true;
-				if(this.filters.start_time==''&& this.filters.start_time!=''){
-					this.filters.start_time='';
-					this.filters.start_time=Number(this.filters.timeVal[0]);
-					console.log(this.filters.start_time)
-				}else if(this.filters.start_time=='' && this.filters.start_time!=''){
-					this.filters.start_time='';
-					this.filters.end_time=Number(this.filters.timeVal[1]);
-				}else if(this.filters.start_time ==''&& this.filters.start_time==''){
-					this.filters.start_time='';
-					this.filters.end_time='';
-				}else{
-					this.filters.start_time=Number(this.filters.timeVal[0]);
-					this.filters.end_time=Number(this.filters.timeVal[1]);
-				}
+			 	this.filters.start_time = this.filters.timeVal[0]
+				? this.filters.timeVal[0]
+				: "";
+				this.filters.end_time = this.filters.timeVal[1]
+				? this.filters.timeVal[1]
+				: "";
 				var para={
 					page:this.currentPage,
 					per_page:this.pagesize,
 					search_name:this.filters.name,
 					search_dc:this.filters.search_dc,
 					search_status:this.filters.search_status,
-					search_start_time:this.filters.start_time,
-					search_end_time:this.filters.end_time,
+					search_start_time:getTime(this.filters.start_time),
+					search_end_time:getTime(this.filters.end_time),
 				}
 				this.$ajax.get('/node/unknown_nodes'+'?token='+this.token,para)
 	    		.then(res => {
@@ -269,7 +262,11 @@
 						id:'add'
 					}
 				})
-	    	},
+			},
+			timeValSearchBtn(value) {
+				this.filters.start_time = this.filters.timeVal[0];
+				this.filters.end_time = this.filters.timeVal[1];
+			},
 	    	foundNode(){
 	    		//发现节点
 	    		this.dialogStatus='found';

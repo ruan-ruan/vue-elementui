@@ -24,6 +24,7 @@
 					      type="daterange"
 					      range-separator="至"
 					      start-placeholder="开始日期"
+						  @change="timeValSearchBtn"
 					      end-placeholder="结束日期">
 					    </el-date-picker>
 					</el-form-item>
@@ -228,7 +229,7 @@
 </template>
 
 <script>
-	import {datedialogFormat} from '@/assets/js/index.js'
+	import {datedialogFormat,getTime} from '@/assets/js/index.js'
 	
 	export default{
 		name:'Unknown',
@@ -244,7 +245,7 @@
 					start_time:'',
 					end_time:'',
 					//总的接收时间
-					timeVal:'',
+					timeVal:[],
 				},
 				//顶部搜索栏部分的状态部分
 				status:[
@@ -414,27 +415,20 @@
 				//获取数据和搜索
 				this.laoding=true;
 				//对时间的选择的处理，当不选择的时候作为一个空
-				if(this.filters.start_time==''&& this.filters.start_time!=''){
-					this.filters.start_time='';
-					this.filters.start_time=Number(this.filters.timeVal[0]);
-				}else if(this.filters.start_time=='' && this.filters.start_time!=''){
-					this.filters.start_time='';
-					this.filters.end_time=Number(this.filters.timeVal[1]);
-				}else if(this.filters.start_time ==''&& this.filters.start_time==''){
-					this.filters.start_time='';
-					this.filters.start_time='';
-				}else{
-					this.filters.start_time=Number(this.filters.timeVal[0]);
-					this.filters.end_time=Number(this.filters.timeVal[1]);
-				}
+				this.filters.start_time = this.filters.timeVal[0]
+				? this.filters.timeVal[0]
+				: "";
+				this.filters.end_time = this.filters.timeVal[1]
+				? this.filters.timeVal[1]
+				: "";
 				
 				var para={
 					page:this.currentPage,
 					per_page:this.pagesize,
 					search_name:this.filters.search_name,
 					search_status:this.filters.search_status,
-					start_time:this.filters.start_time,
-					end_time:this.filters.end_time,
+					start_time:getTime(this.filters.start_time),
+					end_time:getTime(this.filters.end_time),
 				}
 				this.$ajax.get('/link/unknown_links'+'?token='+this.token,para)
 				.then(res => {
@@ -442,7 +436,7 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.users=res.data.data.items;
-//							this.total=res.data.data.page.total;
+							this.total=res.data.data.page.total;
 							this.users.forEach(ele => {
 								if(ele.monitoring){
 									ele.monitoringText='开启'
@@ -471,6 +465,10 @@
 				}).catch( e => {
 					console.log(e)
 				})
+			},
+			timeValSearchBtn(value) {
+				this.filters.start_time = this.filters.timeVal[0];
+				this.filters.end_time = this.filters.timeVal[1];
 			},
 			handleAdd(){
 				

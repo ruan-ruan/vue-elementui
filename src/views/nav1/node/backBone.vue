@@ -68,6 +68,7 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               class='ipt_sels'
+              @change="timeValSearchBtn"
             >
             </el-date-picker>
           </el-form-item>
@@ -262,6 +263,7 @@
 </template>
 
 <script>
+import { getTime } from "@/assets/js/index.js";
 export default {
   name: "Service",
   data() {
@@ -364,30 +366,20 @@ export default {
     selsChange(sels) {
       this.sels = sels;
     },
+    timeValSearchBtn(value) {
+      this.filters.start_time = this.filters.timeVal[0];
+      this.filters.end_time = this.filters.timeVal[1];
+    },
     //获取列表的所有的数据
     getUsers() {
       var _this = this;
       this.loading = true;
-      if (this.filters.start_time == "" && this.filters.start_time != "") {
-        this.filters.start_time = "";
-        this.filters.start_time = Number(this.filters.timeVal[0]);
-        console.log(this.filters.start_time);
-      } else if (
-        this.filters.start_time == "" &&
-        this.filters.start_time != ""
-      ) {
-        this.filters.start_time = "";
-        this.filters.end_time = Number(this.filters.timeVal[1]);
-      } else if (
-        this.filters.start_time == "" &&
-        this.filters.start_time == ""
-      ) {
-        this.filters.start_time = "";
-        this.filters.end_time = "";
-      } else {
-        this.filters.start_time = Number(this.filters.timeVal[0]);
-        this.filters.end_time = Number(this.filters.timeVal[1]);
-      }
+       this.filters.start_time = this.filters.timeVal[0]
+        ? this.filters.timeVal[0]
+        : "";
+      this.filters.end_time = this.filters.timeVal[1]
+        ? this.filters.timeVal[1]
+        : "";
       //				顶部工具栏内的对应的数据
       var para = {
         page: this.currentPage,
@@ -395,8 +387,8 @@ export default {
         search_name: this.filters.name,
         search_dc: this.filters.search_dc,
         search_status: this.filters.search_status,
-        search_start_time: this.filters.start_time,
-        search_end_time: this.filters.end_time
+        search_start_time: getTime(this.filters.start_time),
+        search_end_time: getTime(this.filters.end_time)
       };
       this.$ajax
         .get("/node/nodes" + "?token=" + this.token, para)

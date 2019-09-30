@@ -576,7 +576,7 @@ export default {
       //获取所有的点的数据
       let para = {
         search_tenant:
-          typeof this.customerID !== "undefined" ? this.customerID : "",
+          typeof this.customerID !== "undefined" ? this.customerID : this.filters.search_tenant,
         page: this.currentPage,
         per_page: this.pagesize,
         search_name: this.filters.search_name,

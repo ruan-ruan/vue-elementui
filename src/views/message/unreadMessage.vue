@@ -187,8 +187,8 @@
           :next-text='next'
         ></el-pagination>
       </el-col>
-      <messageDialog :mesdetail="mesdetail"></messageDialog>
-
+      <messageDialog :mesdetail="mesdetail" @getData='getData'></messageDialog>
+      <slotvue></slotvue>
     </section>
   </div>
 </template>
@@ -242,23 +242,23 @@ export default {
       levelList: [
         {
           name: "一级",
-          value: "1级"
+          value: "1"
         },
         {
           name: "二级",
-          value: "2级"
+          value: "2"
         },
         {
           name: "三级",
-          value: "3级"
+          value: "3"
         },
         {
           name: "四级",
-          value: "4级"
+          value: "4"
         },
         {
           name: "五级",
-          value: "5级"
+          value: "5"
         }
       ],
       //时间戳的转换
@@ -379,7 +379,7 @@ export default {
           .then(() => {
             const id = ids.substring(0, ids.lastIndexOf(","));
             this.isid = id.split(",");
-            let para ={ ids: this.isid };
+            let para = { ids: this.isid };
             console.log(para);
             this.$ajax
               .del("/public/del_news" + "?token=" + this.token, para)
@@ -490,6 +490,33 @@ export default {
       this.mesdetail.type = row.level + "级";
       this.mesdetail.timeVal = row.time;
       this.mesdetail.text = row.content;
+      this.readid = row.id.split(",");
+      let para = { ids: this.readid };
+      this.$ajax
+        .put("/public/read_news" + "?token=" + this.token, para)
+        .then(res => {
+          if (res.status == 200) {
+            if (res.data.status == 0) {
+              // this.$message({
+              //   message: "标记成功!",
+              //   type: "success"
+              // });
+              // this.getData();
+              this.$store.state.message = this.$store.state.message - 1;
+              if (this.$store.state.message < 0) {
+                this.$store.state.message = 0;
+              }
+            } else if (res.data.status) {
+              this.$message({
+                messaeg: res.data.message,
+                type: "warning"
+              });
+            }
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
     }
   }
 };
