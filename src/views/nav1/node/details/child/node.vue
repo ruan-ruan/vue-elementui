@@ -16,7 +16,7 @@
 							<el-col :span='12'>								
 								<el-form-item label='数据中心:'prop='dc_id'>
 									<el-input v-model='seeForm.dc_id' :disabled='StaEditForm' v-show='StaEditForm' class='ipt'></el-input>
-									<el-select v-model='seeForm.dc_id' class='ipt' v-show='!StaEditForm'placeholder='请选择数据中心'>
+									<el-select v-model='seeForm.dc_id' filterable class='ipt' v-show='!StaEditForm'placeholder='请选择数据中心'>
 										<el-option v-for='(item,index) in itemData'
 											:value='item.id'
 											:key='index'
@@ -44,15 +44,15 @@
 								<el-form-item label='SN号:' prop='devices0_sn'>
 									<el-input v-model='seeForm.devices0_sn':disabled='StaNot'class='ipt'placeholder='请输入SN号'></el-input>
 								</el-form-item>
+								<el-form-item label='设备型号:'prop='devices0_model'>
+									<el-input v-model='seeForm.devices0_model':disabled='StaNot'class='ipt'placeholder='请输入设备型号'></el-input>
+								</el-form-item>
 								<!--业务端口区间-->
 								<el-form-item label='端口区间:' prop='port_section0'>
 									<template>						
 										<el-input v-model='seeForm.port_section0':disabled='StaNot'class='ipt' placeholder='请输入设备1的端口'></el-input>
 										<span class="cli_toTip":title='portRules'>*?</span>
 									</template>
-								</el-form-item>
-								<el-form-item label='设备型号:'prop='devices0_model'>
-									<el-input v-model='seeForm.devices0_model':disabled='StaNot'class='ipt'placeholder='请输入设备型号'></el-input>
 								</el-form-item>
 								<el-form-item label='所在位置:'>
 									<el-input v-model='seeForm.devices0_position':disabled='StaEditForm'class='ipt'placeholder="所在位置"></el-input>
@@ -84,15 +84,15 @@
 								<el-form-item label='SN号:' prop='devices1_sn'>
 									<el-input v-model='seeForm.devices1_sn':disabled='StaNot'class='ipt'></el-input>
 								</el-form-item>
+								<el-form-item label='设备型号:'prop='devices1_model'>
+									<el-input v-model='seeForm.devices1_model':disabled='StaNot'class='ipt'></el-input>
+								</el-form-item>
 								<!--业务端口区间-->
 								<el-form-item label='端口区间:' prop='port_section1'>
 									<template>
 										<el-input v-model='seeForm.port_section1':disabled='StaNot'class='ipt' placeholder="请输入正确区间格式或者正整数"></el-input>
 										<span class="cli_toTip":title='portRules'>*?</span>
 									</template>
-								</el-form-item>
-								<el-form-item label='设备型号:'prop='devices1_model'>
-									<el-input v-model='seeForm.devices1_model':disabled='StaNot'class='ipt'></el-input>
 								</el-form-item>
 								<el-form-item label='所在位置:'>
 									<el-input v-model='seeForm.devices1_position':disabled='StaEditForm'class='ipt'placeholder="所在位置"></el-input>
@@ -318,30 +318,8 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-							var str=[];
-							var sons=[];
-							var dataCen;
-							str=res.data.data.items;
-							sons=str;
-							var arr = []
-						    for(let val of sons){
-						        arr.push(val.id)
-						    }
-						    var newArr = [];
-						    var newArr2 = [];
-						    for(var i =0;i<arr.length-1;i++){
-						        if(newArr.indexOf(arr[i]) == -1){
-						            newArr.push(arr[i]);
-						            newArr2.push(sons[i]);
-						        }
-						    }
-						    //根据id找到对用的name
-							this.itemData=newArr2;
-//							let items=ids;
-//							var findVal=this.itemData.find(function(obj){
-//								return obj.id===items
-//							})
-//							this.dc_id=findVal.name;
+							this.itemData=res.data.data.items;
+
 						}
 					}
 				})

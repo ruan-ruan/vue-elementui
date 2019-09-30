@@ -19,9 +19,21 @@
 	export default {
 		data(){
 			return{
-				activeName:'first',
+				activeName:this.$store.state.statusname?'second':'first',
 				isChildUpdate1:true,
-				isChildUpdate2:false
+				isChildUpdate2:false,
+			}
+		},
+		created() {
+			this.$store.state.statusname=false;
+		},
+		mounted() {
+			if(this.activeName=='first') {
+				 this.isChildUpdate1 = true;
+	                this.isChildUpdate2 = false;
+			}else {
+				  this.isChildUpdate1 = false;
+	                this.isChildUpdate2 = true;
 			}
 		},
 		methods:{

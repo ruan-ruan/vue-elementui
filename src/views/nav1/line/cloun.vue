@@ -37,7 +37,7 @@
 					<el-col :span='4'>
 						<el-button type='primary' @click='addClounLink'>+添加云链路</el-button>
 					</el-col>
-					<el-col :span='20'>
+					<el-col :span='20' class='table-top'>
 						<el-dropdown split-button type='success'@command="handleExport">
 							导出数据
 							<el-dropdown-menu slot='dropdown'>
@@ -48,37 +48,42 @@
 					</el-col>
 				</el-col>
 			</el-row>
+
+			
 			
 			<el-table :data='users' highlight-current-row @selection-change="selsChange" style='width: 100%;' v-loading='loading'>
-				<el-table-column type='selection' width='60'></el-table-column>
-				<el-table-column type='index' label='序号' width='60'align='center'></el-table-column>
-				<el-table-column prop='creation_tinme' label='创建时间' width='120' align='center' :formatter='dateFormat'>					
+				<el-table-column type='selection' width='40'></el-table-column>
+				<el-table-column type='index' label='序号' width='50'align='center'></el-table-column>
+				<el-table-column prop='creation_tinme' label='创建时间' width='95' align='center' :formatter='dateFormat'>					
 				</el-table-column>
-				<el-table-column  label='云链路名称' width='120' align='center'>
+				<el-table-column  label='云链路名称' min-width='120' align='center'>
 					<template slot-scope='scope'>
 						<a href="#" @click='handleSeeLink(scope.$index,scope.row)'>{{scope.row.name}}</a>
 					</template>
 				</el-table-column>
-				<el-table-column prop='status'  label='链路状态' width='120' align='center'>
+				<el-table-column prop='status'  label='链路状态' min-width='80' align='center'>
 				</el-table-column>
-				<el-table-column prop='typeName'  label='公有云' width='120' align='center'>
+				<el-table-column prop='typeName'  label='公有云' min-width='80' align='center'>
 				</el-table-column>
-				<el-table-column prop='region'  label='区域 ' width='120' align='center'>
+				<el-table-column prop='region'  label='区域 ' min-width='60' align='center'>
 				</el-table-column>
-				<el-table-column prop='access_point'  label='接入点' width='120' align='center'>
+				<el-table-column prop='access_point'  label='接入点' min-width='70' align='center'>
 				</el-table-column>
-				<el-table-column prop='bandwidth'  label='带宽(Gbps)' width='120' align='center'>
+				<el-table-column prop='bandwidth'  label='带宽(Gbps)' min-width='70' align='center'>
 				</el-table-column>
-				<el-table-column prop='logic_port.name'  label='逻辑口' width='120' align='center'>
+				<el-table-column prop='logic_port.name'  label='逻辑口' min-width='80' align='center'>
 					<template slot-scope='scope'>
 						<a href="#" @click="handleSeeLogic(scope.$index,scope.row)">{{scope.row.logic_port.name}}</a>
 					</template>
 				</el-table-column>
-				<el-table-column prop='name'  label='逻辑口状态' width='120' align='center'>
+				<el-table-column   label='逻辑口状态' min-width='80' align='center'>
+					<template slot-scope='scope'>
+						<span :class='scope.row.color' v-text="scope.row.portStatus"></span>
+					</template>
 				</el-table-column>
-				<el-table-column prop='description'  label='备注' width='120' align='center'>
+				<el-table-column prop='descriptionVal'  label='备注' min-width='80' align='center'>
 				</el-table-column>
-				<el-table-column   label='操作' width='200' align='center'>
+				<el-table-column   label='操作' width='160' align='center'>
 					<template slot-scope='scope'>
 						<el-button size='small' type='primary' @click='handleEdit(scope.$index,scope.row)'>编辑</el-button>
 						<el-button size='small' type='danger' @click='handleDel(scope.$index,scope.row)'>删除</el-button>
@@ -115,6 +120,7 @@
 </template>
 
 <script>
+	import {descriptionValue,getPortStatus} from '@/assets/js/index.js'
 	
 	export default{
 		name:'cloun',
@@ -198,14 +204,24 @@
 						if(res.data.status==0){
 							console.log(res)
 							
-							
+							descriptionValue(res.data.data.items)
 							res.data.data.items.forEach(ele => {
 								if(ele.type==='ali'){
 									ele.typeName='阿里云'
 								}else if(ele.type==='tencent'){
 									ele.typeName='腾讯云'
 								}
+//								console.log(ele.logic_port.physical_port)
+								ele.portStatus=getPortStatus(ele.logic_port.physical_port)
+								if(getPortStatus(ele.logic_port.physical_port) === 'UP'){
+									ele.color='colorGreen'
+								}else if(getPortStatus(ele.logic_port.physical_port) === 'DOWN'){
+									ele.color='colorRed'
+								}else if(getPortStatus(ele.logic_port.physical_port) === '异常'){
+									ele.color='colorWarning'	
+								}
 							})
+							console.log(res)
 							this.users=res.data.data.items;
 							this.total=res.data.data.page.total;
 						}
@@ -361,4 +377,6 @@
 </script>
 
 <style>
+	
+
 </style>

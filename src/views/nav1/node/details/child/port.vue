@@ -4,16 +4,16 @@
 		<!--顶部标签-->
 		<el-tabs type='border-card'>
 			<el-tab-pane label='物理端口1'>
-				<portChilds :titleOne='idOne'></portChilds>
+				<portChilds :titleOne='base1' ></portChilds>
 			</el-tab-pane>
-			<el-tab-pane label='物理端口2' v-if='equipStatue'>
-				<portChilds :titleTwo='idTwo'></portChilds>
+			<el-tab-pane label='物理端口2' v-show='equipStatue'>
+				<portChilds :titleTwo='base2'></portChilds>
 			</el-tab-pane>
 			<el-tab-pane label='逻辑端口1'>
-				<logicalPort :titleOne='idOne'></logicalPort>
+				<logicalPort :titleOne='base1.id'></logicalPort>
 			</el-tab-pane>
 			<el-tab-pane label='逻辑端口2' v-if='equipStatue'>
-				<logicalPort :titleTwo='idTwo'></logicalPort>
+				<logicalPort :titleTwo='base2.id'></logicalPort>
 			</el-tab-pane>
 		</el-tabs>
 	</div>
@@ -38,6 +38,11 @@
 				idTwo:[],
 				node_equip:[],
 				equipStatue:false,
+				obj:{},
+				base1:{},
+				base2:{},
+				dataVal:[],
+				ids1:''
 			}
 		},
 		created(){
@@ -47,19 +52,49 @@
 		},
 		methods:{
 			getUsers(id){
-				this.$ajax.get('/node/device_info/'+id+'/ports'+'?token='+this.token)
+				this.$ajax.get('/node/node_info/'+id+'?token='+this.token)
+				.then(res => {
+					if(res.status==200){
+						if(res.data.status==0){
+							console.log(res)
+							console.log(res.data.data.devices.length)
+							this.obj=res.data.data;
+							if(res.data.data.devices){
+								if(res.data.data.devices.length==2){
+									this.equipStatue=true
+									this.base1=res.data.data.devices[0];
+									this.base2=res.data.data.devices[1];
+								}else{
+									this.equipStatue=false
+									this.base1=res.data.data.devices[0];
+								}
+							}
+							this.ids1=this.obj.devices[0].id
+							console.log(this.base1)
+							console.log(this.base2)
+//							
+							this.getList(this.obj.devices[0].id)
+							
+						}
+					}
+				})
+				.catch(e => {console.log(e)})
+			},
+			getList(ids){
+				this.$ajax.get('/node/device_info/'+ids+'/ports'+'?token='+this.token)
 				.then(res => {
 					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
-							this.physicalData=res.data.data.items;
-							if(res.data.data.items.length===1){
-								this.physicalValue=1;
-								this.equipStatue=false;
-							}else if(res.data.data.items.length===2){
-								this.physicalValue=2;
-								this.equipStatue=true;
-							}
+							this.dataVal=res;
+//							this.physicalData=res.data.data.items;
+//							if(res.data.data.items.length===1){
+//								this.physicalValue=1;
+//								this.equipStatue=false;
+//							}else if(res.data.data.items.length===2){
+//								this.physicalValue=2;
+//								this.equipStatue=true;
+//							}
 						}
 					}
 				}).catch(e => {

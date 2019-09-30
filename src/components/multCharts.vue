@@ -1,7 +1,9 @@
 <template>
 	<div>
 		<!--点到点的图表数据-->
-		
+		<!--<goback></goback>-->
+		<el-button type='info' size='small' @click='goback' v-show='typeof topoId ==="undefined" ? false:true'>
+			<i class="el-icon-d-arrow-left" aria-hidden="true"></i>返回</el-button>
 		<el-form :model='filters' ref='filters' :inline='true'>
 			<el-form-item >
 				<el-select v-model='filters.unit'class='sel_chart'>
@@ -68,13 +70,15 @@
 <script>
 	
 	import {datedialogFormat,isChartTime,arrayPro} from '@/assets/js/index.js'   //arrayPro  数组的处理
-	
+//	import goback from '@/components/goback'
 	export default{
 		name:'multCharts',
 		props:['titData'],//  titData    点到点的业务id
 		data(){
 			return{
 				token:'',
+				topoId:this.$route.query.topoId,
+//				components:{ goback },
 				filters:{
 					unit:'Mbps',
 					selVal:'平均值',
@@ -116,12 +120,30 @@
 			this.token=sessionStorage.getItem('token');
 			this.valType=this.seaVal();
 			this.trafficData=this.getTimeData('最近一天');
-			this.ChartData(this.titData);
+//			var str=[this.titData,this.topoId];
+//
+//			str.forEach(ele => {
+//				console.log(  ele)
+//				if( ele !=='undefined'){
+//					this.ChartData(ele);
+//				}
+//			})
+			let strVal=''
+			if(typeof this.titData !=='undefined'){
+				strVal=this.titData
+			}
+			if(typeof this.topoId !=='undefined'){
+				strVal=this.topoId
+			}
+			this.ChartData(strVal);
 			
 		},
 		methods:{
+			goback(){
+				this.$router.go(-1)
+			},
 			ChartData(ids){//获取id下 对应的数据
-
+				console.log('进入选择呀')
 				let newData=[];//保存每次获取的数据
 
 				let staIndex='';
@@ -131,7 +153,7 @@
 				var sortID=[];//将id相同的部分里面flow合并即可
 
 //				//遍历以后再进行树的排序
-				let time={};
+				let time={};	
 				this.sendType.forEach(ele => {
 					time={
 						search_date :ele.toString(),
@@ -139,10 +161,11 @@
 					this.chartLoading=true;
 					this.$ajax.get('/vll/get_vll_flow/'+ids+'?token='+this.token,time)
 					.then(res => {
-						this.chartLoading=false;
 						console.log(res)
+						this.chartLoading=false;
 						if(res.status==200){
 							if(res.data.status==0){
+								console.log(res)
 								if(res.data.data.endpoints){
 									newData=res.data.data.endpoints;
 								}else if(res.data.data.cloud_endpoints){
@@ -348,6 +371,7 @@
 								this.usersZ=usersZ;
 								this.getCharts(this.baseObjA,this.baseObjZ);//画图
 							}
+
 						}
 					}).catch(e => {console.log(e)})
 				})

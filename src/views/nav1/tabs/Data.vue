@@ -12,7 +12,7 @@
 								<el-input v-model="filters.name" placeholder="请输入名称"></el-input>
 							</el-form-item>
 							<el-form-item label='所属区域:'>
-								<el-select v-model='filters.search_region' placehoder='全部' class='sel' @change='selectArea(filters.search_region)'>
+								<el-select v-model='filters.search_region' filterable placehoder='全部' class='sel' @change='selectArea(filters.search_region)'>
 									<el-option
 										v-for='(item,index) in areaData'
 										:key='index'
@@ -51,21 +51,21 @@
 		
 				<!--列表-->
 				<el-table :data="users" highlight-current-row @selection-change="selsChange" style="width: 100%;">
-					<el-table-column type="selection" width="70" align='center'>
+					<el-table-column type="selection" width="40" align='center'>
 					</el-table-column>
-					<el-table-column type="index" width="70" label='序号' align='center'>
+					<el-table-column type="index" width="50" label='序号' align='center'>
 					</el-table-column>
-					<el-table-column prop="id" label="ID" width="150" align='center'>
+					<el-table-column prop="id" label="ID" min-width='100' align='center'>
 					</el-table-column>
-					<el-table-column prop="name" label="名称" width="120" align='center'>
+					<el-table-column prop="name" label="名称" min-width="80" align='center'>
 					</el-table-column>
-					<el-table-column prop="region.name" label="所属区域" min-width="150" align='center'>
+					<el-table-column prop="region.name" label="所属区域" min-width="80" align='center'>
 					</el-table-column>
-					<el-table-column prop="city.name" label="所属城市" min-width="150" align='center'>
+					<el-table-column prop="city.name" label="所属城市" min-width="80"  align='center'>
 					</el-table-column>
-					<el-table-column prop="description" label="备注" min-width="150"align='center' >
+					<el-table-column prop="descriptionVal" label="备注" align='center' >
 					</el-table-column>
-					<el-table-column label="操作" width="260"align='center'>
+					<el-table-column label="操作" align='center'width='220'>
 						<template slot-scope="scope">
 							<el-button size='small' type='info' @click='handleSee(scope.$index,scope.row)'>详情</el-button>
 							<el-button size="small"type='success' @click="handleEdit(scope.$index, scope.row)" >编辑</el-button>
@@ -102,7 +102,7 @@
 							<el-input v-model="editForm.name"  auto-complete="off" class='ipt_sels'></el-input>
 						</el-form-item>
 						<el-form-item label='所属区域' prop='region_id' >		
-								<el-select  v-model='editForm.region_id'   @change='selectArea(editForm.region_id)' class='sel' >
+								<el-select  v-model='editForm.region_id'  filterable  @change='selectAreaDia(editForm.region_id)' class='sel' >
 									<el-option
 										v-for='(item,index) in areaData'
 										:key='index'
@@ -169,9 +169,10 @@
 
 <script>
 
+	import {descriptionValue} from '@/assets/js/index.js'
 	
 	export default{
-		name:'City',
+		name:'Data',
 		data() {
 		    return {
 		    	token:'',
@@ -263,9 +264,17 @@
 		  			console.log(e)
 		  		})
 			},
-		  	selectArea(sels){
-		  	//获取城市对应的接口数据
-				var para={
+			selectAreaDia(sels){//日志里面的搜索区域-城市
+				this.editForm.city_id=''
+				this.selFilterArea(sels)
+			},
+		  	selectArea(sels){//搜素栏里面的搜索 区域-城市
+		  		this.filters.city_id=''
+		  		//获取城市对应的接口数据
+				this.selFilterArea(sels)
+		  	},
+		  	selFilterArea(sels){//选择区域的时候  获取的不同的数据
+		  		var para={
 					search_region:sels,
 				}
 				this.$ajax.get('/location/cities'+'?token='+this.token,para)
@@ -298,10 +307,17 @@
 				.then( res => {
 					if(res.status==200){
 						if(res.data.status==0){
+							console.log(res)
+							descriptionValue(res.data.data.items);
 							this.total = res.data.data.page.total;
 					        this.pageNum=res.data.data.page.pages;
 							this.users=res.data.data.items;
 					        this.listLoading = false;
+						}else{
+							this.$message({
+								message:res.data.message,
+								type:'warning'
+							})
 						}
 					}
 				}).catch( e => {

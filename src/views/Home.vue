@@ -116,7 +116,7 @@
                   ><i :class="child.iconCls"></i>{{child.name}}</template>
                   <el-menu-item
                     v-for="(sun,i)  in child.children"
-                    :index="sun.path"
+                    :index="i"
                     :key="sun.path"
                   >
                     {{sun.name}}
@@ -187,10 +187,10 @@
             <!-- <i :class="item.iconCls"></i> -->
             <img :src="item.iconCls" class='asideLogo'/>
           </div>
-          </li>
-</template>
-</li>
-</ul>
+        </li>
+			</template>
+		</li>
+	</ul>
 </aside>
 
 <section class="content-container">

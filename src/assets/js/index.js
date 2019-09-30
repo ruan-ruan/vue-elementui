@@ -110,27 +110,7 @@ export var arrayPro={
 	 	}
 	 	return str
 	},
-//	valType(data){//获取数组内 flow的最大值，最小值，平均值
-//		var max=data[0];//用来比较的值
-//		var min=data[data.length-1];
-//		var  num=0;//总和
-//		var val=0;//平均值
-//		let obj={}
-//		for(var i=0;i<str.length;i++){ 
-//			if(max.age<str[i].age)max.age=str[i].age;
-//			if(min.age>str[i].age)min.age=str[i].age;
-////			console.log(str[i].age);
-//			avg+=str[i].age
-//			val=avg/str.length
-//		}
-//		obj={
-//			min:min,
-//			max:max,
-//			num:num,
-//			avg:val
-//		}
-//		return obj
-//	},
+
 	flowObj(data,property){//  data 数组     property是要对比的对象里面的属性
 		let d1=[],d2=[];
 		for(var item =0 ;item <data.length;item++){
@@ -393,5 +373,25 @@ export function CloneVal(data){//当权限是  all的时候   默认的是全部
 //			return deep(ele.list)
 //		}
 //	})
+}
+
+
+export function descriptionValue(str){   //对列表的里面的备注信息进行处理  
+	let strData=[]
+	str.forEach(ele => {
+		//所有的备注信息的输入的时候 进行处理
+		if(!ele.description && typeof(ele.description)!='undefined' && ele.description!=0 ){//判断是否为null
+			ele.descriptionVal=''
+		}else if( ele.description  ===''){//判断是否为空字符串
+			ele.descriptionVal=''
+		}else{
+			if(ele.description.length>10){
+				ele.descriptionVal=ele.description.substring(0,9)+'...'
+			}else{
+				ele.descriptionVal=ele.description;
+			}
+		}	
+	})
+//	return strData;
 }
 

@@ -188,7 +188,7 @@
           :next-text='next'
         ></el-pagination>
       </el-col>
-      <messageDialog :mesdetail="mesdetail"></messageDialog>
+      <messageDialog :mesdetail="mesdetail" @getData='getData'></messageDialog>
 
     </section>
   </div>
@@ -481,6 +481,28 @@ export default {
       this.mesdetail.type = row.level + "级";
       this.mesdetail.timeVal = row.time;
       this.mesdetail.text = row.content;
+       this.readid = row.id.split(",");
+      let para = { ids: this.readid };
+      this.$ajax
+        .put("/public/read_news" + "?token=" + this.token, para)
+        .then(res => {
+          if (res.status == 200) {
+            if (res.data.status == 0) {
+              this.$store.state.message = this.$store.state.message - 1;
+              if (this.$store.state.message < 0) {
+                this.$store.state.message = 0;
+              }
+            } else if (res.data.status) {
+              this.$message({
+                messaeg: res.data.message,
+                type: "warning"
+              });
+            }
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
     }
   }
 };

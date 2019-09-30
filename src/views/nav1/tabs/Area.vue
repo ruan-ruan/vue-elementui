@@ -29,19 +29,18 @@
 				</el-col>
 		
 				<!--列表-->
-				<!--:data="users" users.slice((currentPage-1)*pagesize,currentPage*pagesize)-->
 				<el-table  :data="users" highlight-current-row @selection-change="selsChange" style="width: 100%;" v-loading='loading'>
-					<el-table-column type="selection" width="55" align='center'>
+					<el-table-column type="selection"  align='center'>
 					</el-table-column>
-					<el-table-column type="index" width="70" label='序号' align='center'>
+					<el-table-column type="index"  label='序号' align='center'>
 					</el-table-column>
-					<el-table-column prop="id" label="ID" width="200" align='center' >
+					<el-table-column prop="id" label="ID" align='center' min-width='120' >
 					</el-table-column>
-					<el-table-column prop="name" label="名称" width="120" align='center'>
+					<el-table-column prop="name" label="名称" align='center' min-width='120'>
 					</el-table-column>
-					<el-table-column prop="description" label="备注" min-width="120" align='center'>
+					<el-table-column prop="descriptionVal" label="备注"  align='center' min-width='120'>
 					</el-table-column>
-					<el-table-column label="操作" width="260" align='center'>
+					<el-table-column label="操作"  align='center' width='220'>
 						<template slot-scope="scope" style="width: 100%;">
 							<el-button size='small' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
 							<el-button size="small"type='success' @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -49,7 +48,6 @@
 						</template>
 					</el-table-column>
 				</el-table>
-		
 				<!--工具条-->
 				<el-col :span="24" class="toolbar">
 					<el-col :span='3'>
@@ -126,7 +124,7 @@
 
 
 	import util from "@/common/util";
-	import {datedialogFormat} from '@/assets/js/index.js'
+	import {datedialogFormat,descriptionValue} from '@/assets/js/index.js'
 	export default {
 		name:'Area',
 	
@@ -227,6 +225,8 @@
 			      	if(res.status==200){
 			      		this.loading=false;
 			      		if(res.data.status==0){
+
+							descriptionValue(res.data.data.items)//处理   备注信息
 					        this.total=res.data.data.page.total;
 					        this.pageNum=res.data.data.page.pages;
 							this.users=res.data.data.items;
@@ -310,8 +310,8 @@
 		        if (valid) {
 		        //   this.$confirm("确认提交吗？", "提示", {})
 		        //     .then(() => {
-		            	this.editLoading = true;
-		            	let para = Object.assign({}, this.editForm);
+		            this.editLoading = true;
+		            let para = Object.assign({}, this.editForm);
 					this.$ajax.put('/location/edit_region/'+para.id+'?token='+this.token,para)
 		              .then( (res) => {             	
 		              	if(res.status=='200'){

@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-button type='info' size='small' @click='goback'>
-			<i class="fa fa-angle-double-left" aria-hidden="true"></i>返回</el-button>
+			<i class="el-icon-d-arrow-left" aria-hidden="true"></i>返回</el-button>
 	</div>
 </template>
 

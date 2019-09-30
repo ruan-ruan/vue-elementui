@@ -4,11 +4,10 @@
 		<section>
 			<el-form  label='80px'>
 				<el-form-item label='设备名称'>
-					<!--<template>{{title.name}}</template>-->
-					<!--<span v-text=''></span>-->
+					<span v-text='title.name'></span>
 				</el-form-item>
 				<el-form-item label='管理IP'>
-					<!--<template>{{title.ip}}</template>-->
+					<span v-text='title.ip'></span>
 				</el-form-item>
 			</el-form>
 			<el-table :data='users' highlight-current-row  style="width: 100%;">
@@ -95,71 +94,85 @@
 				ids:'',
 				title:{
 					name:'',
-					ip:''
+					ip:'',
+					id:''
 				}
 				
 			}
 		},
-		created(){
-			var dataStr=[this.titleOne,this.titleTwo];
-			dataStr.forEach(ele => {
-				if(typeof ele  !='undefined'){
-//					this.ids=ele;
-					this.users=ele
-				}
-			})
-//			this.getUsers()
-			this.token=sessionStorage.getItem('token');
-			console.log(this.token);
+		watch:{
+			titleOne:{
+				handler:function (newVal){
+					console.log(newVal)
+					this.getList(newVal.id)
+					this.title.id=newVal.id;
+					this.title.name=newVal.hostname;
+					this.title.ip=newVal.ip
+	
+				},
+				deep:true
+			},
+			
+			titleTwo:{
+				handler(newVal,oldVal){
+					console.log(newVal)
+					this.getList(newVal.id)
+					this.title.id=newVal.id;
+					this.title.name=newVal.hostname;
+					this.title.ip=newVal.ip
+				},
+				deep:true
+			}
+
 		},
+		created(){
+			this.token=sessionStorage.getItem('token');
+		},
+
 		methods:{
 			handleSizeChange(val){
 				console.log(`每页:${val}条`);
 				this.pagesize=val;
-				this.getUsers()
+				this.getList(this.title.id)
 			},
 			handleCurrentChange(val){
 				console.log(`当前是第${val}页`)
 				this.currentPage=val;
-				this.getUsers()
+				this.getList(this.title.id)
 			},
-//			getUsers(){
-////				console.log()
-//				var para={
-//					page:this.currentPage,
-//					per_page:this.pagesize,
-////					token:this.token
-//				}
-//				this.$axios({
-//					method:'get',
-//					url:base+'/node/node_info/'+this.ids+'/ports'+"?token="+this.token,
-//					params:para
-//				})
-//				.then(res => {
-////					console.log(res)
-//					if(res.status==200){
-//						if(res.data.status==0){
-//							this.users=res.data.data.items;
-//							this.total=res.data.data.page.total;
-//						}
-//					}
-//				}).catch( e => {
-//					console.log(e)
-//				})
-//			},
+
+			getList(ids){
+				var para={
+					page:this.currentPage,
+					per_page:this.pagesize,
+				}
+				this.$ajax.get('/node/device_info/'+ids+'/ports'+'?token='+this.token,para)
+				.then(res => {
+					console.log(res)
+					if(res.status==200){
+						if(res.data.status==0){
+							this.users=res.data.data.items;
+							this.total=res.data.data.page.total;
+						}
+					}
+				}).catch(e => {
+					console.log(e)
+				})
+			},
+			getDetails(ids){//获取详情
+				
+			},
 			handleEdit(index,row){
+				console.log(row)
 				this.dialogStatus='update';
 				this.dialogFormVisible=true;
 				this.editForm=Object.assign({} ,row);
 //				console.log(this.editForm);
 			},
+			
 			updateData(){
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-						// this.$confirm('确认要提交吗?','提示',{
-						// 	type:'info'
-						// })
-						// .then( () => {
 							var para={
 								note:this.editForm.note,
 							}
@@ -186,10 +199,6 @@
 										type:'warning'
 									})
 								}
-							// })
-							// .catch(e => {
-							// 	console.log(e)
-							// })
 						})
 					}
 				})

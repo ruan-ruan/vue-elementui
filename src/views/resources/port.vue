@@ -2,7 +2,7 @@
   <div>
    	 <!--逻辑端口管理-->
    	 <section>
-   	 	<el-row class='toollbar' style='width: 100%;'>
+   	 	<el-row class='toolbar' style='width: 100%;'>
    	 		<el-col :span='24'>
    	 			<el-form :inline='true' :model='filters' ref='filters'>
    	 				<el-form-item label='名称' prop='name'>
@@ -37,7 +37,7 @@
    	 			<el-col :span='4'>
    	 				<el-button type='primary' @click='addUsers' v-if=' !tit'>+创建逻辑端口</el-button>
    	 			</el-col>
-   	 			<el-col :span='20'>
+   	 			<el-col :span='20' class='table-top'>
    	 				<el-dropdown split-button type='success'@command="handleExport">
 							导出数据
 							<el-dropdown-menu slot='dropdown'>
@@ -48,29 +48,29 @@
    	 			</el-col>
    	 		</el-col>
    	 	</el-row>
-   	 	
+
    	 	
    	 	<!--表格数据部分-->
    	 	<el-table :data='users' highlight-current-row style='width: 100%;' v-loading='loading'>
-   	 		<el-table-column type='index' width='50' align='center'></el-table-column>
+   	 		<el-table-column type='index' width='40' align='center'></el-table-column>
    	 		<el-table-column prop='creation_time' label='创建时间' width='95'align='center':formatter='dateFormat'></el-table-column>
-   	 		<el-table-column prop='name' label='逻辑端口名称' width='80'align='center'>
+   	 		<el-table-column prop='name' label='逻辑端口名称' min-width='100'align='center'>
    	 			<template slot-scope='scope'>
    	 				<span class='cli_spn' @click="handleSee(scope.$index,scope.row)">{{scope.row.name}}</span>
    	 			</template>
    	 		</el-table-column>
-   	 		<el-table-column prop='tenant.name' label='租户标识' width='80'align='center'></el-table-column>
-   	 		<el-table-column  label='逻辑口状态' width='80'align='center'>
+   	 		<el-table-column prop='tenant.name' label='租户标识' min-width='100'align='center'></el-table-column>
+   	 		<el-table-column  label='逻辑口状态' min-width='100'align='center'>
    	 			<template slot-scope='scope'>
    	 				<span :class='scope.row.usableTextColor'>{{scope.row.usableText}}</span>
    	 			</template>
    	 		</el-table-column>
-   	 		<el-table-column prop='physical_ports_len' label='端口组合数' width='50'align='center'></el-table-column>
-   	 		<el-table-column prop='access_type' label='用户连接方式' width='60'align='center'></el-table-column>
+   	 		<el-table-column prop='physical_ports_len' label='端口组合数' min-width='80'align='center'></el-table-column>
+   	 		<el-table-column prop='access_type' label='用户连接方式' min-width='80'align='center'></el-table-column>
    	 		<el-table-column prop='creation_time' label='合同开始时间' width='95'align='center':formatter='dateFormat'></el-table-column>
    	 		<el-table-column prop='creation_time' label='合同结束时间' width='95'align='center':formatter='dateFormat'></el-table-column>
-   	 		<el-table-column prop='creation_time' label='备注' width='100'align='center'></el-table-column>
-   	 		<el-table-column  label='操作' width='230'  v-if=' !tit'>
+   	 		<el-table-column prop='descriptionVal' label='备注' min-width='80'align='center'></el-table-column>
+   	 		<el-table-column  label='操作' width='230'  v-if=' !tit'align='center'>
    	 			<template slot-scope='scope'>
    	 				<el-button size='small' type='info' @click='handleStatus(scope.$index, scope.row)'>{{scope.row.btnStatus}}</el-button>
 	   	 			<el-button size='small' type='success' @click='handleEdit(scope.$index,scope.row)'>编辑</el-button>
@@ -99,7 +99,7 @@
 </template>
 
 <script>
-	import {getPortStatus,isPortStatus} from '@/assets/js/index'
+	import {getPortStatus,isPortStatus,descriptionValue} from '@/assets/js/index'
 	export default{
 		name:'port',
 		props:['tit','LogicTitle'],//来判断进入的界面的，控制添加和操作按钮显示
@@ -147,11 +147,8 @@
 		created(){
 			//获取token
 			this.token=sessionStorage.getItem('token');
-			if(this.tit){//如果存在详情的里面的数据的时候，直接赋值就可以了 ，否则执行下面的
-				this.users=this.tit
-			}else{
-				this.getUsers();
-			}
+			
+			this.getUsers();
 			this.getTenantData()
 		},
 		methods:{
@@ -184,6 +181,7 @@
 					per_page:this.pagesize,
 					search_name:this.filters.name,
 					search_tenant:this.filters.nameLogo,
+					search_device: typeof this.tit !=='undefined' ?this.tit:''
 //					search_usable:this.filters.status,
 				}
 				this.$ajax.get('/port/logic_ports'+'?token='+this.token,para)
@@ -191,6 +189,7 @@
 					this.loading=false;
 					if(res.status==200){
 						if(res.data.status==0){
+							descriptionValue(res.data.data.items)
 							console.log(res);
 							res.data.data.items.forEach(ele => {
 								ele.physical_ports_len=ele.physical_ports.length;
@@ -201,12 +200,12 @@
 									ele.usableText=isPortStatus(ele.physical_ports);
 									//根据不同的value设置不同的css
 										if(ele.usableText==='UP'){
-											ele.usableTextColor='portUP'
+											ele.usableTextColor='colorGreen'
 										}else if(ele.usableText==='DOWN'){
-											ele.usableTextColor='portDOWN'
+											ele.usableTextColor='colorRed'
 										}else if(ele.usableText==='异常'){
 											ele.usableText==='DOWN'
-											ele.usableTextColor='portAbnor'
+											ele.usableTextColor='colorWarning'
 										}	
 									ele.btnStatus='禁用'
 								}else{
@@ -413,7 +412,7 @@
 </script>
 
 <style >
-	.portUP{
+	/*.portUP{
 		color: #409EFF;
 	}
 	.portDOWN{
@@ -422,5 +421,5 @@
 	.portAbnor{
 		color:#E6A23C;
 		
-	}
+	}*/
 </style>

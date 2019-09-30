@@ -29,6 +29,7 @@
               class='ipt_sta'
               v-model='filters.search_dc'
               placeholder='全部'
+              filterable
             >
               <el-option
                 v-for='(item,index) in dataCenter'
@@ -68,6 +69,7 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               class='ipt_sels'
+              @change="timeValSearchBtn"
             >
             </el-date-picker>
           </el-form-item>
@@ -84,8 +86,9 @@
         </el-form>
       </el-col>
 
-      <el-col :span='24'>
-        <el-dropdown
+
+      <div class="table-top">
+      	 <el-dropdown
           split-button
           type='success'
           @command="handleExport"
@@ -96,54 +99,23 @@
             <el-dropdown-item command="all">所有页</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-      </el-col>
+      </div>
+      
+      
       <!--列表-->
         <el-col :span="24">
-          <el-table
-            :data='users'
-            highlight-current-row
-            @selection-change='selsChange'
-            style='width: 100%;'
-            v-loading='loading'
-          >
-            <el-table-column
-              type='selection'
-              width='40'
-            ></el-table-column>
-            <el-table-column
-              type='index'
-              width='50'
-              label='序号'
-              align='center'
-            ></el-table-column>
-            <el-table-column
-              prop='creation_time'
-              :formatter='dateFormat'
-              width='100'
-              label='创建时间'
-              align='center'
-            ></el-table-column>
-            <el-table-column
-              prop='name'
-              width='80'
-              label='节点名称'
-              align='center'
-            ></el-table-column>
-            <el-table-column
-              prop='exist_status'
-              width='80'
-              label='节点状态'
-              align='center'
-            >
+          <el-table :data='users'   highlight-current-row   @selection-change='selsChange'   style='width: 100%;'   v-loading='loading' >
+            <el-table-column  type='selection'   width='40'  ></el-table-column>
+            <el-table-column   type='index'   width='50'   label='序号'   align='center' ></el-table-column>
+            <el-table-column   prop='creation_time'
+              :formatter='dateFormat'   width='95'   label='创建时间'   align='center'  ></el-table-column>
+            <el-table-column   prop='name'  min-width='80'max-width='100'   label='节点名称'   align='center' ></el-table-column>
+            <el-table-column   prop='exist_status'   min-width='80'max-width='100'   label='节点状态'  align='center' >
               <template slot-scope="scope">
                 {{scope.row.exist_status=='normal'?'运行中':scope.row.exist_status=='found'?'离线':'单一运行中'}}
               </template>
             </el-table-column>
-            <el-table-column
-              width='80'
-              label='设备名称'
-              align='center'
-            >
+            <el-table-column   min-width='80'max-width='100'  label='设备名称'   align='center'  >
               <template slot-scope="scope">
                 <ul v-for='item in scope.row.devices'>
                   <li v-text="item.hostname"></li>
@@ -152,7 +124,8 @@
             </el-table-column>
             <el-table-column
               prop='exist_status'
-              width='80'
+              min-width='80'
+              max-width='100'
               label='设备状态'
               align='center'
             >
@@ -163,7 +136,8 @@
               </template>
             </el-table-column>
             <el-table-column
-              width='70'
+              min-width='80'
+              max-width='100'
               label='SN号'
               align='center'
             >
@@ -174,7 +148,8 @@
               </template>
             </el-table-column>
             <el-table-column
-              width='70'
+              min-width='70'
+              max-wdith='90'
               label='管理IP'
               align='center'
             >
@@ -186,24 +161,27 @@
             </el-table-column>
             <el-table-column
               prop='vtep'
-              width='80'
+             min-width='80'
+             max-width='100'
               label='vtep'
               align='center'
             ></el-table-column>
             <el-table-column
               prop='dc.name'
-              width='80'
-              label='设备中心'
+              min-width='80'
+              max-wdith='100'
+              label='数据中心'
               align='center'
             ></el-table-column>
             <el-table-column
-              prop='description'
-              width='60'
+              prop='descriptionVal'
+              min-width='60'
+              max-width='100'
               label='备注'
               align='center'
             ></el-table-column>
             <el-table-column
-              width='220'
+            	width='220'
               label='操作'
               align='center'
             >
@@ -262,6 +240,8 @@
 </template>
 
 <script>
+	
+		import {descriptionValue,getTime} from '@/assets/js/index.js'
 export default {
   name: "Service",
   data() {
@@ -364,30 +344,20 @@ export default {
     selsChange(sels) {
       this.sels = sels;
     },
+    timeValSearchBtn(value) {
+      this.filters.start_time = this.filters.timeVal[0];
+      this.filters.end_time = this.filters.timeVal[1];
+    },
     //获取列表的所有的数据
     getUsers() {
       var _this = this;
       this.loading = true;
-      if (this.filters.start_time == "" && this.filters.start_time != "") {
-        this.filters.start_time = "";
-        this.filters.start_time = Number(this.filters.timeVal[0]);
-        console.log(this.filters.start_time);
-      } else if (
-        this.filters.start_time == "" &&
-        this.filters.start_time != ""
-      ) {
-        this.filters.start_time = "";
-        this.filters.end_time = Number(this.filters.timeVal[1]);
-      } else if (
-        this.filters.start_time == "" &&
-        this.filters.start_time == ""
-      ) {
-        this.filters.start_time = "";
-        this.filters.end_time = "";
-      } else {
-        this.filters.start_time = Number(this.filters.timeVal[0]);
-        this.filters.end_time = Number(this.filters.timeVal[1]);
-      }
+       this.filters.start_time = this.filters.timeVal[0]
+        ? this.filters.timeVal[0]
+        : "";
+      this.filters.end_time = this.filters.timeVal[1]
+        ? this.filters.timeVal[1]
+        : "";
       //				顶部工具栏内的对应的数据
       var para = {
         page: this.currentPage,
@@ -395,8 +365,8 @@ export default {
         search_name: this.filters.name,
         search_dc: this.filters.search_dc,
         search_status: this.filters.search_status,
-        search_start_time: this.filters.start_time,
-        search_end_time: this.filters.end_time
+        search_start_time: getTime(this.filters.start_time),
+        search_end_time: getTime(this.filters.end_time)
       };
       this.$ajax
         .get("/node/nodes" + "?token=" + this.token, para)
@@ -405,8 +375,7 @@ export default {
           console.log(res);
           if (res.status == 200) {
             if (res.data.status == 0) {
-              _this.users = res.data.data.items;
-              _this.total = res.data.data.page.total;
+            	descriptionValue(res.data.data.items)
               let params = res.data.data.items;
 
               params.forEach((ele, index) => {
@@ -418,6 +387,8 @@ export default {
                   _this.diStatus = true;
                 }
               });
+               _this.users = res.data.data.items;
+              _this.total = res.data.data.page.total;
             }
           }
         })

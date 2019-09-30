@@ -35,6 +35,7 @@ export default {
   methods: {
     handleClose() {
       this.mesdetail.dialogVisible = false;
+      this.$emit('getData');
     },
     timestamp(timestamp){
       let timestampString = null;
