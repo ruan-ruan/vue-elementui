@@ -199,7 +199,6 @@
 			},
 			editForm:{
 				handler(newVal,oldVal){
-					this.$emit('sendFormData_a',newVal)
 					this.$emit('sendFormData_z',newVal)
 					
 					if(newVal.endpoints_vlan){
@@ -235,9 +234,9 @@
 			sendForm:{
 				handler(newVal,oldVal){
 					this.$emit('sendFormData',newVal)
-					
+//					
+//					this.$emit('sendFormData_a',newVal)
 
-//					this.$emit('sendFormData_z',newVal)
 				},
 				deep:true,
 			}
@@ -481,10 +480,10 @@
 
 <style>
 	.active{
-		background:#737272  !important;
+		background: #737272!important;
 	}
 	.activeCla{
-		background: #45BAFD !important;
+		background:  #45BAFD!important;
 	}
 	.v-modal{
 		z-index: 2000 !important;

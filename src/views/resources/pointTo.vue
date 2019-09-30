@@ -280,27 +280,27 @@
             </el-table-column>
             <el-table-column
               label='操作'
-              width='200'
+              width='240'
               align='center'
               v-if='parentStatus'
             >
-              <template slot-scope='scope'>
+              <template slot-scope='scope' v-if='scope.row.creat'>
                 <el-button
                   size='small'
-                  type='info'
+									v-if='!scope.row.btn'
                   @click='handleStatus(scope.$index,scope.row)'
-                  v-if='false'
                 >{{scope.row.specialName}}</el-button>
                 <el-button
                   size='small'
                   type='primary'
                   @click='handleEdit(scope.$index,scope.row)'
+                  v-if='!scope.row.btn'
                 >编辑</el-button>
                 <el-button
                   size='small'
                   type='danger'
                   @click='handleDel(scope.$index,scope.row)'
-                  v-if='scope.row.creat'
+                  v-if='scope.row.btn'
                 >删除</el-button>
               </template>
             </el-table-column>
@@ -528,7 +528,7 @@ export default {
   created() {
     this.token = sessionStorage.getItem("token");
     this.getFiltersData();
-    let str = [this.customer, this.nodeID];
+//  let str = [this.customer, this.nodeID];
     if (
       typeof this.customer !== "undefined" ||
       typeof this.nodeID !== "undefined" ||
@@ -608,12 +608,12 @@ export default {
         .then(res => {
           if (res.status == 200) {
             if (res.data.status == 0) {
-              console.log(res.data.data.items);
               // this.users=res.data.data.items;
                  this.total=res.data.data.page.total;
               console.log(res);
 
               res.data.data.items.forEach(ele => {
+              	
                 if (ele.type == "d2d") {
                   ele.typeName = "DCI";
                 } else if (ele.type == "d2c") {
@@ -625,21 +625,28 @@ export default {
                   ele.statusHTML = "创建失败";
                   ele.statusColor = "creatFie";
                   ele.creat = true;
+                  ele.btn=true;
                 } else if (ele.status == "creating") {
                   ele.statusHTML = "创建中";
                   ele.statusColor = "creating";
                   ele.creat = false;
+//                 ele.btn=t;
                 } else if (ele.status == "stopping") {
                   ele.statusHTML = "停止中";
                   ele.specialName = "运行";
                   ele.statusColor = "stopVal";
                   ele.creat = true;
+                  ele.btn=true;
                 } else if (ele.status == "serving") {
                   ele.statusHTML = "运行中";
                   ele.specialName = "停止";
                   ele.statusColor = "ServerVal";
                   ele.creat = true;
+                   ele.btn=false;
                 }
+                
+                
+                
                 //								console.log(ele)
                 var str = ele.endpoints;
                 if (str) {
@@ -687,8 +694,24 @@ export default {
                   }
                 }
               });
-              console.log(res);
-              this.users = res.data.data.items;
+						let creatData=[],failureData=[],stopData=[],servData=[];
+						let strData=res.data.data.items;
+							creatData=strData.filter(item => {
+								return item.status==='creating'
+							})
+							failureData=strData.filter(item => {
+								return item.status==='failure'
+							})
+							stopData=strData.filter(item => {
+								return item.status==='stopping'
+							})
+							servData=strData.filter(item => {
+								return item.status==='serving'
+							})
+							this.users=creatData.concat(failureData,stopData,servData)
+
+
+//            this.users = res.data.data.items;
             }
           }
         })
@@ -799,7 +822,7 @@ export default {
       this.$confirm("确定要删除吗?", "提示", {})
         .then(() => {
           this.$ajax
-            .del("/vll​/del_vll​/" + row.id + "?token=" + this.token)
+            .del("/vll/del_vll/"+ row.id + "?token=" + this.token)
             .then(res => {
               if (res.status == 200) {
                 if (res.data.status == 0) {
@@ -859,61 +882,46 @@ export default {
         .catch(() => {});
     },
     handleStatus(index, row) {
-      //  设置状态    运行和停止
-      if (row.status == "停止中") {
-        console.log("进入运行");
-        this.$confirm(`${row.name}`, "确定要运行该设备吗", "提示", {})
-          .then(() => {
-            this.$ajax
-              .put("/vll/to_server_p2p_vll/" + row.id + "?token=" + this.token)
-              .then(res => {
-                if (res.status == 200) {
-                  if (res.data.status == 0) {
-                    this.$message({
-                      message: "运行成功!",
-                      type: "success"
-                    });
-                    row.status = "运行中";
-                    this.getUsers();
-                  } else {
-                    this.$message({
-                      message: res.data.message,
-                      type: "warning"
-                    });
-                  }
-                }
-              });
-          })
-          .catch(() => {});
-      } else if (row.status == "运行中") {
-        console.log("进入停止");
-        this.$confirm(`${row.status}`, "确定要停止该设备吗？", "提示", {})
-          .then(() => {
-            this.$ajax
-              .put("/vll/to_stop_p2p_vll/" + row.id + "?token=" + this.token)
-              .then(res => {
-                if (res.status == 200) {
-                  if (res.data.status == 0) {
-                    this.$message({
-                      message: "停止成功!",
-                      type: "success"
-                    });
-                    row.status = "停止中";
-                    this.getUsers();
-                  } else {
-                    this.$meesage({
-                      message: res.data.message,
-                      type: "warning"
-                    });
-                  }
-                }
-              })
-              .catch(e => {
-                console.log(e);
-              });
-          })
-          .catch(() => {});
-      }
+    	console.log(row);
+    	if(row.specialName==='停止'){
+    		this.$ajax.put('/vll/to_stop_vll/'+row.id+'?token='+this.token)
+    		.then(res => {
+    			if(res.status==200){
+    				if(res.data.status==0){
+    					this.$message({
+    						message:'禁用成功!',
+    						type:'success'
+    					})
+    					this.getUsers()
+    				}else{
+    					this.$message({
+    						message:res.data.message,
+    						type:'warning'
+    					})
+    				}
+    				
+    			}
+    		})
+    		.catch(e => {console.log(e)})
+    	}else if(row.specialName==='运行'){
+    		this.$ajax.put('/vll/to_serve_vll/'+row.id+'?token='+this.token)
+    		.then(res => {
+    			if(res.status==200){
+    				if(res.data.status==0){
+    					this.$message({
+    						message:'运行成功!',
+    						type:'success'
+    					})
+    					this.getUsers()
+    				}else{
+    					this.$message({
+    						message:res.data.message,
+    						type:'warning'
+    					})
+    				}
+    			}
+    		})
+    	} 
     },
     handleExport(command) {
       //选择导出的当前还是所有数据

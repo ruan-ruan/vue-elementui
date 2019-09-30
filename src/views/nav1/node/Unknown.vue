@@ -305,6 +305,7 @@
 	    	},
 	    	//查看详情
 	    	handleSee(index,row){
+	    		console.log(row)
 				this.$router.push({
 					path:'/location/index/unknown_details/'+row.id,
 				})
@@ -353,6 +354,7 @@
 	    	},
 	    	//删除
 		    handleDel(index, row) {
+		    	console.log(row)
 		      	this.$confirm("确认删除该记录吗?", "提示", {
 		       		type: "warning"
 		      	})

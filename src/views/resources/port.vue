@@ -60,7 +60,7 @@
    	 			</template>
    	 		</el-table-column>
    	 		<el-table-column prop='tenant.name' label='租户标识' width='80'align='center'></el-table-column>
-   	 		<el-table-column  label='逻辑口状态' width='60'align='center'>
+   	 		<el-table-column  label='逻辑口状态' width='80'align='center'>
    	 			<template slot-scope='scope'>
    	 				<span :class='scope.row.usableTextColor'>{{scope.row.usableText}}</span>
    	 			</template>
@@ -99,7 +99,7 @@
 </template>
 
 <script>
-	import {getPortStatus} from '@/assets/js/index'
+	import {getPortStatus,isPortStatus} from '@/assets/js/index'
 	export default{
 		name:'port',
 		props:['tit','LogicTitle'],//来判断进入的界面的，控制添加和操作按钮显示
@@ -198,7 +198,7 @@
 								if(ele.usable){
 									//根据物理端口下的port的status拼接出来的这个参数，并在不同的状态的时候显示不同的字体格式
 //									ele.usableText=this.getPortStatus(ele.physical_ports);
-									ele.usableText=getPortStatus(ele.physical_ports);
+									ele.usableText=isPortStatus(ele.physical_ports);
 									//根据不同的value设置不同的css
 										if(ele.usableText==='UP'){
 											ele.usableTextColor='portUP'

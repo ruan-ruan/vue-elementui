@@ -9,7 +9,7 @@
 				<el-row>
 					<el-col :span='24'>
 						<el-col :span='12'>
-							<el-form-item label='创建时间' v-if='seePortDetails'>
+							<el-form-item label='创建时间' v-if='seePortDetails' prop='creation_time'>
 								<el-input v-model='filters.creation_time' class='ipt':disabled='seePortDetails'></el-input>
 							</el-form-item>
 							<el-form-item label='逻辑口名称'prop='name'>
@@ -35,7 +35,7 @@
 							</el-form-item>
 						</el-col>
 						<el-col :span='12'>
-							<el-form-item label='逻辑端口状态'v-if='seePortDetails'>
+							<el-form-item label='逻辑端口状态'v-if='seePortDetails' prop='status'>
 								<el-input v-model='filters.status' class='ipt':disabled='addPortStatus'></el-input>
 							</el-form-item>
 							<el-form-item label='合同的开始时间' prop='start_time'>
@@ -66,7 +66,7 @@
 					                placeholder="请选择合同的截止日期时间">
 					            </el-date-picker>
 							</el-form-item>
-							<el-form-item label='备注'>
+							<el-form-item label='备注' prop='description'>
 								<!--<input type="" placeholder="" name="" id="" value="" />-->
 								<el-input v-model='filters.description'placeholder="请输入备注信息" type='textarea'class='ipt'cols='4' :disabled='seePortDetails'></el-input>
 							</el-form-item>
@@ -151,13 +151,13 @@
 						</el-select>
 					</el-form-item>
 					<h3 class="dialog_title">物理端口对接客户信息</h3>
-					<el-form-item label='机柜编号'>
+					<el-form-item label='机柜编号' prop='rack'>
 						<el-input v-model='editForm.rack' :disabled='disabeldSee'class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='机房位置'>
+					<el-form-item label='机房位置' prop='position'>
 						<el-input v-model='editForm.position':disabled='disabeldSee'class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='用户设备类型'>
+					<el-form-item label='用户设备类型' prop='device_type'>
 						<el-select v-model='editForm.device_type':disabled='disabeldSee'class='ipt'>
 							<el-option v-for='(item,index) in deviceType'
 								:key='index'
@@ -165,7 +165,7 @@
 								:label='item.label'></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label='端口类型'>
+					<el-form-item label='端口类型' prop='port_type'>
 						<el-select v-model='editForm.port_type':disabled='disabeldSee'class='ipt'>
 							<el-option v-for='(item,index) in portType'
 								:key='index'
@@ -174,7 +174,7 @@
 							</el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label='备注'>
+					<el-form-item label='备注' prop='description'>
 						<el-input type='textarea':disabled='disabeldSee' v-model='editForm.description'class='ipt' cols="4" placeholder=""></el-input>
 					</el-form-item>
 				</el-form>
@@ -407,19 +407,23 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
+							console.log(res)
 							this.backNodes=res.data.data.items;
 						}
 					}
 				})
 			},
 			selectNode(ids){
-				//筛选  选择对应的id的name
+				//筛选  获取骨干节点的信息
 				let items=ids;
 				var findVal=this.backNodes.find(function(obj){
 					return obj.id===items;
 				})
 				//将选择的骨干的id的名字保存下来
 				this.editForm.node_name=findVal.name;
+				console.log(findVal)
+				
+				
 				if(!findVal.dc && typeof(findVal.dc)!='undefined' && findVal.dc!=0){//此时的数据类型为null
 					console.log('hello')
 				}else{
@@ -691,6 +695,7 @@
 							}
 							this.filters.physical_ports.push(para);
 							this.physical_ports.push(paraData);
+							
 							this.$refs["editForm"].resetFields();
 							this.dialogFormVisible=false;
 							console.log(this.physical_ports)
@@ -699,6 +704,7 @@
 				})
 			},
 			handleEdit(index,row){
+				console.log(row)
 				//关联-编辑
 				this.dialogStatus='update';
 				this.dialogFormVisible=true;
@@ -728,8 +734,10 @@
 				//关联-编辑保存按钮
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-						// this.$confirm('确定要修改吗?','提示',{})
-						// .then(() => {
+							console.log(this.editForm)
+							
+							
+							
 							this.filters.physical_ports[this.editForm.index]=Object.assign({},this.editForm);
 							this.physical_ports[this.editForm.index]={
 								description:this.editForm.description,
@@ -755,12 +763,11 @@
 							this.$refs["editForm"].resetFields();
 							this.dialogFormVisible = false;
 							console.log(this.physical_ports)
-						// }).catch(() => {})
 					}
 				})
 			},
 			//关联端口里面的操作按钮
-			handleSee(index,row){
+			handleSee(index,row){   //详情界面
 				//查看详情
 				this.dialogStatus='details';
 				this.dialogFormVisible=true;

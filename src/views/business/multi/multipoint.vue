@@ -194,9 +194,9 @@
 			        search_node:(typeof this.clounID !=='undefined' ? this.clounID:''),
 			        search_logic_port:(typeof this.logicID !=='undefined' ?this.logicID:''),
 				}
+				console.log(para)
 				this.$ajax.get('/vll/multi_vlls'+'?token='+this.token,para)
 				.then(res => {
-					console.log(res);
 					if(res.status==200){
 						if(res.data.status==0){
 							this.users=res.data.data.items;

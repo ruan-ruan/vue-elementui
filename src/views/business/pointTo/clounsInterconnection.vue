@@ -126,22 +126,19 @@
 		},
 		methods:{
 			getsharedCloun_a(msg){
-				this.editForm={
-					sharedCloun_a:msg.cloun,
-					clounDoc_a:msg.clounDock,
-					target_a:msg.targetRegion,
-				}
+				this.editForm.sharedCloun_a=msg.cloun
+				this.editForm.clounDoc_a=msg.clounDock
+				this.editForm.target_a=msg.targetRegion
+
 			},
 			sendClounList_a(list){
 				this.selectFormA=Object.assign({},list)
 			},
 			
 			getsharedCloun_z(msg){
-				this.editForm={
-					sharedCloun_z:msg.cloun,
-					clounDoc_z:msg.clounDock,
-					target_z:msg.targetRegion,
-				}
+				this.editForm.sharedCloun_z=msg.cloun
+				this.editForm.clounDoc_z=msg.clounDock
+				this.editForm.target_z=msg.targetRegion
 			},
 			sendClounList_z(list){
 				this.selectFormZ=Object.assign({},list)

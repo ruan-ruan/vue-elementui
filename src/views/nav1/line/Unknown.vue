@@ -184,7 +184,7 @@
 								</el-radio>				
 						</el-radio-group>
 					</el-form-item>
-					<el-form-item v-show='detectionStatus' label='检测类型'>
+					<el-form-item v-if='detectionStatus' label='检测类型' prop='monitoring_type'>
 						<el-select v-model='editForm.monitoring_type' :disabled='seeStatus' placehold='请选择' class='ipt' >
 							<el-option v-for='(item,index) in detectionType'
 								:value='item.value'
@@ -192,7 +192,7 @@
 								:key='index'></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item v-show='detectionStatus' label='检测参数'>
+					<el-form-item v-if='detectionStatus' label='检测参数' prop='monitoring_param'>
 						<el-input v-model='editForm.monitoring_param':disabled='seeStatus' class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item  label='流量获取键入值'>
@@ -308,9 +308,10 @@
 					physical_bandwidth:[{ required:true ,message:'请输入物理带宽',trigger:'blur'}],
 					bandwidth:[{ required:true , message:'请输入总带宽',trigger:'blur'}],
 					
-					monitoring:[{required:true ,message:'请选择链路检测类型', trigger:'change'}],
+					monitoring:[{required:true ,message:'请选择链路检测是否开启', trigger:'change'}],
 					
-					link_cost:[{ required:true ,message:'请输入链路开销',trigger:'blur'}]	
+					link_cost:[{ required:true ,message:'请输入链路开销',trigger:'blur'}]	,
+					monitoring_type:[{required:true ,message:'请选择链路检测类型', trigger:'change'}],
 				},
 				//链路检测是否开启部分
 				detectionStatue:[
@@ -490,7 +491,7 @@
 					physical_bandwidth:'',
 					bandwidth:'',
 					
-					monitoring:'false',
+					monitoring:false,
 					
 					monitoring_type:'',
 					monitoring_param:'',
@@ -500,13 +501,32 @@
 				};
 			},
 			creatData:function(){
-//				var this=this;
-//				console.log(this.editForm)
+
 				this.$refs.editForm.validate(valid => {
 					if(valid){
 						this.$confirm('确认提交吗?','提示',{})
 						.then( () => {
-							let para=Object.assign({},this.editForm);
+//							let para=Object.assign({},this.editForm);
+							console.log(this.editForm)
+							let para={
+								a_node_id:this.editForm.a_node_id,
+								a_ip:this.editForm.a_ip,
+								a_vlan:this.editForm.a_vlan,
+								a_desc:this.editForm.a_desc,
+								z_node_id:this.editForm.z_node_id,
+								z_ip:this.editForm.z_ip,
+								z_vlan:this.editForm.z_vlan,
+								z_desc:this.editForm.z_desc,
+								physical_bandwidth:this.editForm.physical_bandwidth,
+								bandwidth:this.editForm.bandwidth,
+								monitoring:this.editForm.monitoring.toString(),
+								monitoring_type:this.editForm.monitoring_type,
+								monitoring_param:this.editForm.monitoring_param,
+								link_cost:this.editForm.link_cost,
+								description:this.editForm.description,	
+							}
+							
+							
 							this.$ajax.post('/link/add_unknown_link'+'?token='+this.token,para)
 							.then( res => {
 								console.log(res);

@@ -6,9 +6,12 @@
 				<el-col :span='24'style='margin-left: 40px;'>
 					<!--<el-col :span='12'>-->
 						<el-form :model='customer' ref='customer' :rules='customerRules' v-loading='editLoading' label-width='95px'>
-							<el-form-item label='租户标识(公司名称)' prop='company_name'>
+							<el-form-item label='创建时间'>
+								<el-input disabled v-model='customer.creation_time' class='ipt_sels' ></el-input>
+							</el-form-item>
+							<el-form-item label='租户标识(公司名称)' prop='name'>
 								<template>
-									<el-input v-model='customer.company_name' class='ipt_sels'placeholder='请输入公司名称' :disabled='!btnStatus'></el-input>
+									<el-input v-model='customer.name' class='ipt_sels' :disabled='!btnStatus'></el-input>
 									<span class="cli_toTip" title="公司名称应该与客户签订合同的主题名称一致">?</span>	
 								</template>
 							</el-form-item>
@@ -21,8 +24,8 @@
 							<el-form-item label='租户邮箱'prop='email'>
 								<el-input v-model='customer.email' class='ipt_sels'placeholder='请输入租户邮箱':disabled='!btnStatus'></el-input>
 							</el-form-item>
-							<el-form-item label='关联租户标识' v-show='false'>
-								<el-input v-model='customer.name' class='ipt_sels' disabled></el-input>
+							<el-form-item label='关联租户标识' v-show='false' prop='tenant_id'>
+								<el-input v-model='customer.tenant_id' class='ipt_sels' disabled></el-input>
 							</el-form-item>
 							<!--<el-form-item label='租户标识' prop='name'>
 								<el-select v-model='customer.name'class='ipt_sels' filterable  :disabled='!btnStatus'placeholder='请输入租户标识'>
@@ -81,7 +84,7 @@
 
 
 	import { regionData,CodeToText } from 'element-china-area-data'
-	import {isvalidPhone,isvalidEmail} from '@/assets/js/index.js';
+	import {isvalidPhone,isvalidEmail,datedialogFormat} from '@/assets/js/index.js';
 	export default{
 		name:'cusOperation',
 		//这个是接收的是详情的时候的id
@@ -128,6 +131,7 @@
 					district:'',
 					extra:'',
 					description:'',
+					creation_time:''
 					
 				},
 				customerRules:{
@@ -316,7 +320,12 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.editLoading=false;
+							console.log(res)
+							//datedialogFormat
+							res.data.data.creation_time=datedialogFormat(res.data.data.creation_time);
 							this.customer=res.data.data;
+//							creation_time
+							
 							this.selectedOptions.push(res.data.data.province,res.data.data.city,res.data.data.district);
 
 						}

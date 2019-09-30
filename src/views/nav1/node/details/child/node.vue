@@ -28,10 +28,6 @@
 						<el-button size='small' type='success' @click='equStatusTwo = !equStatusTwo' v-show='addEquipStatus' v-text='equStatusTwo?"收起物理设备2":"添加物理设备2"' ></el-button>
 						<el-col :span='24'>		
 							<el-col :span='12' class='equipment'>
-<<<<<<< HEAD
-=======
-								<!-- <el-button size='small' type='success' @click='StatusDisplay' v-show='addEquipStatus'>添加物理设备2</el-button> -->
->>>>>>> 1505d515345ba881f213149da15b93eef63090aa
 								<h4>物理设备1:</h4>
 								<el-form-item label='设备名称:'prop='devices0_hostname'>
 									<el-input v-model='seeForm.devices0_hostname':disabled='StaNot' class='ipt'placeholder='请输入设备名称'></el-input>
@@ -300,6 +296,7 @@
 			}
 			if(typeof this.unknown_editFormID !='undefined'){
 				//未知节点的编辑
+				this.unknown_editForm_status=false;
 				this.addEquipStatus=false;
 				this.StaEditForm=false;
 				this.StaNot=false;
@@ -313,6 +310,7 @@
 		},
 		mounted(){
 			this.bus.$emit('equipment',this.seeForm.devices);
+			this.$refs['seeForm'].resetFields();
 		},
 		methods:{
 			getDataCenter(){
@@ -668,10 +666,15 @@
 				})
 			},
 			getUnknownDetail(id){
+//				this.$nextTick(() =>{
+//					this.$refs['seeForm'].resetFields();
+//				})
+				
 				//获取未知节点的详情
 				this.loading=true;				
 				this.$ajax.get('/node/unknown_node_info/'+id+'?token='+this.token)
 				.then(res => {
+					this.$refs['seeForm'].resetFields();
 					this.loading=false;
 					if(res.status==200){
 						if(res.data.status==0){
@@ -695,8 +698,7 @@
 									devices0_room:unknownSee.devices[0].room,
 									devices0_rack:unknownSee.devices[0].rack,
 									devices0_description:unknownSee.devices[0].description,
-									port_section:unknownSee.devices[0].port_section,
-									
+									port_section0:unknownSee.devices[0].port_section,
 //										dc_id:unknownSee.dc.id,
 //										dc_name:unknownSee.dc.name,
 								}
@@ -718,7 +720,7 @@
 									devices0_room:unknownSee.devices[0].room,
 									devices0_rack:unknownSee.devices[0].rack,
 									devices0_description:unknownSee.devices[0].description,
-									port_section:unknownSee.devices[0].port_section,
+									port_section0:unknownSee.devices[0].port_section,
 				
 									devices1_id:unknownSee.devices[1].id,
 									devices1_hostname:unknownSee.devices[1].hostname,
@@ -730,13 +732,16 @@
 									devices1_room:unknownSee.devices[1].room,
 									devices1_rack:unknownSee.devices[1].rack,
 									devices1_description:unknownSee.devices[1].description,
-									port_section:unknownSee.devices[1].port_section,
+									port_section1:unknownSee.devices[1].port_section,
 			
 //										dc_id:unknownSee.dc.id,
 //										dc_name:unknownSee.dc.name,
 								}
 							}
-							this.seeForm.dc_id=res.data.data.dc.name;
+							if(res.data.data.dc){
+								this.seeForm.dc_id=res.data.data.dc.name;
+							}
+							
 						}
 					}
 				}).catch(e => {

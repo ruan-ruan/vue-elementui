@@ -12,7 +12,8 @@
           <el-form
             :inline='true'
             :model='filters'
-          >
+          > 
+
             <el-form-item label='租户标识：'>
               <el-input
                 v-model='filters.name'
@@ -93,6 +94,8 @@
           align='center'
           label='序号'
         ></el-table-column>
+          <!--:formatter='dateTableFormat'-->
+        <el-table-column prop='creation_time' :formatter='dateTableFormat' width='95' label='创建时间' align='center'></el-table-column>
         <el-table-column  width='90'align='center'label='租户标识(公司名称)' >
           <template slot-scope='scope'>
             <span class="tem_span" @click="handleSee(scope.$index, scope.row)"
@@ -538,18 +541,18 @@ export default {
     },
     formatJson(filterVal, jsonData) {
       return jsonData.map(v => filterVal.map(j => v[j]));
-    }
-    //			dateTableFormat(row,column){
-    //				//将时间戳转换为前端的时间
-    //				let date=new Date(parseInt(row.creation_time)*1000);
-    //				let Y=date.getFullYear()+'-';
-    //				let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-    //				let D=date.getDate() <10? '0' +date.getDate() +'':date.getDate()+'';
-    //				let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
-    //				let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
-    //				let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
-    //				return Y + M + D + h + m + s
-    //			}
+    },
+		dateTableFormat(row,column){
+			//将时间戳转换为前端的时间
+			let date=new Date(parseInt(row.creation_time)*1000);
+			let Y=date.getFullYear()+'-';
+			let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
+			let D=date.getDate() <10? '0' +date.getDate() +'':date.getDate()+'';
+			let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
+			let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
+			let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
+			return Y + M + D + h + m + s
+		}
   }
   //		mounted(){
   //			this.getUsers()
