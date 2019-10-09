@@ -102,7 +102,7 @@
                 {{item.name}}</template>
               <el-menu-item-group
                 v-for='(child,indexs)  in item.children'
-                :index="child.path"
+                :index="indexs"
                 :key="child.path"
                 v-if="!child.hidden"
               >
@@ -116,7 +116,7 @@
                   ><i :class="child.iconCls"></i>{{child.name}}</template>
                   <el-menu-item
                     v-for="(sun,i)  in child.children"
-                    :index="i"
+                    :index="sun.path"
                     :key="sun.path"
                   >
                     {{sun.name}}

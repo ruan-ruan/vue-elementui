@@ -231,6 +231,7 @@
 				unknown_editForm_status:false,
 				//控制添加设备2的按钮,默认是隐藏的
 				addEquipStatus:false,
+				backstatus:false,//返回按钮
 				itemData:[],
 				dc_id:''
 			}
@@ -252,7 +253,7 @@
 				
 				this.creatFormBtn=false;
 				this.unknownStatusBtn=false;
-				
+				this.backstatus=true;
 				this.devices_id_status=true;
 				this.getUsers(this.editId)
 				this.getDataCenter()
@@ -536,7 +537,8 @@
 											message:'添加成功!',
 											type:'success'
 										})
-										this.$router.go(-1)
+										this.$store.state.statusname=true;
+										this.$router.push('/location/backbone')
 									}else{
 										this.$message({
 											message:res.data.message,
@@ -628,6 +630,7 @@
 											message:'修改成功!',
 											type:'success'
 										})
+										this.$store.state.statusname=true;
 										this.$router.push('/location/backbone')
 									}else{
 										this.$message({
@@ -729,7 +732,13 @@
 			goback(){
 				//返回
 //				this.$router.go(-1)
-				this.$router.push('/location/backbone')
+				if(this.backstatus==true) {
+					this.$router.push('/location/backbone')
+				}else {
+					this.$store.state.statusname=true;
+					this.$router.push('/location/backbone')
+				}
+				
 			}
 		},
 	}
