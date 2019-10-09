@@ -54,28 +54,23 @@
           </el-form>
         </el-col>
       </el-col>
+			<el-col :span='24'>
+				<el-col :span='4'>
+					<el-button type='primary' @click='handleAdd' >添加租户</el-button>
+				</el-col>
+				<el-col :span='20' class='table-top'>
+					<el-dropdown  split-button type='success' @command="handleExport" >
+	        		导出数据
+	        <el-dropdown-menu slot='dropdown'>
+	          <el-dropdown-item command="current">当前页 </el-dropdown-item>
+	          <el-dropdown-item command="all">所有页</el-dropdown-item>
+	        </el-dropdown-menu>
+	      </el-dropdown>
+				</el-col>
+			</el-col>
 
-      <el-col :span='24'>
-        <el-col :span='3'>
-          <el-button
-            type='primary'
-            @click='handleAdd'
-          >添加租户</el-button>
-        </el-col>
-        <el-col :span='21'>
-          <el-dropdown
-            split-button
-            type='success'
-            @command="handleExport"
-          >
-            导出数据
-            <el-dropdown-menu slot='dropdown'>
-              <el-dropdown-item command="current">当前页 </el-dropdown-item>
-              <el-dropdown-item command="all">所有页</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </el-col>
-      </el-col>
+      
+      
       <el-table
         :data='users'
         highlight-current-row
@@ -96,51 +91,44 @@
         ></el-table-column>
           <!--:formatter='dateTableFormat'-->
         <el-table-column prop='creation_time' :formatter='dateTableFormat' width='95' label='创建时间' align='center'></el-table-column>
-        <el-table-column  width='90'align='center'label='租户标识(公司名称)' >
+        <el-table-column  min-width='120'align='center'label='租户标识(公司名称)' >
           <template slot-scope='scope'>
             <span class="tem_span" @click="handleSee(scope.$index, scope.row)"
             >{{scope.row.name}}</span>  <br />
             <span>{{scope.row.company_name}}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop='usableText'
-          width='150'
-          align='center'
-          label='租户状态'
-        ></el-table-column>
-        <!--<el-table-column
-          prop='company_name'
-          width='150'
-          align='center'
-          label='公司名称'
-        ></el-table-column>-->
+        <el-table-column    min-width='100'  align='center' label='租户状态' >
+        	<template slot-scope='scope'>
+        		<span :class='scope.row.color' v-text="scope.row.usableText"></span>
+        	</template>
+        </el-table-column>
         <el-table-column
           prop='contact'
-          width='150'
+          min-width='120'
           align='center'
           label='租户联系人'
         ></el-table-column>
         <el-table-column
           prop='mobile'
-          width='100'
+          min-width='120'
           align='center'
           label='手机号'
         ></el-table-column>
         <el-table-column
           prop='email'
-          width='100'
+          min-width='120'
           align='center'
           label='邮箱'
         ></el-table-column>
         <el-table-column
-          prop='description'
-          width='100'
+          prop='descriptionVal'
+          min-width='80'
           align='center'
           label='备注'
         ></el-table-column>
         <el-table-column
-          width='300'
+          width='220'
           label='操作'
           align='center'
         >
@@ -193,6 +181,8 @@
 </template>
 
 <script>
+	import {descriptionValue} from '@/assets/js/index.js'
+	
 export default {
   name: "Customer",
   data() {
@@ -273,13 +263,16 @@ export default {
           if (res.status == 200) {
             if (res.data.status == 0) {
               this.laoding = false;
+              descriptionValue(res.data.data.items)
               this.users = res.data.data.items;
               this.total = res.data.data.page.total;
               this.users.forEach(ele => {
                 if (ele.usable) {
+                	ele.color='colorGreen'
                   ele.usableText = "启用";
                   ele.usableBtnText = "禁用";
                 } else {
+                	ele.color='colorRed'
                   ele.usableText = "禁用";
                   ele.usableBtnText = "启用";
                 }

@@ -27,15 +27,12 @@
 					</el-form-item>
 				</el-form>
 			</el-col>
-			
-			<!--所有的数据部分-->
-			<!--导出数据的部分-->
 			<el-col :span='24'>
-				<el-col :span='3'>
+				<el-col :span='4'>
 					<el-button type='primary' @click='addUser(editForm)' >+添加</el-button>
 				</el-col>
-				<el-col :span='21'>
-					<el-dropdown split-button type='success' @command="handleExport">
+				<el-col :span='20'class="table-top">
+					<el-dropdown split-button type='success' @command="handleExport" >
 						导出数据
 						<el-dropdown-menu slot='dropdown'>
 							<el-dropdown-item command="current">当前页 </el-dropdown-item>
@@ -43,33 +40,35 @@
 						</el-dropdown-menu>
 					</el-dropdown>
 				</el-col>
-
-				
 			</el-col>
+
 			
 			<!--数据部分-->
 			<el-table :data = "users" highlight-current-row @selection-change="selsChange" style='width: 100%;' v-loading='loading'>
-				<el-table-column type='selection' width='60'></el-table-column>
-				<el-table-column type='index' width='60' label='序号'></el-table-column>
-				<el-table-column prop='creation_time' width='150' :formatter='dateFormat' label='创建时间' align='center'>
+				<el-table-column type='selection' width='40'></el-table-column>
+				<el-table-column type='index' min-width='50' label='序号'></el-table-column>
+				<el-table-column prop='creation_time' width='95' :formatter='dateFormat' label='创建时间' align='center'>
 				</el-table-column>
-				<el-table-column prop='name' width='150' label='账户' align='center'>
+				<el-table-column prop='name' min-width='80' label='账户' align='center'>
 				</el-table-column>
-				<el-table-column prop='real_name' width='150' label='姓名' align='center'>
+				<el-table-column prop='real_name' min-width='100' label='姓名' align='center'>
 				</el-table-column>
-				<el-table-column prop='roleStatus' width='120' label='人员状态' align='center'>
+				<el-table-column  min-width='80' label='人员状态' align='center'>
+					<template slot-scope='scope'>
+						<span :class="scope.row.color" v-text="scope.row.roleStatus"></span>
+					</template>
 				</el-table-column>
-				<el-table-column prop='mobile' width='170' label='手机号' align='center'>
+				<el-table-column prop='mobile' min-width='80' label='手机号' align='center'>
 				</el-table-column>
-				<el-table-column prop='email' width='200' label='邮箱' align='center'>
+				<el-table-column prop='email' min-width='80' label='邮箱' align='center'>
 				</el-table-column>
-				<el-table-column prop='role.name' width='120' label='角色名称' align='center'>
+				<el-table-column prop='role.name' min-width='100' label='角色名称' align='center'>
 				</el-table-column>
-				<el-table-column prop='description' width='120' label='备注' align='center'>
+				<el-table-column prop='descriptionVal' min-width='80' label='备注' align='center'>
 				</el-table-column>
 				<el-table-column  width='300' label='操作' align='center'>
 					<template slot-scope='scope'  >
-						<el-button size='small'  @click='handleSta(scope.$index, scope.row)' class='btnStatus'>{{scope.row.btnText}}</el-button>
+						<el-button size='small' type='warning'  @click='handleSta(scope.$index, scope.row)' class='btnStatus'>{{scope.row.btnText}}</el-button>
 						<el-button size='small' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
 						<el-button size='small' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
 						<el-button size='small' type='danger' @click='handleDel(scope.$index, scope.row)'>删除</el-button>
@@ -121,7 +120,7 @@
 						<el-input v-model='editForm.email' class='ipt' :disabled='read' ></el-input>
 					</el-form-item>
 					<el-form-item label='关联角色' prop='role_id' >
-						<el-select v-model='editForm.role_id':disabled='read'  >
+						<el-select v-model='editForm.role_id':disabled='read'  class='ipt'>
 							<el-option v-for='(item,index) in roles'
 								:key='index'
 								:value='item.id'
@@ -161,7 +160,7 @@
 
 <script>
 	
-
+		import {descriptionValue} from '@/assets/js/index.js'
 	export default{
 		name:'Set',
 		mounted(){
@@ -332,13 +331,16 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.loading=false;
-							
+							descriptionValue(res.data.data.items)
 							res.data.data.items.forEach(ele => {
 //								console.log(ele.usable)
 								if(!ele.usable){
+									ele.color='colorRed'
 									ele.roleStatus='禁用';
 									ele.btnText='启用';
 								}else{
+									ele.color='colorGreen'
+									
 									ele.roleStatus='启用';
 									ele.btnText='禁用';
 								}
@@ -430,17 +432,15 @@
 										this.dialogFormVisible=false;
 										this.getUsers();
 									}else if(res.data.status){
+										this.dialogFormVisible=false;
 										this.$message({
-											message:res.data.messaeg,
-											type:'danger'
+											message:res.data.message,
+											type:'waring'
 										})
 									}
 								}
-							})
-						// })
-						// .catch( e => {
-						// 	console.log(e)
-						// })
+							}).catch( e=> {console.log(e)})
+
 					}else{
 						return false;
 					}

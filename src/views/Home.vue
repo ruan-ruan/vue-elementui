@@ -187,10 +187,10 @@
             <!-- <i :class="item.iconCls"></i> -->
             <img :src="item.iconCls" class='asideLogo'/>
           </div>
-          </li>
-</template>
-</li>
-</ul>
+        </li>
+			</template>
+		</li>
+	</ul>
 </aside>
 
 <section class="content-container">

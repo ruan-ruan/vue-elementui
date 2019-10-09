@@ -12,7 +12,7 @@
 				<span class="cli_toTip" title="请选择本次链接云的类型">?</span>
 			</el-form-item>
 			<el-form-item label='目标Region' prop='targetRegion'>
-				<el-select v-model='editForm.targetRegion' class='ipt'@change='selRegion(editForm.targetRegion)'>
+				<el-select v-model='editForm.targetRegion' class='ipt' @change='selRegion(editForm.targetRegion)'>
 					<el-option v-for='(item ,index) in targetRegionData'
 						:label='item'
 						:value='item'
@@ -133,6 +133,7 @@
 				
 		    },
 		    selRegion(ids){
+		    	this.editForm.clounDock='';
 		    	let para={
 		    		search_cloud:this.editForm.cloun,
 		    		search_region:ids,

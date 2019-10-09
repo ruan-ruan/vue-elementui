@@ -271,7 +271,7 @@
 						//编辑的角色的时候按钮
 						var para={
 							name:this.editForm.name,
-							rights:this.editForm.dataCen.join(','),
+							rights:this.editForm.dataCen,
 							usable:this.editForm.usableStatus,
 							description:this.editForm.description
 						}

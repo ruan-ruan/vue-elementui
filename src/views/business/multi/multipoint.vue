@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<section>
-			<el-row>
+			<el-row class='toolbar'>
 				<el-col :span='24'>
 					<el-form :inline='true' :model='filters' ref='filters'>
 						<el-form-item label='组网名称' prop='name'>
@@ -23,20 +23,19 @@
 				</el-col>
 			</el-row>
 			
-			<el-row v-if='(typeof virTit !=="undefined"?false: (typeof clounID !=="undefined"?false:true)) '>
-				<el-col :span='24'>
-					<el-button @click='add' type='primary'>添加虚拟组网</el-button>
-				</el-col>
-			</el-row>
+			
+			<div class="table-top" v-if='(typeof virTit !=="undefined"?false: (typeof clounID !=="undefined"?false:true)) '>
+				<el-button @click='add' type='primary'>添加虚拟组网</el-button>	
+			</div>
 			
 			<el-table :data='users' highlight-current-row @selection-change="selsChange"style='width: 100%;' v-loading='loading'>
 				<el-table-column type='selection' width='60' v-if='(typeof clounID !=="undefined"?false:true)'></el-table-column>
-				<el-table-column type='index' width='60' label='序号'></el-table-column>
-				<el-table-column prop='name'label='组网名称' align='center'width='120' ></el-table-column>
-				<el-table-column prop='name'label='关联断点数' align='center'width='120' ></el-table-column>
-				<el-table-column prop='name'label='租户标识' align='center'width='120' ></el-table-column>
-				<el-table-column prop='name'label='备注' align='center'width='120' ></el-table-column>
-				<el-table-column label='操作' width='260' align='center'>
+				<el-table-column type='index' width='80' label='序号'></el-table-column>
+				<el-table-column prop='name'label='组网名称' align='center'min-width='150' ></el-table-column>
+				<el-table-column prop='len'label='关联端点数' align='center'min-width='150' ></el-table-column>
+				<el-table-column prop='tenant.name'label='租户标识' align='center'min-width='150' ></el-table-column>
+				<el-table-column prop='descriptionVal'label='备注' align='center'min-width='150' ></el-table-column>
+				<el-table-column label='操作' align='center' width='300'>
 					<template slot-scope='scope'>
 						<el-button size='small' type='info' @click='handleDetails(scope.$index,scope.row)'>详情</el-button>
 						<el-button size='small' type='primary' @click='handleEdit(scope.$index,scope.row)' v-if='(typeof clounID !=="undefined"?false:true)'>
@@ -102,6 +101,7 @@
 
 <script>
 	
+	import {descriptionValue} from '@/assets/js/index.js'
 	
 	export default{
 		name:'multipoint',
@@ -199,7 +199,13 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
+							console.log(res)
+							descriptionValue(res.data.data.items);
+//							res.data.data.items.forEach(ele =>{
+//								
+//							})
 							this.users=res.data.data.items;
+							this.total=res.data.data.page.total
 						}
 					}
 				}).catch(e => {console.log(e)})

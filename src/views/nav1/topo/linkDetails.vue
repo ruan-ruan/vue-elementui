@@ -183,8 +183,26 @@
 				}
 			},
 			charts(ids){
-				console.log(ids);//跳转到流量监控的界面
-				
+//				console.log(ids);//跳转到流量监控的界面
+				this.$ajax.get('/vll/get_vll_flow/'+ids+'?token='+this.token)
+					.then(res => {
+						if(res.status==200){
+							if(res.data.status==0){
+								this.$router.push({
+									path:'/topology/charts',
+									query:{
+										topoId:ids
+									}
+								});
+							}else{
+								this.$message({
+									message:res.data.message,
+									type:'warning'
+								})
+							}
+						}
+					}).catch(e => {console.log(e)})
+	
 			}
 		}
 	}

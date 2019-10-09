@@ -115,12 +115,12 @@
 				 <el-button size='small' type='primary' @click='creatVlan'>保存</el-button>
 			</div>
 		</el-dialog>
-		<!--<button @click="conversion(vlanData)">kkkk</button>-->
+
 	</div>
 </template>
 
 <script>
-//var itable= document.getElementById('idData').getElementsByTagName("span");	
+
 	
 	import {datedialogFormat,getPortStatus ,isPortStatus} from '@/assets/js/index.js'
 	export default{
@@ -289,6 +289,7 @@
 			},
 			selectNode(ids){//根据选择的节点获取逻辑口的数据
 				console.log(ids)
+				this.editForm.logic=''
 				this.logicPort=[]
 				var para={
 					search_node:ids

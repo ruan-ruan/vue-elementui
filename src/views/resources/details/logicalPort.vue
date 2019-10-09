@@ -80,7 +80,7 @@
 					<el-button @click='addPort' type='success'>关联端口</el-button>
 				</el-col>
 			</el-row>
-			<el-table :data='physical_ports' style='width: 100%; ' v-loading='loading'>
+			<el-table :data='physicalData' style='width: 100%; ' v-loading='loading'>
 				<el-table-column type='index' label='序号' width='60'></el-table-column>
 				<el-table-column prop='node.name'label='节点名称' width='120' align='center'>					
 				</el-table-column>
@@ -88,7 +88,7 @@
 				</el-table-column>
 				<el-table-column prop='port.name'label='设备端口' width='120' align='center'>					
 				</el-table-column>
-				<el-table-column prop='port.status'label='设备状态' width='120' align='center'>					
+				<el-table-column prop='device_status'label='设备状态' width='120' align='center'>					
 				</el-table-column>
 				<el-table-column prop='dc_name'label='数据中心' width='120' align='center'>					
 				</el-table-column>
@@ -141,11 +141,11 @@
 						<el-select v-model='editForm.port_id' :disabled='disabeldSee'class='ipt' @change='selectPort(editForm.port_id)'>
 							<el-option v-for='(item,index) in netwotkPortData'
 								:value='item.id'
-								:label='item.name'
+								:label='item.port_no'
 								:key='index'>
 								<template>
-									<span>{{item.name}}</span>
-									<span style="margin-left: 100px;">{{item.status}}</span>
+									<span>{{item.port_no}}</span>
+									<span style="margin-left: 20px;">{{item.status}}</span>
 								</template>
 							</el-option>
 						</el-select>
@@ -228,6 +228,8 @@
 					description:''
 				},
 				physical_ports:[],
+				physicalData:[],//数据
+				
 				filtersRules:{
 					//校验
 					name:[ { required: true, message: '请输入逻辑端口名称', trigger: 'blur' }],
@@ -254,6 +256,7 @@
 					dc_id:'',
 					port_no:'',
 					port_status:'',
+					port_type:'',
 					index:''
 				},
 				editFormRules:{
@@ -320,13 +323,24 @@
 					},{
 						label:'百G单模',
 						value:'百G单模'
-					},{
-						label:'百G多模',
-						value:'百G多模'
-					},
+					}
 				],
 				//默认情况下是可以编辑的
 				disabeldSee:false,
+			}
+		},
+		watch:{
+			editForm:{
+				handler(newVal,oldVal){
+//					console.log(newVal)
+				},
+				deep:true
+			},
+			physical_ports:function(newVal,oldVal){
+				this.physicalData=JSON.parse(JSON.stringify(newVal))
+//				sessionStorage.setItem('dataTable',JSON.stringify(this.physical_ports));
+//				
+//				this.physicalData=JSON.parse(sessionStorage.getItem('dataTable') )
 			}
 		},
 		created(){
@@ -359,6 +373,10 @@
 				this.getUsers(this.title)
 			}
 			
+			
+		},
+		updated(){
+			console.log(this.physicalData)
 		},
 		methods:{
 			beginDate(){
@@ -484,7 +502,6 @@
 				console.log('执行添加');
 				console.log(this.filters);
 				if(this.physical_ports.length===0){
-					console.log('空的数组')
 					this.$message({
 						message:'关联物理端口至少一个，不能为空，请关联物理端口',
 						type:'warning'
@@ -649,11 +666,10 @@
 			},
 			contantCreatedData:function(){
 				console.log('执行添加')
+				console.log(this.editForm)
 				//关联-添加保存按钮
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-						// this.$confirm('确认要添加吗?','提示',{})
-						// .then(() => {
 							let para={
 								node_id:this.editForm.node_id,
 								device_id:this.editForm.device_id,
@@ -673,16 +689,18 @@
 							//表格的里面的数据
 							let paraData={
 								description:this.editForm.description,
-								device:{
+								device_status:this.editForm.device_status,								
+								device:{//设备
 									hostname:this.editForm.device_name,
-									id:this.editForm.device_id
+									id:this.editForm.device_id,
+									status:this.editForm.device_status,
 								},
 								device_type:this.editForm.device_type,
-								node:{
+								node:{//节点
 									id:this.editForm.node_id,
 									name:this.editForm.node_name,
 								},
-								port:{
+								port:{//端口
 									id:this.editForm.port_id,
 									name:this.editForm.port_name,
 									port_no:this.editForm.port_no,
@@ -693,12 +711,21 @@
 								rack:this.editForm.rack,
 								dc_name:this.editForm.dc_name,
 							}
-							this.filters.physical_ports.push(para);
-							this.physical_ports.push(paraData);
 							
-							this.$refs["editForm"].resetFields();
+							console.log(this.editForm)
 							this.dialogFormVisible=false;
+							this.$refs["editForm"].resetFields();
+							this.filters.physical_ports.push(para);
+
+							var  str=[];
+							
+//							sessionStorage.setItem('dataTable', JSON.parse(JSON.stringify( str.push(paraData) ))   );
+							this.physical_ports.push(paraData);
+//							this.physical_ports=sessionStorage.getItem('dataTable')
 							console.log(this.physical_ports)
+//							sessionStorage.setItem('dataTable',JSON.stringify(this.physical_ports));
+//							this.physicalData=JSON.parse(sessionStorage.getItem('dataTable') )
+							
 						// }).catch(() => {})
 					}
 				})
@@ -717,12 +744,12 @@
 					rack:row.rack,
 					device_type:row.device_type,
 					description:row.description,
-					description:row.port_type,
-					node_name:'',
-					device_name:'',
-					port_name:'',
+					port_type:row.port_type,
+					node_name:row.node.name,
+					device_name:row.device.hostname,
+					port_name:row.port.name,
 					device_status:row.port.status,
-					dc_name:'',
+//					dc_name:'',
 					dc_id:row.device.id,
 					port_no:row.port.port_no,
 					port_status:row.port.status,
@@ -735,11 +762,13 @@
 				this.$refs.editForm.validate(valid => {
 					if(valid){
 							console.log(this.editForm)
-							
-							
-							
+
 							this.filters.physical_ports[this.editForm.index]=Object.assign({},this.editForm);
-							this.physical_ports[this.editForm.index]={
+							
+//							this.physical_ports[this.editForm.index]
+							
+							
+							var obj={
 								description:this.editForm.description,
 								device:{
 									id:this.editForm.device_id,
@@ -760,9 +789,15 @@
 								position:this.editForm.position,
 								rack:this.editForm.rack
 							}
-							this.$refs["editForm"].resetFields();
 							this.dialogFormVisible = false;
+							this.$refs["editForm"].resetFields();
+							
 							console.log(this.physical_ports)
+							this.physical_ports.splice(this.editForm.index,1,obj)
+//							this.physical_ports.
+//							sessionStorage.setItem('dataTable',JSON.stringify(this.physical_ports));
+//							this.physicalData=JSON.parse(sessionStorage.getItem('dataTable') )
+//							this.$router.replace('/resource/add/logicalPort?name=新建逻辑端口')
 					}
 				})
 			},
@@ -780,7 +815,7 @@
 					rack:row.rack,
 					device_type:row.device_type,
 					description:row.description,
-					description:row.port_type,
+					port_type:row.port_type,
 					device_status:row.port.status,
 					port_no:row.port.port_no,
 					port_status:row.port.status,
@@ -788,13 +823,10 @@
 			},
 			handleDel:function(index,row){
 				let _this=this;
-				console.log(index)
 				//删除
 				this.$confirm('确定要删除该物理端口吗?','提示',{type:'warning'})
 				.then(() => {
-					console.log('执行删除')
 					this.physical_ports.splice(index,1);
-					console.log(this.physical_ports);
 				}).catch(() => {})
 			},
 			goback(){

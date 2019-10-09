@@ -104,37 +104,24 @@
           </el-form>
         </el-col>
       </el-row>
-      <el-row>
-        <el-col :span='24'>
-          <el-col :span='4'>
-            <el-button
-              type="danger"
-              @click="batchRemove()"
-              :disabled="this.sels.length===0"
-              v-if='parentStatus'
-            >
-              批量删除</el-button>
-            <el-dropdown
-              split-button
-              type='success'
-              @command="handleExport"
-            >
-              导出数据
+				<div class="table-top">
+					 <!--<el-button type="danger"  @click="batchRemove()" :disabled="this.sels.length===0" v-if='parentStatus'  >
+             	批量删除</el-button>-->
+           <el-dropdown split-button type='success' @command="handleExport"  >
+             	 导出数据
               <el-dropdown-menu slot='dropdown'>
                 <el-dropdown-item command="current">当前页 </el-dropdown-item>
                 <el-dropdown-item command="all">所有页</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-          </el-col>
-        </el-col>
-      </el-row>
-
-      <el-row>
+				</div>
+				
+      <!--<el-row>
         <el-col
           :sm='24'
           :md='24'
           :lg='24'
-        >
+        >-->
 
           <el-table
             :data="users"
@@ -151,12 +138,12 @@
             <el-table-column
               type='index'
               label='序号'
-              width='50'
+              width='40'
               align='center'
             ></el-table-column>
             <el-table-column
               label='专线名称'
-              width='80'
+              min-width='70'
               align='center'
             >
               <template slot-scope='scope'>
@@ -168,7 +155,7 @@
             </el-table-column>
             <el-table-column
               label='专线状态'
-              width='70'
+              min-width='40'
               align='center'
             >
               <template slot-scope='scope'>
@@ -178,13 +165,13 @@
             <el-table-column
               prop='bandwidth'
               label='带宽(Mbps)'
-              width='80'
+              min-width='40'
               align='center'
             >
             </el-table-column>
             <el-table-column
               label='专线类型'
-              width='60'
+              min-width='40'
               align='center'
             >
               <template slot-scope='scope'>
@@ -193,7 +180,7 @@
             </el-table-column>
             <el-table-column
               label='A端'
-              width='70'
+              min-width='60'
               align='center'
             >
               <template slot-scope='scope'>
@@ -207,18 +194,14 @@
                 <span>{{scope.row.vlanHTMLA}}</span>
               </template>
             </el-table-column>
-            <el-table-column
-              label='A逻辑口状态'
-              width='65'
-              align='center'
-            >
+            <el-table-column label='A逻辑口状态' min-width='60'  align='center'  >
               <template slot-scope='scope'>
-                <span> {{scope.row.statusValA}}</span>
+                <span  :class="scope.row.colorA" v-text="scope.row.statusValA"> </span>
               </template>
             </el-table-column>
             <el-table-column
               label='Z端'
-              width='70'
+              min-width='60'
               align='center'
             >
               <template slot-scope='scope'>
@@ -233,12 +216,10 @@
                 <span>{{scope.row.vlanHTMLZ}}</span>
               </template>
             </el-table-column>
-            <el-table-column
-              prop='endpoints.ports.status'
-              label='Z逻辑口状态'
-              width='120'
-              align='center'
-            >
+            <el-table-column prop='endpoints.ports.status' label='Z逻辑口状态'  min-width='60' align='center' >
+            	<template slot-scope='scope'>
+            		<span v-text='scope.row.statusValZ' :class="scope.row.colorZ"></span>
+            	</template>
             </el-table-column>
             <el-table-column
               prop='creation_time'
@@ -267,20 +248,20 @@
             <el-table-column
               prop='tenant.name'
               label='租户标识'
-              width='60'
+              min-width='50'
               align='center'
             >
             </el-table-column>
             <el-table-column
-              prop='description'
+              prop='descriptionVal'
               label='备注'
-              width='80'
+              min-width='60'
               align='center'
             >
             </el-table-column>
             <el-table-column
               label='操作'
-              width='240'
+              width='220'
               align='center'
               v-if='parentStatus'
             >
@@ -305,10 +286,17 @@
               </template>
             </el-table-column>
           </el-table>
-        </el-col>
-      </el-row>
+        <!--</el-col>
+      </el-row>-->
+      
       <el-row v-if='parentStatus'>
+      	
         <el-col :span='24'>
+        	<el-col :span='3'>
+        		<el-button type="danger"  @click="batchRemove()" :disabled="this.sels.length===0" v-if='parentStatus'  >
+             	批量删除</el-button>
+        	</el-col>
+        	<el-col :span='21'>
           <el-pagination
             :total="total"
             @size-change="handleSizeChange"
@@ -321,6 +309,7 @@
             :prev-text='prev'
             :next-text='next'
           ></el-pagination>
+          </el-col>
         </el-col>
       </el-row>
 
@@ -409,10 +398,13 @@
 </template>
 
 <script>
+
+	
 import {
   datedialogFormat,
   isValidinteger,
-  getPortStatus
+  getPortStatus,
+  descriptionValue
 } from "@/assets/js/index";
 export default {
   name: "pointsTo",
@@ -611,7 +603,7 @@ export default {
               // this.users=res.data.data.items;
                  this.total=res.data.data.page.total;
               console.log(res);
-
+							descriptionValue(res.data.data.items);
               res.data.data.items.forEach(ele => {
               	
                 if (ele.type == "d2d") {
@@ -669,6 +661,21 @@ export default {
                     } else if (str.length === 2) {
                       ele.statusValA = getPortStatus(str[0].ports);
                       ele.statusValZ = getPortStatus(str[1].ports);
+                      if(getPortStatus(str[0].ports) ==='UP'){
+                      	ele.colorA='colorGreen'
+                      }else if(getPortStatus(str[0].ports)==='DOWN'){
+                      	ele.colorA='colorRed'
+                      }else if(getPortStatus(str[0].ports) ==='异常'){
+                      	ele.colorA='colorWarning'
+                      }
+                      if(getPortStatus(str[1].ports) ==='UP'){
+                      	ele.colorZ='colorGreen'
+                      }else if(getPortStatus(str[1].ports)==='DOWN'){
+                      	ele.colorZ='colorRed'
+                      }else if(getPortStatus(str[1].ports) ==='异常'){
+                      	ele.colorZ='colorWarning'
+                      }
+                      
                       ele.logicPortA = ele.endpoints[0].logic_port.name;
                       ele.logicPortZ = ele.endpoints[1].logic_port.name;
                       if (str[0].vlan) {

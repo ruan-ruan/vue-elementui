@@ -23,15 +23,18 @@
 			<!--主体数据部分-->
 			<el-table :data ="users"  highlight-current-row style='width: 100%;'@selection-change="selsChange"  v-loading='loading'>
 				<el-table-column type='selection' width='60'></el-table-column>
-				<el-table-column type='index' width='60' label='序号' align='center'>
+				<el-table-column type='index' min-width='60' label='序号' align='center'>
 				</el-table-column>
-				<el-table-column prop='creation_time' width='120' :formatter='dateFormat' label='创建时间' align='center'>
+				<el-table-column prop='creation_time' width='95' :formatter='dateFormat' label='创建时间' align='center'>
 				</el-table-column>
-				<el-table-column prop='name' width='120' label='角色名称' align='center'>
+				<el-table-column prop='name' min-width='150' label='角色名称' align='center'>
 				</el-table-column>
-				<el-table-column prop='usableText' width='120' label='角色状态' align='center'>
+				<el-table-column  min-width='150' label='角色状态' align='center'>
+					<template slot-scope='scope'>
+						<span :class='scope.row.color' v-text="scope.row.usableText"></span>
+					</template>
 				</el-table-column>
-				<el-table-column prop='description' width='160' label='描述' align='center'>
+				<el-table-column prop='descriptionVal' min-width='200' label='描述' align='center'>
 				</el-table-column>
 				<el-table-column  width='300' label='操作' align='center'>
 					<template slot-scope='scope'>
@@ -56,7 +59,7 @@
 </template>
 
 <script>
-
+		import {descriptionValue} from '@/assets/js/index.js'
 	export default{
 		name:'Role',
 		data(){
@@ -91,20 +94,25 @@
 					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
-							this.users=res.data.data.items;
+							
 							//将数据同步到 store里面
-							this.$store.state.roles=this.users;
-							this.users.forEach(ele => {
+							descriptionValue(res.data.data.items)
+							
+							res.data.data.items.forEach(ele => {
 								if(ele.usable){
+									ele.color='colorGreen'
 									ele.usableText='可用';
 //									btnstatus. textContent='禁用';
 									ele.btnText='禁用';
 								}else if(!ele.usable){
+									ele.color='colorRed'
 									ele.usableText='禁用';
 //									btnstatus.textContext='启用';
 									ele.btnText='启用';	
 								}
 							})
+							this.users=res.data.data.items;
+							this.$store.state.roles=this.users;
 						}
 					}
 				})

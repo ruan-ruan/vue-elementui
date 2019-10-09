@@ -263,6 +263,7 @@
 				.then(res => {
 					if(res.status==200){	
 						if(res.data.status==0){
+							console.log(res)
 							this.editLoading=false;
 							let str=res.data.data;
 							this.backUpData=Object.assign({},str);
@@ -362,7 +363,6 @@
 							console.log(para)
 							this.$ajax.put('/link/edit_cloud_link/'+this.editForm.id+'?token='+this.token,para)
 							.then(res => {
-								console.log(res)
 								this.editLoading=false;
 								if(res.status==200){
 									if(res.data.status==0){
@@ -379,7 +379,8 @@
 										})
 									}
 								}
-							}).catch(e => {console.log(e)})
+							}).catch(e => {console.log(e)
+							})
 						}).catch(() => {})
 					}
 				})

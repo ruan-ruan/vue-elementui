@@ -59,40 +59,40 @@
 
 			</el-col>
 			<el-table :data='users' highlight-current-row @selection-change="selsChange" style='width: 100%;' v-loading='loading'>
-				<el-table-column type='selection' width='60'></el-table-column>
-				<el-table-column type='index' width='60' label='序号' align='center'></el-table-column>
-				<el-table-column prop='creation_time' width='120' label='申请时间' :formatter='dateFormat' align='center'></el-table-column>				
-				<el-table-column label='A端' width='100' align='center'>
+				<el-table-column type='selection' width='40'></el-table-column>
+				<el-table-column type='index' width='50' label='序号' align='center'></el-table-column>
+				<el-table-column prop='creation_time' width='95' label='申请时间' :formatter='dateFormat' align='center'></el-table-column>				
+				<el-table-column label='A端' min-width='80' align='center'>
 					<template slot-scope='scope'>
 						<el-tag size='small' type='primary'style='cursor: pointer;'@click='handelSee_aNode(scope.$index,scope.row)'>{{scope.row.a_node.name}}</el-tag>
 						-{{scope.row.a_ip}}-{{scope.row.a_vlan}}
 					</template>
 				</el-table-column>
-				<el-table-column  label='Z端' align='center' width='100'>
+				<el-table-column  label='Z端' align='center' min-width='80'>
 					<template slot-scope='scope'>
 						<el-tag size='small' type='primary'style='cursor: pointer;' @click='handelSee_zNode(scope.$index, scope.row)'>{{scope.row.z_node.name}}</el-tag>
 						-{{scope.row.z_ip}}-{{scope.row.z_vlan}}
 					</template>
 				</el-table-column>
-				<el-table-column prop='bandwidth' label='总带宽(Mbps)' align='center' width='100'>
+				<el-table-column prop='bandwidth' label='总带宽(Mbps)' align='center' min-width='70'>
 				</el-table-column>
-				<el-table-column prop='physical_bandwidth' label='物理带宽(Mbps)' align='center' width='100'>
+				<el-table-column prop='physical_bandwidth' label='物理带宽(Mbps)' align='center' min-width='80'>
 				</el-table-column>
-				<el-table-column  label='剩余带宽(Mbps)' align='center' width='100'>
+				<el-table-column  label='剩余带宽(Mbps)' align='center' width='80'>
 					<template slot-scope='scope'>{{scope.row.bandwidth-scope.row.physical_bandwidth}}</template>
 				</el-table-column>
-				<el-table-column prop='link_cost' label='链路开销' align='center' width='100'>
+				<el-table-column prop='link_cost' label='链路开销' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='monitoringText' label='链路检测' align='center' width='100'>
+				<el-table-column prop='monitoringText' label='链路检测' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='description' label='备注' align='center' width='150'>
+				<el-table-column prop='descriptionVal' label='备注' align='center' min-width='80'>
 				</el-table-column>
-				<el-table-column  label='操作' align='center' width='400'>
+				<el-table-column  label='操作' align='center' width='300'>
 					<template slot-scope='scope'>
-						<el-button size='small' type='primary' @click='handleStart(scope.$index, scope.row)'>运行</el-button>
-						<el-button size='small' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
-						<el-button size='small' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
-						<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)"  >删除</el-button>
+						<el-button size='mini' type='primary' @click='handleStart(scope.$index, scope.row)'>运行</el-button>
+						<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
+						<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
+						<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)"  >删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -127,7 +127,7 @@
 					</el-form-item>
 					<el-form-item label='A端节点' prop='a_node_id'>
 						
-						<el-select v-model='editForm.a_node_id' :disabled='seeStatus'  class='ipt'>
+						<el-select v-model='editForm.a_node_id' filterable :disabled='seeStatus'  class='ipt'>
 							<el-option
 								v-for='(item,index) in nodeData'
 								:key='index'
@@ -146,7 +146,7 @@
 						<el-input v-model='editForm.a_desc' :disabled='seeStatus' class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item label='Z端节点' prop='z_node_id'>
-						<el-select v-model='editForm.z_node_id':disabled='seeStatus'  class='ipt'>
+						<el-select v-model='editForm.z_node_id'filterable :disabled='seeStatus'  class='ipt'>
 							<el-option
 								v-for='(item,index) in nodeData'
 								:key='index'
@@ -229,8 +229,9 @@
 </template>
 
 <script>
-	import {datedialogFormat,getTime} from '@/assets/js/index.js'
 	
+	import {datedialogFormat , descriptionValue,getTime} from '@/assets/js/index.js'
+
 	export default{
 		name:'Unknown',
 		data(){
@@ -436,15 +437,18 @@
 					console.log(res);
 					if(res.status==200){
 						if(res.data.status==0){
-							this.users=res.data.data.items;
+							descriptionValue(res.data.data.items)
+							
 							this.total=res.data.data.page.total;
-							this.users.forEach(ele => {
+							res.data.data.items.forEach(ele => {
 								if(ele.monitoring){
 									ele.monitoringText='开启'
 								}else if(!ele.monitoring){
 									ele.monitoringText='关闭'
 								}
 							})
+							this.total=res.data.data.page.total;
+							this.users=res.data.data.items;
 						}
 					}
 				})

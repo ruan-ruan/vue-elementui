@@ -35,7 +35,7 @@
 			</el-col>
 			
 			<!--列表数据部分-->
-			<el-col :span='24'>
+			<div class="table-top">
 				<el-dropdown split-button type='success'@command="handleExport">
 					导出数据
 					<el-dropdown-menu slot='dropdown'>
@@ -43,52 +43,55 @@
 						<el-dropdown-item command="all">所有页</el-dropdown-item>																				
 					</el-dropdown-menu>
 				</el-dropdown>
-			</el-col>
+			</div>
 			
 			
 			<!--<el-row  :gutter="24">
 				<el-col :sm="24" :md="24" :lg="24">-->
 			<el-table :data='users'highlight-current-row @selection-change="selsChange" style='width: 100%;' v-loading='loading'>
-				<el-table-column type='selection' width='60'></el-table-column>				
-				<el-table-column type='index' width='60' align='center' label='序号'>	</el-table-column>
-				<el-table-column prop='creation_time'width='100'label='创建时间'align='center' :formatter='dateFormat'></el-table-column>
-				<el-table-column  label='A端' align='center' width='100' >
+				<el-table-column type='selection' width='40'></el-table-column>				
+				<el-table-column type='index' min-width='40' align='center' label='序号'>	</el-table-column>
+				<el-table-column prop='creation_time'width='95'label='创建时间'align='center' :formatter='dateFormat'></el-table-column>
+				<el-table-column  label='A端' align='center' min-width='60' >
 					<template slot-scope='scope'>
 						<el-tag size='small' type='primary'style='cursor: pointer;' @click='handleNode_a(scope.$index, scope.row)'>{{scope.row.a_node.name}}</el-tag>
 						{{scope.row.a_ip}}-{{scope.row.a_vlan}}
 					</template>
 				</el-table-column>
-				<el-table-column  label='Z端' align='center' width='100'>
+				<el-table-column  label='Z端' align='center' min-width='60'>
 					<template slot-scope='scope'>
 						<el-tag size='small' type='primary'style='cursor: pointer;' @click='handleNode_z(scope.$index, scope.row)'>{{scope.row.z_node.name}}</el-tag>
 						{{scope.row.z_ip}}-{{scope.row.z_vlan}}
 					</template>
 				</el-table-column>
-				<el-table-column prop='status' label='链路状态' align='center' width='80'>
+				<el-table-column prop='status' label='链路状态' align='center' min-width='60'>
+					<template slot-scope='scope'>
+						<span v-text="scope.row.status" :class='scope.row.color'></span>
+					</template>
 				</el-table-column>
-				<el-table-column  prop='maintenance_value' label='故障/维护' align='center' width='80'>
+				<el-table-column  prop='maintenance_value' label='故障/维护' align='center' min-width='40'max-width='50'>
 					<!--这里的数据是在下面的进行判断的是-->
 				</el-table-column>
-				<el-table-column prop='bandwidth' label='总带宽(Mbps)' align='center' width='90'>
+				<el-table-column prop='bandwidth' label='总带宽(Mbps)' align='center' min-width='50'>
 				</el-table-column>
-				<el-table-column prop='physical_bandwidth' label='物理带宽(Mbps)' align='center' width='90'>
+				<el-table-column prop='physical_bandwidth' label='物理带宽(Mbps)' align='center' min-width='50'>
 				</el-table-column>
-				<el-table-column prop='idle_bandwidth' label='剩余带宽(Mbps)' align='center' width='90'>
+				<el-table-column prop='idle_bandwidth' label='剩余带宽(Mbps)' align='center' min-width='50'>
 					<template slot-scope='scope'>
 						{{scope.row.bandwidth-scope.row.physical_bandwidth}}						
 					</template>
 				</el-table-column>
-				<el-table-column prop='link_cost' label='链路开销' align='center' width='100'>
+				<el-table-column prop='link_cost' label='链路开销' align='center' min-width='40'>
 				</el-table-column>
-				<el-table-column prop='monitorHTML' label='链路检测' align='center' width='100'>
+				<el-table-column prop='monitorHTML' label='链路检测' align='center' min-width='40'>
 				</el-table-column>
-				<el-table-column prop='a_desc' label='A端描述' align='center' width='100'>
+				<el-table-column prop='a_desc' label='A端描述' align='center' width='60'>
 				</el-table-column>
-				<el-table-column prop='z_desc' label='Z端描述' align='center' width='100'>
+				<el-table-column prop='z_desc' label='Z端描述' align='center' width='60'>
 				</el-table-column>
-				<el-table-column prop='description' label='备注' align='center' width='150'>
+				<el-table-column prop='descriptionVal' label='备注' align='center' width='60'>
 				</el-table-column>
-				<el-table-column  label='操作' align='center' width='400'>
+				<el-table-column  label='操作' align='center' min-width='300'>
 					<template slot-scope='scope'>
 						<el-button size='small' type='primary' @click='handleStatus(scope.$index, scope.row)'
 							v-if='scope.row.maintenance_value==="故障" ? false : true ' class='maintenance'> <!--当状态为故障的时候   这个时候的该按钮银行 -->
@@ -222,7 +225,12 @@
 </template>
 
 <script>
-	import {datedialogFormat,getTime} from '@/assets/js/index.js'
+
+
+
+	
+	import {datedialogFormat ,descriptionValue,getTime} from '@/assets/js/index.js'
+
 	export default{
 		name:'Data',
 		data(){
@@ -387,6 +395,7 @@
 						if(res.data.status==0){
 							console.log(res)
 						this.loading=false;
+						descriptionValue(res.data.data.items)
 						_this.users=res.data.data.items;
 						_this.total=res.data.data.page.total;	
 						//控制删除按钮的显示与隐藏
@@ -400,6 +409,7 @@
 									ele.monitorHTML='开启'
 								}
 								if(ele.status=='UP'){
+									ele.color='colorGreen'
 									if(ele.maintain_type){
 										ele.maintenance_value=''
 										ele.maintenanceBtn='开启维护'
@@ -408,6 +418,7 @@
 										ele.maintenanceBtn='关闭维护'
 									}
 								}else if(ele.status=='DOWN'){
+									ele.color='colorRed'
 									if(!ele.maintain_type){
 										ele.maintenance_value='维护'
 										ele.maintenanceBtn='关闭维护'

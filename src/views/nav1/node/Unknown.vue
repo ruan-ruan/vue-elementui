@@ -9,7 +9,7 @@
 							<el-input v-model='filters.name' class='sel'></el-input>
 						</el-form-item>
 						<el-form-item label='数据中心'>
-							<el-select v-model='filters.search_dc' placeholder='全部' class='sel'>
+							<el-select v-model='filters.search_dc' filterable placeholder='全部' class='sel'>
 								<el-option
 									v-for='(item,index) in datac'
 									:key='index'
@@ -52,34 +52,33 @@
 			<!--列表部分-->
 			<el-table :data='users'  highlight-current-row style='width: 100%;'@selection-change="selsChange" v-loading='loading'>
 				<el-table-column type="selection" width="50" align='center'></el-table-column>
-				<el-table-column type='index' width='50' label='序号' align='center'></el-table-column>
-				<el-table-column prop='creation_time'width='100'label='申请时间'align='center' :formatter='dateFormat'></el-table-column>
-				<el-table-column prop='name' width='80' label='节点名称' align='center'></el-table-column>
-				<el-table-column  width='80' label='设备名称' align='center'>
+				<el-table-column type='index' min-width='50'max-width='70' label='序号' align='center'></el-table-column>
+				<el-table-column prop='creation_time'width='95'label='申请时间'align='center' :formatter='dateFormat'></el-table-column>
+				<el-table-column prop='name' min-width='100'max-width='120' label='节点名称' align='center'></el-table-column>
+				<el-table-column  min-width='120'max-width='140' label='设备名称' align='center'>
 					<template slot-scope='scope'>
 						<ul v-for='item in scope.row.devices'>
 							<li>{{item.hostname}}</li>
 						</ul>
 					</template>
 				</el-table-column>
-				<el-table-column  width='70' label='SN号' align='center'> 
-					<!--prop='devices[0].sn'-->
+				<el-table-column  min-width='70'max-width='90' label='SN号' align='center'> 
 					<template slot-scope="scope">
 						<ul v-for='item in scope.row.devices'>
 							<li>{{item.sn}}</li>
 						</ul>
 					</template>
 				</el-table-column>			
-				<el-table-column width='70' label='管理IP' align='center'>
+				<el-table-column min-width='70'max-width='90' label='管理IP' align='center'>
 					<template slot-scope="scope">
 						<ul v-for='item in scope.row.devices'>
 							<li>{{item.ip}}</li>
 						</ul>
 					</template>
 				</el-table-column>
-				<el-table-column prop='vtep' width='80' label='Vtep' align='center'></el-table-column>		
-				<el-table-column prop='dc.name' width='80' label='设备中心' align='center'></el-table-column>
-				<el-table-column prop='description' width='60' label='备注' align='center'></el-table-column>
+				<el-table-column prop='vtep' min-width='80' max-width='100' label='Vtep' align='center'></el-table-column>		
+				<el-table-column prop='dc.name' min-width='80'max-width='100' label='设备中心' align='center'></el-table-column>
+				<el-table-column prop='description' min-width='60'max-width='80' label='备注' align='center'></el-table-column>
 				<el-table-column width='300' align='center'label='操作'>
 					<template slot-scope='scope'>
 						<el-button type='primary':diasbled='RunStatus' size='small' @click='run(scope.$index, scope.row)' class='run'>运行</el-button>
@@ -248,7 +247,7 @@
 	    		let date=new Date(parseInt(row.creation_time)*1000);
 	    		let Y=date.getFullYear()+'-';
 	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +'-':date.getDate()+'-';
+	    		let D=date.getDate() <10? '0' +date.getDate() +'-':date.getDate();
 	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
 	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
 	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();

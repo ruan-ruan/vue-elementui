@@ -138,3 +138,18 @@
 .el-badge__content.is-fixed{
 	top:18px;
 }
+
+.table-top{
+	text-align: right;
+}
+
+/*逻辑口的状态的对应的颜色*/
+.colorGreen{
+	color: #409EFF;
+}
+.colorRed{
+	color:#F56C6C ;
+}
+.colorWarning{
+	color:#E6A23C;
+}

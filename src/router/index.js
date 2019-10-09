@@ -82,6 +82,7 @@ var router = new Router({
         },
         children: [
 			{path:"/topology",component:Topology,name:'拓扑视图',leaf:true,},
+			{path:"/topology/charts",component:() => import ('@/components/multCharts.vue'),name:'',leaf:true,hidden:true},//topo的图表详情
 			{path:'/location/area',component:() => import ('@/views/nav1/Table.vue'),name:'物理位置',leaf:true,},
 			{path:'/location',component:() => import('@/views/parent'),name:'节点管理',leaf:false,
 			children:[
@@ -107,7 +108,7 @@ var router = new Router({
 			]},
 			//云对接的部分
 			{path:'/location/line/addcloun',component:() => import('@/views/nav1/line/clounFile/addCloun.vue'),name:'添加云',hidden:true,leaf:true},
-			{path:'/location/line/editcloun',component:() => import('@/views/nav1/line/clounFile/addCloun.vue'),name:'编辑',hidden:true,leaf:true},
+			{path:'/location/line/editcloun',component:() => import('@/views/nav1/line/clounFile/addCloun.vue'),name:'云对接编辑',hidden:true,leaf:true},
 			{path:'/location/line/clounDetails',component:() => import('@/views/nav1/line/clounFile/clounsTab.vue'),name:'云对接详情',hidden:true,leaf:true},
         ]
     },

@@ -17,7 +17,8 @@
 							</el-col>
 							<el-col :span='12'>
 								<h4 class="title_h4"title='虚拟专线受控的终止端'>Z端配置<span class="cli_toTip">?</span></h4>
-								<dcPortz @sendFormData_z='getFormData_z' :tit='vlanSel.label2'  ref='dc_z' ></dcPortz>
+								<!--<dcPortz @sendFormData_z='getFormData_z' :tit='vlanSel.label2'  ref='dc_z' ></dcPortz>-->
+								<dc-port @sendFormData_z='getFormData_z':tit='vlanSel.label2' ref='dc_z'></dc-port>	
 							</el-col>
 							
 						</el-col>
