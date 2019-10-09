@@ -229,9 +229,7 @@
 </template>
 
 <script>
-	
 	import {datedialogFormat , descriptionValue,getTime} from '@/assets/js/index.js'
-
 	export default{
 		name:'Unknown',
 		data(){
@@ -437,10 +435,9 @@
 					console.log(res);
 					if(res.status==200){
 						if(res.data.status==0){
-							descriptionValue(res.data.data.items)
-							
+							this.users=res.data.data.items;
 							this.total=res.data.data.page.total;
-							res.data.data.items.forEach(ele => {
+							this.users.forEach(ele => {
 								if(ele.monitoring){
 									ele.monitoringText='开启'
 								}else if(!ele.monitoring){

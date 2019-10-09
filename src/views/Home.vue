@@ -116,7 +116,7 @@
                   ><i :class="child.iconCls"></i>{{child.name}}</template>
                   <el-menu-item
                     v-for="(sun,i)  in child.children"
-                    :index="sun.path"
+                    :index="i"
                     :key="sun.path"
                   >
                     {{sun.name}}
