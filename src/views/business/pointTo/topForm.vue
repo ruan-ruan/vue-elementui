@@ -3,8 +3,8 @@
 		<el-row>
 			<el-col :span='24'>
 				<el-form :model='editForm'label-width='120px ' ref='editForm' :rules='editFormRules'>
-					<el-form-item label='付费方式'>
-						<!--<el-input v-model='editForm.billingType' disabled class='ipt'></el-input>-->
+					<el-form-item label='付费模式'>
+						
 						<el-radio-group v-model="editForm.billingType">
 							<el-radio-button border size='small'
 								v-for='(item,index) in billingData'

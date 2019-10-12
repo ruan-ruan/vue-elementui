@@ -303,6 +303,7 @@ export 	function getPortStatus(arr){
 	}
 	return statusVal
 }
+
 export function isPortStatus(arr){//针对于 单个逻辑口内的时候数据处理
 	let statusVal='';
 	if(arr.length>1){
@@ -340,12 +341,12 @@ export function deepClone(data){  //设置权限的时候  给按钮添加控制
 	})
 }
 
-export function Clone(data){  //设置权限的时候  给按钮添加控制部分
+export function Clone(data){  //角色的详情部分   所有的数据都是不可以点击的
 	data.forEach(ele => {
 		// console.log(ele)
 		ele.disabled=true;
 		if(ele.list){
-				deepClone(ele.list);
+			Clone(ele.list);
 		}
 	})
 }
@@ -364,15 +365,6 @@ export function CloneVal(data){//当权限是  all的时候   默认的是全部
 		})
 		return arr
 	}
-	
-//	data.forEach(ele => {
-//		ele.disabled='false';
-//		if(ele.code && !ele.list){
-//			return ele.code
-//		}else if(data.list && !data.code){
-//			return deep(ele.list)
-//		}
-//	})
 }
 
 
@@ -394,4 +386,28 @@ export function descriptionValue(str){   //对列表的里面的备注信息进�
 	})
 //	return strData;
 }
-
+/*
+ * 数组   => 根据数组里对象的某个属性进行排序
+ * @param attr 排序的属性 如number属性
+ * @param rev true表示升序排列，false降序排序
+ * 
+ **/
+export function sortVal(attr,rev){
+        if(rev ==  undefined){  //第二个参数没有传递 默认升序排列
+            rev = 1;
+        }else{
+            rev = (rev) ? 1 : -1;
+        }
+        
+        return function(a,b){
+            a = a[attr];
+            b = b[attr];
+            if(a < b){
+                return rev * -1;
+            }
+            if(a > b){
+                return rev * 1;
+            }
+            return 0;
+        }
+    }

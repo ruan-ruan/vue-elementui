@@ -25,8 +25,7 @@
 				</el-col>
 			</el-col>
 		</el-row>
-		
-		<!--<img src="../../../assets/images/newTopo/node.png"/>-->
+
 	</div>
 </template>
 
@@ -123,22 +122,38 @@
 				let newLink=JSON.parse(JSON.stringify(linkVals))  //上面的这两 用来保存  
 				let nodesData=JSON.parse(JSON.stringify(nodeVals))
 				let linksData=JSON.parse(JSON.stringify(linkVals))
-
+				console.log(linkVals)
 				var nodeVal=new Array();
 				var linkVal=new Array();
 				for(let item in obj){
 //					console.log(item);
-					if(item ==='checkboxGroup1'){//进入显示标签和显示流量的控制部分   
+					if(item ==='checkboxGroup1'){//进入隐藏标签和隐藏流量的控制部分   
 						let str=obj['checkboxGroup1'];//用来查找对应的值
+						
 						if(str.length !=0){
-//							if(str.indexOf('显示流量') ===-1){//未找到流量
-//								linksData.forEach(ele => {       // 暂时没有字段       后期添加后在更新流量的数据
-//									ele.bandwidth=''
-//								})
-//								linkVal=linksData;
-//							}else if(str.indexOf('显示流量') !==-1){
-//								linkVal=newLink;
-//							}
+							
+							if(str.indexOf('显示流量') == -1){//隐藏流量
+								linkVal=newLink;
+							}else if(str.indexOf('显示流量') !=-1){//显示流量
+								linksData.forEach(ele => {
+									
+									if(!ele.instant_speed && typeof(ele.instant_speed)!='undefined' && ele.instant_speed!=0){
+										ele.instant_speed=0
+									}
+									
+									var speedVal=ele.instant_speed/ele.bandwidth;
+									if(speedVal>=0 && speedVal <=0.5){
+										ele.speedColor='spedGreen'
+									}else if(speedVal>0.5 && speedVal <=0.75){
+										ele.speedColor='spedYellow'
+									}else if(speedVal>0.75 && speedVal<=1 ){
+										ele.speedColor='spedRed'
+									}
+									
+								})
+								console.log(linksData)
+								linkVal=linksData
+							}
 							
 							if(str.indexOf('显示标签') ===-1){//未找标签
 								nodesData.forEach(ele => {
@@ -153,11 +168,11 @@
 							nodesData.forEach(ele => {
 								ele.node.name=''
 							})
-							linksData.forEach(ele => {
-								ele.bandwidth=''
-							})
+//							linksData.forEach(ele => {
+//								ele.bandwidth=''
+//							})
 							nodeVal=nodesData;
-							linkVal=linksData;
+//							linkVal=linksData;
 
 						}
 					}
@@ -325,15 +340,23 @@
 				.text(function(d){
 					return d.bandwidth
 	          })
+//			    .attr('class', 'link')
 				
-	        let link = g.append('g')
-			    .attr('class', 'link')
+	        let link = g.append('g') 
+//	        	.attr('class', 'link')
 			    .selectAll('line')
 			    .data(linksData)
 			    .enter()
 			    .append('line')
 			    .style('stroke-width', linkWidth)
 			    .style('stroke', linkColour)
+			    .attr('class',function(d){//对数据进行处理
+			    	if(typeof d.speedColor =='undefined'){   //流量的显示不存在的时候   这个时候关闭   返回默认的颜色
+			    		return linkColour;
+			    	}else {  //当存在  流量的时候    显示流量
+			    		return d.speedColor;
+			    	}
+			    })
 			    .on('click',function(d){
 			    	var cls=document.getElementsByTagName('line');
 			    	for (let index=0;index<cls.length;index++) {
@@ -362,12 +385,25 @@
 	            }
 	            function linkColour(d){
 					if(d.status=='UP'){
-						return '#7FFF00'
-					}else{
+						return '#6BC7E2'
+					}else if(d.status=='DOWN'){
 						return '#444242'
+					}else if(d.status=='running'){
+						return '#9254DE';
 					}
 				}
 				
+//				function baseColor(d){
+//					if(d.status=='UP'){
+//			    		d.color='linkUP'
+//			    	}else if(d.status=='DOWN'){
+//			    		d.color='linkDOWN'
+//			    		
+//			    	}else if(d.status=='running'){
+//			    		d.color='linkRun'
+//			    	}
+//			    	return d.color
+//				}
 				
 				let node = g.append('g')
 			    	.attr('class', 'nodes')
@@ -511,38 +547,64 @@
 
 <style>
 
-		.font{
-			font-size: 6px;
-			color: #000000;
-		}
-		.links_text{
-			font-size: 6px;
-			color: #484948;
-		}
-		.link {
-			cursor: pointer;
-		  stroke: #000;
-		  stroke-width: 1.5px;
-		}
-		
-		.nodes{
-			border-radius: 16px;
-		  	cursor: pointer;
-		 	fill: #ccc;
-		  	stroke: #000;
-		  	stroke-width: 1.5px;
-		}
-		.btn{
-			font-size: 14px;
-			width: 40px;
-			height: 40px;
-			line-height: 20px;
-			text-align: center;
-			margin: 0 auto;
-			margin: 2px;
-			cursor: pointer;
-		}
-		.back{
-		background: #F7F5FA;
+
+	.font{
+		font-size: 6px;
+		color: #000000;
+	}
+	.links_text{
+		font-size: 6px;
+		color: #484948;
+	}
+	/*.link {
+		cursor: pointer;
+	  	stroke: #6BC7E2;
+	  	stroke-width: 1.5px;
+	}*/
+	.linkUP{
+		/*cursor: pointer;
+		stroke-width: 1.5px;*/
+		stroke: #6BC7E2 ;
+	}
+	.linkDOWN{
+		/*cursor: pointer;
+		stroke-width: 1.5px;*/
+		stroke: #444242;
+	}
+	.linkRun{
+		/*cursor: pointer;
+		stroke-width: 1.5px;*/
+		stroke: #9254DE;
+	}
+	
+	.spedGreen{
+		stroke: #74CE9B !important;
+	}
+	.spedYellow{
+		stroke: #EFB751 !important;
+	}
+	.spedRed{
+		stroke: #E76D6C !important ;
+	}
+	
+	.nodes{
+		border-radius: 16px;
+	  	cursor: pointer;
+	 	fill: #ccc;
+	  	stroke: #000;
+	  	stroke-width: 1.5px;
+	}
+	.btn{
+		font-size: 14px;
+		width: 40px;
+		height: 40px;
+		line-height: 20px;
+		text-align: center;
+		margin: 0 auto;
+		margin: 2px;
+		cursor: pointer;
+	}
+	.back{
+	background: #F7F5FA;
 	}
 </style>

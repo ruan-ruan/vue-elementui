@@ -3,32 +3,20 @@
 	padding: 0px;
 	list-style: none;
 }
-/*.marT2{
-	margin-top: 2px;
+.marT5{
+	margin-top: 5px;
 }
-.marT4{
-	margin-top: 4px;
-}
-.marT6{
-	margin-top: 6px;
-}*/
-/*.marT8{
-	margin-top: 8px;
+.marT7{
+	margin-top: 7px;
 }
 .marT10{
 	margin-top: 10px;
 }
-.marT12{
-	margin-top: 12px;
-}
-.marT14{
-	margin-top: 14px;
-}
-.marT16{
-	margin-top: 16px;
-}*/
 .marT20{
 	margin-top: 20px;
+}
+.marB8{
+	margin-bottom: 8px;
 }
 .marB15{
 	margin-bottom: 15px;
@@ -39,6 +27,12 @@
 }
 .marL60{
 	margin-left: 60px;
+}
+.padL10{
+	padding-left: 10px ;
+}
+.padL50{
+	padding-left: 50px !important;
 }
 .right{
 	text-align: right;
@@ -64,9 +58,12 @@
 	width: 300px !important;
 }
 .el-dialog{
-	width: 500px;
+	/*width: 500px;*/
+	border-radius: 10px;
 }
-
+.el-dialog__header{
+	border-bottom: 1px solid #CCCCCC ;
+}
 .cli_spn{
 	cursor: pointer;
 	color: #0B66F4;
@@ -91,6 +88,9 @@
 
 /*标题部分*/
 .title_h3{
+	font-size: 16px;
+	color: #494646;
+	font-weight: 550;
 	width: 100%;
 	height: 30px;
 	line-height: 30px;

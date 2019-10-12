@@ -3,66 +3,34 @@
 
     <section>
       <!--工具条-->
-      <el-col
-        :span='24'
-        class='toolbar'
-        style='padding-bottom: 0px;'
-      >
-        <el-form
-          :inline='true'
-          :model='formList'
-          @submit.native.prevent
-        >
-          <el-form-item
-            label='标题'
-            prop='name'
-          >
-            <!--搜索对应的名字-->
-            <el-input
-              v-model='formList.name'
-              class="sel"
-            ></el-input>
+      <el-col :span='24' class='toolbar' style='padding-bottom: 0px;' >
+        <el-form :inline='true' :model='formList'  ref='formList'  @submit.native.prevent >
+          <el-form-item  label='标题' prop='name' >
+            <el-input v-model='formList.name'  class="sel" ></el-input>
           </el-form-item>
-          <el-form-item
-            label='类型'
-            prop='mesType'
-          >
-            <el-select
-              class='ipt_sta'
-              v-model='formList.mesType'
-              placeholder='全部'
-            >
+          <el-form-item  label='类型' prop='mesType' >
+            <el-select class='ipt_sta'  v-model='formList.mesType'  placeholder='全部'  >
               <el-option
-                v-for='item in mesTypeList'
-                :key='item.value'
+                v-for='(item,index) in mesTypeList'
+                :key='index'
                 :label='item.name'
                 :value='item.value'
               >
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item
-            label='级别'
-            prop='level'
-          >
-            <el-select
-              class='ipt_sta'
-              v-model='formList.level'
-              placeholder='全部'
-            >
+          <el-form-item label='级别' prop='level' >
+            <el-select class='ipt_sta' v-model='formList.level' placeholder='全部' >
               <el-option
-                v-for='vals in levelList'
-                :key='vals.name'
+                v-for='(vals,index) in levelList'
+                :key='index'
                 :label='vals.name'
                 :value='vals.value'
               >
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item
-            label='时间'
-            prop='timeVal'
-          >
+          <el-form-item label='时间' prop='timeVal' >
             <el-date-picker
               v-model="formList.timeVal"
               type="daterange"
@@ -76,14 +44,8 @@
           </el-form-item>
           <el-form-item>
             <span>
-              <el-button
-                type='primary'
-                @click='getData'
-              >查询</el-button>
-              <el-button
-                type='info'
-                @click='reset(formList)'
-              >重置</el-button>
+              <el-button  type='primary'  @click='getData' >查询</el-button>
+              <el-button type='info' @click='reset' >重置</el-button>
             </span>
           </el-form-item>
         </el-form>
@@ -110,6 +72,7 @@
         @selection-change='handleSelectionChange'
         style='width: 100%;'
         v-loading='loading'
+        :default-sort = "{prop: 'time', order: 'descending'}"
       >
         <el-table-column
           type='selection'
@@ -146,6 +109,8 @@
         </el-table-column>
         <el-table-column
           prop='time'
+          width='101'
+          sortable
           label='时间'
           :formatter="dateFormat"
           align='center'
@@ -188,7 +153,6 @@
         ></el-pagination>
       </el-col>
       <messageDialog :mesdetail="mesdetail" @getData='getData'></messageDialog>
-      <slotvue></slotvue>
     </section>
   </div>
 </template>
@@ -295,10 +259,8 @@ export default {
   },
   methods: {
     //重置按钮
-    reset(sels) {
-      for (let key in sels) {
-        sels[key] = "";
-      }
+    reset() {
+      this.$refs['formList'].resetFields()
     },
     // 标记已读
     markTap() {

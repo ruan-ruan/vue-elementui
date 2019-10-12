@@ -3,34 +3,13 @@
 
     <section>
       <!--工具条-->
-      <el-col
-        :span='24'
-        class='toolbar'
-        style='padding-bottom: 0px;'
-      >
-        <el-form
-          :inline='true'
-          :model='filters'
-        >
-          <el-form-item
-            label='名称'
-            prop='name'
-          >
-            <el-input
-              v-model='filters.name'
-              class='sel'
-            ></el-input>
+      <el-col :span='24' class='toolbar' style='padding-bottom: 0px;'  >
+        <el-form :inline='true' :model='filters' ref='filters'>
+          <el-form-item label='名称' prop='name' >
+            <el-input  v-model='filters.name' class='sel' ></el-input>
           </el-form-item>
-          <el-form-item
-            label='数据中心'
-            prop='search_dc'
-          >
-            <el-select
-              class='ipt_sta'
-              v-model='filters.search_dc'
-              placeholder='全部'
-              filterable
-            >
+          <el-form-item label='数据中心' prop='search_dc' >
+            <el-select class='ipt_sta' v-model='filters.search_dc' placeholder='全部' filterable  >
               <el-option
                 v-for='(item,index) in dataCenter'
                 :key='index'
@@ -40,15 +19,8 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item
-            label='状态'
-            prop='search_status'
-          >
-            <el-select
-              class='ipt_sta'
-              v-model='filters.search_status'
-              placeholder='全部'
-            >
+          <el-form-item  label='状态' prop='search_status' >
+            <el-select  class='ipt_sta' v-model='filters.search_status'  placeholder='全部' >
               <el-option
                 v-for='(vals,index) in status'
                 :key='index'
@@ -58,10 +30,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item
-            label='创建时间'
-            prop='timeVal'
-          >
+          <el-form-item label='创建时间' prop='timeVal' >
             <el-date-picker
               v-model="filters.timeVal"
               type="daterange"
@@ -74,26 +43,17 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button
-              type='primary'
-              v-on:click='getUsers'
-            >查询</el-button>
-            <el-button
-              type='info'
-              @click='reset(filters)'
-            >重置</el-button>
+            <el-button type='primary' v-on:click='getUsers' >查询</el-button>
+            <el-button  type='info'  @click='reset' >重置</el-button>
           </el-form-item>
         </el-form>
       </el-col>
 
 
       <div class="table-top">
-      	 <el-dropdown
-          split-button
-          type='success'
-          @command="handleExport"
-        >
-          导出数据
+          <el-button   type="danger"   @click="batchRemove(sels)"   :disabled="this.sels.length===0"  >批量删除</el-button>
+      	 <el-dropdown split-button  type='success'  @command="handleExport"  >
+         		 导出数据
           <el-dropdown-menu slot='dropdown'>
             <el-dropdown-item command="current">当前页 </el-dropdown-item>
             <el-dropdown-item command="all">所有页</el-dropdown-item>
@@ -104,18 +64,19 @@
       
       <!--列表-->
         <el-col :span="24">
-          <el-table :data='users'   highlight-current-row   @selection-change='selsChange'   style='width: 100%;'   v-loading='loading' >
-            <el-table-column  type='selection'   width='40'  ></el-table-column>
-            <el-table-column   type='index'   width='50'   label='序号'   align='center' ></el-table-column>
+          <el-table :data='users'   highlight-current-row   @selection-change='selsChange'   style='width: 100%;'   
+          	v-loading='loading' :default-sort = "{prop: 'creation_time', order: 'descending'}">
+            <el-table-column  type='selection'  min-width='40'  ></el-table-column>
+            <el-table-column   type='index'  min-width='50'   label='序号'   align='center' ></el-table-column>
             <el-table-column   prop='creation_time'
-              :formatter='dateFormat'   width='95'   label='创建时间'   align='center'  ></el-table-column>
-            <el-table-column   prop='name'  min-width='80'max-width='100'   label='节点名称'   align='center' ></el-table-column>
-            <el-table-column   prop='exist_status'   min-width='80'max-width='100'   label='节点状态'  align='center' >
+              :formatter='dateFormat'   width='101'  label='创建时间' sortable  align='center'  ></el-table-column>
+            <el-table-column   prop='name'  min-width='80'  label='节点名称'   align='center' ></el-table-column>
+            <el-table-column   prop='exist_status'   min-width='80'  label='节点状态'  align='center' >
               <template slot-scope="scope">
                 {{scope.row.exist_status=='normal'?'运行中':scope.row.exist_status=='found'?'离线':'单一运行中'}}
               </template>
             </el-table-column>
-            <el-table-column   min-width='80'max-width='100'  label='设备名称'   align='center'  >
+            <el-table-column   min-width='80'  label='设备名称'   align='center'  >
               <template slot-scope="scope">
                 <ul v-for='item in scope.row.devices'>
                   <li v-text="item.hostname"></li>
@@ -125,7 +86,7 @@
             <el-table-column
               prop='exist_status'
               min-width='80'
-              max-width='100'
+
               label='设备状态'
               align='center'
             >
@@ -136,8 +97,8 @@
               </template>
             </el-table-column>
             <el-table-column
-              min-width='80'
-              max-width='100'
+              min-width='60'
+
               label='SN号'
               align='center'
             >
@@ -149,7 +110,7 @@
             </el-table-column>
             <el-table-column
               min-width='70'
-              max-wdith='90'
+             
               label='管理IP'
               align='center'
             >
@@ -162,21 +123,21 @@
             <el-table-column
               prop='vtep'
              min-width='80'
-             max-width='100'
+             
               label='vtep'
               align='center'
             ></el-table-column>
             <el-table-column
               prop='dc.name'
-              min-width='80'
-              max-wdith='100'
+              min-width='70'
+              
               label='数据中心'
               align='center'
             ></el-table-column>
             <el-table-column
               prop='descriptionVal'
               min-width='60'
-              max-width='100'
+              
               label='备注'
               align='center'
             ></el-table-column>
@@ -208,18 +169,12 @@
         </el-col>
 
       <!--底部工具条-分页-数据的导出等-->
-      <el-col
-        :span='24'
-        class='toolbar'
-      >
-        <el-col :span='3'>
-          <el-button
-            type="danger"
-            @click="batchRemove(sels)"
-            :disabled="this.sels.length===0"
-          >批量删除</el-button>
-        </el-col>
-        <el-col :span='21'>
+      <!--<el-col   :span='24'  class='toolbar'
+      >-->
+        <!--<el-col :span='3'>
+          <el-button   type="danger"   @click="batchRemove(sels)"   :disabled="this.sels.length===0"  >批量删除</el-button>
+        </el-col>-->
+        <el-col :span='24'  class='toolbar'>
           <el-pagination
             :total="total"
             @size-change="handleSizeChange"
@@ -234,18 +189,15 @@
           ></el-pagination>
         </el-col>
 
-      </el-col>
+      <!--</el-col>-->
     </section>
   </div>
 </template>
 
 <script>
-<<<<<<< HEAD
 	
-		import {descriptionValue,getTime} from '@/assets/js/index.js'
-=======
-import { getTime } from "@/assets/js/index.js";
->>>>>>> 18056f2c0ca13d4d8b077af685a79e0c9ae4466e
+		import {descriptionValue,getTime,sortVal} from '@/assets/js/index.js'
+
 export default {
   name: "Service",
   data() {
@@ -307,6 +259,7 @@ export default {
     this.selectData();
   },
   methods: {
+
     selectData() {
       this.$ajax
         .get("/location/dcs" + "?token=" + this.token)
@@ -340,10 +293,8 @@ export default {
         });
     },
     //重置按钮
-    reset(sels) {
-      for (let key in sels) {
-        sels[key] = "";
-      }
+    reset() {
+      this.$refs['filters'].resetFields()
     },
     selsChange(sels) {
       this.sels = sels;
@@ -372,14 +323,15 @@ export default {
         search_start_time: getTime(this.filters.start_time),
         search_end_time: getTime(this.filters.end_time)
       };
-      this.$ajax
-        .get("/node/nodes" + "?token=" + this.token, para)
+      this.$ajax.get("/node/nodes" + "?token=" + this.token, para)
         .then(res => {
           _this.loading = false;
-          console.log(res);
           if (res.status == 200) {
             if (res.data.status == 0) {
+            	console.log(res.data.data.items)
             	descriptionValue(res.data.data.items)
+            	
+//          	res.data.data.items.sort( sortVal( 'creation_time',false ) )
               let params = res.data.data.items;
 
               params.forEach((ele, index) => {
@@ -391,6 +343,7 @@ export default {
                   _this.diStatus = true;
                 }
               });
+              
                _this.users = res.data.data.items;
               _this.total = res.data.data.page.total;
             }
@@ -404,12 +357,8 @@ export default {
     dateFormat(row, column) {
       let date = new Date(parseInt(row.creation_time) * 1000);
       let Y = date.getFullYear() + "-";
-      let M =
-        date.getMonth() + 1 < 10
-          ? "0" + (date.getMonth() + 1) + "-"
-          : date.getMonth() + 1 + "-";
-      let D =
-        date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
+      let M = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
+      let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
       let h =
         date.getHours() < 10
           ? "0" + date.getHours() + ":"

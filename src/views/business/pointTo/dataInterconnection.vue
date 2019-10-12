@@ -5,9 +5,9 @@
 		<el-row>
 			<el-col :span='24'>
 				<el-col :span='18'>					
-					<h3 class="title_h3">第一步：创建数据中心互联的虚拟专线 <span class="cli_toTip" title='创建任意两个数据中心之间的二层虚拟专线'>?</span></h3>
+					<h3 class="title_h3">第一步:创建数据中心互联的虚拟专线 <span class="cli_toTip" title='创建任意两个数据中心之间的二层虚拟专线'>?</span></h3>
 					<topForm @formVal='getVal'  ref='newForm'></topForm>
-					<h3 class="title_h3">第二步</h3>
+					<h3 class="title_h3">第二步:业务两端基础信息配置</h3>
 					
 					<el-row>
 						<el-col :span='24'>
@@ -17,7 +17,8 @@
 							</el-col>
 							<el-col :span='12'>
 								<h4 class="title_h4"title='虚拟专线受控的终止端'>Z端配置<span class="cli_toTip">?</span></h4>
-								<dcPortz @sendFormData_z='getFormData_z' :tit='vlanSel.label2'  ref='dc_z' ></dcPortz>
+								<!--<dcPortz @sendFormData_z='getFormData_z' :tit='vlanSel.label2'  ref='dc_z' ></dcPortz>-->
+								<dc-port @sendFormData_z='getFormData_z':tit='vlanSel.label2' ref='dc_z'></dc-port>	
 							</el-col>
 							
 						</el-col>

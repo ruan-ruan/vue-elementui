@@ -3,38 +3,20 @@
 
     <section>
       <!--工具条-->
-      <el-col
-        :span='24'
-        class='toolbar'
-        style='padding-bottom: 0px;'
-      >
-        <el-form
-          :inline='true'
-          :model='formList'
-          @submit.native.prevent
-        >
-          <el-form-item
-            label='标题'
-            prop='name'
-          >
-            <!--搜索对应的名字-->
-            <el-input
-              v-model='formList.name'
-              class="sel"
-            ></el-input>
+      <el-col :span='24' class='toolbar' style='padding-bottom: 0px;' >
+        <el-form :inline='true' :model='formList' ref='formList' @submit.native.prevent >
+          <el-form-item label='标题'  prop='name' >
+            <el-input  v-model='formList.name' class="sel" ></el-input>
           </el-form-item>
-          <el-form-item
-            label='类型'
-            prop='mesType'
-          >
+          <el-form-item label='类型' prop='mesType' >
             <el-select
               class='ipt_sta'
               v-model='formList.mesType'
               placeholder='全部'
             >
               <el-option
-                v-for='item in mesTypeList'
-                :key='item.value'
+                v-for='(item,index) in mesTypeList'
+                :key='index'
                 :label='item.name'
                 :value='item.value'
               >
@@ -51,8 +33,8 @@
               placeholder='全部'
             >
               <el-option
-                v-for='vals in levelList'
-                :key='vals.name'
+                v-for='(vals,index) in levelList'
+                :key='index'
                 :label='vals.name'
                 :value='vals.value'
               >
@@ -82,7 +64,7 @@
               >查询</el-button>
               <el-button
                 type='info'
-                @click='reset(formList)'
+                @click='reset'
               >重置</el-button>
             </span>
           </el-form-item>
@@ -110,6 +92,7 @@
         @selection-change='selsChange'
         style='width: 100%;'
         v-loading='loading'
+        :default-sort = "{prop: 'time', order: 'descending'}"
       >
         <el-table-column
           type='selection'
@@ -149,6 +132,8 @@
           prop='time'
           :formatter='dateFormat'
           label='时间'
+          sortable
+          width='101'
           align='center'
         ></el-table-column>
         <el-table-column
@@ -297,10 +282,8 @@ export default {
   },
   methods: {
     //重置按钮
-    reset(sels) {
-      for (let key in sels) {
-        sels[key] = "";
-      }
+    reset() {
+      this.$refs['formList'].resetFields()
     },
     selsChange(val) {
       this.sels = val;

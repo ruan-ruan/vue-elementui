@@ -4,28 +4,35 @@
 		<section>
 			<!--顶部工具栏-->
 			<el-col :span='24' class='toolbar' style='padding-bottom: 0px;'>
-				<el-form :inline='true' :model='filters'>
-					<el-form-item label='名称'>
+				<el-form :inline='true' :model='filters' ref='filters'>
+					<el-form-item label='名称' prop='name'>
 						<el-input v-model='filters.name'></el-input>
 					</el-form-item>
 					<el-form-item>
 						<el-button type='primary' @click='getUsers'>搜索</el-button>
+						<el-button type='info' @click='reset'>重置</el-button>
 					</el-form-item>
-					<el-form-item>
-						<el-button type='primary' @click='addUsers()'>+添加角色</el-button>
-					</el-form-item>
+					
 				</el-form>
 			</el-col>
 			
-			
-			
-			
+			<el-col :span='24'>
+				<el-col :span='4'>
+					<el-button type='primary' @click='addUsers()'>+添加角色</el-button>
+				</el-col>
+				<el-col :span='20' class='table-top'>
+					<el-button type='danger'  @click='batchRemove(sels)' :disabled="this.sels.length===0">批量删除</el-button>
+					
+				</el-col>
+			</el-col>
+
 			<!--主体数据部分-->
-			<el-table :data ="users"  highlight-current-row style='width: 100%;'@selection-change="selsChange"  v-loading='loading'>
+			<el-table :data ="users"  highlight-current-row style='width: 100%;'@selection-change="selsChange" 
+				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
 				<el-table-column type='selection' width='60'></el-table-column>
 				<el-table-column type='index' min-width='60' label='序号' align='center'>
 				</el-table-column>
-				<el-table-column prop='creation_time' width='95' :formatter='dateFormat' label='创建时间' align='center'>
+				<el-table-column prop='creation_time' sortable width='101' :formatter='dateFormat' label='创建时间' align='center'>
 				</el-table-column>
 				<el-table-column prop='name' min-width='150' label='角色名称' align='center'>
 				</el-table-column>
@@ -49,11 +56,11 @@
 			</el-table>
 			
 			<!--底部工具栏-->
-			<el-col :span='24'>
+			<!--<el-col :span='24'>
 				<el-col :span='3'>
 					<el-button type='danger'  @click='batchRemove(sels)' :disabled="this.sels.length===0">批量删除</el-button>
 				</el-col>
-			</el-col>
+			</el-col>-->
 		</section>
 	</div>
 </template>
@@ -81,6 +88,9 @@
 			
 		},
 		methods:{
+			reset(){
+				this.$refs['filters'].resetFields()
+			},
 			addUsers(){
 				//添加
 				this.$router.push({path:'/account/roles/add'})
@@ -276,7 +286,7 @@
 	    		let date=new Date(parseInt(row.creation_time)*1000);
 	    		let Y=date.getFullYear()+'-';
 	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +'':date.getDate()+'';
+	    		let D=date.getDate() <10? '0' +date.getDate() +' ':date.getDate()+' ';
 	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
 	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
 	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();

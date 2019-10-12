@@ -5,27 +5,19 @@
         <img  :src="(collapsed?sysImg:sysName)" :class="collapsed?'':'Img_left'"/>
       </el-col>
       <el-col :span="8">
-          <img :src="collapsed?asideRigth:asideLeft" class="tools asideLeft"  @click.prevent="collapse"/>
+          <img :src="collapsed?asideRigth:asideLeft" class="tools"  @click.prevent="collapse"/>
       </el-col>
       <el-col  :span="6"class="userinfo">
         <el-row>
           <el-col :span='24'>
             <el-col :span='7'>
               <span style="cursor:pointer;" @click="tapmes" v-popover:visible>消息</span>
-              <el-badge
-                :value="this.$store.state.message"
-                :max="99"
-                class="item"
-              >
+              <el-badge :value="this.$store.state.message" :max="99"  class="item" >
                 <i class="el-icon-bell"></i>
               </el-badge>
             </el-col>
-             <el-popover
-                placement="left-start"
-                ref="visible"
-                title="站内消息通知列表"
-                width="300"
-                trigger="hover">
+             <el-popover  placement="left-start" ref="visible"
+                title="站内消息通知列表"  width="300" trigger="hover">
                 <ul v-if="tableData.length>0" style="border-top:1px solid #ccc;">
                   <li style="border-top:1px solid #ccc;padding:8px 0;padding-bottom:2px;" v-for="(item,is) in tableData" :key="is">
                     <span><img
@@ -41,7 +33,7 @@
                   </li>
                 </ul>
                 <div v-else>
-                  暂无消息
+                                    暂无消息
                 </div>
               </el-popover>
             <el-col :span='7'>
@@ -55,13 +47,8 @@
             </el-col>
             <el-col :span='10'>
               <el-dropdown trigger="click">
-                <span
-                  class="el-dropdown-link userinfo-inner"
-                  :title='sysUserName'
-                ><img
-                    :src="sysUserAvatar"
-                    alt="头像"
-                  /> {{sysUserName}}</span>
+                <span class="el-dropdown-link userinfo-inner" :title='sysUserName' >
+                	<img :src="sysUserAvatar" alt="头像" /> {{sysUserName}}</span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item @click.native="logout">退出登录</el-dropdown-item>
                   <el-dropdown-item @click.native='psd'>修改密码</el-dropdown-item>
@@ -73,92 +60,80 @@
       </el-col>
     </el-col>
     
-    <el-col
-      :span="24"
-      class="main"
-    >
+    <el-col :span="24"  class="main" >
       <aside :class="collapsed?'menu-collapsed':'menu-expanded'">
         <!--导航菜单-->
-        <el-menu
-          :default-active="$route.path"
-          class="el-menu-vertical-demo el-menus"
-          unique-opened
-          router
-          v-show="!collapsed"
-          id="menuClass"
-          background='#EEEEEE'
-        >
-          <template
-            v-for="(item,index) in $router.options.routes"
-            v-if="!item.hidden"
-          >
-            <el-submenu
-              :index="index+''"
-              v-if="!item.leaf"
-            >
+        <el-menu  :default-active="$route.path"  
+        	class="el-menu-vertical-demo el-menus" 
+        	unique-opened  router  v-show="!collapsed" id="menuClass" 
+        	background-color='#EEEEEE' 
+        	>
+          <!--  一级菜单 -->
+          <template  v-for="(item,index) in $router.options.routes"  v-if="!item.hidden" >
+          	
+            <el-submenu  :index="index+''"  v-if="!item.leaf" >
+            	
               <template slot="title">
-                <!-- <i :class="item.iconCls"></i> -->
                 <img :src="item.iconCls" class='asideLogo'/>
-                {{item.name}}</template>
-              <el-menu-item-group
-                v-for='(child,indexs)  in item.children'
-                :index="child.path"
-                :key="child.path"
-                v-if="!child.hidden"
-              >
-                <el-submenu
-                  :index='child.path'
-                  v-if='!child.leaf'
-                >
-                  <template
-                    slot="title"
-                    class="child_title"
-                  ><i :class="child.iconCls"></i>{{child.name}}</template>
-                  <el-menu-item
-                    v-for="(sun,i)  in child.children"
-                    :index="i"
-                    :key="sun.path"
-                  >
-                    {{sun.name}}
+                <span slot="title">
+                	{{item.name}}
+                </span>
+                
+              </template>
+							<!--  ：二级菜单  在二级菜单的不能使用el-menu-item-group 标签    因为改标签插件  中间多一个div造成  间隔不同  -->
+              <template v-for='child  in item.children' v-if="!child.hidden">
+                <el-submenu :index='child.path':key="child.path"  v-if='!child.leaf'>
+                  <template  class="child_title "  >
+                  	<span class="padL10" slot="title"> <!--改标签   是为了  在调整name未知而定  并无实用-->
+                  		{{child.name}}
+                  	</span>
+          				</template>
+          				<!-- 	三级菜单  -->
+                  <el-menu-item v-for="sun  in child.children" :index="sun.path" :key="sun.path" >
+                  	<span slot="title">
+                  		{{sun.name}}
+                  	</span>
+                    
                   </el-menu-item>
                 </el-submenu>
-                <el-menu-item
-                  :index="child.path"
-                  v-else-if="child.leaf"
-                  :key="child.path"
-                > {{child.name}} </el-menu-item>
-              </el-menu-item-group>
+                
+                <el-menu-item v-else-if="child.leaf" :index="child.path" :key="child.path"
+                	class='padL50' > 
+                	<span slot="title">
+                		{{child.name}}
+                	</span>
+                </el-menu-item>
+                
+              </template>
+              
             </el-submenu>
-            <el-menu-item
-              v-if="item.leaf&&item.children.length>0"
-              :index="item.children[0].path"
-            >
-            <!-- <i :class="item.iconCls"></i> -->
-            <img :src="item.iconCls" class='asideLogo'/>
-            {{item.children[0].name}}</el-menu-item>
+            
+            <el-menu-item  v-if="item.leaf && item.children.length>0" :index="item.children[0].path" style='padding-left: 10px; '>
+	            <img :src="item.iconCls" class='asideLogo'/>
+	            <span slot="title">
+	            	 {{item.children[0].name}}
+	            </span>
+	           
+            </el-menu-item>
+            
           </template>
+          
         </el-menu>
+ 
+        
         <!--导航菜单-折叠后-->
-        <ul
-          class="el-menu el-menu-vertical-demo collapsed"
+        <ul class="el-menu el-menu-vertical-demo collapsed"
           v-show="collapsed"
-          ref="menuCollapsed"
-        >
+          ref="menuCollapsed" style="background-color: #EEEEEE; position: absolute;">
           <li
             v-for="(item,index) in $router.options.routes"
             v-if="!item.hidden"
-            class="el-submenu item"
-          >
+            class="el-submenu item" >
             <template v-if="!item.leaf">
-              <div
-                class="el-submenu__title"
-                style="padding-left: 20px;"
-                @mouseover="showMenu(index,true)"
-                @mouseout="showMenu(index,false)"
-              >
-              <!-- <i :class="item.iconCls"></i> -->
-              <img :src="item.iconCls" class='asideLogo'/>
-            </div>
+              <div class="el-submenu__title" style="padding-left: 20px;"
+              	 @mouseover="showMenu(index,true)"  @mouseout="showMenu(index,false)"  >
+	              <img :src="item.iconCls" class='asideLogo'/>
+	            </div>
               <ul
                 class="el-menu submenu"
                 :class="'submenu-hook-'+index"
@@ -173,62 +148,58 @@
                   style="padding-left: 40px;"
                   :class="$route.path==child.path?'is-active':''"
                   @click="$router.push(child.path)"
+                  
                 >{{child.name}}</li>
               </ul>
             </template>
+            
             <template v-else>
-          <li class="el-submenu">
-            <div
-              class="el-submenu__title el-menu-item"
-              style="padding-left: 20px;height: 56px;line-height: 56px;padding: 0 20px; "
-              :class="$route.path==item.children[0].path?'is-active':''"
-              @click="$router.push(item.children[0].path)"
-            >
-            <!-- <i :class="item.iconCls"></i> -->
-            <img :src="item.iconCls" class='asideLogo'/>
-          </div>
-        </li>
-			</template>
-		</li>
-	</ul>
-</aside>
+			        <li class="el-submenu">
+		            <div class="el-submenu__title el-menu-item" style="padding-left: 20px;height: 56px;line-height: 56px;padding-top: 0; "
+		              :class="$route.path==item.children[0].path?'is-active':''"
+		              @click="$router.push(item.children[0].path)" >
+		              
+			            <img :src="item.iconCls" class='asideLogo'/>
+			          </div>
+			        </li>
+						</template>
+					</li>
+				</ul>
+			</aside>
 
-<section class="content-container">
-  <div class="grid-content bg-purple-light">
-    <el-col
-      :span="24"
-      class="breadcrumb-container"
-    >
-      <strong class="title">{{$route.name}}</strong>
-      <el-breadcrumb
-        separator="/"
-        class="breadcrumb-inner"
-      >
-        <el-breadcrumb-item
-          v-for="item in $route.matched"
-          :key="item.path"
-        >
-          {{ item.name }}
-        </el-breadcrumb-item>
-      </el-breadcrumb>
-    </el-col>
-    <el-col
-      :span="24"
-      class="content-wrapper"
-    >
-      <transition
-        name="fade"
-        mode="out-in"
-      >
-        <router-view></router-view>
-      </transition>
-    </el-col>
-  </div>
-</section>
+			<section class="content-container">
+			  <div class="grid-content bg-purple-light">
+			    <el-col :span="24" class="breadcrumb-container marB8" >
+			      <h2  class="title"> {{$route.name}}</h2>
+			      <el-breadcrumb
+			        separator="/"
+			        class="breadcrumb-inner"
+			      >
+			        <el-breadcrumb-item
+			          v-for="item in $route.matched"
+			          :key="item.path"
+			        >
+			          {{ item.name }}
+			        </el-breadcrumb-item>
+			      </el-breadcrumb>
+			    </el-col>
+			    <el-col
+			      :span="24"
+			      class="content-wrapper"
+			    >
+			      <transition
+			        name="fade"
+			        mode="out-in"
+			      >
+			        <router-view></router-view>
+			      </transition>
+			    </el-col>
+			  </div>
+			</section>
 
 
-</el-col>
-</el-row>
+		</el-col>
+	</el-row>
 </template>
 
 <script>
@@ -383,10 +354,13 @@ export default {
     line-height: 60px;
     background: $color-primary;
     color: #fff;
+    
     .userinfo {
+    
       text-align: right;
       padding-right: 35px;
       float: right;
+      
       .userinfo-inner {
         cursor: pointer;
         color: #fff;
@@ -426,12 +400,12 @@ export default {
     }
     .tools {
         padding: 0px 10px;
-				width:30px;
-				height: 30px;
-				line-height: 30px;
+				width:26px;
+				height: 26px;
+				line-height: 26px;
 				position: absolute;
 				top: 30px;
-				margin-top: -15px;
+				margin-top: -13px;
 				cursor: pointer;
     }
   }
@@ -458,7 +432,7 @@ export default {
         }
         .submenu {
           position: absolute;
-          top: 0px;
+          top: 0px !important;
           left: 60px;
           z-index: 99999;
           height: auto;
@@ -487,7 +461,7 @@ export default {
         .title {
           width: 200px;
           float: left;
-          color: #475669;
+         display: inline-block;
         }
         .breadcrumb-inner {
           float: right;
@@ -507,7 +481,8 @@ export default {
   margin-top: 11px !important;
 }
 .el-menu-item-group__title{
-		padding-top: 0px !important;
+		display: none !important; 
+		/*padding-top: 0px !important;*/
 	}
 .asideLogo{
 		width: 22px;

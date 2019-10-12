@@ -4,11 +4,11 @@
 			<!--工具条-->
 			<el-row>									
 				<el-col :span='24' class='toolbar' style='padding-bottom: 0px;'>
-					<el-form :inline='true' :model='filters'>
-						<el-form-item label='名称'>
+					<el-form :inline='true' :model='filters' ref='filters'>
+						<el-form-item label='名称' prop='name'>
 							<el-input v-model='filters.name' class='sel'></el-input>
 						</el-form-item>
-						<el-form-item label='数据中心'>
+						<el-form-item label='数据中心'prop='search_dc'>
 							<el-select v-model='filters.search_dc' filterable placeholder='全部' class='sel'>
 								<el-option
 									v-for='(item,index) in datac'
@@ -18,7 +18,7 @@
 								</el-option>
 							</el-select>
 						</el-form-item>
-						<el-form-item label='创建日期'>
+						<el-form-item label='创建日期' prop='timeVal'>
 							<el-date-picker
 								v-model='filters.timeVal'
 								type='daterange'
@@ -32,28 +32,31 @@
 							<el-button type='primary'@click='getUsers'>查询</el-button>
 						</el-form-item>
 						<el-form-item>
-							<el-button type='info' @click='reset(filters)'>重置</el-button>
+							<el-button type='info' @click='reset'>重置</el-button>
 						</el-form-item>
 					</el-form>
 				</el-col>
 			</el-row>
 			<!--添加部分-->
 			<el-row>
-				<!--<el-col :span='24'>-->
-					<el-col :span='24'>
-						<template >
-							<el-button type="primary" @click="handleAdd">+添加节点</el-button>
-							<el-button type='success' @click='foundNode'>发现节点</el-button>
-						</template>
-					</el-col>
-				<!--</el-col>-->
+				<el-col :span='8'>
+					<template >
+						<el-button type="primary" @click="handleAdd">+添加节点</el-button>
+						<el-button type='success' @click='foundNode'>发现节点</el-button>
+					</template>
+				</el-col>
+				<el-col :span='16'	class="table-top">
+					<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">批量删除</el-button>
+					
+				</el-col>
 			</el-row>
 			
 			<!--列表部分-->
-			<el-table :data='users'  highlight-current-row style='width: 100%;'@selection-change="selsChange" v-loading='loading'>
+			<el-table :data='users'  highlight-current-row style='width: 100%;'@selection-change="selsChange"
+				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
 				<el-table-column type="selection" width="50" align='center'></el-table-column>
 				<el-table-column type='index' min-width='50'max-width='70' label='序号' align='center'></el-table-column>
-				<el-table-column prop='creation_time'width='95'label='申请时间'align='center' :formatter='dateFormat'></el-table-column>
+				<el-table-column prop='creation_time'width='101'label='申请时间'sortable align='center' :formatter='dateFormat'></el-table-column>
 				<el-table-column prop='name' min-width='100'max-width='120' label='节点名称' align='center'></el-table-column>
 				<el-table-column  min-width='120'max-width='140' label='设备名称' align='center'>
 					<template slot-scope='scope'>
@@ -92,23 +95,18 @@
 		<!--底部工具栏-->
 		<el-row>
 			<el-col :span='24' class='toolbar'>
-				<el-col :span='3'>
-					<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">批量删除</el-button>
-				</el-col>
-				<el-col :span='21'>
-					<el-pagination
-						:total="total"
-					     	@size-change="handleSizeChange"
-	                   		@current-change="handleCurrentChange"
-					     	layout="total, sizes, prev, pager, next, jumper"
-					     	:page-sizes="[10, 20, 30,50]" 						     	 
-					     	:current-page.sync="currentPage"  
-					     	:page-count='pageNum'
-					     	:pager-count="pagecount"
-					     	:prev-text='prev'
-					     	:next-text='next'>
-					</el-pagination>
-				</el-col>
+				<el-pagination
+					:total="total"
+				     	@size-change="handleSizeChange"
+                   		@current-change="handleCurrentChange"
+				     	layout="total, sizes, prev, pager, next, jumper"
+				     	:page-sizes="[10, 20, 30,50]" 						     	 
+				     	:current-page.sync="currentPage"  
+				     	:page-count='pageNum'
+				     	:pager-count="pagecount"
+				     	:prev-text='prev'
+				     	:next-text='next'>
+				</el-pagination>
 			</el-col>
 		</el-row>
 		<!--发现节点额界面-->
@@ -237,17 +235,16 @@
 	    			console.log(e)
 	    		})
 	    	},
-	    	reset(sels){
-				for(let key in sels){
-					sels[key]='';
-				}
+	    	reset(){
+				this.$refs['filters'].resetFields()
 			},
 	    	dateFormat(row,column){
 	    		//将时间戳转换为前端的时间
 	    		let date=new Date(parseInt(row.creation_time)*1000);
 	    		let Y=date.getFullYear()+'-';
 	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +'-':date.getDate();
+	    		let D=   date.getDate() <10	?  '0' + date.getDate() +'   ':date.getDate()+'   ';
+	    		
 	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
 	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
 	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();

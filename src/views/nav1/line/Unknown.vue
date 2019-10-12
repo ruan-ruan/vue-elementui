@@ -39,29 +39,24 @@
 			
 			<!--列表的数据部分-->
 			<!--列表的数据导出部分-->
-			<el-col :span='24'>
-				<!--<el-col :span='4'>
-					<el-dropdown split-button type='success'>
-						导出数据
-						<el-dropdown-menu slot='dropdown'>
-							<el-dropdown-item> <el-button @click='downloadExcel'> 当前页</el-button></el-dropdown-item>
-							<el-dropdown-item> <el-button @click='downloadExcelList'> 所有页</el-button></el-dropdown-item>
-							
-						</el-dropdown-menu>
-					</el-dropdown>
-				</el-col>-->
 				<el-col :span='24'>
-					<template>
-						<el-button type='success'@click='handleAdd'>+添加未知链路</el-button>
-						<el-button type='primary' @click='handleFound'>发现链路</el-button>
-					</template>
+					<el-col :span='8'>
+						<template>
+							<el-button type='success'@click='handleAdd'>+添加未知链路</el-button>
+							<el-button type='primary' @click='handleFound'>发现链路</el-button>
+						</template>	
+					</el-col>
+					<el-col :span='16' class='table-top'>
+						<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">批量删除</el-button>						
+					</el-col>
+
 				</el-col>
 
-			</el-col>
-			<el-table :data='users' highlight-current-row @selection-change="selsChange" style='width: 100%;' v-loading='loading'>
-				<el-table-column type='selection' width='40'></el-table-column>
-				<el-table-column type='index' width='50' label='序号' align='center'></el-table-column>
-				<el-table-column prop='creation_time' width='95' label='申请时间' :formatter='dateFormat' align='center'></el-table-column>				
+			<el-table :data='users' highlight-current-row @selection-change="selsChange" style='width: 100%;' 
+				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
+				<el-table-column type='selection' min-width='40'></el-table-column>
+				<el-table-column type='index' min-width='50' label='序号' align='center'></el-table-column>
+				<el-table-column prop='creation_time' width='101' sortable label='申请时间' :formatter='dateFormat' align='center'></el-table-column>				
 				<el-table-column label='A端' min-width='80' align='center'>
 					<template slot-scope='scope'>
 						<el-tag size='small' type='primary'style='cursor: pointer;'@click='handelSee_aNode(scope.$index,scope.row)'>{{scope.row.a_node.name}}</el-tag>
@@ -87,22 +82,26 @@
 				</el-table-column>
 				<el-table-column prop='descriptionVal' label='备注' align='center' min-width='80'>
 				</el-table-column>
-				<el-table-column  label='操作' align='center' width='300'>
+				<el-table-column  label='操作' align='center' width='160'>
 					<template slot-scope='scope'>
-						<el-button size='mini' type='primary' @click='handleStart(scope.$index, scope.row)'>运行</el-button>
-						<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
-						<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
-						<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)"  >删除</el-button>
+						<div>
+							<el-button size='mini' type='primary' @click='handleStart(scope.$index, scope.row)'>运行</el-button>
+							<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
+						</div>
+						<div style="margin-top: 5px;">
+							<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
+							<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)"  >删除</el-button>
+						</div>
 					</template>
 				</el-table-column>
 			</el-table>
 			
 			<!--底部数据导航部分-->
-			<el-col :span='24' class='toolbar'>
-				<el-col :span='3'>
+			<!--<el-col :span='24' class='toolbar'>-->
+				<!--<el-col :span='3'>
 					<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">批量删除</el-button>
-				</el-col>
-				<el-col :span='21'>
+				</el-col>-->
+				<el-col :span='24' class='toolbar'>
 					<el-pagination
 						:total="total"
 				     	@size-change="handleSizeChange"
@@ -115,7 +114,7 @@
 				     	:prev-text='prev'
 				     	:next-text='next'></el-pagination>
 				</el-col>
-			</el-col>
+			<!--</el-col>-->
 
 			<!--添加部分/编辑部分/发现链路-->
 			<el-dialog :title='textMap[dialogStatus]':visible.sync='dialogFormVisible':close-on-click-modal="false" v-loading='editLoading'>
@@ -159,7 +158,7 @@
 						<el-input v-model='editForm.z_ip':disabled='seeStatus' class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item label='Z端接口VLAN'prop='z_vlan'>
-						<el-input v-model='editForm.z_vlan':disabled='seeStatus' class='ipt'></el-input>
+						<el-input v-model='editForm.z_vlan':disabled='seeStatus'   class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item label='Z端描述:'prop='z_desc'>
 						<el-input v-model='editForm.z_desc':disabled='seeStatus' class='ipt'></el-input>
@@ -229,16 +228,21 @@
 </template>
 
 <script>
-<<<<<<< HEAD
-	import {datedialogFormat , descriptionValue,getTime} from '@/assets/js/index.js'
-
-=======
-	import {datedialogFormat,getTime} from '@/assets/js/index.js'
 	
->>>>>>> 18056f2c0ca13d4d8b077af685a79e0c9ae4466e
+	import {datedialogFormat , descriptionValue,getTime ,isValidNumber} from '@/assets/js/index.js'
+
 	export default{
 		name:'Unknown',
 		data(){
+			var isNumber= (rule,value,callback) => {
+				if(!value){
+					callback(new Error('不能为空'))
+				}else if(! isValidNumber(value)){
+					 callback(new Error('只能输入数字'))
+				}else{
+					callback()
+				}
+			}
 			return{
 				radio: '1',
 				//获取用户的权限token
@@ -304,18 +308,18 @@
 				editFormRules:{
 					a_node_id:[{ required: true, message: '请选择A端节点', trigger: 'change' }],
 					a_ip:[{ required: true, message: '请输入A端端口ip', trigger: 'blur' }],
-					a_vlan:[{ required: true, message: '请输入A端端口vlan', trigger: 'blur' }],
+					a_vlan:[{ required: true, validator:isNumber, trigger: 'blur' }],
 					a_desc:[{required:true, message:'请输入A端端口描述',trigger:'blur'}],
 					z_node_id:[{ required:true, message:'请选择Z端节点',trigger:'change'}],
 					z_ip:[{required:true , message:'请输入Z端端口IP', trigger:'blur'}],
-					z_vlan:[{ required:true , message:'请输入Z端端口vlan',trigger:'blur'}],
+					z_vlan:[{ required:true , validator:isNumber,trigger:'blur'}],
 					z_desc:[{ required:true , message:'请输入Z端端口描述',trigger:'blur'}],
-					physical_bandwidth:[{ required:true ,message:'请输入物理带宽',trigger:'blur'}],
-					bandwidth:[{ required:true , message:'请输入总带宽',trigger:'blur'}],
+					physical_bandwidth:[{ required:true ,validator:isNumber,trigger:'blur'}],
+					bandwidth:[{ required:true , validator:isNumber,trigger:'blur'}],
 					
 					monitoring:[{required:true ,message:'请选择链路检测是否开启', trigger:'change'}],
 					
-					link_cost:[{ required:true ,message:'请输入链路开销',trigger:'blur'}]	,
+					link_cost:[{ required:true ,validator:isNumber,trigger:'blur'}]	,
 					monitoring_type:[{required:true ,message:'请选择链路检测类型', trigger:'change'}],
 				},
 				//链路检测是否开启部分
@@ -441,22 +445,17 @@
 					console.log(res);
 					if(res.status==200){
 						if(res.data.status==0){
-<<<<<<< HEAD
 							descriptionValue(res.data.data.items)
 							
 							this.total=res.data.data.page.total;
 							res.data.data.items.forEach(ele => {
-=======
-							this.users=res.data.data.items;
-							this.total=res.data.data.page.total;
-							this.users.forEach(ele => {
->>>>>>> 18056f2c0ca13d4d8b077af685a79e0c9ae4466e
 								if(ele.monitoring){
 									ele.monitoringText='开启'
 								}else if(!ele.monitoring){
 									ele.monitoringText='关闭'
 								}
 							})
+							this.total=res.data.data.page.total;
 							this.users=res.data.data.items;
 						}
 					}
@@ -550,7 +549,7 @@
 											type:'success'
 										})
 //										this.$refs['editForm'].resetFields();
-										this.$refs.editForm.resetFields();
+										this.$refs['editForm'].resetFields();
 										
 										this.dialogFormVisible=false;
 										this.getUsers()
@@ -831,7 +830,7 @@
 	    		let date=new Date(parseInt(row.creation_time)*1000);
 	    		let Y=date.getFullYear()+'-';
 	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +'':date.getDate()+'';
+	    		let D=date.getDate() <10? '0' +date.getDate() +'  ':date.getDate()+'  ';
 	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
 	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
 	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();

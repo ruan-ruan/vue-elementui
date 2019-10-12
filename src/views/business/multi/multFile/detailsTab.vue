@@ -29,7 +29,7 @@
 			}
 		},
 		created(){
-//			console.log(this.detailsID)
+
 		}
 	}
 </script>

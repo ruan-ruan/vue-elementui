@@ -1,16 +1,17 @@
 <template>
 	<div>
 		<section>
-			<h4 v-show='unknown_editForm_status'>骨干ID:{{seeForm.id}}</h4>
+			<!--<h4 v-show='unknown_editForm_status'>骨干ID:{{seeForm.id}}</h4>-->
 				<el-form label-position='left'style='margin-left: 50px;' :model='seeForm'ref='seeForm' label-width="100px"  v-loading='loading' :rules='rulesForm'>
 					<el-row>
 						<el-col :span='24'>
 							<el-col :span='12'>
-								<el-form-item label='Vtep:'prop='vtep'>
-									<el-input v-model='seeForm.vtep' :disabled='StaNot'class='ipt'placeholder='请输入vtep'></el-input>
-								</el-form-item>
+								
 								<el-form-item label='骨干名称:' prop='name'>
 									<el-input v-model='seeForm.name' :disabled='StaEditForm'class='ipt'placeholder='请输入骨干名称'></el-input>
+								</el-form-item>
+								<el-form-item label='Vtep:'prop='vtep'>
+									<el-input v-model='seeForm.vtep' :disabled='StaNot'class='ipt'placeholder='请输入vtep'></el-input>
 								</el-form-item>
 							</el-col>
 							<el-col :span='12'>								
@@ -32,9 +33,9 @@
 								<el-form-item label='设备名称:'prop='devices0_hostname'>
 									<el-input v-model='seeForm.devices0_hostname':disabled='StaNot' class='ipt'placeholder='请输入设备名称'></el-input>
 								</el-form-item>
-								<el-form-item label='设备ID:' prop='devices0_id' v-if='devices_id_status'>
+								<!--<el-form-item label='设备ID:' prop='devices0_id' v-if='devices_id_status'>
 									<el-input v-model='seeForm.devices0_id':disabled='StaEditForm' class='ipt'placeholder='请输入设备ID'></el-input>
-								</el-form-item>
+								</el-form-item>-->
 								<el-form-item label='管理IP:'prop='devices0_ip'>
 									<el-input v-model='seeForm.devices0_ip':disabled='StaNot' class='ipt'placeholder='请输入管理IP'></el-input>
 								</el-form-item>
@@ -72,9 +73,9 @@
 								<el-form-item label='设备名称:' prop='devices1_hostname'>
 									<el-input v-model='seeForm.devices1_hostname':disabled='StaNot' class='ipt'></el-input>
 								</el-form-item>
-								<el-form-item label='设备ID:'prop='devices1_id' v-if='devices_id_status'>
+								<!--<el-form-item label='设备ID:'prop='devices1_id' v-if='devices_id_status'>
 									<el-input v-model='seeForm.devices1_id':disabled='StaEditForm' class='ipt'></el-input>
-								</el-form-item>
+								</el-form-item>-->
 								<el-form-item label='管理IP:'prop='devices1_ip'>
 									<el-input v-model='seeForm.devices1_ip':disabled='StaNot' class='ipt'></el-input>
 								</el-form-item>
@@ -111,7 +112,9 @@
 					</el-row>					
 				</el-form>
 				<div slot='footer' class="dialog-footer footer_right">
-					<el-button size='small' @click='goback' >返回</el-button>
+					<el-button size='small' @click='goback' v-if='editFormBtn' >返回</el-button>
+					
+					<el-button size='small' @click='unknowgoback' v-else  >返回</el-button>
 					<!--节点的编辑保存-->
 					<el-button size='small' v-if='editFormBtn' @click='editForm' type="primary">保存</el-button>
 					<!--未知节点的添加按钮-->
@@ -232,7 +235,8 @@
 				//控制添加设备2的按钮,默认是隐藏的
 				addEquipStatus:false,
 				itemData:[],
-				dc_id:''
+				dc_id:'',
+				baseData:{},//数据备份
 			}
 		},
 		created(){
@@ -355,16 +359,18 @@
 							console.log(res)
 							this.loading=false
 							var strData=res.data.data;
+							this.baseData=res.data.data
 							let str=[];
 							let obj={};
 							if(strData.devices.length==1){
 								this.equStatusTwo=false;
-								str=Object.assign([],strData.devices);
+//								str=Object.assign([],strData.devices);
+								str=JSON.parse(JSON.stringify(strData.devices))
 								obj={
 									id:strData.id,
 									name:strData.name,
 									vtep:strData.vtep,
-									dc_id:this.dc_id,
+									dc_id:strData.dc.name,
 									
 									port_section0:str[0].port_section,
 									devices0_id:str[0].id,
@@ -386,7 +392,7 @@
 									id:strData.id,
 									name:strData.name,
 									vtep:strData.vtep,
-									dc_id:this.dc_id,
+									dc_id:strData.dc.name,
 									
 									port_section0:str[0].port_section,
 									devices0_id:str[0].id,
@@ -435,7 +441,9 @@
 						this.$confirm('确认要修改吗?','提示',{})
 						.then(() => {
 							let para=Object.assign({},this.seeForm);
-							para.dc_id=this.seeForm.dc_id;
+//							para.dc_id=this.seeForm.dc_id;
+							para.dc_id=this.seeForm.dc_id==this.baseData.dc.name?this.baseData.dc.id:this.seeForm.dc_id;
+							
 							this.$ajax.put('/node/edit_node/'+para.id+'?token='+this.token,para)
 							.then(res => {
 								console.log(res);
@@ -536,7 +544,14 @@
 											message:'添加成功!',
 											type:'success'
 										})
+										this.$store.state.statusname=true;
 										this.$router.go(-1)
+//										this.$router.push({
+//											path:'/location/backbone',
+//											query:{
+//												tab:'second'
+//											}
+//										})
 									}else{
 										this.$message({
 											message:res.data.message,
@@ -554,12 +569,14 @@
 			unknownEditForm(){
 				//未知节点的额编辑
 				var para;
+				console.log(this.seeForm);
+				console.log(this.unknown_editFormData)
 				var str=this.unknown_editFormData.devices
 				if(str.length=1){
 					para={
 						id:this.seeForm.id,
 						name:this.seeForm.name,
-						dc_id:this.seeForm.dc_id,
+						dc_id:this.seeForm.dc_id==this.unknown_editFormData.dc.name?this.unknown_editFormData.dc.id:this.seeForm.dc_id,
 						vtep:this.seeForm.vtep,
 						devices:[
 							{
@@ -573,7 +590,7 @@
 								room:this.seeForm.devices0_room,
 								rack:this.seeForm.devices0_rack,
 								description:this.seeForm.devices0_description,
-								port_section:this.seeForm.port_section[0],
+								port_section:this.seeForm.port_section0,
 							}
 						]
 					}	
@@ -614,6 +631,7 @@
 						]
 					}
 				}
+				console.log(para)
 				this.$refs.seeForm.validate(valid => {
 					if(valid){
 						this.$confirm('确认要修改吗?','提示',{})
@@ -628,7 +646,9 @@
 											message:'修改成功!',
 											type:'success'
 										})
-										this.$router.push('/location/backbone')
+//										this.$router.push('/location/backbone')
+										this.$store.state.statusname=true;
+										this.$router.go(-1)
 									}else{
 										this.$message({
 											message:res.data.message,
@@ -644,9 +664,6 @@
 				})
 			},
 			getUnknownDetail(id){
-//				this.$nextTick(() =>{
-//					this.$refs['seeForm'].resetFields();
-//				})
 				
 				//获取未知节点的详情
 				this.loading=true;				
@@ -656,6 +673,7 @@
 					this.loading=false;
 					if(res.status==200){
 						if(res.data.status==0){
+							this.unknown_editFormData=Object.assign({},res.data.data)
 							var unknownSee;
 							unknownSee=res.data.data;
 							console.log(res);
@@ -727,8 +745,12 @@
 				})
 			},
 			goback(){
+				this.$router.push('/location/backbone')
+				
+			},
+			unknowgoback(){
 				//返回
-//				this.$router.go(-1)
+				this.$store.state.statusname=true;
 				this.$router.push('/location/backbone')
 			}
 		},

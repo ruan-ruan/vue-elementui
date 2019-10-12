@@ -19,6 +19,11 @@ import moment from 'moment'
 import *as types from '@/api/types'
 import '@/assets/css/bus.css'
 import ajax from '@/api/api'
+
+
+
+import VueClipboard from 'vue-clipboard2'
+Vue.use(VueClipboard)
 //import 'element-ui/lib/theme-chalk/display.css';
 Vue.use(Vuex)
 Vue.use(ElementUI)

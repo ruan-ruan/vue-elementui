@@ -4,9 +4,9 @@
 		<el-row>
 			<el-col :span='24'>
 				<el-col :span='18'>
-					<h3 class="title_h3">第一步：创建数据中心互联的虚拟专线 <span class="cli_toTip" title='创建任意两个数据中心之间的二层虚拟专线'>?</span></h3>
+					<h3 class="title_h3">第一步:创建数据中心互联的虚拟专线 <span class="cli_toTip" title='创建任意两个数据中心之间的二层虚拟专线'>?</span></h3>
 					<topForm @formVal='getVal' ref='basicForm'></topForm>
-					<h3 class="title_h3">第二步</h3>
+					<h3 class="title_h3">第二步:业务两端基础信息配置</h3>
 					<el-row>
 						<el-col :span='24'>
 							<el-col :span='12'>

@@ -5,7 +5,14 @@
 				<el-input v-model='basicForm.bandwidth'class='ipt' :disabeld='DataStatus'></el-input>
 			</el-form-item>
 			<el-form-item label='计费模式' prop='changeModel'>
-				<el-input v-model='basicForm.changeModel'disabled class='ipt'></el-input>
+				
+				 <el-radio-group v-model="basicForm.changeModel" >
+				 	<el-radio-button border v-for='(item,index) in modelData'
+				 	:key='index'
+				 	:value='item.value' 
+				 	:label="item.label" 
+				 	border></el-radio-button>
+				 </el-radio-group>
 			</el-form-item>
 			<el-form-item label='计费时间'prop='billing_time'>
 				<el-date-picker
@@ -67,9 +74,15 @@
 					overdue_time:'',
 					des:''
 				},
+				modelData:[
+					{
+						value:'包年包月',
+						label:'包年包月'
+					},
+				],
 				DataStatus:false,//默认的 时候是可以编辑的
 				basicFormRules:{
-					bandwidth:[ { required: true,  validator: isValidNumber,message:'请输入带宽', trigger: 'blur' }],
+					bandwidth:[ { required: true,  validator: isValidNumber, trigger: 'blur' }],
 					changeModel:[{ required: true, message:'请选择计费模式', trigger: 'change' }]
 				},
 				startDatePicker: this.beginDate(),//计费时间 和 结束时间的判断
@@ -80,19 +93,20 @@
 		},
 		watch:{
 			basicForm:{
-				handler(newVal,oldVal){
+				handler(newVal,oldVal){					
 					this.$emit('sendBasic',newVal)
 				},
 				deep:true,
 			}
 		},
 		created(){
+			console.log(this.basicObj)
 			if(typeof this.basicObj!=='undefined'){  //详情的时候展示
 				this.basicForm={ 
 					bandwidth:this.basicObj.bandwidth,
-					changeModel:this.basicObj.charge_mode,
-					billing_time:new Date(datedialogFormat(this.basicObj.charge_time)),
-					overdue_time:new Date(datedialogFormat(this.basicObj.expiration_time)),
+					changeModel:this.basicObj.changeModel,
+					billing_time:new Date(datedialogFormat(this.basicObj.billing_time)),
+					overdue_time:new Date(datedialogFormat(this.basicObj.overdue_time)),
 					des:this.basicObj.description
 				}
 				this.DataStatus=true;//不可编辑

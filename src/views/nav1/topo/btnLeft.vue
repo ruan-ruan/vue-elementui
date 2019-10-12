@@ -190,6 +190,10 @@
 					{
 						img:require('../../../assets/images/newTopo/huawei.png'),
 						name:'华为云'
+					},
+					{
+						img:require('../../../assets/images/newTopo/other.png'),
+						name:'其他云'
 					}
 				],
 				//网元的显示的控制

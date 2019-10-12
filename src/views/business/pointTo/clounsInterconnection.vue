@@ -4,9 +4,9 @@
 		<el-row>
 			<el-col :span='24'>
 				<el-col :span='18'>
-					<h3 class="title_h3">第一步：创建云到云的虚拟专线 <span class="cli_toTip" title='创建任意两个数据中心之间的二层虚拟专线'>?</span></h3>
+					<h3 class="title_h3">第一步:创建云到云的虚拟专线 <span class="cli_toTip" title='创建任意两个数据中心之间的二层虚拟专线'>?</span></h3>
 					<topForm @formVal='getVal' ref='newForm'></topForm>
-					<h3 class="title_h3">第二步</h3>
+					<h3 class="title_h3">第二步:业务两端基础信息配置</h3>
 					<el-row>
 						<el-col :span='24'>
 							<el-col :span='12'>
@@ -26,6 +26,7 @@
 				<el-col :span='5'  class='pos_row'>
 					<!--<el-row>
 						<el-col :span='24'>-->
+							<!--<span class="tit_h3">配置详情概览 </span>-->
 							<h3 class="tit_h3" >配置详情概览</h3>
 							<el-form :model='creatFormDetails' ref='creatFormDetails' style='width: 100%;'label-width='120px'>
 								<el-form-item label='A公有云:' class='label_tit' prop='tenant_name'>

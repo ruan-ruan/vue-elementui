@@ -4,11 +4,11 @@
 		<section>
 			<!--顶部工具条-->
 			<el-col :span='24'class='toolbar' style="padding-bottom: 0px;">
-				<el-form :inline='true' :model="filters" @submit.native.prevent >
-					<el-form-item label='名称'>
+				<el-form :inline='true' :model="filters" ref='filters' @submit.native.prevent >
+					<el-form-item label='名称' prop='search_name'>
 						<el-input v-model='filters.search_name'></el-input>
 					</el-form-item>
-					<el-form-item label='状态'>
+					<el-form-item label='状态' prop='search_status'>
 						<!--<el-input v-model='filters.search_status'></el-input>-->
 						<el-select v-model='filters.search_status' class='sel'>
 							<el-option
@@ -21,9 +21,7 @@
 					</el-form-item>
 					<el-form-item>
 						<el-button type='primary' @click='getUsers()'>搜索</el-button>
-					</el-form-item>
-					<el-form-item>
-						<el-button type='info' @click='reset(filters)'>重置</el-button>
+						<el-button type='info' @click='reset'>重置</el-button>
 					</el-form-item>
 				</el-form>
 			</el-col>
@@ -32,6 +30,8 @@
 					<el-button type='primary' @click='addUser(editForm)' >+添加</el-button>
 				</el-col>
 				<el-col :span='20'class="table-top">
+					<el-button type='danger' @click='batchRemove(sels)' :disabled="this.sels.length===0">批量删除</el-button>
+					
 					<el-dropdown split-button type='success' @command="handleExport" >
 						导出数据
 						<el-dropdown-menu slot='dropdown'>
@@ -44,10 +44,11 @@
 
 			
 			<!--数据部分-->
-			<el-table :data = "users" highlight-current-row @selection-change="selsChange" style='width: 100%;' v-loading='loading'>
-				<el-table-column type='selection' width='40'></el-table-column>
+			<el-table :data = "users" highlight-current-row @selection-change="selsChange" style='width: 100%;'
+				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
+				<el-table-column type='selection' min-width='40'></el-table-column>
 				<el-table-column type='index' min-width='50' label='序号'></el-table-column>
-				<el-table-column prop='creation_time' width='95' :formatter='dateFormat' label='创建时间' align='center'>
+				<el-table-column prop='creation_time' width='101'sortable :formatter='dateFormat' label='创建时间' align='center'>
 				</el-table-column>
 				<el-table-column prop='name' min-width='80' label='账户' align='center'>
 				</el-table-column>
@@ -80,24 +81,19 @@
 			
 			<!--底部导航的额数据-->
 			<el-col :span='24' class='toolbar'>
-				<el-col :span='3'>
-					<el-button type='danger' @click='batchRemove(sels)' :disabled="this.sels.length===0">批量删除</el-button>
-				</el-col>
-				<el-col :span='21'>
-					<el-pagination
-						:total="total"
-				     	@size-change="handleSizeChange"
-                   		@current-change="handleCurrentChange"
-				     	layout="total, sizes, prev, pager, next, jumper"
-				     	:page-sizes="[10, 20, 30,50]" 						     	 
-				     	:current-page.sync="currentPage"  
-				     	:page-count='pageNum'
-				     	:pager-count="pagecount"
-				     	:prev-text='prev'
-				     	:next-text='next'>
-						
-					</el-pagination>
-				</el-col>
+				<el-pagination
+					:total="total"
+			     	@size-change="handleSizeChange"
+               		@current-change="handleCurrentChange"
+			     	layout="total, sizes, prev, pager, next, jumper"
+			     	:page-sizes="[10, 20, 30,50]" 						     	 
+			     	:current-page.sync="currentPage"  
+			     	:page-count='pageNum'
+			     	:pager-count="pagecount"
+			     	:prev-text='prev'
+			     	:next-text='next'>
+					
+				</el-pagination>
 			</el-col>
 			
 			
@@ -160,7 +156,7 @@
 
 <script>
 	
-		import {descriptionValue} from '@/assets/js/index.js'
+	import {descriptionValue,datedialogFormat} from '@/assets/js/index.js'
 	export default{
 		name:'Set',
 		mounted(){
@@ -191,7 +187,6 @@
 		          return callback(new Error('手机号不能为空'));
 		        } else {
 		          const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
-//		          console.log(reg.test(value));
 		          if (reg.test(value)) {
 		            callback();
 		          } else {
@@ -381,7 +376,7 @@
 //				this.loading=true;
 				this.editForm={
 					id:row.id,
-					creation_time:this.dateFormats(row.creation_time),
+					creation_time:datedialogFormat(row.creation_time),
 					name:row.name,
 					real_name:row.real_name,
 					email:row.email,
@@ -518,11 +513,8 @@
 				})
 				
 			},
-			reset(sels){
-				//清空所有的搜索条件
-				for(let key in sels){
-					sels[key]='';
-				}
+			reset(){
+				this.$refs['filters'].resetFields()
 			},
 			handleSta(index,row){
 				var btn=document.getElementsByClassName('btnStatus');
@@ -604,7 +596,7 @@
 							console.log(res.data.data)
 							var str=res.data.data;
 							this.editForm={
-								creation_time:this.dateFormats(str.creation_time),
+								creation_time:datedialogFormat(str.creation_time),
 								id:str.id,
 								name:str.name,
 								real_name:str.real_name,
@@ -775,16 +767,7 @@
                 return Y + M + D + h + m + s;
 				
 			},
-			dateFormats(value){
-		    	let date = new Date(parseInt(value) * 1000);
-		        let Y = date.getFullYear() + '-';
-		        let M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) + '-' : date.getMonth() + 1 + '-';
-		        let D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
-		        let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
-		        let m = date.getMinutes()  < 10 ? '0' + date.getMinutes() + ':' : date.getMinutes() + ':';
-		        let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-		        return Y + M + D + h + m + s;
-		    },
+
 		},
 		
 	}

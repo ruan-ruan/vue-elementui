@@ -20,12 +20,25 @@
 		data(){
 			return{
 				activeName:this.$store.state.statusname?'second':'first',
+				activeName:'first',
 				isChildUpdate1:true,
 				isChildUpdate2:false,
+				Tabs:this.$route.query.tab,
 			}
 		},
 		created() {
 			this.$store.state.statusname=false;
+//			if(this.Tabs){
+//				this.activeName=this.$route.query.tab
+//			}
+
+//			if(this.Tabs){
+//				this.$router.push({
+//	            	path:'/location/backbone?tab='+this.Tabs,
+//	            	
+//	            })	
+//			}
+			
 		},
 		mounted() {
 			if(this.activeName=='first') {
