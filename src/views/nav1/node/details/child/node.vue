@@ -234,6 +234,7 @@
 				unknown_editForm_status:false,
 				//控制添加设备2的按钮,默认是隐藏的
 				addEquipStatus:false,
+				backstatus:false,//返回按钮
 				itemData:[],
 				dc_id:'',
 				baseData:{},//数据备份
@@ -256,7 +257,7 @@
 				
 				this.creatFormBtn=false;
 				this.unknownStatusBtn=false;
-				
+				this.backstatus=true;
 				this.devices_id_status=true;
 				this.getUsers(this.editId)
 				this.getDataCenter()
@@ -545,6 +546,7 @@
 											type:'success'
 										})
 										this.$store.state.statusname=true;
+<<<<<<< HEAD
 										this.$router.go(-1)
 //										this.$router.push({
 //											path:'/location/backbone',
@@ -552,6 +554,9 @@
 //												tab:'second'
 //											}
 //										})
+=======
+										this.$router.push('/location/backbone')
+>>>>>>> e20b0c41d092939b497b2afd1b96c76ac9d15018
 									}else{
 										this.$message({
 											message:res.data.message,
@@ -646,9 +651,14 @@
 											message:'修改成功!',
 											type:'success'
 										})
+<<<<<<< HEAD
 //										this.$router.push('/location/backbone')
 										this.$store.state.statusname=true;
 										this.$router.go(-1)
+=======
+										this.$store.state.statusname=true;
+										this.$router.push('/location/backbone')
+>>>>>>> e20b0c41d092939b497b2afd1b96c76ac9d15018
 									}else{
 										this.$message({
 											message:res.data.message,
@@ -750,8 +760,19 @@
 			},
 			unknowgoback(){
 				//返回
+<<<<<<< HEAD
 				this.$store.state.statusname=true;
 				this.$router.push('/location/backbone')
+=======
+//				this.$router.go(-1)
+				if(this.backstatus==true) {
+					this.$router.push('/location/backbone')
+				}else {
+					this.$store.state.statusname=true;
+					this.$router.push('/location/backbone')
+				}
+				
+>>>>>>> e20b0c41d092939b497b2afd1b96c76ac9d15018
 			}
 		},
 	}
