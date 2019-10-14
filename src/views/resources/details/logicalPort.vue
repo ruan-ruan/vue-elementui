@@ -1,6 +1,5 @@
 <template>
 	<div>
-
 		<!--创建的逻辑端口-->
 		<section>
 			<h3 class="title_h3" v-text="seePortDetails?seeTopTitle: editTopTitle" ></h3>
@@ -88,7 +87,7 @@
 				</el-table-column>
 				<el-table-column prop='port.name'label='设备端口' width='120' align='center'>					
 				</el-table-column>
-				<el-table-column prop='device_status'label='设备状态' width='120' align='center'>					
+				<el-table-column prop='port.status'label='端口状态' width='120' align='center'>					
 				</el-table-column>
 				<el-table-column prop='dc_name'label='数据中心' width='120' align='center'>					
 				</el-table-column>
@@ -119,7 +118,7 @@
 			</div>
 			
 			<!--关联端口的日志部分-->
-			<el-dialog :title='textMap[dialogStatus]':visible.sync='dialogFormVisible':close-on-click-modal="false" v-loading='editLoading'>
+			<el-dialog :title='textMap[dialogStatus]':visible.sync='dialogFormVisible' :close-on-click-modal="false" v-loading='editLoading'>
 				<el-form :model='editForm' label-width='120px' ref='editForm':rules='editFormRules'>
 					<el-form-item label='骨干节点'prop='node_id'>
 						<el-select v-model='editForm.node_id' :disabled='disabeldSee'class='ipt' @change='selectNode(editForm.node_id)'>
@@ -259,6 +258,7 @@
 					port_type:'',
 					index:''
 				},
+				basicForm:{},//编辑的数据的备份
 				editFormRules:{
 					node_id:[{ required: true, message: '请选择骨干节点', trigger: 'change' }],
 					device_id:[{ required: true, message: '请选择设备', trigger: 'change' }],
@@ -330,36 +330,29 @@
 			}
 		},
 		watch:{
-			editForm:{
-				handler(newVal,oldVal){
-//					console.log(newVal)
-				},
-				deep:true
-			},
+//			editForm:{
+//				handler(newVal,oldVal){
+//				},
+//				deep:true
+//			},
 			physical_ports:function(newVal,oldVal){
 				this.physicalData=JSON.parse(JSON.stringify(newVal))
-//				sessionStorage.setItem('dataTable',JSON.stringify(this.physical_ports));
-//				
-//				this.physicalData=JSON.parse(sessionStorage.getItem('dataTable') )
 			}
 		},
 		created(){
 			this.token=sessionStorage.getItem('token');
 			this.getTenantData();
-//			console.log('进入逻辑端口界面');
-			console.log(this.addLogicalPort);
-			console.log(this.editLogicalPort);
-			console.log(this.title)
+
 			if(this.addLogicalPort==='新建逻辑端口'&&(typeof this.editLogicalPort =='undefined' && typeof this.title=='undefined')){
 				//新建逻辑端口界面
-				console.log('进入新建逻辑端口');
+
 				this.addPortStatus=false;
 				//控制标题的操作
 				this.seePortDetails=false;
 				this.createStatus=true;
 			}else if (typeof this.editLogicalPort !='undefined'&&(this.addLogicalPort!='新建逻辑端口'&& typeof this.title=='undefined')){
 				//逻辑端口的编辑界面
-				console.log('进入编辑逻辑端口');
+
 				this.addPortStatus=true;
 				//控制标题的操作
 				this.seePortDetails=false;
@@ -367,7 +360,7 @@
 				this.getUsers(this.editLogicalPort)
 			}else if(typeof this.title!='undefined'&&(typeof this.editLogicalPort =='undefined'&&this.addLogicalPort!='新建逻辑端口' )){
 				//进入详情的界面
-				console.log('进入详情的界面')
+
 				this.seePortDetails=true;
 				this.addPortStatus=true;
 				this.getUsers(this.title)
@@ -376,7 +369,7 @@
 			
 		},
 		updated(){
-			console.log(this.physicalData)
+//			console.log(this.physicalData)
 		},
 		methods:{
 			beginDate(){
@@ -433,6 +426,8 @@
 			},
 			selectNode(ids){
 				//筛选  获取骨干节点的信息
+				this.editForm.device_id='';
+				this.editForm.port_id='';
 				let items=ids;
 				var findVal=this.backNodes.find(function(obj){
 					return obj.id===items;
@@ -463,6 +458,7 @@
 				}).catch(e => {console.log(e)})
 			},
 			selectDevice(ids){
+				this.editForm.port_id=''
 				//筛选  选择对应的id的name
 				let items=ids;
 				var findVal=this.equipmentData.find(function(obj){
@@ -491,7 +487,7 @@
 					return obj.id===items;
 				})
 				//将选择的设备下的端口的id的名字保存下来
-				this.editForm.port_name=findVal.name;
+				this.editForm.port_name=findVal.port_no;
 				this.editForm.device_status=findVal.status;
 //				console.log(findVal.name);
 			},
@@ -533,8 +529,8 @@
 							access_type:this.filters.access_type,
 							physical_ports:str
 						}
-						console.log(this.filters)
-						console.log(para);
+//						console.log(this.filters)
+//						console.log(para);
 						if(valid){
 							this.$confirm('确定要创建逻辑端口吗?','提示',{})
 							.then(() => {
@@ -663,6 +659,11 @@
 				this.dialogFormVisible=true;
 				//显示可以操作的界面
 				this.disabeldSee=false;
+
+				this.$nextTick(() => {
+					console.log('执行')
+					this.$refs["editForm"].clearValidate();
+				})
 			},
 			contantCreatedData:function(){
 				console.log('执行添加')
@@ -670,7 +671,8 @@
 				//关联-添加保存按钮
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-							let para={
+						let para={}
+							para={
 								node_id:this.editForm.node_id,
 								device_id:this.editForm.device_id,
 								port_id:this.editForm.port_id,
@@ -687,7 +689,8 @@
 								dc_id:this.editForm.dc_id
 							}
 							//表格的里面的数据
-							let paraData={
+							let paraData={}
+							paraData={
 								description:this.editForm.description,
 								device_status:this.editForm.device_status,								
 								device:{//设备
@@ -703,8 +706,8 @@
 								port:{//端口
 									id:this.editForm.port_id,
 									name:this.editForm.port_name,
-									port_no:this.editForm.port_no,
-									status:this.editForm.port_status,
+									port_no:this.editForm.port_name,
+									status:this.editForm.device_status,
 								},
 								port_type:this.editForm.port_type,
 								position:this.editForm.position,
@@ -713,12 +716,14 @@
 							}
 							
 							console.log(this.editForm)
-							this.dialogFormVisible=false;
 							this.$refs["editForm"].resetFields();
-							this.filters.physical_ports.push(para);
+							this.dialogFormVisible=false;
+							
+//							this.filters.physical_ports.push(para);
 
 							var  str=[];
-							
+							str.push(paraData);
+//							this.physical_ports=this.physical_ports.concat(str)
 //							sessionStorage.setItem('dataTable', JSON.parse(JSON.stringify( str.push(paraData) ))   );
 							this.physical_ports.push(paraData);
 //							this.physical_ports=sessionStorage.getItem('dataTable')
@@ -736,10 +741,11 @@
 				this.dialogStatus='update';
 				this.dialogFormVisible=true;
 				this.disabeldSee=false;
+				this.basicForm=Object.assign({},row);
 				this.editForm={
 					node_id:row.node.name,
 					device_id:row.device.hostname,
-					port_id:row.port.name,
+					port_id:row.port.port_no,
 					position:row.position,
 					rack:row.rack,
 					device_type:row.device_type,
@@ -749,12 +755,13 @@
 					device_name:row.device.hostname,
 					port_name:row.port.name,
 					device_status:row.port.status,
-//					dc_name:'',
+					dc_name:'',
 					dc_id:row.device.id,
 					port_no:row.port.port_no,
 					port_status:row.port.status,
 					index:index   //  在此时的添加的index 是用作删除和编辑的替换的
 				}
+			
 			},
 			contantUpdateData:function(){
 				console.log('执行编辑保存')
@@ -762,26 +769,23 @@
 				this.$refs.editForm.validate(valid => {
 					if(valid){
 							console.log(this.editForm)
-
+							console.log(this.basicForm)
 							this.filters.physical_ports[this.editForm.index]=Object.assign({},this.editForm);
-							
-//							this.physical_ports[this.editForm.index]
-							
-							
+
 							var obj={
 								description:this.editForm.description,
 								device:{
-									id:this.editForm.device_id,
+									id:this.editForm.device_id==this.basicForm.device.hostname?this.basicForm.device.id:this.editForm.device_id,
 									hostname:this.editForm.device_name
 								},
 								device_type:this.editForm.device_type,
 								node:{
-									id:this.editForm.node_id,
+									id:this.editForm.node_id==this.basicForm.node.name?this.basicForm.node.id:this.editForm.node_id,
 									name:this.editForm.node_name
 								},
 								port:{
-									id:this.editForm.port_id,
-									name:this.editForm.port_name,
+									id:this.editForm.port_id==this.basicForm.port.port_no?this.basicForm.port.id:this.editForm.port_id,
+									name:this.editForm.port_no,
 									port_no:this.editForm.port_no,
 									status:this.editForm.port_status
 								},
@@ -789,15 +793,16 @@
 								position:this.editForm.position,
 								rack:this.editForm.rack
 							}
-							this.dialogFormVisible = false;
+							
 							this.$refs["editForm"].resetFields();
+							this.dialogFormVisible = false;
+//							this.$refs["basicForm"].resetFields();
+							
 							
 							console.log(this.physical_ports)
+//							this.physical_ports[this.editForm.index]=obj;
 							this.physical_ports.splice(this.editForm.index,1,obj)
-//							this.physical_ports.
-//							sessionStorage.setItem('dataTable',JSON.stringify(this.physical_ports));
-//							this.physicalData=JSON.parse(sessionStorage.getItem('dataTable') )
-//							this.$router.replace('/resource/add/logicalPort?name=新建逻辑端口')
+
 					}
 				})
 			},

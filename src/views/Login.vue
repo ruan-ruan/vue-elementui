@@ -33,7 +33,7 @@
 		<!--<section>
 			
 		</section>-->
-	  <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="80px" class="demo-ruleForm login-container"v-loading="logining">
+	  <el-form :model="ruleForm2"  :rules="rules2" ref="ruleForm2" label-position="left" label-width="55px" class="demo-ruleForm login-container"v-loading="logining">
 	    <h3 class="title">账户登录</h3>
 	    <el-form-item prop="account" label='账号:' >
 	      <el-input type="text" v-model="ruleForm2.account"  placeholder="账号"></el-input>
@@ -42,7 +42,7 @@
 	      <el-input type="password" v-model="ruleForm2.checkPass"  placeholder="密码" @keydown.enter.native='handleSubmit2' show-password></el-input>
 	    </el-form-item>
 	    <!--<el-form-item>-->
-	    	<!--<el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>-->
+	    	<el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>
 	    <!--</el-form-item>-->
 	    <el-form-item style="width:100%;">
 	      <el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit2" >登录</el-button>
@@ -70,6 +70,19 @@
 		        checked: true
 	      	};
 	    },
+	    created(){
+	    	if(this.checked){
+	    		this.ruleForm2={
+	    			account:localStorage.getItem('user'),
+	    			checkPass:localStorage.getItem('psd')
+	    		}
+	    	}else{
+	    		this.ruleForm2={
+	    			account:'',
+	    			checkPass:''
+	    		}
+	    	}
+	    },
 	    methods: {
 	      	handleReset2() {
 	        	this.$refs.ruleForm2.resetFields();
@@ -87,6 +100,13 @@
 						.then(res => {
 							if(res.status==200){
 								if(res.data.status==0){
+									if(this.checked){
+										localStorage.setItem('user',loginParams.name)
+										localStorage.setItem('psd',loginParams.password)
+									}else{
+										localStorage.setItem('user','')
+										localStorage.setItem('psd','')
+									}
 									this.logining=false;
 									this.$message({
 										message:'登录成功!',

@@ -4,11 +4,11 @@
 		<section>
 			<!--工具条-->
 			<el-col :span='24' class='toolbar' style='width: 100%;'>
-				<el-form :inline='true' :model='filters'>
-					<el-form-item label='名称'>
+				<el-form :inline='true' :model='filters' ref='filters'>
+					<el-form-item label='名称' prop='search_name'>
 						<el-input v-model='filters.search_name' class='sel'></el-input>
 					</el-form-item>
-					<el-form-item label='状态'>
+					<el-form-item label='状态' prop='search_status'>
 						<el-select v-model='filters.search_status' plachodle='全部' class='sel'>
 							<el-option
 								v-for='(item,index) in status'
@@ -17,7 +17,7 @@
 								:value='item.value'></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label='创建时间' >	
+					<el-form-item label='创建时间'  prop='timeVal'>	
 						<el-date-picker
 					      v-model="filters.timeVal"
 					      type="daterange"
@@ -29,13 +29,15 @@
 					</el-form-item>
 					<el-form-item>
 						<el-button type='primary'v-on:click='getUsers()'>搜索</el-button>
-						<el-button type='info' @click='reset(filters)'>重置</el-button>
+						<el-button type='info' @click='reset'>重置</el-button>
 					</el-form-item>
 				</el-form>				
 			</el-col>
 			
 			<!--列表数据部分-->
 			<div class="table-top">
+				<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">批量删除</el-button>
+				
 				<el-dropdown split-button type='success'@command="handleExport">
 					导出数据
 					<el-dropdown-menu slot='dropdown'>
@@ -46,12 +48,11 @@
 			</div>
 			
 			
-			<!--<el-row  :gutter="24">
-				<el-col :sm="24" :md="24" :lg="24">-->
-			<el-table :data='users'highlight-current-row @selection-change="selsChange" style='width: 100%;' v-loading='loading'>
-				<el-table-column type='selection' width='40'></el-table-column>				
+			<el-table :data='users'highlight-current-row @selection-change="selsChange" style='width: 100%;'
+				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
+				<el-table-column type='selection' min-width='30'></el-table-column>				
 				<el-table-column type='index' min-width='40' align='center' label='序号'>	</el-table-column>
-				<el-table-column prop='creation_time'width='95'label='创建时间'align='center' :formatter='dateFormat'></el-table-column>
+				<el-table-column prop='creation_time'width='101' sortable label='创建时间'align='center' :formatter='dateFormat'></el-table-column>
 				<el-table-column  label='A端' align='center' min-width='60' >
 					<template slot-scope='scope'>
 						<el-tag size='small' type='primary'style='cursor: pointer;' @click='handleNode_a(scope.$index, scope.row)'>{{scope.row.a_node.name}}</el-tag>
@@ -64,55 +65,55 @@
 						{{scope.row.z_ip}}-{{scope.row.z_vlan}}
 					</template>
 				</el-table-column>
-				<el-table-column prop='status' label='链路状态' align='center' min-width='60'>
+				<el-table-column prop='status' label='链路状态' align='center' min-width='50'>
 					<template slot-scope='scope'>
 						<span v-text="scope.row.status" :class='scope.row.color'></span>
 					</template>
 				</el-table-column>
-				<el-table-column  prop='maintenance_value' label='故障/维护' align='center' min-width='40'max-width='50'>
+				<el-table-column  prop='maintenance_value' label='故障/维护' align='center' min-width='60'>
 					<!--这里的数据是在下面的进行判断的是-->
 				</el-table-column>
-				<el-table-column prop='bandwidth' label='总带宽(Mbps)' align='center' min-width='50'>
+				<el-table-column prop='bandwidth' label='总带宽(Mbps)' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='physical_bandwidth' label='物理带宽(Mbps)' align='center' min-width='50'>
+				<el-table-column prop='physical_bandwidth' label='物理带宽(Mbps)' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='idle_bandwidth' label='剩余带宽(Mbps)' align='center' min-width='50'>
+				<el-table-column prop='idle_bandwidth' label='剩余带宽(Mbps)' align='center' min-width='60'>
 					<template slot-scope='scope'>
 						{{scope.row.bandwidth-scope.row.physical_bandwidth}}						
 					</template>
 				</el-table-column>
-				<el-table-column prop='link_cost' label='链路开销' align='center' min-width='40'>
+				<el-table-column prop='link_cost' label='链路开销' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='monitorHTML' label='链路检测' align='center' min-width='40'>
+				<el-table-column prop='monitorHTML' label='链路检测' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='a_desc' label='A端描述' align='center' width='60'>
+				<el-table-column prop='a_desc' label='A端描述' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='z_desc' label='Z端描述' align='center' width='60'>
+				<el-table-column prop='z_desc' label='Z端描述' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='descriptionVal' label='备注' align='center' width='60'>
+				<el-table-column prop='descriptionVal' label='备注' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column  label='操作' align='center' min-width='300'>
+				<el-table-column  label='操作' align='right'  width='175'>
 					<template slot-scope='scope'>
-						<el-button size='small' type='primary' @click='handleStatus(scope.$index, scope.row)'
-							v-if='scope.row.maintenance_value==="故障" ? false : true ' class='maintenance'> <!--当状态为故障的时候   这个时候的该按钮银行 -->
-							{{scope.row.maintenanceBtn}}
-						</el-button>
-						<el-button size='small' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
-						<el-button size='small' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
-						<el-button size='small' v-if='scope.row.status==="DOWN"?true:false' type='danger' @click='handleDel(scope.$index, scope.row)'>删除</el-button>
-						
+						<div>
+							<el-button size='small' type='primary' @click='handleStatus(scope.$index, scope.row)'
+								v-if='scope.row.maintenance_value==="故障" ? false : true ' class='maintenance'> <!--当状态为故障的时候   这个时候的该按钮银行 -->
+								{{scope.row.maintenanceBtn}}
+							</el-button>
+							<el-button size='small' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>	
+						</div>
+						<div style="margin-top: 5px;">
+							<el-button size='small' v-if='scope.row.status==="DOWN"?true:false' type='danger' @click='handleDel(scope.$index, scope.row)'>删除</el-button>
+							<el-button size='small' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
+							
+						</div>
+							
+
 					</template>
 				</el-table-column>
 
 			</el-table>
-			<!--</el-col>
-		</el-row>-->
-			<!--底部导航的数据-->
-			<el-col :span='24' class='toolbar'>
-				<el-col :span='3'>
-					<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">批量删除</el-button>
-				</el-col>
-				<el-col :span='21'>
+
+				<el-col :span='24' class='toolbar'>
 					<el-pagination
 						:total="total"
 				     	@size-change="handleSizeChange"
@@ -125,7 +126,7 @@
 				     	:prev-text='prev'
 				     	:next-text='next'></el-pagination>
 				</el-col>
-			</el-col>
+
 			
 			<!--编辑界面操作和详情的操作的界面-->
 			<el-dialog :title='textMap[dialogStatus]':visible.sync='dialogFormVisible':close-on-click-modal="false" v-loading='editLoading'>
@@ -160,14 +161,11 @@
 						</template>
 					</el-form-item>
 					<el-form-item label='Z端'>
-						<!--<el-input  :disabled='disb' class='ipt_sels'>-->
-							<template slot-scope='scope'>
-								<span v-text="editForm.z_node.name"></span>-
-								<span v-text="editForm.z_ip"></span>-
-								<span v-text="editForm.z_vlan"></span>
-							</template>
-							
-						<!--</el-input>-->
+						<template slot-scope='scope'>
+							<span v-text="editForm.z_node.name"></span>-
+							<span v-text="editForm.z_ip"></span>-
+							<span v-text="editForm.z_vlan"></span>
+						</template>
 					</el-form-item>
 					<el-form-item label='Z端描述'>
 						<template>
@@ -175,10 +173,10 @@
 						</template>
 					</el-form-item>
 					<el-form-item label='总带宽'>
-						<el-input v-model='editForm.bandwidth' :disabled='editFormStatue'  class='ipt_sels'></el-input>
+						<el-input v-model='editForm.bandwidth' :disabled='editFormStatue'  class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item label='物理带宽'>
-						<el-input v-model='editForm.physical_bandwidth' :disabled='editFormStatue' class='ipt_sels'></el-input>
+						<el-input v-model='editForm.physical_bandwidth' :disabled='editFormStatue' class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item label='剩余带宽'>
 						<template>
@@ -186,7 +184,7 @@
 						</template>
 					</el-form-item>
 					<el-form-item label='链路开销'>
-						<el-input v-model='editForm.link_cost':disabled='editFormStatue'  class='ipt_sels'></el-input>
+						<el-input v-model='editForm.link_cost':disabled='editFormStatue'  class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item label='链路检测'>
 						<el-radio-group v-model='editForm.monitoring' :disabled='editFormStatue' @change="mointradio">
@@ -196,7 +194,7 @@
 						</el-radio-group>
 					</el-form-item>
 					<el-form-item v-show='detectionStatus' label='检测类型'>
-						<el-select v-model='editForm.monitoring_type' :disabled='editFormStatue'>
+						<el-select v-model='editForm.monitoring_type' :disabled='editFormStatue' class='ipt'>
 							<el-option v-for='(item,index) in detectionType'
 								:value='item.value'
 								:label='item.label'
@@ -212,7 +210,7 @@
 					</el-form-item>
 					<el-form-item label='备注'>
 						<!--<textarea name="" rows="" cols="7"></textarea>-->
-						<el-input type='textarea'cols="7" v-model='editForm.description' :disabled='editFormStatue' class='ipt_sels'></el-input>
+						<el-input type='textarea'cols="7" v-model='editForm.description' :disabled='editFormStatue' class='ipt'></el-input>
 					</el-form-item>
 				</el-form>
 				<div slot='footer' class='dailog-footer'>
@@ -225,7 +223,14 @@
 </template>
 
 <script>
+
+
+
+
+	
 	import {datedialogFormat ,descriptionValue,getTime} from '@/assets/js/index.js'
+
+
 	export default{
 		name:'Data',
 		data(){
@@ -434,10 +439,8 @@
 					console.log(e)
 				})
 			},
-			reset(sels){
-				for(let key in sels){
-					sels[key]='';
-				}
+			reset(){
+				this.$refs['filters'].resetFields()
 			},
 			selsChange:function(sels){
 				//用来报错多选的是数据
@@ -567,7 +570,6 @@
 				this.editLoading=true;
 				this.dialogStatus='details';
 				this.dialogFormVisible=true;
-				this.dialogStatus=true;
 				this.editFormStatue=true;
 				var _this=this;
 
@@ -745,7 +747,7 @@
 	    		let date=new Date(parseInt(row.creation_time)*1000);
 	    		let Y=date.getFullYear()+'-';
 	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +'':date.getDate()+'';
+	    		let D=date.getDate() <10? '0' +date.getDate() +'  ':date.getDate()+'  ';
 	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
 	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
 	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();

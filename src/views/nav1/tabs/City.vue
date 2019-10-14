@@ -3,12 +3,12 @@
 		<section>
 			<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 				<el-col :span='24'>
-					<el-form :inline="true" :model="filters">
-						<el-form-item label='名称'>
+					<el-form :inline="true" :model="filters" ref='filters'>
+						<el-form-item label='名称' prop='name'>
 							<el-input v-model="filters.name" placeholder="请输入名称"></el-input>
 						</el-form-item>
-						<el-form-item label='区域:'>
-							<el-select v-model='value' placehoder='请选择' filterable class='sel' >
+						<el-form-item label='区域:' prop='value'>
+							<el-select v-model='filters.value' placehoder='请选择' filterable class='sel' >
 								<el-option
 									v-for='(item,index) in areaData'
 									:key='index'
@@ -20,31 +20,39 @@
 						</el-form-item>
 						<el-form-item>
 							<el-button type="primary" v-on:click="getCitys">查询</el-button>
+							<el-button type='info' @click='reset'>重置</el-button>
 						</el-form-item>
-						<el-form-item>
-							<el-button type="primary" @click="handleAdd">新增</el-button>
-						</el-form-item>
-						<el-form-item>
-							<el-dropdown split-button trigger="click" type='success'@command="handleExport">
-								导出数据
-								<el-dropdown-menu slot='dropdown'>
-									<el-dropdown-item command="current">当前页 </el-dropdown-item>									
-									<el-dropdown-item command="all">所有页</el-dropdown-item>																				
-								</el-dropdown-menu>
-							</el-dropdown>
-						</el-form-item>
+						
 					</el-form>	
 				</el-col>
-
 			</el-col>
-	
+			
+			<el-col :span='24'>
+				<el-col :span='4'>
+					<el-button type="primary" @click="handleAdd">新增</el-button>
+				</el-col>
+				<el-col :span='20' class='table-top'>
+					<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">批量删除</el-button>
+					<el-dropdown split-button trigger="click" type='success'@command="handleExport">
+						导出数据
+						<el-dropdown-menu slot='dropdown'>
+							<el-dropdown-item command="current">当前页 </el-dropdown-item>									
+							<el-dropdown-item command="all">所有页</el-dropdown-item>																				
+						</el-dropdown-menu>
+					</el-dropdown>
+				</el-col>
+			</el-col>
+
 			<!--列表-->
-			<el-table :data="users" highlight-current-row @selection-change="selsChange" style="width: 100%;">
+			<el-table :data="users" highlight-current-row @selection-change="selsChange" style="width: 100%;"
+				:default-sort = "{prop: 'creation_time', order: 'descending'}">
 				<el-table-column type="selection" width="50" align='center'>
 				</el-table-column>
 				<el-table-column type="index" width="50" label='序号' align='center'>
 				</el-table-column>
-				<el-table-column prop="id" label="ID" align='center' min-width='100'>
+				<!--<el-table-column prop="id" label="ID" align='center' min-width='100'>
+				</el-table-column>-->
+				<el-table-column prop="creation_time" sortable label="创建时间" align='center' width='101' :formatter='dateFormat' >
 				</el-table-column>
 				<el-table-column prop="name" label="名称"  align='center' min-wdith='100'>
 				</el-table-column>
@@ -62,11 +70,11 @@
 			</el-table>
 	
 			<!--工具条-->
-			<el-col :span="24" class="toolbar">
-				<el-col :span='3'>
+			<!--<el-col :span="24" class="toolbar">-->
+				<!--<el-col :span='3'>
 					<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">批量删除</el-button>
-				</el-col>
-				<el-col :span='21'>
+				</el-col>-->
+				<el-col :span='24'  class="toolbar">
 					<el-pagination 
 						:total='total' 
 						layout="total, sizes, prev, pager, next, jumper"
@@ -80,7 +88,7 @@
 					</el-pagination>
 				</el-col>
 				
-			</el-col>
+			<!--</el-col>-->
 	
 			<!--编辑界面-->
 			<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
@@ -158,7 +166,7 @@
 		    return {
 		    	 token:'',
 		    	//选择区域部分
-		    	value:'',
+		    	
 		    	regions:'',
 		      	activeName:'first',
 		      	dialogStatus: "",
@@ -170,6 +178,7 @@
 		      	dialogFormVisible: false,
 		      	filters: {
 		        	name: "",
+		        	value:'',
 		      	},
 		      //加载等待时间
 		      	loading:false,
@@ -225,6 +234,9 @@
 			this.getArea()
 		  },
 		  methods: {
+		  	reset(){
+		  		this.$refs['filters'].resetFields();
+		  	},
 		  	getArea(){
 				this.$ajax.get('/location/regions'+'?token='+this.token)
 		  		.then(res => {
@@ -253,7 +265,7 @@
 			 	page:this.currentPage,
 			 	per_page:this.pagesize,
 			 	search_name:this.filters.name,
-			 	search_region:this.value,
+			 	search_region:this.filters.value,
 			 }
 			this.$ajax.get('/location/cities'+'?token='+this.token,para)
 		    .then(res => {
@@ -550,7 +562,17 @@
 			},
 			formatJson(filterVal,jsonData){
 				return jsonData.map(v => filterVal.map (j => v[j]))
-			}
+			},
+			dateFormat(row, column) {
+		      	let date = new Date(parseInt(row.creation_time) * 1000);
+		      	let Y = date.getFullYear() + "-";
+		      	let M =date.getMonth() + 1 < 10  ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
+		      	let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
+		      	let h = date.getHours() < 10  ? "0" + date.getHours() + ":"  : date.getHours() + ":";
+		        let m = date.getMinutes() < 10  ? "0" + date.getMinutes() + ":"  : date.getMinutes() + ":";
+		        let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+		      return Y + M + D + h + m + s;
+		    },
 		  }
 	}
 </script>

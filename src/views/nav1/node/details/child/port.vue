@@ -6,7 +6,7 @@
 			<el-tab-pane label='物理端口1'>
 				<portChilds :titleOne='base1' ></portChilds>
 			</el-tab-pane>
-			<el-tab-pane label='物理端口2' v-show='equipStatue'>
+			<el-tab-pane label='物理端口2' v-if='equipStatue'>
 				<portChilds :titleTwo='base2'></portChilds>
 			</el-tab-pane>
 			<el-tab-pane label='逻辑端口1'>

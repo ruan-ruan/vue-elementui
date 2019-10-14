@@ -2,23 +2,19 @@
   <div>
     <!--点到点专线-->
     <section>
-      <el-row class='toollbar'>
-        <el-col
-          :sm='24'
-          :md='24'
-          :lg='24'
-        >
+      <el-row class='toolbar'>
+        <el-col  :soan='24'  >
           <el-form :model='filters':inline='true' ref='filters'>
-            <el-form-item label='名称'>
+            <el-form-item label='名称' prop='search_name'>
               <el-input
                 v-model='filters.search_name'
                 class='sel'
                 placeholder='名称'
               ></el-input>
             </el-form-item>
-            <el-form-item label='租户标识'>
+            <el-form-item label='租户标识' prop='search_tenant'>
               <el-select
-                v-model='filters.search_tenant'
+                v-model='filters.search_tenant' filterable
                 class='sel'
               >
                 <el-option
@@ -29,7 +25,7 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label='专线状态'>
+            <el-form-item label='专线状态' prop='search_status'>
               <el-select
                 v-model='filters.search_status'
                 class='sel'
@@ -42,7 +38,7 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label='专线类型'>
+            <el-form-item label='专线类型' prop='search_type'>
               <el-select
                 v-model='filters.search_type'
                 class='sel'
@@ -55,19 +51,22 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label='带宽(Mbps)'>
+            <el-form-item label='带宽(Mbps)' prop='search_start_bandwidth'>
               <el-input
                 v-model='filters.search_start_bandwidth'
                 class='ipts'
                 placeholder='起始'
               ></el-input>至
-              <el-input
+              
+            </el-form-item>
+            <el-form-item prop='search_end_bandwidth'>
+            	<el-input
                 v-model='filters.search_end_bandwidth'
                 class='ipts'
                 placeholder='截止'
               ></el-input>
             </el-form-item>
-            <el-form-item label='计费时间'>
+            <el-form-item label='计费时间' prop='billingTime'>
               <el-date-picker
                 v-model="filters.billingTime"
                 type="datetimerange"
@@ -79,7 +78,7 @@
               >
               </el-date-picker>
             </el-form-item>
-            <el-form-item label='过期时间'>
+            <el-form-item label='过期时间' prop='overdueTime'>
               <el-date-picker
                 v-model="filters.overdueTime"
                 type="datetimerange"
@@ -98,15 +97,15 @@
               >搜索</el-button>
               <el-button
                 type='info'
-                @click='reset(filters)'
+                @click='reset'
               >重置</el-button>
             </el-form-item>
           </el-form>
         </el-col>
       </el-row>
 				<div class="table-top">
-					 <!--<el-button type="danger"  @click="batchRemove()" :disabled="this.sels.length===0" v-if='parentStatus'  >
-             	批量删除</el-button>-->
+          <el-button type="danger"  @click="batchRemove()" :disabled="this.sels.length===0" v-if='parentStatus'  >
+             	批量删除</el-button>   	
            <el-dropdown split-button type='success' @command="handleExport"  >
              	 导出数据
               <el-dropdown-menu slot='dropdown'>
@@ -116,34 +115,28 @@
             </el-dropdown>
 				</div>
 				
-      <!--<el-row>
-        <el-col
-          :sm='24'
-          :md='24'
-          :lg='24'
-        >-->
-
           <el-table
             :data="users"
             @selection-change="selsChange"
             highlight-current-row
             v-loading='getLoading'
+            
           >
             <el-table-column
               type='selection'
-              width='30'
+              min-width='30'
               align='center'
               v-if='parentStatus'
             ></el-table-column>
             <el-table-column
               type='index'
               label='序号'
-              width='40'
+              min-width='30'
               align='center'
             ></el-table-column>
             <el-table-column
               label='专线名称'
-              min-width='70'
+              min-width='60'
               align='center'
             >
               <template slot-scope='scope'>
@@ -155,7 +148,7 @@
             </el-table-column>
             <el-table-column
               label='专线状态'
-              min-width='40'
+              min-width='50'
               align='center'
             >
               <template slot-scope='scope'>
@@ -165,13 +158,13 @@
             <el-table-column
               prop='bandwidth'
               label='带宽(Mbps)'
-              min-width='40'
+              min-width='50'
               align='center'
             >
             </el-table-column>
             <el-table-column
               label='专线类型'
-              min-width='40'
+              min-width='50'
               align='center'
             >
               <template slot-scope='scope'>
@@ -180,7 +173,7 @@
             </el-table-column>
             <el-table-column
               label='A端'
-              min-width='60'
+              min-width='50'
               align='center'
             >
               <template slot-scope='scope'>
@@ -194,14 +187,14 @@
                 <span>{{scope.row.vlanHTMLA}}</span>
               </template>
             </el-table-column>
-            <el-table-column label='A逻辑口状态' min-width='60'  align='center'  >
+            <el-table-column label='A逻辑口状态' min-width='50'  align='center'  >
               <template slot-scope='scope'>
                 <span  :class="scope.row.colorA" v-text="scope.row.statusValA"> </span>
               </template>
             </el-table-column>
             <el-table-column
               label='Z端'
-              min-width='60'
+              min-width='50'
               align='center'
             >
               <template slot-scope='scope'>
@@ -216,7 +209,7 @@
                 <span>{{scope.row.vlanHTMLZ}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop='endpoints.ports.status' label='Z逻辑口状态'  min-width='60' align='center' >
+            <el-table-column prop='endpoints.ports.status' label='Z逻辑口状态'  min-width='50' align='center' >
             	<template slot-scope='scope'>
             		<span v-text='scope.row.statusValZ' :class="scope.row.colorZ"></span>
             	</template>
@@ -224,7 +217,7 @@
             <el-table-column
               prop='creation_time'
               label='创建时间'
-              width='95'
+              width='93'
               :formatter='dateFormat'
               align='center'
             >
@@ -232,7 +225,7 @@
             <el-table-column
               prop='charge_time'
               label='计费时间'
-              width='95'
+              width='93'
               :formatter='dateFormat'
               align='center'
             >
@@ -240,7 +233,7 @@
             <el-table-column
               prop='expiration_time'
               label='过期时间'
-              width='95'
+              width='93'
               :formatter='dateFormat'
               align='center'
             >
@@ -255,7 +248,7 @@
             <el-table-column
               prop='descriptionVal'
               label='备注'
-              min-width='60'
+              min-width='50'
               align='center'
             >
             </el-table-column>
@@ -286,17 +279,9 @@
               </template>
             </el-table-column>
           </el-table>
-        <!--</el-col>
-      </el-row>-->
       
-      <el-row v-if='parentStatus'>
-      	
-        <el-col :span='24'>
-        	<el-col :span='3'>
-        		<el-button type="danger"  @click="batchRemove()" :disabled="this.sels.length===0" v-if='parentStatus'  >
-             	批量删除</el-button>
-        	</el-col>
-        	<el-col :span='21'>
+      <el-row v-if='parentStatus' class='toolbar'>
+        	<el-col :span='24'>
           <el-pagination
             :total="total"
             @size-change="handleSizeChange"
@@ -309,7 +294,7 @@
             :prev-text='prev'
             :next-text='next'
           ></el-pagination>
-          </el-col>
+
         </el-col>
       </el-row>
 
@@ -329,22 +314,22 @@
             label='专线名称'
             prop='name'
           >
-            <el-input v-model='editForm.name'></el-input>
+            <el-input v-model='editForm.name'  class='ipt'></el-input>
           </el-form-item>
           <el-form-item
             label='带宽'
             prop='bandwidth'
           >
-            <el-input v-model='editForm.bandwidth'></el-input>
+            <el-input v-model='editForm.bandwidth'  class='ipt'></el-input>
           </el-form-item>
           <el-form-item label='业务状态'>
             <el-input
-              v-model='editForm.name'
+              v-model='editForm.statusHTML' class='ipt'
               disabled
             ></el-input>
           </el-form-item>
           <el-form-item label='创建时间'>
-            <el-input v-model='editForm.time'></el-input>
+            <el-input v-model='editForm.time' class='ipt' disabled></el-input>
           </el-form-item>
           <el-form-item label='计费时间'>
             <!--<el-input v-model='editForm.charge_time'></el-input>-->
@@ -377,7 +362,7 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item label='备注'>
-            <el-input v-model='editForm.description'></el-input>
+            <el-input v-model='editForm.description'  class='ipt'></el-input>
           </el-form-item>
         </el-form>
         <div
@@ -459,7 +444,9 @@ export default {
         bandwidth: "",
         charge_time: "",
         expiration_time: "",
-        description: ""
+        description: "",
+        time:'',
+        statusHTML:'',//业务状态
       },
       editFormRules: {
         name: [{ required: true, message: "请输入名称", trigger: "blur" }],
@@ -616,25 +603,26 @@ export default {
                 if (ele.status == "failure") {
                   ele.statusHTML = "创建失败";
                   ele.statusColor = "creatFie";
+                  //creat   控制操作部分   btn控制  删除按钮和其他按钮的互斥
                   ele.creat = true;
                   ele.btn=true;
                 } else if (ele.status == "creating") {
                   ele.statusHTML = "创建中";
                   ele.statusColor = "creating";
                   ele.creat = false;
-//                 ele.btn=t;
+                  ele.btn=true;
                 } else if (ele.status == "stopping") {
                   ele.statusHTML = "停止中";
                   ele.specialName = "运行";
                   ele.statusColor = "stopVal";
                   ele.creat = true;
-                  ele.btn=true;
+                  ele.btn=false;
                 } else if (ele.status == "serving") {
                   ele.statusHTML = "运行中";
                   ele.specialName = "停止";
                   ele.statusColor = "ServerVal";
                   ele.creat = true;
-                   ele.btn=false;
+                  ele.btn=false;
                 }
                 
                 
@@ -717,8 +705,6 @@ export default {
 							})
 							this.users=creatData.concat(failureData,stopData,servData)
 
-
-//            this.users = res.data.data.items;
             }
           }
         })
@@ -762,6 +748,7 @@ export default {
       });
     },
     handleEdit(index, row) {
+    	console.log(row)
       //编辑
       this.dialogStatus = "update";
       this.dialogFormVisible = true;
@@ -769,16 +756,15 @@ export default {
         id: row.id,
         name: row.name,
         bandwidth: row.bandwidth,
+        time:datedialogFormat(row.creation_time),
         charge_time: new Date(datedialogFormat(row.charge_time)),
         expiration_time: new Date(datedialogFormat(row.expiration_time)),
-        description: row.description
+        description: row.description,
+        statusHTML:row.statusHTML
       };
     },
-    reset(sles) {
-      //重置
-      for (let key in sles) {
-        sles[key] = "";
-      }
+    reset() {
+      this.$refs['filters'].resetFields()
     },
     UpdateData: function() {
       //编辑保存按钮
@@ -864,8 +850,7 @@ export default {
           const id = ids.substring(0, ids.lastIndexOf(","));
           this.isid = id.split(",");
           let para = { ids: this.isid };
-          this.$ajax
-            .del("/vll/del_vlls" + "?token=" + this.token, para)
+          this.$ajax.del("/vll/del_vlls" + "?token=" + this.token, para)
             .then(res => {
               if (res.status == 200) {
                 if (res.data.status == 0) {

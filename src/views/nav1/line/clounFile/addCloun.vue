@@ -91,10 +91,11 @@
 					</el-col>
 				</el-row>
 			</el-form>
-			<div slot='footer' class='dailog-footer' v-if='clounStatus'>
+			<div slot='footer' class='dailog-footer' v-if='clounStatus'style="text-align: center;">
+				<el-button @click='goback' size='small' >返回</el-button>
 				<el-button type='primary' size='small' @click='handleAdd' v-if='btnStatus'>提交</el-button>
 				<el-button type='primary' size='small' @click='handleEdit' v-if='!btnStatus'>提交</el-button>
-				<el-button @click='goback' size='small' >返回</el-button>
+				
 			</div>
 		</section>
 	</div>
@@ -220,6 +221,7 @@
 				}).catch(e => {console.log(e)})
 			},
 			selNode(ids){//根据所选取的节点获取逻辑口
+				this.editForm.logic_port_id=''
 				var para={
 					search_node:ids
 				}

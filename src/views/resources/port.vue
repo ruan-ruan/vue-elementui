@@ -51,9 +51,10 @@
 
    	 	
    	 	<!--表格数据部分-->
-   	 	<el-table :data='users' highlight-current-row style='width: 100%;' v-loading='loading'>
+   	 	<el-table :data='users' highlight-current-row style='width: 100%;' v-loading='loading' 
+   	 		:default-sort = "{prop: 'creation_time', order: 'descending'}">
    	 		<el-table-column type='index' width='40' align='center'></el-table-column>
-   	 		<el-table-column prop='creation_time' label='创建时间' width='95'align='center':formatter='dateFormat'></el-table-column>
+   	 		<el-table-column prop='creation_time' sortable  label='创建时间' width='101'align='center':formatter='dateFormat'></el-table-column>
    	 		<el-table-column prop='name' label='逻辑端口名称' min-width='100'align='center'>
    	 			<template slot-scope='scope'>
    	 				<span class='cli_spn' @click="handleSee(scope.$index,scope.row)">{{scope.row.name}}</span>
@@ -190,7 +191,7 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							descriptionValue(res.data.data.items)
-							console.log(res);
+							this.total=res.data.data.page.total;
 							res.data.data.items.forEach(ele => {
 								ele.physical_ports_len=ele.physical_ports.length;
 								let portColor=document.getElementsByClassName('portColor');
@@ -400,7 +401,7 @@
 	    		let date=new Date(parseInt(row.creation_time)*1000);
 	    		let Y=date.getFullYear()+'-';
 	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +'':date.getDate()+'';
+	    		let D=date.getDate() <10? '0' +date.getDate() +' ':date.getDate()+' ';
 	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
 	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
 	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();

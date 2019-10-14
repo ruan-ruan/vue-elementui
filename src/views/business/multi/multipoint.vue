@@ -8,7 +8,7 @@
 							<el-input v-model='filters.name' class='sel_chart'></el-input>
 						</el-form-item>
 						<el-form-item label='租户标识'prop='tenant_id'>
-							<el-select v-model='filters.tenant_id' class='sel_chart'>
+							<el-select v-model='filters.tenant_id' filterable class='sel_chart'>
 								<el-option v-for='(item,index) in tenantData'
 									:label='item.name'
 									:value='item.id'
@@ -23,14 +23,28 @@
 				</el-col>
 			</el-row>
 			
+			<el-row>
+				<el-col :span='24'>
+				<el-col :span='4'>
+					<div v-show='(typeof virTit !=="undefined"?false: (typeof clounID !=="undefined"?false:true)) '>
+						<el-button @click='add' type='primary'>添加虚拟组网</el-button>	
+					</div>
+				</el-col>
+				<el-col :span='20' class='table-top' :class='(typeof virTit !=="undefined"?"marL": (typeof clounID !=="undefined"?"marL":"table_top")) '  v-if='(typeof clounID !=="undefined"?false:true)' >
+					<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">
+						批量删除</el-button>
+				</el-col>
+			</el-col>
+			</el-row>
 			
-			<div class="table-top" v-if='(typeof virTit !=="undefined"?false: (typeof clounID !=="undefined"?false:true)) '>
-				<el-button @click='add' type='primary'>添加虚拟组网</el-button>	
-			</div>
 			
-			<el-table :data='users' highlight-current-row @selection-change="selsChange"style='width: 100%;' v-loading='loading'>
+			
+			<el-table :data='users' highlight-current-row @selection-change="selsChange"style='width: 100%;' 
+				v-loading='loading' :default-sort = "{prop: 'creation_time', order: 'descending'}">
 				<el-table-column type='selection' width='60' v-if='(typeof clounID !=="undefined"?false:true)'></el-table-column>
 				<el-table-column type='index' width='80' label='序号'></el-table-column>
+				<el-table-column prop="creation_time" sortable label="时间" align='center' width='95' :formatter='dateFormat' >
+				</el-table-column>
 				<el-table-column prop='name'label='组网名称' align='center'min-width='150' ></el-table-column>
 				<el-table-column prop='len'label='关联端点数' align='center'min-width='150' ></el-table-column>
 				<el-table-column prop='tenant.name'label='租户标识' align='center'min-width='150' ></el-table-column>
@@ -48,24 +62,18 @@
 			</el-table>
 
 			<el-row class='toolbar' v-if='(typeof clounID !=="undefined"?false:true)'>
-				<el-col :span='24' >
-					<el-col :span='4'>
-						<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">
-							批量删除</el-button>
-					</el-col>
-					<el-col :span='20'>
-						<el-pagination
-						:total="total"
-				     	@size-change="handleSizeChange"
-                   		@current-change="handleCurrentChange"
-				     	layout="total, sizes, prev, pager, next, jumper"
-				     	:page-sizes="[10, 20, 30,50]" 						     	 
-				     	:current-page.sync="currentPage"  
-				     	:page-count='pageNum'
-				     	:pager-count="pagecount"
-				     	:prev-text='prev'
-				     	:next-text='next'></el-pagination>
-					</el-col>
+				<el-col :span='24'>
+					<el-pagination
+					:total="total"
+			     	@size-change="handleSizeChange"
+               		@current-change="handleCurrentChange"
+			     	layout="total, sizes, prev, pager, next, jumper"
+			     	:page-sizes="[10, 20, 30,50]" 						     	 
+			     	:current-page.sync="currentPage"  
+			     	:page-count='pageNum'
+			     	:pager-count="pagecount"
+			     	:prev-text='prev'
+			     	:next-text='next'></el-pagination>
 				</el-col>
 			</el-row>
 			
@@ -113,6 +121,8 @@
 					name:'',
 					tenant_id:'',
 				},
+				marL:'marL',
+				table_top:'table-top',
 				users:[],
 				sels:[],
 				loading:false,
@@ -251,14 +261,23 @@
 					}
 				})
 			},
-			
 			handleDetails(index,row){    //组网详情
+				console.log(row)
 				this.$router.push({
-					path:'/business/detailsMultipoint',
-					query:{
-						detailsID:row.id,
-					}
+								path:'/business/detailsMultipoint',
+								query:{
+									detailsID:row.id,
+								}
+							})
+				this.$ajax.get('/vll/multi_vll_info/'+row.id+'?token='+this.token)
+				.then(res => {
+					console.log(res);
+					
 				})
+				.catch(e => {
+					console.log(e)
+				})
+
 			},
 			handleEdit(index,row){//编辑
 				this.$router.push({
@@ -299,10 +318,46 @@
 				rows.forEach(ele => {
 					ids.push(ele.id)
 				})
-			}
+				let para={
+					ids:ids
+				}
+				this.$ajax.del("/vll/del_vlls" + "?token=" + this.token, para)
+	            .then(res => {
+	              if (res.status == 200) {
+	                if (res.data.status == 0) {
+	                  this.$message({
+	                    message: "删除成功!",
+	                    type: "success"
+	                  });
+	                  this.getUsers();
+	                } else {
+	                  this.$message({
+	                    message: res.data.message,
+	                    type: "warning"
+	                  });
+	                }
+	              }
+	            })
+	            .catch(e => {
+	              console.log(e);
+	            });
+			},
+			dateFormat(row, column) {
+		      	let date = new Date(parseInt(row.creation_time) * 1000);
+		      	let Y = date.getFullYear() + "-";
+		      	let M =date.getMonth() + 1 < 10  ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
+		      	let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
+		      	let h = date.getHours() < 10  ? "0" + date.getHours() + ":"  : date.getHours() + ":";
+		        let m = date.getMinutes() < 10  ? "0" + date.getMinutes() + ":"  : date.getMinutes() + ":";
+		        let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+		      return Y + M + D + h + m + s;
+		    },
 		}
 	}
 </script>
 
 <style>
+	.marL{
+		margin-left: 16.6%;
+	}
 </style>

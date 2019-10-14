@@ -5,8 +5,11 @@
 			<h3 class="tit_h3" v-if=" typeof id !=='undefined'" v-text="title.nav"></h3>
 			<el-row>
 				<el-col :span='24'>
-					<el-col :span='12'>
+					<!--<el-col :span='12'>-->
 					<el-form :model='editForm' ref='editForm'label-width='100px' v-loading='basicLoading' :rules='editFormRules'>
+						<el-form-item label='创建时间' prop='creation_time'>
+							<el-input v-model='editForm.creation_time' class='ipt' disabled></el-input>
+						</el-form-item>
 						<el-form-item label='组网名称' prop='name'>
 							<el-input v-model='editForm.name' class='ipt' :disabled=" !(typeof id !=='undefined')"></el-input>
 						</el-form-item>
@@ -17,7 +20,7 @@
 							<el-input type='textarea' cols='6' v-model='editForm.dec' class='ipt':disabled=" !(typeof id !=='undefined')"></el-input>
 						</el-form-item>
 					</el-form>
-					</el-col>
+					<!--</el-col>-->
 				</el-col>
 			</el-row>
 			<h3 class="tit_h3" v-text="title.hea" v-if=" typeof id !=='undefined'"></h3>
@@ -27,19 +30,27 @@
 				</el-col>
 			</el-row>
 			<el-table :data='users' highlight-current-row style="width: 100%;" v-loading='loading'>
-				<el-table-column type="index"label='序号' width="70" align='center'></el-table-column>
-				<el-table-column prop="name"label='名称' width="120" align='center'></el-table-column>
-				<el-table-column prop="logic_port.name"label='逻辑口' width="120" align='center'></el-table-column>
-				<el-table-column prop="status"label='逻辑口状态' width="120" align='center'></el-table-column>
-				<el-table-column prop="bandwidth"label='带宽(Mbps)' width="120" align='center'></el-table-column>
-				<el-table-column prop="type"label='类型' width="120" align='center'></el-table-column>
-				<el-table-column prop="charge_mode"label='计费模式' width="120" align='center'></el-table-column>
-				<el-table-column prop="charge_time"label='计费时间':formatter='dateFormat' width="120" align='center'></el-table-column>
-				<el-table-column prop="expiration_time"label='过期时间':formatter='dateFormat' width="120" align='center'></el-table-column>
-				<el-table-column prop="description"label='备注' width="120" align='center'></el-table-column>
+				<el-table-column type="index"label='序号' min-width="30" align='center'></el-table-column>
+				<el-table-column prop="name"label='名称' min-width="80" align='center'></el-table-column>
+				<el-table-column prop="logic_port.name"label='逻辑口' min-width="80" align='center'></el-table-column>
+				<el-table-column prop="logicStatus"label='逻辑口状态' min-width="80" align='center'>
+					<template slot-scope='scope'>
+						<span :class="scope.row.LogicColor">{{scope.row.logicStatus}}</span>
+					</template>
+				</el-table-column>
+				<el-table-column prop="bandwidth"label='带宽(Mbps)' min-width="60" align='center'></el-table-column>
+				<el-table-column prop="type"label='类型' min-width="60" align='center'></el-table-column>
+				<el-table-column prop="charge_mode"label='计费模式' min-width="80" align='center'></el-table-column>
+				
+				<el-table-column prop="charge"label='计费时间' width="95" align='center'>					
+				</el-table-column>
+				<el-table-column prop="expiration"label='过期时间'width="95" align='center'>			
+				</el-table-column>
+				
+				<el-table-column prop="description"label='备注'min-width="60" align='center'></el-table-column>
 				<el-table-column label='操作' width="300" align='center' v-if=" typeof id !=='undefined'">
 					<template slot-scope='scope'>
-						<el-button size='small' @click='handleTabStatus(scope.$index,scope.row)'>{{}}</el-button>
+						<el-button size='small' @click='handleTabStatus(scope.$index,scope.row)'>{{scope.row.changeBtn}}</el-button>
 						<el-button size='small' type='primary' @click='handleEdit(scope.$index,scope.row)'>编辑</el-button>
 						<el-button size='small' type='info' @click='handleDetails(scope.$index,scope.row)'>详情</el-button>
 						<el-button size='small' type='danger' @click='handleDel(scope.$index,scope.row)'>删除</el-button>
@@ -50,23 +61,9 @@
 		</section>
 		
 		<el-dialog :title='textMap[dialogStatus]':visible.sync="dialogFormVisible" :close-on-click-modal="false" v-loading='editLoading'>
-			<!--<el-form label-width='100px'>
-				<el-form-item label='选择类型' >
-					<el-tabs v-model='activeName'type="border-card"  @tab-click="handleClick">
-						<el-tab-pane label='数据中心端口'name='first'>
-							<dc-port @sendFormData='getFormData' @sendNdoe='getNodeObj' @sendLogic='getLogicObj' ref='dcForm'></dc-port>
-							<basic-details @sendBasic='getBasic' ref='basicForm'></basic-details>
-							<el-button style='margin-left: 50%;' type='primary' size='small' @click='dcSubmit'>提交</el-button>
-						</el-tab-pane>
-						<el-tab-pane label='公有云端口'name="second">
-							dsadad
-						</el-tab-pane>
-					</el-tabs>
-				</el-form-item>
-			</el-form>-->
 			<div v-if='dialogStatus=="creat"'>
-				类型选择
-				<el-tabs v-model='activeName'type="border-card" >
+				<h3>类型选择:</h3>		
+				<el-tabs v-model='activeName'type="border-card" class='marT5'>
 					<el-tab-pane label='数据中心端口'name='first'>
 						<dc-port @sendFormData='getFormData' ref='dcForm'></dc-port> <!-- @sendNdoe='getNodeObj' @sendLogic='getLogicObj'-->                                                                                 
 						<basic-details @sendBasic='getBasic' ref='basicForm'></basic-details>
@@ -123,7 +120,8 @@
 					name:'',
 					tenant_name:'',
 					tenant_id:'',
-					dec:''
+					dec:'',
+					creation_time:''
 				},
 				tenantData:[],//租户标识数据
 				editFormRules:{
@@ -148,35 +146,36 @@
 		},
 		created(){
 			this.token=sessionStorage.getItem('token');
+			console.log(this.id);
+			console.log(this.detailsID)
 			if(typeof this.id !=='undefined'){
 				this.getDetails(this.id);
 				console.log(1111)
-			}else{
-				this.getTenant()
-				console.log(33333)
-			}
-			if(typeof this.detailsID !=='undefined'){
-				this.getDetails(this.id);
 			}
 //			else{
-				this.getTenant()
+//				this.getTenant()
+//				console.log(33333)
 //			}
-			
+			if(typeof this.detailsID !=='undefined'){
+				console.log(this.detailsID)
+				this.getDetails(this.detailsID);
+			}
+
 		},
 		methods:{
-			getTenant(){//获取租户的数据
-				this.$ajax.get('/tenant/add_tenant'+'?token='+this.token)
-				.then(res => {
-					console.log(res);
-					if(res.status==200){
-						if(res.data.status==0){
-							
-						}
-					}
-				}).catch(e => {
-					console.log(e)
-				})
-			},
+//			getTenant(){//获取租户的数据
+//				this.$ajax.get('/tenant/tenants'+'?token='+this.token)
+//				.then(res => {
+//					console.log(res);
+//					if(res.status==200){
+//						if(res.data.status==0){
+//							
+//						}
+//					}
+//				}).catch(e => {
+//					console.log(e)
+//				})
+//			},
 			getClounBasic(msg){
 				console.log(msg);
 				this.clounBasic=Object.assign({},msg);
@@ -333,6 +332,7 @@
 				console.log(this.basicObj)
 			},
 			getDetails(ids){//获取数据
+				console.log(ids)
 				this.$ajax.get('/vll/multi_vll_info/'+ids+'?token='+this.token)
 				.then(res => {
 					console.log(res);
@@ -345,28 +345,63 @@
 								tenant_name:str.tenant.name,
 								tenant_id:str.tenant.id,
 								dec:str.description,
+								creation_time:datedialogFormat(str.creation_time)
 							}
-							console.log(this.editForm)
-							this.users=str.endpoints;
+							console.log(str.endpoints)
+							
+							
+							
 							//将dc的数据和云的数据整合后在一个新的数组里面        是两个数组   
 							if(str.endpoints){
 								str.endpoints.forEach(ele => {
+									ele.changeBtn='禁用'
+//									getPortStatus
+									if(getPortStatus(ele.ports) =='UP'){
+										ele.logicStatus='UP'
+										ele.LogicColor='colorGreen'
+									}
+									if(getPortStatus(ele.ports) =='DOWN'){
+										ele.logicStatus='DOWN'
+										ele.LogicColor='colorRed'
+									}
+									if(getPortStatus(ele.ports) =='故障'){
+										ele.logicStatus='DOWN'
+										ele.LogicColor='colorWarning'
+									}
+									console.log(ele)
+									if(!ele.charge_time && typeof(ele.charge_time)!='undefined' && ele.charge_time!=0){
+										ele.charge_time=''
+										ele.charge=''
+									}else{
+										ele.charge=datedialogFormat(ele.charge_time)
+									}
+									if(!ele.expiration_time && typeof(ele.expiration_time)!='undefined' && ele.expiration_time!=0){
+										ele.expiration_time=''
+										ele.expiration=''
+									}else{
+										ele.expiration=datedialogFormat(ele.expiration_time)
+									}
 									ele.dataType='endpoints';//添加新的字段判断  改数据是dc还是云  该数据是dc的
-									this.users.push(ele);
+//									this.users.push(ele);
 								})
 							}
+							
 							if(str.cloud_endpoints){
 								str.cloud_endpoints.forEach(ele => {
+									ele.changeBtn='禁用'
 									ele.dataType='cloud_endpoints';//数据为云的数据
-									this.users.push(ele);
+//									this.users.push(ele);
 								})
 							}
+//							this.users=str.endpoints;
+							console.log(str.endpoints)
+							this.users=JSON.parse(JSON.stringify(str.endpoints))
 						}else{
 							this.$message({
 								message:res.data.message,
 								type:'warning'
 							})
-							this.$replace('/business/multipoint')
+//							this.$router.replace('/business/multipoint')
 						}
 					}
 				})
@@ -416,11 +451,12 @@
 				
 			},
 			handleTabStatus(index,row){//禁用和启用的装填的切换
-				if(row.status==='禁用'){
+				console.log(row)
+				if(row.changeBtn==='禁用'){
 					this.$confirm('确定要启用吗?','提示',{})
 					.then(() => {
 						this.loading=true;
-						this.$ajax.put('/vll/enable_endpoint/'+row.type+'/'+this.id+'/'+row.id+'?token='+this.token)
+						this.$ajax.put('/vll/enable_endpoint/'+row.dataType+'/'+this.id+'/'+row.id+'?token='+this.token)
 						.then(res => {
 							if(res.status==200){
 								if(res.data.status==0){
@@ -443,7 +479,7 @@
 						.catch(e => {console.log(e)})
 					})
 					.catch( () => {})
-				}else if(row.type==='启用'){
+				}else if(row.changeBtn==='启用'){
 					this.$confirm('确定要禁用吗?','提示',{})
 					.then(() => {
 						this.loading=true;
@@ -475,6 +511,14 @@
 			handleEdit(index,row){//编辑
 				this.dialogStatus='edit';
 				this.dialogFormVisible=true;
+				console.log(row)
+				this.basicObj={
+					bandwidth:row.bandwidth,
+					changeModel:row.charge_mode,
+					billing_time:row.charge_time,
+					overdue_time:row.expiration_time,
+					des:row.description
+				}
 			},
 			handleDetails(index,row){//详情
 				this.dialogStatus='see';
@@ -509,17 +553,26 @@
 				}).catch(() => {})
 			},
 			//表格数据时间转换
-			dateFormat(row,column){
-	    		//将时间戳转换为前端的时间
-	    		let date=new Date(parseInt(row.creation_time)*1000);
-	    		let Y=date.getFullYear()+'-';
-	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +'':date.getDate()+'';
-	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
-	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
-	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
-	    		return Y + M + D + h + m + s	    		
-	    	}
+			dateFormat(row, column) {
+		      	let date = new Date(parseInt(row.charge_time) * 1000);
+		      	let Y = date.getFullYear() + "-";
+		      	let M =date.getMonth() + 1 < 10  ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
+		      	let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
+		      	let h = date.getHours() < 10  ? "0" + date.getHours() + ":"  : date.getHours() + ":";
+		        let m = date.getMinutes() < 10  ? "0" + date.getMinutes() + ":"  : date.getMinutes() + ":";
+		        let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+		      return Y + M + D + h + m + s;
+		    },
+		    dateFormatExpiration(row, column) {
+		      	let date = new Date(parseInt(row.expiration_time) * 1000);
+		      	let Y = date.getFullYear() + "-";
+		      	let M =date.getMonth() + 1 < 10  ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
+		      	let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
+		      	let h = date.getHours() < 10  ? "0" + date.getHours() + ":"  : date.getHours() + ":";
+		        let m = date.getMinutes() < 10  ? "0" + date.getMinutes() + ":"  : date.getMinutes() + ":";
+		        let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+		      return Y + M + D + h + m + s;
+		    },
 		}
 	}
 </script>

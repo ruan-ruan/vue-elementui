@@ -2,13 +2,10 @@
 	<div >
 		<!--设置-->
 		<section>
-			<!--<div>
-				<el-button size='small' type='info' @click='reset'><返回</el-button>
-			</div>-->
 			<goback></goback>
 			<el-form  :model='editForm' label-width='100px' :rules='editFormRules' ref='editForm' v-loading='Loading'>
 				<el-form-item label='名称' prop='name'>
-					<el-input v-model='editForm.name'  class='sel' :disabled='disUp'></el-input>
+					<el-input v-model='editForm.name'  class='ipt_sels' :disabled='disUp'></el-input>
 				</el-form-item>
 				<el-form-item label='角色状态' prop='usable'>
 					<template>
@@ -23,7 +20,7 @@
 					</template>		
 				</el-form-item>
 				<el-form-item label='备注'>
-					<el-input type='textarea' v-model='editForm.description' class='sel' :disabled='disUp'></el-input>
+					<el-input type='textarea' v-model='editForm.description' class='ipt_sels' :disabled='disUp'></el-input>
 				</el-form-item>
 				<!--添加的时候-->
 				<h3  class="toolbar text_c">角色的权限列表</h3>
@@ -67,31 +64,7 @@
 		components:{
 			goback
 		},
-		created(){
-			//获取token
-			this.token=sessionStorage.getItem('token');
-			this.getRoles();
-			if(typeof this.id !='undefined' && typeof this.roleID =='undefined'){
-				console.log('执行角色的详情的界面')
-//				this.isOk=true;
-				this.disUp=true;
-				//在角色详情的界面的时候下方的操作按钮是不会渲染的
-				this.disNo=false;
-				this.getRoleDetails(this.id);
-			}
-			
-			if(typeof this.roleID !='undefined' &&  typeof this.id =='undefined'){
-				console.log('执行角色的编辑的界面');
-				//获取编辑的按钮
-				this.roleBtnStatus=false;
-				this.getEditRole(this.roleID);				
-			}
-			
-			if(typeof this.id=='undefined'&& typeof this.roleID=='undefined'){
-				//当详情和编辑的id都是未定义的时候，这个是时候进来的是添加角色部分
-				this.roleBtnStatus=true;
-			}
-		},
+		
 		data(){
 			return{
 //				isOk:false,
@@ -143,15 +116,48 @@
 				backUpdata:[],//权限列表数据的备份
 			}
 		},
+		created(){
+			//获取token
+			this.token=sessionStorage.getItem('token');
+			var str=null;
+			if(typeof this.id !='undefined' && typeof this.roleID =='undefined'){
+				str=false;
+//				this.isOk=true;
+				this.disUp=true;
+				//在角色详情的界面的时候下方的操作按钮是不会渲染的
+				this.disNo=false;
+				this.getRoleDetails(this.id);
+			}
+			
+			if(typeof this.roleID !='undefined' &&  typeof this.id =='undefined'){
+				str=true
+				console.log('执行角色的编辑的界面');
+				//获取编辑的按钮
+				this.roleBtnStatus=false;
+				this.getEditRole(this.roleID);				
+			}
+			
+			if(typeof this.id=='undefined'&& typeof this.roleID=='undefined'){
+				str=true
+				//当详情和编辑的id都是未定义的时候，这个是时候进来的是添加角色部分
+				this.roleBtnStatus=true;
+			}
+			this.getRoles(str);
+			
+		},
 		methods:{
-			getRoles(){   //获取权限的列
+			getRoles(val){   //获取权限的列表，分别区分为可点击或不可点击
 				this.$ajax.get('/role/permissions'+'?token='+this.token)
 				.then( res => {
 					if(res.status==200){
 						if(res.data.status==0){
 							var str=res.data.data;
-							deepClone(str);
-
+							if(val){
+								deepClone(str);
+							}else{
+								Clone(str);
+							}
+							console.log(str)
 							this.organizationData=str;
 							this.backUpdata=JSON.parse(JSON.stringify(str))
 							
@@ -275,7 +281,6 @@
 							usable:this.editForm.usableStatus,
 							description:this.editForm.description
 						}
-						console.log(para)
 						this.$ajax.put('/role/edit_role/'+this.editForm.id+'?token='+this.token,para)
 						.then(res => {
 							console.log(res)
@@ -310,8 +315,6 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.roleDetails=res.data.data.rights.split(',');
-//							Clone(this.organizationData)
-							this.Clone(this.organizationData)
 							if(res.data.data.usable){
 								this.editForm.statusName='启用'
 							}else{
@@ -336,17 +339,6 @@
 					console.log(e)
 				})
 			},
-			Clone(data){  //设置权限的时候  给按钮添加控制部分
-				data.forEach(ele => {
-					// console.log(ele)
-					ele.disabled=true;
-					if(ele.list){
-						if( ele.list.length>0){
-							this.Clone(ele.list);
-						}
-					}
-				})
-			},
 			setrole(data,checked){
 				this.editForm.dataCen=checked.checkedKeys;
 				this.editForm.rights=this.editForm.dataCen.join(',');
@@ -362,9 +354,9 @@
 		/*display: none !important;*/
 		display: none  !important;
 	}
-	.sel{
+	/*.sel{
 		width: 300px;
-	}
+	}*/
 	.el-tree-node__children{
 		overflow: hidden;
 	}

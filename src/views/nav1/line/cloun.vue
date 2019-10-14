@@ -38,6 +38,8 @@
 						<el-button type='primary' @click='addClounLink'>+添加云链路</el-button>
 					</el-col>
 					<el-col :span='20' class='table-top'>
+						<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">
+							批量删除</el-button>
 						<el-dropdown split-button type='success'@command="handleExport">
 							导出数据
 							<el-dropdown-menu slot='dropdown'>
@@ -51,10 +53,11 @@
 
 			
 			
-			<el-table :data='users' highlight-current-row @selection-change="selsChange" style='width: 100%;' v-loading='loading'>
-				<el-table-column type='selection' width='40'></el-table-column>
-				<el-table-column type='index' label='序号' width='50'align='center'></el-table-column>
-				<el-table-column prop='creation_tinme' label='创建时间' width='95' align='center' :formatter='dateFormat'>					
+			<el-table :data='users' highlight-current-row @selection-change="selsChange" style='width: 100%;'
+				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
+				<el-table-column type='selection'min-width='40'></el-table-column>
+				<el-table-column type='index' label='序号' min-width='50'align='center'></el-table-column>
+				<el-table-column prop='creation_time' sortable label='创建时间' width='101' align='center' :formatter='dateFormat'>					
 				</el-table-column>
 				<el-table-column  label='云链路名称' min-width='120' align='center'>
 					<template slot-scope='scope'>
@@ -93,12 +96,12 @@
 			</el-table>
 			
 			<el-row class='toolbar'>
-				<el-col :span='24' >
-					<el-col :span='4'>
+				<!--<el-col :span='24' >-->
+					<!--<el-col :span='4'>
 						<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">
 							批量删除</el-button>
-					</el-col>
-					<el-col :span='20'>
+					</el-col>-->
+					<el-col :span='24'>
 						<el-pagination
 						:total="total"
 				     	@size-change="handleSizeChange"
@@ -111,7 +114,7 @@
 				     	:prev-text='prev'
 				     	:next-text='next'></el-pagination>
 					</el-col>
-				</el-col>
+				<!--</el-col>-->
 			</el-row>
 			
 			
@@ -366,7 +369,7 @@
 	    		let date=new Date(parseInt(row.creation_time)*1000);
 	    		let Y=date.getFullYear()+'-';
 	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +'':date.getDate()+'';
+	    		let D=date.getDate() <10? '0' +date.getDate() +'  ':date.getDate()+'  ';
 	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
 	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
 	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();

@@ -2,10 +2,10 @@
 	<div>
 		<el-tabs v-model='activeName'>
 			<el-tab-pane label='骨干链路' name='first'>
-				<Link></Link>
+				<Link v-if='activeName=="first"'></Link>
 			</el-tab-pane>
 			<el-tab-pane label='未知链路' name='second'>
-				<Unknown/>
+				<Unknown v-if='activeName=="second"'/>
 			</el-tab-pane>
 		</el-tabs>
 	</div>

@@ -3,29 +3,15 @@
     <!--客户管理-->
     <section>
       <!--顶部工具栏-->
-      <el-col
-        :span='24'
-        class='toolbar'
-        style="padding-bottom: 0px;"
-      >
+      <el-col :span='24' class='toolbar' style="padding-bottom: 0px;" >
         <el-col :span='24'>
-          <el-form
-            :inline='true'
-            :model='filters'
-          > 
+          <el-form :inline='true' :model='filters' ref='filters'> 
 
-            <el-form-item label='租户标识：'>
-              <el-input
-                v-model='filters.name'
-                class='sel'
-              ></el-input>
+            <el-form-item label='租户标识：' prop='name'>
+              <el-input  v-model='filters.name' class='sel' ></el-input>
             </el-form-item>
-            <el-form-item label='状态：'>
-              <el-select
-                v-model='filters.status'
-                class='ipt_sta'
-                placeholder="请选择"
-              >
+            <el-form-item label='状态：' prop='status'>
+              <el-select v-model='filters.status' class='ipt_sta'  placeholder="请选择" >
                 <el-option
                   v-for='(item,index) in staData'
                   :key='index'
@@ -34,22 +20,12 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label='租户手机号：'>
-              <el-input
-                v-model='filters.pho'
-                class='sel'
-              ></el-input>
+            <el-form-item label='租户手机号：' prop='pho'>
+              <el-input v-model='filters.pho' class='sel_sels' ></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button
-                type='primary'
-                @click='getUsers'
-                @keydown.enter='getUsers'
-              >搜索</el-button>
-              <el-button
-                type='info'
-                @click='reset(filters)'
-              >重置</el-button>
+              <el-button type='primary'  @click='getUsers' @keydown.enter='getUsers' >搜索</el-button>
+              <el-button type='info'  @click='reset' >重置</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -59,6 +35,11 @@
 					<el-button type='primary' @click='handleAdd' >添加租户</el-button>
 				</el-col>
 				<el-col :span='20' class='table-top'>
+					<el-button
+            type="danger"
+            @click="batchRemove(sels)"
+            :disabled="this.sels.length===0"
+          >批量删除</el-button>
 					<el-dropdown  split-button type='success' @command="handleExport" >
 	        		导出数据
 	        <el-dropdown-menu slot='dropdown'>
@@ -77,6 +58,7 @@
         @selection-change="selsChange"
         style="width: 100%;"
         v-loading='loading'
+        :default-sort = "{prop: 'creation_time', order: 'descending'}"
       >
         <el-table-column
           type='selection'
@@ -90,7 +72,7 @@
           label='序号'
         ></el-table-column>
           <!--:formatter='dateTableFormat'-->
-        <el-table-column prop='creation_time' :formatter='dateTableFormat' width='95' label='创建时间' align='center'></el-table-column>
+        <el-table-column prop='creation_time'sortable :formatter='dateTableFormat' width='101' label='创建时间' align='center'></el-table-column>
         <el-table-column  min-width='120'align='center'label='租户标识(公司名称)' >
           <template slot-scope='scope'>
             <span class="tem_span" @click="handleSee(scope.$index, scope.row)"
@@ -153,15 +135,9 @@
         </el-table-column>
       </el-table>
 
-      <el-col :span='24'>
-        <el-col :span='3'>
-          <el-button
-            type="danger"
-            @click="batchRemove(sels)"
-            :disabled="this.sels.length===0"
-          >批量删除</el-button>
-        </el-col>
-        <el-col :span='21'>
+      <el-col :span='24' class='toolbar'>
+
+        <!--<el-col :span='21'>-->
           <el-pagination
             :total='total'
             layout="total, sizes, prev, pager, next, jumper"
@@ -174,7 +150,7 @@
             :next-text='next'
           >
           </el-pagination>
-        </el-col>
+        <!--</el-col>-->
       </el-col>
     </section>
   </div>
@@ -284,12 +260,8 @@ export default {
           console.log(e);
         });
     },
-    reset(sles) {
-      //重置
-      for (let key in sles) {
-        sles[key] = "";
-      }
-      // this.filters.status = "true";
+    reset() {
+      this.$refs['filters'].resetFields()
     },
     handleSta(index, row) {
       //禁用和启用切换
@@ -540,7 +512,7 @@ export default {
 			let date=new Date(parseInt(row.creation_time)*1000);
 			let Y=date.getFullYear()+'-';
 			let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-			let D=date.getDate() <10? '0' +date.getDate() +'':date.getDate()+'';
+			let D=date.getDate() <10? '0' +date.getDate() +' ':date.getDate()+' ';
 			let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
 			let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
 			let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();

@@ -10,7 +10,7 @@
 			</el-col>
 			<el-col :span='2'>
 				<span @click="goback" class="err_no">
-					<i class="el-icon-circle-close-outline"></i>
+					<i class="el-icon-close"></i>
 				</span>
 			</el-col>
 		</el-row>
