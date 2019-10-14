@@ -359,8 +359,8 @@
 		    updateData:function() {
 		      this.$refs.editForm.validate(valid => {
 		        if (valid) {
-		          this.$confirm("确认提交吗？", "提示", {})
-		            .then(() => {
+		        //   this.$confirm("确认提交吗？", "提示", {})
+		        //     .then(() => {
 		                this.editLoading = true;
 //		           		let para = Object.assign({}, this.editForm);
 						let obj={};
@@ -400,10 +400,10 @@
 							}
 
 		              }).catch (e => {console.log(e)})
-		           }) .catch(e => {
-		              // 打印一下错误
-		              console.log(e);
-		            });
+		        //    }) .catch(e => {
+		        //       // 打印一下错误
+		        //       console.log(e);
+		        //     });
 		        }
 		      });
 		    },
@@ -411,8 +411,8 @@
 		    createData: function() {
 		      this.$refs.editForm.validate(valid => {
 		        if (valid) {
-		         	 this.$confirm("确认提交吗？", "提示", {})
-		            .then(() => {
+		         	//  this.$confirm("确认提交吗？", "提示", {})
+		            // .then(() => {
 		                this.editLoading = true;
 		             	let para = Object.assign({}, this.editForm);
 						this.$ajax.post('/location/add_city'+'?token='+this.token,para)
@@ -435,7 +435,7 @@
 			              		}
 			              	} 
 			            }).catch(e => {console.log(e)})
-		            }) .catch( ()=> { });
+		            // }) .catch( ()=> { });
 		        }
 		      });
 		    },

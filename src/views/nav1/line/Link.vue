@@ -187,7 +187,7 @@
 						<el-input v-model='editForm.link_cost':disabled='editFormStatue'  class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item label='链路检测'>
-						<el-radio-group v-model='editForm.monitoring' :disabled='editFormStatue'>
+						<el-radio-group v-model='editForm.monitoring' :disabled='editFormStatue' @change="mointradio">
 							<template v-for='item in needDown'>
 								<el-radio :value='item.label' :label='item.val'>{{item.name}}</el-radio>
 							</template>
@@ -203,10 +203,10 @@
 						</el-select>
 					</el-form-item>
 					<el-form-item v-show='detectionStatus' label='检测参数'>
-						<el-input v-model='editForm.monitoring_param':disabled='editFormStatue' ></el-input>
+						<el-input v-model='editForm.monitoring_param' :disabled='editFormStatue'></el-input>
 					</el-form-item>
 					<el-form-item  label='流量获取键入值'>
-						<el-input v-model='editForm.monitoring_param' :disabled='editFormStatue' class='ipt'></el-input>
+						<el-input v-model='editForm.monitoring_param' :disabled="editFormStatue" class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item label='备注'>
 						<!--<textarea name="" rows="" cols="7"></textarea>-->
@@ -349,11 +349,7 @@
 		created(){
 			//获取用户的权限
 			this.token =sessionStorage.getItem('token');
-			if(this.editForm.need_down=='true'){
-				this.detectionStatus=true;
-			}else{
-				this.detectionStatus=false
-			}
+			
 		},
 		methods:{
 			handleSizeChange(val){
@@ -365,6 +361,13 @@
 //				console.log(`当前页数是:${val}`)
 				this.currentPage=val;
 				this.getUsers()
+			},
+			mointradio(){
+				if(this.editForm.monitoring==true){
+					this.detectionStatus=true;
+				}else{
+					this.detectionStatus=false
+				}
 			},
 			getUsers(){
 				var _this=this;
@@ -551,7 +554,7 @@
 			},
 			//节点a的点击详情
 			handleNode_a(index,row){
-				
+				console.log(row)
 				this.$router.push({path:'/location/index/unknown/nodedetails/'+row.a_node.id});
 			},
 			//节点z的详情
@@ -573,7 +576,12 @@
 						if(res.data.status==0){
 							this.editLoading=false;
 							this.editForm=Object.assign({},res.data.data)
-							this.editForm.creation_time=datedialogFormat(row.creation_time);	
+							this.editForm.creation_time=datedialogFormat(row.creation_time);
+							if(this.editForm.monitoring==true){
+								this.detectionStatus=true;
+							}else{
+								this.detectionStatus=false
+							}	
 						}
 					}
 				}).catch(e => {
@@ -588,14 +596,16 @@
 				this.editFormStatue=false;
 				this.editForm=Object.assign({} ,row)
 				this.editForm.creation_time=datedialogFormat(row.creation_time)
+					if(this.editForm.monitoring==true){
+					this.detectionStatus=true;
+				}else{
+					this.detectionStatus=false
+				}
 				
 			},
 			updateData(){
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-						this.$confirm('确认要提交吗？ ' ,'提示',{})
-						.then(() => {
-
 							let para={
 //								id:this.edtiForm.id,
 								a_node_id:this.editForm.a_node.id,
@@ -627,8 +637,8 @@
 										})
 									}
 									this.$refs["editForm"].resetFields();
-	                this.dialogFormVisible = false;
-	                this.getUsers();
+								this.dialogFormVisible = false;
+								this.getUsers();
 								}else {
 									this.editLoading=false;
 									this.$message({
@@ -638,7 +648,6 @@
 								}
 									
 							})
-						}).catch(() => {})
 					}
 					
 				})

@@ -520,8 +520,6 @@
 
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-						this.$confirm('确认提交吗?','提示',{})
-						.then( () => {
 //							let para=Object.assign({},this.editForm);
 							console.log(this.editForm)
 							let para={
@@ -568,7 +566,6 @@
 							}).catch(e => {
 								console.log(e)
 							})
-						}).catch(() => {})
 					}
 				})
 			},
@@ -634,8 +631,6 @@
 //				var this=this;
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-						this.$confirm('确认要提交吗?','提示',{})
-						.then( () => {
 							let para={
 								a_node_id:this.editForm.a_node_id,
 								a_ip:this.editForm.a_ip,
@@ -676,10 +671,6 @@
 							.catch(e => {
 								console.log(e)
 							})
-						})
-						.catch((e) =>{
-							console.log(e)
-						})
 					}
 				})
 			},
@@ -715,11 +706,11 @@
 			handelSee_aNode(index,row){
 				console.log(row);
 				//查看a的节点的详细的信息
-				this.$router.push({path:'/location/index/details/'+row.a_node.id});	
+				this.$router.push({path:'/location/index/unknown/nodedetails/'+row.a_node.id});	
 			},
 			handelSee_zNode(index,row){
 				//查看z节点额详细信息
-				this.$router.push({path:'/location/index/details/'+row.z_node.id});
+				this.$router.push({path:'/location/index/unknown/nodedetails/'+row.z_node.id});
 				
 			},
 			handleDel(index,row){
@@ -763,14 +754,10 @@
 				//保存的时候提交请求
 				this.$refs.foundForm.validate(valid => {
 					if(valid){
-						// this.$confirm('确定要提交吗?','提示',{})
-						// .then(() => {
 							var para={
 								
 							};
 							this.foundFormVisible=false;
-						// }).catch(() => {})
-//						this.foundFormVisible=false;
 					}else{
 						this.foundFormVisible=false;
 						this.$message({

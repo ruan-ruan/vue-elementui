@@ -161,7 +161,7 @@
 import messageDialog from "@/components/dialog/messageDialog";
 import { getTime } from "@/assets/js/index.js";
 export default {
-  name: "Service",
+  name: "unread",
   components: {
     messageDialog
   },
