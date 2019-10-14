@@ -228,13 +228,11 @@
 </template>
 
 <script>
-<<<<<<< HEAD
+
 	
 	import {datedialogFormat , descriptionValue,getTime ,isValidNumber} from '@/assets/js/index.js'
 
-=======
-	import {datedialogFormat , descriptionValue,getTime} from '@/assets/js/index.js'
->>>>>>> e20b0c41d092939b497b2afd1b96c76ac9d15018
+
 	export default{
 		name:'Unknown',
 		data(){
@@ -449,16 +447,12 @@
 					console.log(res);
 					if(res.status==200){
 						if(res.data.status==0){
-<<<<<<< HEAD
+
 							descriptionValue(res.data.data.items)
 							
 							this.total=res.data.data.page.total;
 							res.data.data.items.forEach(ele => {
-=======
-							this.users=res.data.data.items;
-							this.total=res.data.data.page.total;
-							this.users.forEach(ele => {
->>>>>>> e20b0c41d092939b497b2afd1b96c76ac9d15018
+
 								if(ele.monitoring){
 									ele.monitoringText='开启'
 								}else if(!ele.monitoring){

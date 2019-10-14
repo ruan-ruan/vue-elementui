@@ -75,7 +75,7 @@
             	
               <template slot="title">
                 <img :src="item.iconCls" class='asideLogo'/>
-<<<<<<< HEAD
+
                 <span slot="title">
                 	{{item.name}}
                 </span>
@@ -95,29 +95,7 @@
                   		{{sun.name}}
                   	</span>
                     
-=======
-                {{item.name}}</template>
-              <el-menu-item-group
-                v-for='(child,indexs)  in item.children'
-                :index="indexs"
-                :key="child.path"
-                v-if="!child.hidden"
-              >
-                <el-submenu
-                  :index='child.path'
-                  v-if='!child.leaf'
-                >
-                  <template
-                    slot="title"
-                    class="child_title"
-                  ><i :class="child.iconCls"></i>{{child.name}}</template>
-                  <el-menu-item
-                    v-for="(sun,i)  in child.children"
-                    :index="sun.path"
-                    :key="sun.path"
-                  >
-                    {{sun.name}}
->>>>>>> e20b0c41d092939b497b2afd1b96c76ac9d15018
+
                   </el-menu-item>
                 </el-submenu>
                 
@@ -148,7 +126,7 @@
         <!--导航菜单-折叠后-->
         <ul class="el-menu el-menu-vertical-demo collapsed"
           v-show="collapsed"
-          ref="menuCollapsed" style="background-color: #EEEEEE; position: absolute;">
+          ref="menuCollapsed" style="background-color: #EEEEEE;">
           <li
             v-for="(item,index) in $router.options.routes"
             v-if="!item.hidden"

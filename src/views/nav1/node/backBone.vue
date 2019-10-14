@@ -195,13 +195,10 @@
 </template>
 
 <script>
-<<<<<<< HEAD
+
 	
 		import {descriptionValue,getTime,sortVal} from '@/assets/js/index.js'
 
-=======
-import {descriptionValue,getTime} from '@/assets/js/index.js'
->>>>>>> e20b0c41d092939b497b2afd1b96c76ac9d15018
 export default {
   name: "Service",
   data() {

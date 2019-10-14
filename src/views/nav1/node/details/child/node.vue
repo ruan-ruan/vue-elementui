@@ -546,17 +546,9 @@
 											type:'success'
 										})
 										this.$store.state.statusname=true;
-<<<<<<< HEAD
-										this.$router.go(-1)
-//										this.$router.push({
-//											path:'/location/backbone',
-//											query:{
-//												tab:'second'
-//											}
-//										})
-=======
+
 										this.$router.push('/location/backbone')
->>>>>>> e20b0c41d092939b497b2afd1b96c76ac9d15018
+
 									}else{
 										this.$message({
 											message:res.data.message,
@@ -651,14 +643,10 @@
 											message:'修改成功!',
 											type:'success'
 										})
-<<<<<<< HEAD
-//										this.$router.push('/location/backbone')
-										this.$store.state.statusname=true;
-										this.$router.go(-1)
-=======
+
 										this.$store.state.statusname=true;
 										this.$router.push('/location/backbone')
->>>>>>> e20b0c41d092939b497b2afd1b96c76ac9d15018
+
 									}else{
 										this.$message({
 											message:res.data.message,
@@ -759,11 +747,7 @@
 				
 			},
 			unknowgoback(){
-				//返回
-<<<<<<< HEAD
-				this.$store.state.statusname=true;
-				this.$router.push('/location/backbone')
-=======
+
 //				this.$router.go(-1)
 				if(this.backstatus==true) {
 					this.$router.push('/location/backbone')
@@ -771,8 +755,7 @@
 					this.$store.state.statusname=true;
 					this.$router.push('/location/backbone')
 				}
-				
->>>>>>> e20b0c41d092939b497b2afd1b96c76ac9d15018
+
 			}
 		},
 	}
