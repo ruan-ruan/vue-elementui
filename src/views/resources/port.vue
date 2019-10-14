@@ -53,7 +53,7 @@
    	 	<!--表格数据部分-->
    	 	<el-table :data='users' highlight-current-row style='width: 100%;' v-loading='loading' 
    	 		:default-sort = "{prop: 'creation_time', order: 'descending'}">
-   	 		<el-table-column type='index' width='40' align='center'></el-table-column>
+   	 		<el-table-column type='index' width='60'label='序号' align='center'></el-table-column>
    	 		<el-table-column prop='creation_time' sortable  label='创建时间' width='101'align='center':formatter='dateFormat'></el-table-column>
    	 		<el-table-column prop='name' label='逻辑端口名称' min-width='100'align='center'>
    	 			<template slot-scope='scope'>
@@ -61,7 +61,7 @@
    	 			</template>
    	 		</el-table-column>
    	 		<el-table-column prop='tenant.name' label='租户标识' min-width='100'align='center'></el-table-column>
-   	 		<el-table-column  label='逻辑口状态' min-width='100'align='center'>
+   	 		<el-table-column  label='逻辑口状态' min-width='80'align='center'>
    	 			<template slot-scope='scope'>
    	 				<span :class='scope.row.usableTextColor'>{{scope.row.usableText}}</span>
    	 			</template>

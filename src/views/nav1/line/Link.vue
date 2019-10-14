@@ -224,10 +224,6 @@
 
 <script>
 
-
-
-
-	
 	import {datedialogFormat ,descriptionValue,getTime} from '@/assets/js/index.js'
 
 

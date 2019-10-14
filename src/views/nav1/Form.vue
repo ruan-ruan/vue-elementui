@@ -26,27 +26,15 @@
 				Tabs:this.$route.query.tab,
 			}
 		},
-		created() {
-			this.$store.state.statusname=false;
-//			if(this.Tabs){
-//				this.activeName=this.$route.query.tab
-//			}
-
-//			if(this.Tabs){
-//				this.$router.push({
-//	            	path:'/location/backbone?tab='+this.Tabs,
-//	            	
-//	            })	
-//			}
-			
-		},
-		mounted() {
-			if(this.activeName=='first') {
-				 this.isChildUpdate1 = true;
-	                this.isChildUpdate2 = false;
-			}else {
-				  this.isChildUpdate1 = false;
-	                this.isChildUpdate2 = true;
+		created(){
+			if(this.$store.state.statusname){
+				this.activeName='second';
+				this.isChildUpdate1 = false;
+	            this.isChildUpdate2 = true;
+			}else{
+				this.activeName='first';
+				this.isChildUpdate1 = true;
+	            this.isChildUpdate2 = false;
 			}
 		},
 		methods:{

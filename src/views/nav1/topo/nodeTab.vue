@@ -69,17 +69,26 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
+							console.log(res)
 							this.seeLoading=false;
 //							console.log(res)
 							let str=res.data.data;
 //							this.seeForm=Object.assign({},res.data.data);
+							let dc_name=''
+							if(!str.dc && typeof(str.dc)!='undefined' && str.dc!=0){
+								dc_name=''
+							}else{
+								dc_name=str.dc.name
+							}
 							this.seeForm={
 								time:datedialogFormat(str.creation_time),
 								name:str.name,
 //								status:str.status,
 								vtep:str.vtep,
-//								data:str.dc.name
+								data:dc_name,
+								id:str.id
 							}
+							console.log(this.seeForm)
 						}
 					}
 				}).catch(e => {console.log(e)})

@@ -363,15 +363,23 @@
 							this.baseData=res.data.data
 							let str=[];
 							let obj={};
+							let dc_name=''
+							if(!strData.dc && typeof(strData.dc)!='undefined' && strData.dc!=0){
+								dc_name=''
+							}else{
+								dc_name=strData.dc.name;
+							}
+							
 							if(strData.devices.length==1){
 								this.equStatusTwo=false;
 //								str=Object.assign([],strData.devices);
 								str=JSON.parse(JSON.stringify(strData.devices))
+								
 								obj={
 									id:strData.id,
 									name:strData.name,
 									vtep:strData.vtep,
-									dc_id:strData.dc.name,
+									dc_id:dc_name,
 									
 									port_section0:str[0].port_section,
 									devices0_id:str[0].id,
@@ -569,11 +577,32 @@
 				console.log(this.seeForm);
 				console.log(this.unknown_editFormData)
 				var str=this.unknown_editFormData.devices
+				let obj={
+					name:'',
+					id:''
+				}
+				if(!this.unknown_editFormData.dc && typeof(this.unknown_editFormData.dc)!='undefined' && this.unknown_editFormData.dc!=0){
+					obj={
+						name:'',
+						id:''
+					}
+				}else if( typeof(this.unknown_editFormData.dc) === "undefined" ){
+					console.log(this.unknown_editFormData.dc)
+					obj={
+						name:'',
+						id:''
+					}
+				}else{
+					obj={
+						name:this.unknown_editFormData.dc.name,
+						id:this.unknown_editFormData.dc.id
+					}
+				}
 				if(str.length=1){
 					para={
 						id:this.seeForm.id,
 						name:this.seeForm.name,
-						dc_id:this.seeForm.dc_id==this.unknown_editFormData.dc.name?this.unknown_editFormData.dc.id:this.seeForm.dc_id,
+						dc_id:this.seeForm.dc_id==obj.name?obj.id:this.seeForm.dc_id,
 						vtep:this.seeForm.vtep,
 						devices:[
 							{
@@ -743,18 +772,22 @@
 				})
 			},
 			goback(){
+				console.log('kkk')
 				this.$router.push('/location/backbone')
 				
 			},
 			unknowgoback(){
-
-//				this.$router.go(-1)
-				if(this.backstatus==true) {
-					this.$router.push('/location/backbone')
-				}else {
-					this.$store.state.statusname=true;
-					this.$router.push('/location/backbone')
-				}
+				this.$store.state.statusname=true;
+										this.$router.push('/location/backbone')
+//				console.log('lll')
+////				this.$router.go(-1)
+//				if(this.backstatus==true) {
+//					this.$router.push('/location/backbone')
+//				}else {
+//					console.log('ggg')
+//					this.$store.state.statusname=true;
+//					this.$router.go(-1)
+//				}
 
 			}
 		},

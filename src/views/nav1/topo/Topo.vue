@@ -15,7 +15,7 @@
 				<el-col :span='24'class='back'>
 					<ul>
 						<li>
-							<button class='btn' id='big'>+</button>
+							<button  class='btn' id='big'>+</button>
 						</li>
 						<li>
 							<button class='btn' id='small'>-</button>
@@ -343,7 +343,7 @@
 //			    .attr('class', 'link')
 				
 	        let link = g.append('g') 
-//	        	.attr('class', 'link')
+	        	.attr('class', 'link')
 			    .selectAll('line')
 			    .data(linksData)
 			    .enter()
@@ -556,11 +556,11 @@
 		font-size: 6px;
 		color: #484948;
 	}
-	/*.link {
+	.link {
 		cursor: pointer;
-	  	stroke: #6BC7E2;
-	  	stroke-width: 1.5px;
-	}*/
+	  	/*stroke: #6BC7E2;
+	  	stroke-width: 1.5px;*/
+	}
 	.linkUP{
 		/*cursor: pointer;
 		stroke-width: 1.5px;*/
@@ -578,12 +578,15 @@
 	}
 	
 	.spedGreen{
+		/*cursor: pointer;*/
 		stroke: #74CE9B !important;
 	}
 	.spedYellow{
+		/*cursor: pointer;*/
 		stroke: #EFB751 !important;
 	}
 	.spedRed{
+		/*cursor: pointer;*/
 		stroke: #E76D6C !important ;
 	}
 	

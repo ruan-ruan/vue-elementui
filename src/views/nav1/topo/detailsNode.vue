@@ -2,19 +2,19 @@
 	<div>
 		<!--节点的详情-->
 		<el-form :model='seeForm' ref='seeForm'label-wdith='80px'  v-loading='seeLoading' >
-			<el-form-item label='创建时间'>
+			<el-form-item label='创建时间:'>
 				<span v-text="seeForm.time"></span>
 			</el-form-item>
-			<el-form-item label='骨干名称'>
+			<el-form-item label='骨干名称:'>
 				<span v-text="seeForm.name"></span>
 			</el-form-item>
-			<el-form-item label='骨干状态'>
+			<el-form-item label='骨干状态:'>
 				<!--<span v-text="seeForm.status"></span>-->
 			</el-form-item>
-			<el-form-item label='数据中心'>
+			<el-form-item label='数据中心:'>
 				<!--<span v-text="seeForm.data"></span>-->
 			</el-form-item>
-			<el-form-item label='Vtep'>
+			<el-form-item label='Vtep:'>
 				<span v-text="seeForm.vtep"></span>
 			</el-form-item>
 			<el-form-item>
@@ -40,6 +40,7 @@
 					status:'',
 					data:'',
 					Vtep:'',
+					id:''
 				},
 				seeLoading:false,
 			}
@@ -51,7 +52,9 @@
 					this.seeForm={
 						time:newVal.time,
 						name:newVal.name,
-						vtep:newVal.Vtep
+						vtep:newVal.vtep,
+						data:newVal.data,
+						id:newVal.id
 					}
 				},
 				deep:true
@@ -91,7 +94,7 @@
 //				}).catch(e => {console.log(e)})
 //			},
 			seedetails(){
-				this.$router.push('/location/index/unknown/nodedetails/'+this.nodeId)
+				this.$router.push('/location/index/unknown/nodedetails/'+this.seeForm.id)
 			}
 		}
 	}
