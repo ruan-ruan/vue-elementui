@@ -665,7 +665,6 @@
 							if(unknownSee.devices.length==1){
 								this.equStatusTwo=false;
 								this.seeForm={
-//										dc_id:unknownSee.dc.id,
 									id:unknownSee.id,
 									name:unknownSee.name,
 									vtep:unknownSee.vtep,
