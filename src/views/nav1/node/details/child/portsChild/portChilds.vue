@@ -51,12 +51,12 @@
 			<el-dialog :title='textMap[dialogStatus]' :visible.sync='dialogFormVisible' :close-on-click-modal="false" >
 				<el-form :model='editForm' label-width='40px' ref='editForm' >
 					<el-form-item label='备注'>
-						<el-input type='textarea' v-model='editForm.note'></el-input>
+						<el-input type='textarea' v-model='editForm.note' class='ipt_sels'></el-input>
 					</el-form-item>
 				</el-form>
 				<div slot='footer' class="dialog-footer">
 					<el-button @click.native='dialogFormVisible=false' >取消</el-button>
-					<el-button @click='updateData' type='success'>保存</el-button>
+					<el-button @click='updateData' type='primary'>保存</el-button>
 				</div>
 			</el-dialog>
 		</section>
@@ -127,6 +127,21 @@
 		},
 		created(){
 			this.token=sessionStorage.getItem('token');
+			console.log(this.titleTwo);
+			console.log(this.titleOne)
+			if(typeof this.titleTwo   !=='undefined'){
+				this.getList(this.titleTwo.id);
+				this.title.id=this.titleTwo.id;
+				this.title.name=this.titleTwo.hostname;
+				this.title.ip=this.titleTwo.ip
+			}
+			if(typeof this.titleOne !=='undefined'){
+				this.getList(this.titleOne.id);
+				this.title.id=this.titleOne.id;
+				this.title.name=this.titleOne.hostname;
+				this.title.ip=this.titleOne.ip
+				
+			}
 		},
 
 		methods:{
@@ -176,7 +191,7 @@
 							var para={
 								note:this.editForm.note,
 							}
-							this.$ajax.put('/node/edit_port/'+para.id+'?token='+this.token,para)
+							this.$ajax.put('/node/edit_port/'+this.editForm.id+'?token='+this.token,para)
 							.then( res => {
 								if(res.status==200){
 									if(res.data.status==0){
@@ -186,7 +201,8 @@
 										})
 										this.$refs['editForm'].resetFields();
 										this.dialogFormVisible=false;
-										this.getUsers()
+										this.getList(this.title.id)
+//										this.getUsers()
 									}else if(res.data.message){
 										this.$message({
 											message:res.data.msg,

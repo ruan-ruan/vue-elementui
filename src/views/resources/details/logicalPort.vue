@@ -327,6 +327,7 @@
 				],
 				//默认情况下是可以编辑的
 				disabeldSee:false,
+				newtworkBasePortP:[],//当关联多个端口的时候保存数据用来去重
 			}
 		},
 		watch:{
@@ -422,7 +423,25 @@
 							this.backNodes=res.data.data.items;
 						}
 					}
+				}).catch(e => {console.log(e)})
+				
+				//对列表内所有的端口已经使用过的  不能再使用的排除  newtworkBasePortP
+				this.$ajax.get('/port/logic_ports'+'?token='+this.token)
+				.then(res => {
+					console.log(res)
+					if(res.status==200){
+						if(res.data.status==0){
+							var str=res.data.data.items;
+							str.forEach(ele => {
+								console.log(ele)
+								ele.physical_ports.forEach(item => {
+									this.newtworkBasePortP.push(item.port)
+								})
+							})
+						}
+					}
 				})
+				.catch(e => {console.log(e)})
 			},
 			selectNode(ids){
 				//筛选  获取骨干节点的信息
@@ -466,15 +485,27 @@
 				})
 				//将选择的设备的id的名字保存下来
 				this.editForm.device_name=findVal.hostname;
-				console.log(findVal.hostname);
+//				console.log(findVal.hostname);
 				//获取设备的下的物理端口
-				
-				this.$ajax.get('/node/device_info/'+ids+'/ports'+'?token='+this.token)
+				var para={
+					search_available:true
+				}
+				this.$ajax.get('/node/device_info/'+ids+'/ports'+'?token='+this.token,para)
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
-							this.netwotkPortData=res.data.data.items;
+							this.netwotkPortData=res.data.data.items.filter(item => {
+								
+								if(this.newtworkBasePortP.length !==0){
+									var num=this.newtworkBasePortP.map(v => v.id)	
+									return !num.includes(item.id)
+								}else {
+									return item;
+								}
+								
+							})
+							console.log(this.netwotkPortData)
+
 						}
 					}
 				})
@@ -505,13 +536,14 @@
 					return new Error('请添加关联物理端口')
 				}else{
 					console.log('关联的物理端口不是空的')	
+					
 					this.$refs.filters.validate(valid => {
 						let str=[],obj={}
-						this.filters.physical_ports.forEach(ele => {
+						this.physical_ports.forEach(ele => {
 							obj={
-								node_id:ele.node_id,
-								device_id:ele.device_id,
-								port_id:ele.port_id,
+								node_id:ele.node.id,
+								device_id:ele.device.id,
+								port_id:ele.port.id,
 								position:ele.position,
 								rack:ele.rack,
 								device_type:ele.device_type,
@@ -529,8 +561,8 @@
 							access_type:this.filters.access_type,
 							physical_ports:str
 						}
-//						console.log(this.filters)
-//						console.log(para);
+
+						console.log(para);
 						if(valid){
 							this.$confirm('确定要创建逻辑端口吗?','提示',{})
 							.then(() => {
@@ -688,6 +720,7 @@
 								dc_name:this.editForm.dc_name,
 								dc_id:this.editForm.dc_id
 							}
+							this.filters.physical_ports.push(para)
 							//表格的里面的数据
 							let paraData={}
 							paraData={
@@ -718,20 +751,13 @@
 							console.log(this.editForm)
 							this.$refs["editForm"].resetFields();
 							this.dialogFormVisible=false;
-							
-//							this.filters.physical_ports.push(para);
 
 							var  str=[];
 							str.push(paraData);
-//							this.physical_ports=this.physical_ports.concat(str)
-//							sessionStorage.setItem('dataTable', JSON.parse(JSON.stringify( str.push(paraData) ))   );
+
 							this.physical_ports.push(paraData);
-//							this.physical_ports=sessionStorage.getItem('dataTable')
+
 							console.log(this.physical_ports)
-//							sessionStorage.setItem('dataTable',JSON.stringify(this.physical_ports));
-//							this.physicalData=JSON.parse(sessionStorage.getItem('dataTable') )
-							
-						// }).catch(() => {})
 					}
 				})
 			},
@@ -771,7 +797,7 @@
 							console.log(this.editForm)
 							console.log(this.basicForm)
 							this.filters.physical_ports[this.editForm.index]=Object.assign({},this.editForm);
-
+							console.log(this.filters)
 							var obj={
 								description:this.editForm.description,
 								device:{
@@ -785,8 +811,8 @@
 								},
 								port:{
 									id:this.editForm.port_id==this.basicForm.port.port_no?this.basicForm.port.id:this.editForm.port_id,
-									name:this.editForm.port_no,
-									port_no:this.editForm.port_no,
+									name:this.editForm.port_name,
+									port_no:this.editForm.port_name,
 									status:this.editForm.port_status
 								},
 								port_type:this.editForm.port_type,
@@ -827,11 +853,14 @@
 				}
 			},
 			handleDel:function(index,row){
+				console.log(index);
+				console.log(row)
 				let _this=this;
 				//删除
 				this.$confirm('确定要删除该物理端口吗?','提示',{type:'warning'})
 				.then(() => {
 					this.physical_ports.splice(index,1);
+					this.filters.physical_ports.splice(index,1)
 				}).catch(() => {})
 			},
 			goback(){

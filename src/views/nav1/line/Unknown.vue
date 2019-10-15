@@ -195,7 +195,7 @@
 						<el-input v-model='editForm.monitoring_param':disabled='seeStatus' class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item  label='流量获取键入值'>
-						<el-input v-model='editForm.monitoring_param' class='ipt'></el-input>
+						<el-input v-model='editForm.monitoring_param' class='ipt' :disabled='seeStatus'></el-input>
 					</el-form-item>
 					<el-form-item label='备注' >
 						<el-input type='textarea'cols="7" v-model='editForm.description' :disabled='seeStatus' class='ipt' ></el-input>
@@ -675,6 +675,7 @@
 				})
 			},
 			handleStart(index,row){
+				
 				//运行
 				this.$confirm('确认将次链路开通运行吗?','提示',{
 					type:'primary'
@@ -688,6 +689,7 @@
 									message:'运行成功，请到数据中心查看!',
 									type:'success'
 								})
+								row.maintain_type=true
 								this.getUsers()
 							}else if(res.data.status){
 								this.$message({

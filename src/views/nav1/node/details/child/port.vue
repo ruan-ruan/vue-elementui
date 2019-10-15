@@ -62,17 +62,26 @@
 							if(res.data.data.devices){
 								if(res.data.data.devices.length==2){
 									this.equipStatue=true
-									this.base1=res.data.data.devices[0];
-									this.base2=res.data.data.devices[1];
+									
+//									this.base1=res.data.data.devices[0];
+//									this.base2=res.data.data.devices[1];
+									this.base1=res.data.data.devices.find((item ) => {
+										return item['sign']=='d1'
+									})
+									this.base2=res.data.data.devices.find((item ) => {
+										return item['sign']=='d2'
+									})
+									console.log(this.base1)
+									console.log(this.base2)
 								}else{
 									this.equipStatue=false
-									this.base1=res.data.data.devices[0];
+									this.base1=res.data.data.devices.find((item ) => {
+										return item['sign']=='d1'
+									})
 								}
 							}
 							this.ids1=this.obj.devices[0].id
-							console.log(this.base1)
-							console.log(this.base2)
-//							
+
 							this.getList(this.obj.devices[0].id)
 							
 						}

@@ -193,13 +193,14 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							console.log(res)
-							res.data.data.items.forEach(ele => {
-								obj={
-									name:ele.name,
-									id:ele.id,
-								}
-								this.clounData.push(obj)
-							})
+							this.clounData=res.data.data.items;
+//							res.data.data.items.forEach(ele => {
+//								obj={
+//									name:ele.name,
+//									id:ele.id,
+//								}
+//								this.clounData.push(obj)
+//							})
 						}
 					}
 				}).catch( e => {console.log(e)})
@@ -274,7 +275,7 @@
 								type:str.type,
 								name:str.name,
 								region_id:str.region,
-								access_point_id:str.access_point,
+								access_point:str.access_point,
 								bandwidth:str.bandwidth,
 								description:str.description,
 								node_id:str.node.name,
@@ -299,7 +300,24 @@
 						this.$confirm('确定要提交吗?','提示',{})
 						.then(() => {
 							this.editLoading=true;
-							let para=Object.assign({},this.editForm)
+//							let para=Object.assign({},this.editForm)
+							console.log(this.editForm)
+							let para={
+								type:this.editForm.type,
+								name:this.editForm.name,
+								region:this.editForm.region_id,
+								access_point:this.editForm.access_point_id,
+								bandwidth:this.editForm.bandwidth,
+								description:this.editForm.description,
+								node_id:this.editForm.node_id,
+								logic_port_id:this.editForm.logic_port_id,
+								interface_driver:this.editForm.name,
+								api_url:this.editForm.api_url,
+								api_token:this.editForm.api_token,
+								api_uuid:this.editForm.api_uuid,
+								extension:this.editForm.extension,
+								get_speed_key:this.editForm.get_speed_key,
+							}
 							this.$ajax.post('/link/add_cloud_link'+'?token='+this.token,para)
 							.then(res => {
 								this.editLoading=false;
@@ -313,7 +331,7 @@
 										this.$router.replace('/location/line/cloun')
 									}else{
 										this.$message({
-											messsage:res.data.message,
+											message:res.data.message,
 											type:'warning'
 										})
 									}
@@ -350,7 +368,7 @@
 								type:this.editForm.type,
 								name:this.editForm.name,
 								region_id:this.editForm.region_id,
-								access_point_id:this.editForm.access_point_id,
+								access_point:this.editForm.access_point_id,
 								bandwidth:this.editForm.bandwidth,
 								description:this.editForm.description,
 								node_id:obj.node_id,

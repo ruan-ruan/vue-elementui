@@ -3,7 +3,7 @@
 		<!--公有云部分-->
 		<el-form :model='editForm':rules='editFormRules' ref='editForm'label-width='100px' v-loading='editLoading'>
 			<el-form-item label='公有云'prop='cloun'>
-				<el-select v-model='editForm.cloun' filterable  class='ipt' >
+				<el-select v-model='editForm.cloun' filterable  class='ipt'  @change='handleSelect(editForm.cloun)'>
 					<el-option v-for='(item ,index) in clounData'
 						:label='item'
 						:value='item'
@@ -196,11 +196,11 @@
 			
 		},
 		mounted(){
-			if(this.clounData.length!==2){
-				this.clounData=localStorage.getItem("temp");
-			}else{
-				return this.clounData;
-			}
+//			if(this.clounData.length!==2){
+//				this.clounData=localStorage.getItem("temp");
+//			}else{
+//				return this.clounData;
+//			}
 		},
 		methods:{
 			tenRules(){
@@ -222,7 +222,7 @@
 			},
 			handleSelect(item) {
 
-				this.editForm.cloun=item;
+//				this.editForm.cloun=item;
 				let para={
 					search_cloud:item
 				}
@@ -257,7 +257,7 @@
 				}).catch(e => {
 					console.log(e)
 				})
-		   },
+		  },
 			getFormData(){
 				//获取公有云的列表
 				this.$ajax.get('/vll/get_public_cloud'+'?token='+this.token)

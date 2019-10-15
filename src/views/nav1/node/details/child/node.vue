@@ -114,7 +114,7 @@
 				<div slot='footer' class="dialog-footer footer_right">
 					<el-button size='small' @click='goback' v-if='editFormBtn' >返回</el-button>
 					
-					<el-button size='small' @click='unknowgoback' v-else  >返回</el-button>
+					<el-button size='small' @click='unknowgoback' v-else-if='!editFormBtn'  >返回</el-button>
 					<!--节点的编辑保存-->
 					<el-button size='small' v-if='editFormBtn' @click='editForm' type="primary">保存</el-button>
 					<!--未知节点的添加按钮-->
@@ -180,6 +180,9 @@
 					devices0_rack:'',
 					devices0_description:'',
 					port_section0:'',
+					
+					
+					
 					devices1_id:'',
 					devices1_hostname:'',
 					devices1_ip:'',
@@ -191,6 +194,7 @@
 					devices1_rack:'',
 					devices1_description:'',
 					port_section1:'',
+					
 					dc_id:'',
 					dc_name:'',
 				},
@@ -265,6 +269,7 @@
 			if(typeof this.title !='undefined'){
 				console.log('进入详情的界面')
 				this.getUsers(this.title)
+				this.backstatus=true;
 				//此处是节点的详情的界面
 				this.StaEditForm=true;
 				this.editFormBtn=false;
@@ -362,7 +367,7 @@
 							var strData=res.data.data;
 							this.baseData=res.data.data
 							let str=[];
-							let obj={};
+							var  setObj={};
 							let dc_name=''
 							if(!strData.dc && typeof(strData.dc)!='undefined' && strData.dc!=0){
 								dc_name=''
@@ -375,7 +380,7 @@
 //								str=Object.assign([],strData.devices);
 								str=JSON.parse(JSON.stringify(strData.devices))
 								
-								obj={
+								setObj={
 									id:strData.id,
 									name:strData.name,
 									vtep:strData.vtep,
@@ -395,41 +400,49 @@
 								}
 								
 							}else if(strData.devices.length==2){
+								console.log('进入设别2')
 								this.equStatusTwo=true;
 								str=Object.assign([],strData.devices);
-								obj={
+								var d1=str.find((item) => {
+									return item['sign']=='d1'
+								})
+								var d2=str.find((item ) => {
+									return item['sign']=='d2'
+								})
+								setObj={
 									id:strData.id,
 									name:strData.name,
 									vtep:strData.vtep,
-									dc_id:strData.dc.name,
+									dc_id:dc_name,
 									
-									port_section0:str[0].port_section,
-									devices0_id:str[0].id,
-									devices0_hostname:str[0].hostname,
-									devices0_ip:str[0].ip,
-									devices0_vendor:str[0].vendor,
-									devices0_model:str[0].model,
-									devices0_sn:str[0].sn,
-									devices0_position:str[0].position,
-									devices0_room:str[0].room,
-									devices0_rack:str[0].rack,
-									devices0_description:str[0].description,
+									port_section0:d1['port_section'],
+									devices0_id:d1.id,
+									devices0_hostname:d1['hostname'],
+									devices0_ip:d1.ip,
+									devices0_vendor:d1.vendor,
+									devices0_model:d1.model,
+									devices0_sn:d1.sn,
+									devices0_position:d1.position,
+									devices0_room:d1.room,
+									devices0_rack:d1.rack,
+									devices0_description:d1.description,
 									
-									port_section1:str[1].port_section,
-									devices1_id:str[1].id,
-									devices1_hostname:str[1].hostname,
-									devices1_ip:str[1].ip,
-									devices1_vendor:str[1].vendor,
-									devices1_model:str[1].model,
-									devices1_sn:str[1].sn,
-									devices1_position:str[1].position,
-									devices1_room:str[1].room,
-									devices1_rack:str[1].rack,
-									devices1_description:str[1].description,
+									port_section1:d2.port_section,
+									devices1_id:d2.id,
+									devices1_hostname:d2.hostname,
+									devices1_ip:d2.ip,
+									devices1_vendor:d2.vendor,
+									devices1_model:d2.model,
+									devices1_sn:d2.sn,
+									devices1_position:d2.position,
+									devices1_room:d2.room,
+									devices1_rack:d2.rack,
+									devices1_description:d2.description,
 								}
 							}
-							console.log(obj);
-							this.seeForm=Object.assign({},obj);
+							
+							this.seeForm=Object.assign({},setObj);
+							console.log(this.seeForm)
 						}else{
 							this.$message({
 								message:res.data.message,
@@ -622,6 +635,15 @@
 					}	
 					
 				}else if(str.length=2){
+//					var d1=str.find((item) => {
+//						return item['sign']=='d1'
+//					})
+//					var d2=str.find((item ) => {
+//						return item['sign']=='d2'
+//					})
+					
+					
+					
 					para={
 						id:this.seeForm.id,
 						name:this.seeForm.name,
@@ -700,10 +722,12 @@
 					this.loading=false;
 					if(res.status==200){
 						if(res.data.status==0){
+							console.log(res);
+							
 							this.unknown_editFormData=Object.assign({},res.data.data)
 							var unknownSee;
 							unknownSee=res.data.data;
-							console.log(res);
+							
 							if(unknownSee.devices.length==1){
 								this.equStatusTwo=false;
 								this.seeForm={
@@ -772,21 +796,22 @@
 			},
 			goback(){
 				console.log('kkk')
+				this.$store.state.statusname=false;
 				this.$router.push('/location/backbone')
 				
 			},
 			unknowgoback(){
-				this.$store.state.statusname=true;
-										this.$router.push('/location/backbone')
-//				console.log('lll')
+//				this.$store.state.statusname=true;
+//				this.$router.push('/location/backbone')
+				console.log('lll')
 ////				this.$router.go(-1)
-//				if(this.backstatus==true) {
-//					this.$router.push('/location/backbone')
-//				}else {
-//					console.log('ggg')
-//					this.$store.state.statusname=true;
-//					this.$router.go(-1)
-//				}
+				if(this.backstatus==true) {
+					this.$store.state.statusname=false;
+					this.$router.push('/location/backbone')
+				}else {
+					this.$store.state.statusname=true;
+					this.$router.push('/location/backbone')
+				}
 
 			}
 		},
