@@ -410,6 +410,7 @@
 								if(ele.status=='UP'){
 									ele.color='colorGreen'
 									if(ele.maintain_type){
+										console.log(2222)
 										ele.maintenance_value=''
 										ele.maintenanceBtn='开启维护'
 									}else{
