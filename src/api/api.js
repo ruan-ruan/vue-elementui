@@ -2,7 +2,7 @@ import axios from 'axios'
 import qs from 'qs'
 import { Message } from 'element-ui';
 //let base = '';
-axios.defaults.baseURL='http://api.tianchic.com'
+axios.defaults.baseURL='http://api.tianchi.com'
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 //axios.defaults.baseURL = $core.use('http://api.tianchic.com'); //确认协议和地址
 const ajax={
