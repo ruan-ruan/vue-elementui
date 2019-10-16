@@ -63,7 +63,7 @@
 <script >
 	
 	import dcPort from'@/views/business/multi/multFile/dcPort'
-	import dcPortz from'@/views/business/multi/multFile/dcPortz'
+//	import dcPortz from'@/views/business/multi/multFile/dcPortz'
 	
 //	dcPortz
 	
@@ -74,7 +74,7 @@
 //	import selVlan from '@/views/business/pointTo/selVlan'	//vlan的弹窗的选择
 	export default{
 		name:'dataInterconnection',
-		components:{topForm,billing,dcPort,dcPortz},
+		components:{topForm,billing,dcPort},
 		data(){
 			return{
 				token:'',
@@ -135,11 +135,6 @@
 				this.editForm.endpoints_logic_port_id_z=msg.logic
 				this.editForm.vlan_z=msg.vlan
 				
-//				this.editForm={
-//					nodeName_z:msg.nodeName,
-//					endpoints_logic_port_id_z:msg.logic,
-//					vlan_z:msg.vlan,
-//				}
 			},
 			getVal(data){
 				//获取基本的信息配置    topForm组件内的信息

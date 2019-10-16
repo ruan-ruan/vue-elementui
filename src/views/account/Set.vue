@@ -317,7 +317,7 @@
 					page:this.currentPage,
 					per_page:this.pagesize,
 					search_name:this.filters.search_name,
-					search_status:this.filters.search_status
+					search_usable:this.filters.search_status
 				}
 				
 				this.$ajax.get('/admin/admins'+'?token='+this.token,para)

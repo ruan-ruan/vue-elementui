@@ -320,7 +320,7 @@
             label='带宽'
             prop='bandwidth'
           >
-            <el-input v-model='editForm.bandwidth'  class='ipt'></el-input>
+            <el-input v-model='editForm.bandwidth'  class='ipt'></el-input>Mbps
           </el-form-item>
           <el-form-item label='业务状态'>
             <el-input
@@ -447,6 +447,7 @@ export default {
         description: "",
         time:'',
         statusHTML:'',//业务状态
+        charge_mode:''
       },
       editFormRules: {
         name: [{ required: true, message: "请输入名称", trigger: "blur" }],
@@ -501,7 +502,9 @@ export default {
       endDatePicker: this.processDate(),
       tenantData: [], //租户数据
       parentStatus: true, //该组件被调用的S时候，上面控制部分隐藏
-      isid: []
+      isid: [],
+      baseForm:{},//数据的备份
+     
     };
   },
   created() {
@@ -524,7 +527,8 @@ export default {
       //获取租户标识的数据
       let tenantObj = {};
 
-      this.$ajax.get("/tenant/tenants" + "?token=" + this.token).then(res => {
+      this.$ajax.get("/tenant/tenants" + "?token=" + this.token)
+      .then(res => {
         if (res.status == 200) {
           if (res.data.status == 0) {
             res.data.data.items.forEach(ele => {
@@ -536,7 +540,8 @@ export default {
             });
           }
         }
-      });
+      }).catch(e => {console.log(e)})
+       
     },
     //改变的时候
     handleSizeChange(val) {
@@ -752,16 +757,25 @@ export default {
       //编辑
       this.dialogStatus = "update";
       this.dialogFormVisible = true;
+      if( (!row.expiration_time && typeof(row.expiration_time)!='undefined' && row.expiration_time!=0) && (typeof (row.expiration_time) ==='undefined')){
+      	row.expiration_time=''
+      }
+      if( (!row.charge_time && typeof(row.charge_time)!='undefined' && row.charge_time!=0) && (typeof (row.charge_time) ==='undefined')){
+      	row.charge_time=''
+      }
       this.editForm = {
         id: row.id,
         name: row.name,
         bandwidth: row.bandwidth,
         time:datedialogFormat(row.creation_time),
-        charge_time: new Date(datedialogFormat(row.charge_time)),
-        expiration_time: new Date(datedialogFormat(row.expiration_time)),
+        charge_time:row.charge_time==''?"": new Date(datedialogFormat(row.charge_time)),
+        expiration_time:row.expiration_time==''?"": new Date(datedialogFormat(row.expiration_time)),
         description: row.description,
-        statusHTML:row.statusHTML
+        statusHTML:row.statusHTML,
+        charge_mode:row.charge_mode
       };
+      this.baseForm=Object.assign({},row);
+     this.baseForm.charge_time==datedialogFormat(row.charge_time)
     },
     reset() {
       this.$refs['filters'].resetFields()
@@ -770,18 +784,17 @@ export default {
       //编辑保存按钮
       this.$refs.editForm.validate(valid => {
         if (valid) {
-        //   this.$confirm("确定要修改 吗?", "提示", {})
-        //     .then(() => {
-              let para = Object.assign({}, this.editForm);
-
-              this.$ajax
-                .put(
-                  "/vll/edit_p2p_vll/" +
-                    this.editForm.id +
-                    "?token=" +
-                    this.token,
-                  para
-                )
+							let para={
+								name:this.editForm.name,
+								charge_mode:this.editForm.charge_mode,
+								bandwidth:this.editForm.bandwidth,
+								charge_time:this.editForm.charge_time=='Invalid Date'?"": Number(this.editForm.charge_time)/1000,
+								expiration_time:this.editForm.expiration_time=='Invalid Date'?"": Number(this.editForm.expiration_time)/1000,
+								description:this.editForm.description
+							}
+							console.log(para)
+              this.$ajax.put(
+                  "/vll/edit_p2p_vll/" + this.editForm.id + "?token=" +  this.token,  para  )
                 .then(res => {
                   if (res.status == 200) {
                     if (res.data.status == 0) {

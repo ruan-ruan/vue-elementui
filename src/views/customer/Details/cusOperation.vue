@@ -6,8 +6,8 @@
 				<el-col :span='24'style='margin-left: 40px;'>
 					<!--<el-col :span='12'>-->
 						<el-form :model='customer' ref='customer' :rules='customerRules' v-loading='editLoading' label-width='95px'>
-							<el-form-item label='创建时间'>
-								<el-input disabled v-model='customer.creation_time' class='ipt_sels' ></el-input>
+							<el-form-item label='创建时间'v-show='editOpera'>
+								<el-input disabled v-model='customer.creation_time' class='ipt_sels'  ></el-input>
 							</el-form-item>
 							<el-form-item label='租户标识(公司名称)' prop='name'>
 								<template>
@@ -184,6 +184,7 @@
 				//设置成不可以编辑
 				this.btnStatus=false;
 				//传入对应的实参
+				this.editOpera=true;
 				this.getCusDetails(this.tit)
 			}else if((typeof this.tit =='undefined'&& typeof this.cusEditID =='undefined')&&this.addCustome ==='添加'){
 				console.log('进入可以添加的界面');

@@ -14,16 +14,24 @@
 		props:['titleOne','titleTwo'],
 		data(){
 			return{
-				data:[]
+				data:''
 			}
 		},
 		created(){
-			let str=[this.titleOne,this.titleTwo];
-			str.forEach(ele => {
-				if(ele){
-					this.data=ele
-				}
-			})
+			console.log(this.titleOne)
+			if(typeof this.titleOne !=='undefined'){
+				this.data=this.titleOne
+			}
+			
+			if(typeof this.titleTwo !=='undefined'){
+				this.data=this.titleTwo
+			}
+//			let str=[this.titleOne,this.titleTwo];
+//			str.forEach(ele => {
+//				if(ele){
+//					this.data=ele
+//				}
+//			})
 		}
 	}
 </script>

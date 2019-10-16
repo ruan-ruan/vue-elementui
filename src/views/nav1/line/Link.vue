@@ -385,9 +385,10 @@
 					per_page:this.pagesize,
 					search_name:this.filters.search_name,
 					search_status:this.filters.search_status,
-					start_time:getTime(this.filters.start_time),
-					end_time:getTime(this.filters.end_time),
+					search_start_time:getTime(this.filters.start_time),
+					search_end_time:getTime(this.filters.end_time),
 				}
+				console.log(para)
 				this.$ajax.get('/link/links'+'?token='+this.token,para)
 				.then( res => {
 					if(res.status==200){
