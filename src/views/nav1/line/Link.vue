@@ -70,7 +70,7 @@
 						<span v-text="scope.row.status" :class='scope.row.color'></span>
 					</template>
 				</el-table-column>
-				<el-table-column  prop='maintenance_value' label='故障/维护' align='center' min-width='60'>
+				<el-table-column prop='maintenance_value' label='故障/维护' align='center' min-width='60'>
 					<!--这里的数据是在下面的进行判断的是-->
 				</el-table-column>
 				<el-table-column prop='bandwidth' label='总带宽(Mbps)' align='center' min-width='60'>
@@ -371,7 +371,7 @@
 			},
 			getUsers(){
 				var _this=this;
-				var maintenance=document.getElementsByClassName('maintenance');
+				// var maintenance=document.getElementsByClassName('maintenance');
 				this.loading=true
 				this.filters.start_time = this.filters.timeVal[0]
 					? this.filters.timeVal[0]
@@ -411,11 +411,12 @@
 								if(ele.status=='UP'){
 									ele.color='colorGreen'
 									if(ele.maintain_type){
-										ele.maintenance_value=''
+										console.log(33333)
+										ele.maintenance_value==''
 										ele.maintenanceBtn='开启维护'
 									}else{
-										ele.maintenance_value='维护'
-										ele.maintenanceBtn='关闭维护'
+										ele.maintenance_value==''
+										ele.maintenanceBtn='开启维护'
 									}
 								}else if(ele.status=='DOWN'){
 									ele.color='colorRed'
