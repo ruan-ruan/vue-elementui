@@ -45,13 +45,14 @@
 
 			<!--列表-->
 			<el-table :data="users" highlight-current-row @selection-change="selsChange" style="width: 100%;"
-				:default-sort = "{prop: 'creation_time', order: 'descending'}">
+				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
 				<el-table-column type="selection" width="50" align='center'>
 				</el-table-column>
 				<el-table-column type="index" width="50" label='序号' align='center'>
+					<template slot-scope='scope'>
+						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+					</template>
 				</el-table-column>
-				<!--<el-table-column prop="id" label="ID" align='center' min-width='100'>
-				</el-table-column>-->
 				<el-table-column prop="creation_time" sortable label="创建时间" align='center' width='101' :formatter='dateFormat' >
 				</el-table-column>
 				<el-table-column prop="name" label="名称"  align='center' min-wdith='100'>
@@ -70,25 +71,19 @@
 			</el-table>
 	
 			<!--工具条-->
-			<!--<el-col :span="24" class="toolbar">-->
-				<!--<el-col :span='3'>
-					<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">批量删除</el-button>
-				</el-col>-->
-				<el-col :span='24'  class="toolbar">
-					<el-pagination 
-						:total='total' 
-						layout="total, sizes, prev, pager, next, jumper"
-						@size-change='handleSizeChange' 
-						@current-change="handleCurrentChange" 
-						:page-sizes="[10, 20, 50, 100]"
-						:page-count='pageNum' 
-						:pager-count="pagecount"
-					    :prev-text='prev'
-					    :next-text='next'>
-					</el-pagination>
-				</el-col>
-				
-			<!--</el-col>-->
+			<el-col :span='24'  class="toolbar">
+				<el-pagination 
+					:total='total' 
+					layout="total, sizes, prev, pager, next, jumper"
+					@size-change='handleSizeChange' 
+					@current-change="handleCurrentChange" 
+					:page-sizes="[10, 20, 50, 100]"
+					:page-count='pageNum' 
+					:pager-count="pagecount"
+				    :prev-text='prev'
+				    :next-text='next'>
+				</el-pagination>
+			</el-col>
 	
 			<!--编辑界面-->
 			<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
@@ -124,7 +119,7 @@
 				
 			</el-dialog>
 			<!--详情界面-->
-			<el-dialog :title="textMap[dialogStatus]":visible.sync="dialog"  :close-on-click-modal="false">
+			<el-dialog :title="textMap[dialogStatus]":visible.sync="dialog"  :close-on-click-modal="false" v-loading='editLoading'>
 				<el-form label-position='left' :model="seeForm" label-width="80px"  ref="seeForm">
 					<el-form-item label="名称ID:" >
 						<template>
@@ -226,6 +221,7 @@
 		     	areaData:[],
 		      	addFormVisible: false, //新增界面是否显示
 		      	excelData:[],
+		      	editLoading:false
 		    	};
 		  	},
 		  created(){
@@ -260,7 +256,7 @@
 		    },
 		    //获取城市列表
 		    getCitys() {
-		    this.listLoading = true;
+		    this.loading = true;
 			 var para={
 			 	page:this.currentPage,
 			 	per_page:this.pagesize,
@@ -272,15 +268,11 @@
 		    	if(res.status==200){
 		    		if(res.data.status==0){
 		    			console.log(res);
+		    			this.loading = false;
 		    			descriptionValue(res.data.data.items);
 		    			this.total = res.data.data.page.total;
-//				        this.pageNum=res.data.data.page.pages;
+
 						this.users=res.data.data.items;
-				        this.listLoading = false;
-				        //利用事件总线发送数据
-//						this.bus.$emit('City',this.users)
-						//将城市的数据保存vuex的state的city里面
-//						this.$store.state.city=res.data.data.items;
 		    		}
 		    	}
 		      });
@@ -291,12 +283,10 @@
 		        	type: "warning"
 		      	})
 		        .then(() => {
-		            this.listLoading = true;
 					this.$ajax.del('/location/del_city/'+row.id+'?token='+this.token,)
 		          	.then(res => {
 			          	if(res.status==200){
 			          		if(res.data.status==0){
-			          			this.listLoading = false;
 					            this.$message({
 					              message: "删除成功",
 					              type: "success"
@@ -359,51 +349,43 @@
 		    updateData:function() {
 		      this.$refs.editForm.validate(valid => {
 		        if (valid) {
-		        //   this.$confirm("确认提交吗？", "提示", {})
-		        //     .then(() => {
-		                this.editLoading = true;
-//		           		let para = Object.assign({}, this.editForm);
-						let obj={};
-						if(this.editForm.region_id==this.backUp.region.name){
-							obj={
-								region_id:this.backUp.region.id
-							}
-						}else{
-							obj={
-								region_id:this.editForm.region_id
+	                this.editLoading = true;
+					let obj={};
+					if(this.editForm.region_id==this.backUp.region.name){
+						obj={
+							region_id:this.backUp.region.id
+						}
+					}else{
+						obj={
+							region_id:this.editForm.region_id
+						}
+					}
+					let para={
+						name:this.editForm.name,
+						region_id:obj.region_id,
+						description:this.editForm.description
+					}
+					this.$ajax.put('/location/edit_city/'+this.backUp.id+'?token='+this.token,para)
+	              	.then(res => {
+						if(res.status==200){
+							if(res.data.status==0){
+								this.editLoading = false;
+				                this.$message({
+				                  message: "编辑成功",
+				                  type: "success"
+				                });
+				                this.$refs["editForm"].resetFields();
+				                 this.dialogFormVisible = false;
+				                this.getCitys();	
+							}else if(res.data.status){
+								this.$message({
+									message:res.data.message,
+									type:'warning'
+								})
 							}
 						}
-						let para={
-							name:this.editForm.name,
-							region_id:obj.region_id,
-							description:this.editForm.description
-						}
-						console.log(para)
-						this.$ajax.put('/location/edit_city/'+this.backUp.id+'?token='+this.token,para)
-		              	.then(res => {
-							if(res.status==200){
-								if(res.data.status==0){
-									this.editLoading = false;
-					                this.$message({
-					                  message: "编辑成功",
-					                  type: "success"
-					                });
-					                this.$refs["editForm"].resetFields();
-					                 this.dialogFormVisible = false;
-					                this.getCitys();	
-								}else if(res.data.status){
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
-								}
-							}
 
-		              }).catch (e => {console.log(e)})
-		        //    }) .catch(e => {
-		        //       // 打印一下错误
-		        //       console.log(e);
-		        //     });
+	              }).catch (e => {console.log(e)})
 		        }
 		      });
 		    },
@@ -452,15 +434,14 @@
 		      this.$confirm("确认删除选中记录吗？", "提示", {
 		        type: "warning"
 		      })
-		        .then(() => {
-		          	this.listLoading = true;
-		          	let para = { ids: ids };
+		    .then(() => {
+		        let para = { ids: ids };
 				this.$ajax.del('/location/del_regions'+'?token='+this.token,para)
 		          .then(res => {
 		          	console.log(res)
 		          	if(res.status=='200'){
 		          		if(res.data.status=='0'){
-		          			this.listLoading = false;
+
 				            this.$message({
 				              message: "删除成功",
 				              type: "success"

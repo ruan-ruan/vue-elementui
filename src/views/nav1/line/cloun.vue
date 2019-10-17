@@ -56,7 +56,11 @@
 			<el-table :data='users' highlight-current-row @selection-change="selsChange" style='width: 100%;'
 				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
 				<el-table-column type='selection'min-width='40'></el-table-column>
-				<el-table-column type='index' label='序号' min-width='50'align='center'></el-table-column>
+				<el-table-column type='index' label='序号' min-width='50'align='center'>
+					<template slot-scope='scope'>
+						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+					</template>
+				</el-table-column>
 				<el-table-column prop='creation_time' sortable label='创建时间' width='101' align='center' :formatter='dateFormat'>					
 				</el-table-column>
 				<el-table-column  label='云链路名称' min-width='120' align='center'>
@@ -194,6 +198,7 @@
 			},
 			getUser(){
 				//获取云列表
+				this.loading=true;
 				let para={
 					page: this.currentPage,
 			        per_page:this.pagesize,
@@ -205,6 +210,7 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
+							this.loading=false;
 							console.log(res)
 							
 							descriptionValue(res.data.data.items)

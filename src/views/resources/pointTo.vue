@@ -133,7 +133,11 @@
               label='序号'
               min-width='30'
               align='center'
-            ></el-table-column>
+            >
+	            <template slot-scope='scope'>
+								<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+							</template>
+            </el-table-column>
             <el-table-column
               label='专线名称'
               min-width='60'
@@ -524,6 +528,7 @@ export default {
   },
   methods: {
     getFiltersData() {
+    	
       //获取租户标识的数据
       let tenantObj = {};
 
@@ -558,6 +563,7 @@ export default {
     },
     getUsers() {
       //获取所有的点的数据
+      this.getLoading=true;
       let para = {
         search_tenant:
           typeof this.customerID !== "undefined" ? this.customerID : this.filters.search_tenant,
@@ -570,33 +576,26 @@ export default {
         search_end_bandwidth: this.filters.search_end_bandwidth,
         
         search_start_charge_time: typeof this.filters.billingTime[0] == "undefined" ? "": Number(this.filters.billingTime[0]) / 1000,
-        search_end_charge_time:
-          typeof this.filters.billingTime[1] == "undefined"
-            ? ""
-            : Number(this.filters.billingTime[1]) / 1000,
-        search_start_expiration_time:
-          typeof this.filters.overdueTime[0] == "undefined"
-            ? ""
-            : Number(this.filters.overdueTime[0]) / 1000,
-        search_end_expiration_time:
-          typeof this.filters.overdueTime[1] == "undefined"
-            ? ""
-            : Number(this.filters.overdueTime[1]) / 1000,
+        search_end_charge_time: typeof this.filters.billingTime[1] == "undefined"  ? "" : Number(this.filters.billingTime[1]) / 1000,
+        search_start_expiration_time: typeof this.filters.overdueTime[0] == "undefined" ? ""  : Number(this.filters.overdueTime[0]) / 1000,
+        search_end_expiration_time:  typeof this.filters.overdueTime[1] == "undefined"  ? "" : Number(this.filters.overdueTime[1]) / 1000,
         search_node: typeof this.nodeID !== "undefined" ? this.nodeID : "",
-        search_logic_port:
-          typeof this.customer !== "undefined" ? this.customer : ""
+        search_logic_port: typeof this.customer !== "undefined" ? this.customer : ""
       };
       console.log(para);
-      this.$ajax
-        .get("/vll/p2p_vlls" + "?token=" + this.token, para)
+      this.$ajax.get("/vll/p2p_vlls" + "?token=" + this.token, para)
         .then(res => {
           if (res.status == 200) {
             if (res.data.status == 0) {
+            	console.log(res)
+            	this.getLoading=false;
               // this.users=res.data.data.items;
                  this.total=res.data.data.page.total;
-              console.log(res);
 							descriptionValue(res.data.data.items);
               res.data.data.items.forEach(ele => {
+              	//设置   a端  z端数据
+              	
+              	
               	
                 if (ele.type == "d2d") {
                   ele.typeName = "DCI";
@@ -629,10 +628,7 @@ export default {
                   ele.creat = true;
                   ele.btn=false;
                 }
-                
-                
-                
-                //								console.log(ele)
+
                 var str = ele.endpoints;
                 if (str) {
                   if (str.length !== 0) {
@@ -671,7 +667,7 @@ export default {
                       
                       ele.logicPortA = ele.endpoints[0].logic_port.name;
                       ele.logicPortZ = ele.endpoints[1].logic_port.name;
-                      if (str[0].vlan) {
+//                    if (str[0].vlan) {
                         if (str[0].vlan == "-1") {
                           ele.vlanHTMLA = "透传";
                         } else if (str[0].vlan == "0") {
@@ -679,7 +675,7 @@ export default {
                         } else {
                           ele.vlanHTMLA = str[0].vlan;
                         }
-                      } else if (str[1].vlan) {
+//                    } else if (str[1].vlan) {
                         if (str[1].vlan == "-1") {
                           ele.vlanHTMLZ = "透传";
                         } else if (str[1].vlan == "0") {
@@ -687,9 +683,7 @@ export default {
                         } else {
                           ele.vlanHTMLZ = str[1].vlan;
                         }
-                      }
-                    } else {
-                      return;
+//                    }
                     }
                   }
                 }
@@ -733,22 +727,24 @@ export default {
       });
     },
     handleSeeA(index, row) {
+    	console.log(row)
       //查看A的详情
       console.log("进入A端的详情");
       this.$router.push({
         path: "/resource/see/logicalPort",
         query: {
-          detailsID: row.id
+          detailsID: row.endpoints[0].logic_port.id
         }
       });
     },
     handleSeeZ(index, row) {
+    	console.log(row)
       //查看Z端的详情
       console.log("进入Z端的详情");
       this.$router.push({
         path: "/resource/see/logicalPort",
         query: {
-          detailsID: row.id
+          detailsID: row.endpoints[1].logic_port.id
         }
       });
     },

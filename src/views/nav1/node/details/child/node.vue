@@ -33,9 +33,6 @@
 								<el-form-item label='设备名称:'prop='devices0_hostname'>
 									<el-input v-model='seeForm.devices0_hostname':disabled='StaNot' class='ipt'placeholder='请输入设备名称'></el-input>
 								</el-form-item>
-								<!--<el-form-item label='设备ID:' prop='devices0_id' v-if='devices_id_status'>
-									<el-input v-model='seeForm.devices0_id':disabled='StaEditForm' class='ipt'placeholder='请输入设备ID'></el-input>
-								</el-form-item>-->
 								<el-form-item label='管理IP:'prop='devices0_ip'>
 									<el-input v-model='seeForm.devices0_ip':disabled='StaNot' class='ipt'placeholder='请输入管理IP'></el-input>
 								</el-form-item>
@@ -51,7 +48,7 @@
 								<!--业务端口区间-->
 								<el-form-item label='端口区间:' prop='port_section0'>
 									<template>						
-										<el-input v-model='seeForm.port_section0':disabled='StaNot'class='ipt' placeholder='请输入设备1的端口'></el-input>
+										<el-input v-model='seeForm.port_section0':disabled='StaNot'class='ipt' placeholder='请输入设备1端口'></el-input>
 										<span class="cli_toTip":title='portRules'>*?</span>
 									</template>
 								</el-form-item>
@@ -73,9 +70,6 @@
 								<el-form-item label='设备名称:' prop='devices1_hostname'>
 									<el-input v-model='seeForm.devices1_hostname':disabled='StaNot' class='ipt'></el-input>
 								</el-form-item>
-								<!--<el-form-item label='设备ID:'prop='devices1_id' v-if='devices_id_status'>
-									<el-input v-model='seeForm.devices1_id':disabled='StaEditForm' class='ipt'></el-input>
-								</el-form-item>-->
 								<el-form-item label='管理IP:'prop='devices1_ip'>
 									<el-input v-model='seeForm.devices1_ip':disabled='StaNot' class='ipt'></el-input>
 								</el-form-item>
@@ -91,7 +85,7 @@
 								<!--业务端口区间-->
 								<el-form-item label='端口区间:' prop='port_section1'>
 									<template>
-										<el-input v-model='seeForm.port_section1':disabled='StaNot'class='ipt' placeholder="请输入正确区间格式或者正整数"></el-input>
+										<el-input v-model='seeForm.port_section1':disabled='StaNot'class='ipt' placeholder="请输入设备2端口"></el-input>
 										<span class="cli_toTip":title='portRules'>*?</span>
 									</template>
 								</el-form-item>
@@ -146,12 +140,16 @@
 					callback(new Error('请输入的端口号'))
 				}else if(!isValidNumber(value)){
 					callback(new Error('请输入正确的端口号，详细规则请点击右侧'))
-				}else{
+				} 
+//				else if(value <1 || value >54){
+//					callback( new Error('请填写正确的端口区间'))
+//				}
+				else {
 					callback()
 				}
 			}
 			return{
-				portRules:'规则:n-m,代表是n-m之间所有的整数代表的端口，且包含n和m,如需断点，请使用","逗号隔开即可，只能输入数字和-，请按照规则输入！！！',
+				portRules:'格式:填写1~54内的正整数;"-"代表端口区间并取两边的数值;","代表单个端口隔离 ,例:1-23,25,26-48代表除去24口的所有端口 ',
 				//获取用户的权限信息
 				token:'',
 				//这是在节点编辑的时候传过来的值
@@ -216,8 +214,11 @@
 					devices1_sn:[{ required: true, message: '请输入sn号', trigger: 'blur' }],
 					devices1_ip:[{ required: true, message: '请输入ip', trigger: 'blur' }],
 					devices1_model:[{ required: true, message: '请输入设备型号', trigger: 'blur' }],
+					
+					
 					port_section0:[{ required: true, trigger: 'blur', validator: validNumber }],
 					port_section1:[{ required: true,  trigger: 'blur' , validator: validNumber}],
+					
 				},
 				//当进去编辑部分的时候，这个时候对应的该属性是可以编辑的，并且保存按钮的控制
 				StaEditForm:false,
@@ -244,14 +245,14 @@
 				baseData:{},//数据备份
 			}
 		},
+		watch:{
+			'seeForm.port_section0':function(newVal,oldVal){
+				console.log(newVal)
+			}
+		},
 		created(){
 			this.token=sessionStorage.getItem('token');
-			//当this.id存在的时候是编辑的界面
-			console.log(typeof this.unknown_id);
-//			console.log(typeof this.title);//节点的详情
-//			console.log(typeof this.editId);
-			console.log(typeof this.unknownID);
-			console.log(this.unknown_editFormID)
+
 			//此处是节点部分的编辑和详情的界面控制
 //			&&  typeof this.title=='undefined'
 			if(typeof this.editId!='undefined'){
@@ -267,7 +268,7 @@
 				this.getDataCenter()
 			}
 			if(typeof this.title !='undefined'){
-				console.log('进入详情的界面')
+//				console.log('进入详情的界面')
 				this.getUsers(this.title)
 				this.backstatus=true;
 				//此处是节点的详情的界面
@@ -359,10 +360,8 @@
 				//编辑和详情的界面的数据
 				this.$ajax.get('/node/node_info/'+id+"?token="+this.token)
 				.then(res => {
-					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
 							this.loading=false
 							var strData=res.data.data;
 							this.baseData=res.data.data
@@ -727,58 +726,66 @@
 							this.unknown_editFormData=Object.assign({},res.data.data)
 							var unknownSee;
 							unknownSee=res.data.data;
-							
+							var d1=unknownSee.devices.find( item => {
+								return item['sign'] == 'd1'
+							})
 							if(unknownSee.devices.length==1){
 								this.equStatusTwo=false;
 								this.seeForm={
 									id:unknownSee.id,
 									name:unknownSee.name,
 									vtep:unknownSee.vtep,
-									devices0_id:unknownSee.devices[0].id,
-									devices0_hostname:unknownSee.devices[0].hostname,
-									devices0_ip:unknownSee.devices[0].ip,
-									devices0_vendor:unknownSee.devices[0].vendor,
-									devices0_model:unknownSee.devices[0].model,
-									devices0_sn:unknownSee.devices[0].sn,
-									devices0_position:unknownSee.devices[0].position,
-									devices0_room:unknownSee.devices[0].room,
-									devices0_rack:unknownSee.devices[0].rack,
-									devices0_description:unknownSee.devices[0].description,
-									port_section0:unknownSee.devices[0].port_section,
+									devices0_id:d1.id,
+									devices0_hostname:d1.hostname,
+									devices0_ip:d1.ip,
+									devices0_vendor:d1.vendor,
+									devices0_model:d1.model,
+									devices0_sn:d1.sn,
+									devices0_position:d1.position,
+									devices0_room:d1.room,
+									devices0_rack:d1.rack,
+									devices0_description:d1.description,
+									port_section0:d1.port_section,
 //										dc_id:unknownSee.dc.id,
 //										dc_name:unknownSee.dc.name,
 								}
 							}else if(unknownSee.devices.length=2){
 								this.equStatusTwo=true;
+								var d1=unknownSee.devices.find( item => {
+									return item['sign'] == 'd1'
+								})
+								var d2=unknownSee.devices.find( item => {
+									return item['sign'] == 'd2'
+								})
 								this.seeForm={
 //										dc_id:unknownSee.dc.id,
 									id:unknownSee.id,
 									name:unknownSee.name,
 									vtep:unknownSee.vtep,
 				
-									devices0_id:unknownSee.devices[0].id,
-									devices0_hostname:unknownSee.devices[0].hostname,
-									devices0_ip:unknownSee.devices[0].ip,
-									devices0_vendor:unknownSee.devices[0].vendor,
-									devices0_model:unknownSee.devices[0].model,
-									devices0_sn:unknownSee.devices[0].sn,
-									devices0_position:unknownSee.devices[0].position,
-									devices0_room:unknownSee.devices[0].room,
-									devices0_rack:unknownSee.devices[0].rack,
-									devices0_description:unknownSee.devices[0].description,
-									port_section0:unknownSee.devices[0].port_section,
+									devices0_id:d1.id,
+									devices0_hostname:d1.hostname,
+									devices0_ip:d1.ip,
+									devices0_vendor:d1.vendor,
+									devices0_model:d1.model,
+									devices0_sn:d1.sn,
+									devices0_position:d1.position,
+									devices0_room:d1.room,
+									devices0_rack:d1.rack,
+									devices0_description:d1.description,
+									port_section0:d1.port_section,
 				
-									devices1_id:unknownSee.devices[1].id,
-									devices1_hostname:unknownSee.devices[1].hostname,
-									devices1_ip:unknownSee.devices[1].ip,
-									devices1_vendor:unknownSee.devices[1].vendor,
-									devices1_model:unknownSee.devices[1].model,
-									devices1_sn:unknownSee.devices[1].sn,
-									devices1_position:unknownSee.devices[1].position,
-									devices1_room:unknownSee.devices[1].room,
-									devices1_rack:unknownSee.devices[1].rack,
-									devices1_description:unknownSee.devices[1].description,
-									port_section1:unknownSee.devices[1].port_section,
+									devices1_id:d2.id,
+									devices1_hostname:d2.hostname,
+									devices1_ip:d2.ip,
+									devices1_vendor:d2.vendor,
+									devices1_model:d2.model,
+									devices1_sn:d2.sn,
+									devices1_position:d2.position,
+									devices1_room:d2.room,
+									devices1_rack:d2.rack,
+									devices1_description:d2.description,
+									port_section1:d2.port_section,
 			
 //										dc_id:unknownSee.dc.id,
 //										dc_name:unknownSee.dc.name,

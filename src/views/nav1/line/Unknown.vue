@@ -55,7 +55,11 @@
 			<el-table :data='users' highlight-current-row @selection-change="selsChange" style='width: 100%;' 
 				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
 				<el-table-column type='selection' min-width='40'></el-table-column>
-				<el-table-column type='index' min-width='50' label='序号' align='center'></el-table-column>
+				<el-table-column type='index' min-width='50' label='序号' align='center'>
+					<template slot-scope='scope'>
+						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+					</template>
+				</el-table-column>
 				<el-table-column prop='creation_time' width='101' sortable label='申请时间' :formatter='dateFormat' align='center'></el-table-column>				
 				<el-table-column label='A端' min-width='80' align='center'>
 					<template slot-scope='scope'>
@@ -425,7 +429,7 @@
 //				var this=this;
 				
 				//获取数据和搜索
-				this.laoding=true;
+				this.loading=true;
 				//对时间的选择的处理，当不选择的时候作为一个空
 				this.filters.start_time = this.filters.timeVal[0]
 				? this.filters.timeVal[0]
@@ -447,7 +451,7 @@
 					console.log(res);
 					if(res.status==200){
 						if(res.data.status==0){
-
+							this.loading=false;
 							descriptionValue(res.data.data.items)
 							
 							this.total=res.data.data.page.total;

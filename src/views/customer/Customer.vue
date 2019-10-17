@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--客户管理-->
+    <!--租户信息列表-->
     <section>
       <!--顶部工具栏-->
       <el-col :span='24' class='toolbar' style="padding-bottom: 0px;" >
@@ -70,7 +70,11 @@
           width='60'
           align='center'
           label='序号'
-        ></el-table-column>
+        >
+        	<template slot-scope='scope'>
+						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+					</template>
+        </el-table-column>
           <!--:formatter='dateTableFormat'-->
         <el-table-column prop='creation_time'sortable :formatter='dateTableFormat' width='101' label='创建时间' align='center'></el-table-column>
         <el-table-column  min-width='120'align='center'label='租户标识(公司名称)' >
@@ -212,7 +216,7 @@ export default {
     },
     getUsers() {
       //搜索
-      this.laoding = true;
+      this.loading = true;
       if(this.filters.status=='') {
          var para = {
           page: this.currentPage,
@@ -238,7 +242,7 @@ export default {
           console.log(res);
           if (res.status == 200) {
             if (res.data.status == 0) {
-              this.laoding = false;
+              this.loading = false;
               descriptionValue(res.data.data.items)
               this.users = res.data.data.items;
               this.total = res.data.data.page.total;

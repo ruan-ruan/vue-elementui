@@ -27,7 +27,7 @@
 			</el-col>
 
 			<!--主体数据部分-->
-			<el-table :data ="users"  highlight-current-row style='width: 100%;'@selection-change="selsChange" 
+			<el-table :data ="users"  highlight-current-row style='width: 100%;' @selection-change="selsChange" 
 				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
 				<el-table-column type='selection' width='60'></el-table-column>
 				<el-table-column type='index' min-width='60' label='序号' align='center'>
@@ -96,15 +96,14 @@
 				this.$router.push({path:'/account/roles/add'})
 			},
 			getUsers(){
-				
-				var btnstatus=document.getElementsByClassName('btnStatus');
+				this.loading=true;
 				//获取所有数据
 				this.$ajax.get('/role/roles'+'?token='+this.token)
 				.then(res => {
 					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
-							
+							this.loading=false;
 							//将数据同步到 store里面
 							descriptionValue(res.data.data.items)
 							
@@ -112,12 +111,12 @@
 								if(ele.usable){
 									ele.color='colorGreen'
 									ele.usableText='可用';
-//									btnstatus. textContent='禁用';
+
 									ele.btnText='禁用';
 								}else if(!ele.usable){
 									ele.color='colorRed'
 									ele.usableText='禁用';
-//									btnstatus.textContext='启用';
+
 									ele.btnText='启用';	
 								}
 							})

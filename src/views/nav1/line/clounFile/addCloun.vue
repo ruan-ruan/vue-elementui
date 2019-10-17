@@ -194,13 +194,7 @@
 						if(res.data.status==0){
 							console.log(res)
 							this.clounData=res.data.data.items;
-//							res.data.data.items.forEach(ele => {
-//								obj={
-//									name:ele.name,
-//									id:ele.id,
-//								}
-//								this.clounData.push(obj)
-//							})
+
 						}
 					}
 				}).catch( e => {console.log(e)})
@@ -210,18 +204,13 @@
 						console.log(res)
 						if(res.data.status==0){
 							this.driveData=res.data.data;
-//							res.data.data.items.forEach(ele => {
-////								obj={
-////									id:ele.id,
-////									name:ele.name
-////								}
-////								this.logicData.push(obj);
-//							})
+
 						}
 					}
 				}).catch(e => {console.log(e)})
 			},
 			selNode(ids){//根据所选取的节点获取逻辑口
+				
 				this.editForm.logic_port_id=''
 				var para={
 					search_node:ids
@@ -232,13 +221,8 @@
 					console.log(res);
 					if(res.status==200){
 						if(res.data.status==0){
-							res.data.data.items.forEach(ele => {
-								obj={
-									id:ele.id,
-									name:ele.name
-								}
-								this.logicData.push(obj);
-							})
+							this.logicData=res.data.data.items;
+
 						}
 					}
 				}).catch(e => {console.log(e)})

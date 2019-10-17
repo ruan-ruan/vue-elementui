@@ -55,28 +55,31 @@
 			<el-table :data='users'  highlight-current-row style='width: 100%;'@selection-change="selsChange"
 				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
 				<el-table-column type="selection" width="50" align='center'></el-table-column>
-				<el-table-column type='index' min-width='50'max-width='70' label='序号' align='center'></el-table-column>
+				<el-table-column type='index' min-width='50'max-width='70' label='序号' align='center'>
+					<template slot-scope='scope'>
+						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+					</template>
+				</el-table-column>
 				<el-table-column prop='creation_time'width='101'label='申请时间'sortable align='center' :formatter='dateFormat'></el-table-column>
 				<el-table-column prop='name' min-width='100'max-width='120' label='节点名称' align='center'></el-table-column>
 				<el-table-column  min-width='120'max-width='140' label='设备名称' align='center'>
 					<template slot-scope='scope'>
-						<ul v-for='item in scope.row.devices'>
-							<li>{{item.hostname}}</li>
-						</ul>
+						<span>{{scope.row.devices_name1}}</span> <br />
+						<span>{{scope.row.devices_name2}}</span>
 					</template>
 				</el-table-column>
 				<el-table-column  min-width='70'max-width='90' label='SN号' align='center'> 
 					<template slot-scope="scope">
-						<ul v-for='item in scope.row.devices'>
-							<li>{{item.sn}}</li>
-						</ul>
+						<span>{{scope.row.devices_sn1}}</span> <br />
+						<span>{{scope.row.devices_sn2}}</span>
+						
 					</template>
 				</el-table-column>			
 				<el-table-column min-width='70'max-width='90' label='管理IP' align='center'>
 					<template slot-scope="scope">
-						<ul v-for='item in scope.row.devices'>
-							<li>{{item.ip}}</li>
-						</ul>
+						<span>{{scope.row.devices_ip1}}</span>   <br />
+						<span>{{scope.row.devices_ip2}}</span>
+						
 					</template>
 				</el-table-column>
 				<el-table-column prop='vtep' min-width='80' max-width='100' label='Vtep' align='center'></el-table-column>		
@@ -203,12 +206,8 @@
 	    	//查询方法
 	    	getUsers(){
 				this.loading=true;
-			 	this.filters.start_time = this.filters.timeVal[0]
-				? this.filters.timeVal[0]
-				: "";
-				this.filters.end_time = this.filters.timeVal[1]
-				? this.filters.timeVal[1]
-				: "";
+			 	this.filters.start_time = this.filters.timeVal[0] ? this.filters.timeVal[0] : "";
+				this.filters.end_time = this.filters.timeVal[1] ? this.filters.timeVal[1] : "";
 				var para={
 					page:this.currentPage,
 					per_page:this.pagesize,
@@ -223,7 +222,40 @@
 	    			if(res.status==200){
 	    				if(res.data.status==0){
 	    					this.loading=false;
-			    			console.log(res);
+//			    			console.log(res);
+			    			res.data.data.items.forEach(ele => {
+//			    				console.log(ele)
+			    				if(ele.devices.length ==1){
+			    					var str1=ele.devices.find(item => {
+				    					return item['sign'] == 'd1' 
+				    				})
+			    					console.log(str1)
+				    				ele.devices_name1=str1.hostname
+				    				ele.devices_ip1=str1.ip;
+				    				ele.devices_sn1=str1.sn;
+				    				
+				    				ele.devices_name2='';
+				    				ele.devices_ip2='';
+				    				ele.devices_sn2='';
+			    				}else if(ele.devices.length ==2){
+			    					var str1=ele.devices.find(item => {
+
+				    					return item.sign == 'd1' 
+				    				})
+			    					
+			    					var str2=ele.devices.find(item => {
+				    					return item.sign =='d2' 
+				    				})
+	    					
+				    				ele.devices_name1=str1.hostname
+				    				ele.devices_ip1=str1.ip;
+				    				ele.devices_sn1=str1.sn;
+				    				
+				    				ele.devices_name2=str2.hostname
+				    				ele.devices_ip2=str2.ip;
+				    				ele.devices_sn2=str2.sn;
+			    				}
+			    			})
 							this.users=res.data.data.items
 							this.total = res.data.data.page.total;
 	    				}else{

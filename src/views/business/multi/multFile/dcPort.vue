@@ -130,13 +130,12 @@
 		props:['tit',],
 		data(){
 			var logic_port= (rule ,value ,callback) => {
-//				var str=this.pointData.find(item => {
-//					return item.id=value;
-//				})
-				if(this.baseObj.statusVal == 0  && this.editForm.chooseVlan){
-					callback(new Error('当前端口已为UNTAG端口'))
-				}else if(! value){
-					callback(new Error(''))
+				if(this.baseObj){
+					if(this.baseObj.statusVal == 0 && this.editForm.chooseVlan){
+						callback(new Error('当前端口已为UNTAG端口'))
+					}
+				}else  if(! value){
+					callback(new Error('不能为空'))
 				}else {
 					callback()
 				}
@@ -297,6 +296,7 @@
 				
 			      //获取点到点的所有的数据   对里面的所有的逻辑口进行判断，
 			      //如果该逻辑口为透传模式=>则不可在使用   ,如果该逻辑口为untag模式，可以使用，不能再选择untag模式
+			    
 			    this.$ajax.get('/vll/p2p_vlls'+'?token='+this.token)
 			    .then(res => {
 			      	console.log(res)
@@ -306,13 +306,6 @@
 			      			str.forEach(ele => {
 			      				ele.endpoints.forEach(item => { //用statusVal   来判断   该逻辑口的状态
 			      					item.logic_port.statusVal=item.vlan
-//			      					if(item.vlan < 0){//为透传模式
-//			      						item.logic_port.statusVal=-1//不可在选择
-//			      					}else if(item.vlan ==0){//此时为untag模式   不可以在选择untag模式
-//			      						item.logic_port.statusVal=0
-//			      					}else{
-//			      						item.logic_port.statusVal=1
-//			      					}
 			      					this.pointData.push(item.logic_port)
 			      				})
 			      			})
@@ -378,9 +371,9 @@
 //							isPortStatus   logicPort
 							
 							let str=res.data.data;
-//							for(let item in str){
+							for(let item in str){
 								str.portStatus=isPortStatus(str.physical_ports)
-//							}
+							}
 							this.logicDetails=Object.assign({},res.data.data);
 						}
 					}
@@ -388,10 +381,12 @@
 					console.log(e)
 				})
 				
+				console.log(this.pointData)
+				
 				this.baseObj=this.pointData.find(item => {
 					return item.id=ids;
 				})
-				
+				console.log(this.baseObj)
 				
 //				this.logicPort=this.logicPort.filter(item => {
 //					return item.id !== ids

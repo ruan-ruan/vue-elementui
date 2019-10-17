@@ -51,7 +51,11 @@
 			<el-table :data='users'highlight-current-row @selection-change="selsChange" style='width: 100%;'
 				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
 				<el-table-column type='selection' min-width='30'></el-table-column>				
-				<el-table-column type='index' min-width='40' align='center' label='序号'>	</el-table-column>
+				<el-table-column type='index' min-width='40' align='center' label='序号'>
+					<template slot-scope='scope'>
+						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+					</template>
+				</el-table-column>
 				<el-table-column prop='creation_time'width='101' sortable label='创建时间'align='center' :formatter='dateFormat'></el-table-column>
 				<el-table-column  label='A端' align='center' min-width='60' >
 					<template slot-scope='scope'>

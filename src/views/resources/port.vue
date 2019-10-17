@@ -53,7 +53,11 @@
    	 	<!--表格数据部分-->
    	 	<el-table :data='users' highlight-current-row style='width: 100%;' v-loading='loading' 
    	 		:default-sort = "{prop: 'creation_time', order: 'descending'}">
-   	 		<el-table-column type='index' width='60'label='序号' align='center'></el-table-column>
+   	 		<el-table-column type='index' width='60'label='序号' align='center'>
+   	 			<template slot-scope='scope'>
+						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+					</template>
+   	 		</el-table-column>
    	 		<el-table-column prop='creation_time' sortable  label='创建时间' width='101'align='center':formatter='dateFormat'></el-table-column>
    	 		<el-table-column prop='name' label='逻辑端口名称' min-width='100'align='center'>
    	 			<template slot-scope='scope'>
@@ -157,7 +161,6 @@
 				//tenantData
 				this.$ajax.get('/tenant/tenants'+'?token='+this.token)
 				.then(res => {
-					console.log(res);
 					if(res.status==200&& res.data.status==0){
 						this.tenantData=res.data.data.items;
 					}
@@ -190,6 +193,7 @@
 					this.loading=false;
 					if(res.status==200){
 						if(res.data.status==0){
+
 							descriptionValue(res.data.data.items)
 							this.total=res.data.data.page.total;
 							res.data.data.items.forEach(ele => {
@@ -215,7 +219,6 @@
 									ele.usableTextColor='portAbnor'
 								}
 							})
-							console.log(res)
 								//对数据状态的遍历  
 							if(this.filters.status !=''){
 									this.users=res.data.data.items.filter(item => {
@@ -239,7 +242,7 @@
 			},
 			addUsers(){
 				//添加  逻辑端口
-				console.log('进入逻辑端口的创建')
+//				console.log('进入逻辑端口的创建')
 				this.$router.push({
 					path:'/resource/add/logicalPort',
 					query:{
@@ -249,7 +252,7 @@
 			},
 			handleEdit(index,row){
 				//编辑逻辑端口部分
-				console.log('进入逻辑端口的编辑部分')
+//				console.log('进入逻辑端口的编辑部分')
 				this.$router.push({
 					path:'/resource/edit/logicalPort',
 					query:{
@@ -259,7 +262,7 @@
 			},
 			handleSee(index,row){
 				//查看信息详情
-				console.log('进入详情的界面');
+//				console.log('进入详情的界面');
 				this.$router.push({
 					path:'/resource/see/logicalPort',
 					query:{
@@ -269,14 +272,13 @@
 			},
 			handleStatus(index,row){
 				//设置端口的启用和禁用
-				console.log(row);
+
 				if(row.btnStatus=='禁用'){
-					console.log('执行禁用');
+
 					this.$confirm('确定要禁用该端口吗?','提示',{})
 					.then(() => {
 						this.$ajax.put('/port/to_disable_logic_port/'+row.id+'?token='+this.token)
 						.then(res => {
-							console.log(res);
 							if(res.status==200){
 								if (res.data.status==0) {
 									this.$message({
@@ -296,7 +298,7 @@
 						})
 					}).catch(() => {})
 				}else if(row.btnStatus=='启用'){
-					console.log('执行启用');
+
 					this.$confirm('确定要启用该端口吗?','提示',{})
 					.then(() => {
 						
@@ -350,7 +352,6 @@
 			//导出数据部分
 			handleExport(command){
 				if(command=='all'){
-					console.log('导出所有的数据');
 					this.$confirm('确定要导出当前的数据吗?','提示',{})
 					.then(() => {
 						var para={
@@ -360,7 +361,6 @@
 						this.exportData(para)
 					}).catch(() => {})
 				}else if(command=='current'){
-					console.log('导出当前页面的数据');
 					this.$confirm('确定要导出所页面的数据吗?','提示',{})
 					.then(() => {
 						this.exportData()

@@ -3,25 +3,33 @@
 		<!--端口的子组件的公用-->
 		<section>
 			<el-form  label='80px'>
-				<el-form-item label='设备名称'>
+				<el-form-item label='设备名称:'>
 					<span v-text='title.name'></span>
 				</el-form-item>
-				<el-form-item label='管理IP'>
+				<el-form-item label='管理IP:'>
 					<span v-text='title.ip'></span>
 				</el-form-item>
 			</el-form>
 			<el-table :data='users' highlight-current-row  style="width: 100%;">
-				<el-table-column type='index' width='70' align='center'label='序号' >					
+				<el-table-column type='index' width='70' align='center'label='序号' >
+					<template slot-scope='scope'>
+						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+					</template>
 				</el-table-column>
 				<el-table-column prop='name' width='100' align='center'label='端口名称' >					
 				</el-table-column>
 				<el-table-column prop='status' width='100' align='center'label='端口状态' >					
 				</el-table-column>
-				<el-table-column prop='max_speed' width='150' align='center'label='速率(Mbps)' >					
+				<el-table-column prop='max_speed' width='80' align='center'label='速率(Mbps)' >					
 				</el-table-column>
-				<el-table-column prop='mac' width='150' align='center'label='Mac地址' >					
+				<el-table-column prop='mac' width='80' align='center'label='Mac地址' >					
 				</el-table-column>
-				<el-table-column prop='description' width='160' align='center'label='描述信息' >					
+				<el-table-column width='80' align='center'label='是否为业务端口' >	
+					<template slot-scope='scope'>
+						{{ scope.row.available ? '是' : '否'}}
+					</template>
+				</el-table-column>
+				<el-table-column prop='description' width='100' align='center'label='描述信息' >					
 				</el-table-column>
 				<el-table-column prop='note' width='160' align='center'label='备注' >					
 				</el-table-column>

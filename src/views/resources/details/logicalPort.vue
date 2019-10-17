@@ -342,18 +342,18 @@
 		},
 		created(){
 			this.token=sessionStorage.getItem('token');
-			this.getTenantData();
+			
 
 			if(this.addLogicalPort==='新建逻辑端口'&&(typeof this.editLogicalPort =='undefined' && typeof this.title=='undefined')){
 				//新建逻辑端口界面
-
+				this.getTenantData();
 				this.addPortStatus=false;
 				//控制标题的操作
 				this.seePortDetails=false;
 				this.createStatus=true;
 			}else if (typeof this.editLogicalPort !='undefined'&&(this.addLogicalPort!='新建逻辑端口'&& typeof this.title=='undefined')){
 				//逻辑端口的编辑界面
-
+				this.getTenantData();
 				this.addPortStatus=true;
 				//控制标题的操作
 				this.seePortDetails=false;
@@ -666,6 +666,7 @@
 				.then(res =>{
 					if(res.status==200){
 						if(res.data.status==0){
+							console.log(res)
 							this.filters=Object.assign({},res.data.data);
 							if(res.data.data.usable){
 								this.filters.status='启用'

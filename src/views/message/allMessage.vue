@@ -94,14 +94,21 @@
         v-loading='loading'
         :default-sort = "{prop: 'time', order: 'descending'}"
       >
+      	
         <el-table-column
           type='selection'
-          width='60'
+          align='center'
+          width='50'
         ></el-table-column>
+        <el-table-column type='index' width='50' align='center'label='序号' >
+					<template slot-scope='scope'>
+						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+					</template>
+				</el-table-column>
         <el-table-column
           label='标题'
           prop='title'
-          align='left'
+          align='center'
           width="240"
         >
           <template slot-scope="scope">

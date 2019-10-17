@@ -33,11 +33,19 @@
 				<span class="cli_toTip" title="对接云的物理线路">?</span>
 			</el-form-item>
 			<el-form-item v-for='(item,index) in dockLinks' :label='item.show_name':key='index' :prop='item.keyVal'
-				:rules="{required:true,message:'不能为空',trigger:'blur'}">
+				:rules="{required:true,message:'不能为空',trigger:'blur'}" v-if='editForm.clounDock ==""? false :true  '>
 				<el-input v-model='item.keyVal':placeholder="'请输入'+item.show_name"class='ipt'
-					:disabled='editForm.cloun==="腾讯云"?true:false' ></el-input>
-				<span v-if='editForm.cloun==="腾讯云"?(item.show_name==="专线通道ID"?true:false):false' 
-					style="cursor: pointer; color: orangered;" @click="tenRules">?</span>
+					:disabled='editForm.cloun==="腾讯云"? (item.show_name == "专用通道id"? false:true ) :false' ></el-input>
+					<template v-if='editForm.cloun==="腾讯云"? true : false' v-for='(val ,index) in icoData'>
+						<span v-if='val.name == item.show_name '  :title="val.value"
+							style="cursor: pointer; color: orangered;" >{{val.label}}</span> <br />
+							<span v-if='val.name == "专用通道id"? true:false' style="cursor: pointer; color: orangered;" @click="tenRules"> 点击如何获取专线通道</span>
+					</template>
+				<!--<span v-if='editForm.cloun==="腾讯云"?  (item.show_name == "专用通道id"? true:false ):false' 
+					style="cursor: pointer; color: orangered;"  title='腾讯云专心通道ID,即DirectConnectTunnelld'>
+					?</span> <br />  <span style="cursor: pointer; color: orangered;" @click="tenRules">点击如何获取专线通道</span>-->
+				
+					
 			</el-form-item>
 		</el-form>
 		
@@ -120,6 +128,26 @@
 		name:'sharedCloun',
 		data(){
 			return{
+				icoData:[//腾讯云开通的时候  需要的数据的提示界面
+					{
+						name:'专用通道id',
+						value:'腾讯云专心通道ID,即DirectConnectTunnelld',
+						label:'?',
+
+					},{
+						name:'专线提供方',
+						value:'此数据将用于创建腾讯云专线通道id时使用',
+						label:'?'
+					},{
+						name:'共享专线id',
+						value:'此数据将用于创建腾讯云专线通道id时使用',
+						label:'?'
+					},{
+						name:'地域',
+						value:'此数据将用于创建腾讯云专线通道id时使用',
+						label:'?'
+					}
+				],
 				tc1:require('../../../../assets/images/tc1.png'),
 				tc2:require('../../../../assets/images/tc2.png'),
 				tc3:require('../../../../assets/images/tc3.png'),
@@ -195,18 +223,14 @@
 			this.getFormData()
 			
 		},
-		mounted(){
-//			if(this.clounData.length!==2){
-//				this.clounData=localStorage.getItem("temp");
-//			}else{
-//				return this.clounData;
-//			}
-		},
+
 		methods:{
 			tenRules(){
+				this.seeLoading=true;
+				
 				this.dialogStatus='see'
 				this.dialogFormVisible=true;
-				
+				this.seeLoading=false
 			},
 			onCopy(e){
 				this.$message({
@@ -221,7 +245,8 @@
 				})
 			},
 			handleSelect(item) {
-
+				this.editForm.targetRegion='';
+				this.editForm.clounDock=''
 //				this.editForm.cloun=item;
 				let para={
 					search_cloud:item
