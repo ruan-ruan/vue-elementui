@@ -91,6 +91,7 @@
         highlight-current-row
         @selection-change='selsChange'
         style='width: 100%;'
+        empty-text='暂无数据'
         v-loading='loading'
         :default-sort = "{prop: 'time', order: 'descending'}"
       >
