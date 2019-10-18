@@ -77,12 +77,19 @@
       >
         <el-table-column
           type='selection'
-          width='60'
+          align='center'
+          width='50'
         ></el-table-column>
+        <el-table-column type='index' width='50' align='center'label='序号' >
+						<template slot-scope='scope'>
+							<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+						</template>
+					</el-table-column>
         <el-table-column
           label='标题'
           prop='title'
-          align='left'
+          align='center'
+
         >
           <template slot-scope="scope">
             <el-popover
@@ -112,9 +119,9 @@
           prop='time'
           width='101'
           sortable
+          align='center'
           label='时间'
           :formatter="dateFormat"
-          align='center'
         ></el-table-column>
         <el-table-column
           prop='level'

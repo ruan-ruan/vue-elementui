@@ -54,13 +54,14 @@
 
 				<!--列表-->
 				<el-table :data="users" highlight-current-row @selection-change="selsChange" style="width: 100%;"
-					:default-sort = "{prop: 'creation_time', order: 'descending'}">
+					:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
 					<el-table-column type="selection" min-width="40" align='center'>
 					</el-table-column>
 					<el-table-column type="index" min-width="50" label='序号' align='center'>
+						<template slot-scope='scope'>
+							<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+						</template>
 					</el-table-column>
-					<!--<el-table-column prop="id" label="ID" min-width='100' align='center'>
-					</el-table-column>-->
 					<el-table-column prop="creation_time" sortable label="时间" align='center' width='101' :formatter='dateFormat' >
 					</el-table-column>
 					<el-table-column prop="name" label="名称" min-width="80" align='center'>
@@ -303,7 +304,7 @@
 		    //获取城市列表
 		    getDatas() {
 
-			    this.listLoading = true;
+			    this.loading = true;
 				var para={
 					page:this.currentPage,
 					per_page:this.pagesize,
@@ -314,12 +315,12 @@
 				.then( res => {
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
+							this.loading = false;
 							descriptionValue(res.data.data.items);
 							this.total = res.data.data.page.total;
 					        this.pageNum=res.data.data.page.pages;
 							this.users=res.data.data.items;
-					        this.listLoading = false;
+					        
 						}else{
 							this.$message({
 								message:res.data.message,
@@ -337,12 +338,12 @@
 		        type: "warning"
 		      })
 		        .then(() => {
-		            this.listLoading = true;
+
 					this.$ajax.del('/location/del_dc/'+row.id+'?token='+this.token)
 		          	.then(res => {
 						if(res.status=='200'){
 							if(res.data.status=='0'){
-								this.listLoading = false;
+
 								this.$message({
 									message:'删除成功!',
 									type:'success'
@@ -382,7 +383,6 @@
 		    handleEdit: function(index, row) {
 		     	this.dialogStatus = "update";
 		     	this.dialogFormVisible = true;
-				console.log(row)
 				this.editForm={
 					region_id:row.region.name,
 					region_val:row.region.id,
@@ -411,44 +411,42 @@
 		    updateData:function() {
 			    this.$refs.editForm.validate(valid => {
 			        if (valid) {
-			        //   this.$confirm("确认提交吗？", "提示", {})
-			        //     .then(() => {
-			                this.editLoading = true;
-							let para={};
-							if(this.editForm.region_id==this.backUp.region.name){
-								para.region_id=this.editForm.region_val;
-								para.city_id=this.editForm.city_val;
-							}else{
-								para.region_id=this.editForm.region_id;
-								para.city_id=this.editForm.city_id;
-							}
-			              	let  params={
-			              		name:this.editForm.name,
-			              		description:this.editForm.description,
-			              		city_id:para.city_id,
-			              		region_id:para.region_id
-			              	}
-							this.$ajax.put('/location/edit_dc/'+this.editForm.id+"?token="+this.token,params)
-			              	.then((res) => {
-				              	if(res.status=='200'){
-				              		if(res.data.status=='0'){
-				              			this.editLoading = false;
-										this.$message({
-											message:'编辑成功!',
-											type:'success'
-										})
-										this.$refs["editForm"].resetFields();
-						                 this.dialogFormVisible = false;
-						                this.getDatas();
-									}else if(res.data.status){
-										this.$message({
-											message:res.data.message,
-											type:'warning'
-										})
-									}
-				              	}		              	
-			              	}).catch(e => {console.log(e)})
-			            // }).catch(() => { });
+		                this.editLoading = true;
+						let para={};
+						if(this.editForm.region_id==this.backUp.region.name){
+							para.region_id=this.editForm.region_val;
+							para.city_id=this.editForm.city_val;
+						}else{
+							para.region_id=this.editForm.region_id;
+							para.city_id=this.editForm.city_id;
+						}
+		              	let  params={
+		              		name:this.editForm.name,
+		              		description:this.editForm.description,
+		              		city_id:para.city_id,
+		              		region_id:para.region_id
+		              	}
+						this.$ajax.put('/location/edit_dc/'+this.editForm.id+"?token="+this.token,params)
+		              	.then((res) => {
+			              	if(res.status=='200'){
+			              		if(res.data.status=='0'){
+			              			this.editLoading = false;
+									this.$message({
+										message:'编辑成功!',
+										type:'success'
+									})
+									this.$refs["editForm"].resetFields();
+					                 this.dialogFormVisible = false;
+					                this.getDatas();
+								}else if(res.data.status){
+									this.$message({
+										message:res.data.message,
+										type:'warning'
+									})
+								}
+			              	}		              	
+		              	}).catch(e => {console.log(e)})
+
 			        }
 			    });
 		    },
@@ -499,13 +497,13 @@
 		        	type: "warning"
 		      	})
 		        .then(() => {
-			        this.listLoading = true;
+
 			        let para = { ids: ids };
 					this.$ajax.del('/location/del_dcs'+'?token='+this.token,para)
 			        .then(res => {
 			          	if( res.status=='200'){
 							if(res.data.status=='0'){
-								this.listLoading = false;
+
 								this.$message({
 									message:'删除成功!',
 									type:'success'

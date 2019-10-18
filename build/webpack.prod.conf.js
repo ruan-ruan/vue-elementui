@@ -64,6 +64,8 @@ const webpackConfig = merge(baseWebpackConfig, {
       filename: config.build.index,
       template: 'index.html',
       inject: true,
+      favicon: path.resolve('logo.ico'),
+      title: '天弛SDN网络系统',
       minify: {
         removeComments: true,
         collapseWhitespace: true,

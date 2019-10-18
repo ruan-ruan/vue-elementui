@@ -67,7 +67,11 @@
           <el-table :data='users'   highlight-current-row   @selection-change='selsChange'   style='width: 100%;'   
           	v-loading='loading' :default-sort = "{prop: 'creation_time', order: 'descending'}">
             <el-table-column  type='selection'  min-width='40'  ></el-table-column>
-            <el-table-column   type='index'  min-width='50'   label='序号'   align='center' ></el-table-column>
+            <el-table-column   type='index'  min-width='50'   label='序号'   align='center' >
+            	<template slot-scope='scope'>
+								<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+							</template>
+            </el-table-column>
             <el-table-column   prop='creation_time'
               :formatter='dateFormat'   width='101'  label='创建时间' sortable  align='center'  ></el-table-column>
             <el-table-column   prop='name'  min-width='80'  label='节点名称'   align='center' ></el-table-column>
@@ -78,9 +82,9 @@
             </el-table-column>
             <el-table-column   min-width='80'  label='设备名称'   align='center'  >
               <template slot-scope="scope">
-                <ul v-for='item in scope.row.devices'>
-                  <li v-text="item.hostname"></li>
-                </ul>
+              	<span>{{scope.row.devices_name1}}</span> <br />
+              	<span>{{scope.row.devices_name2}}</span>
+
               </template>
             </el-table-column>
             <el-table-column
@@ -103,9 +107,11 @@
               align='center'
             >
               <template slot-scope="scope">
-                <ul v-for='item in scope.row.devices'>
+              	<span>{{scope.row.devices_sn1}}</span> <br />
+              	<span>{{scope.row.devices_sn2}}</span>
+                <!--<ul v-for='item in scope.row.devices'>
                   <li v-text="item.sn"></li>
-                </ul>
+                </ul>-->
               </template>
             </el-table-column>
             <el-table-column
@@ -115,9 +121,11 @@
               align='center'
             >
               <template slot-scope="scope">
-                <ul v-for='item in scope.row.devices'>
+              	<span>{{scope.row.devices_ip1}}</span> <br />
+              	<span>{{scope.row.devices_ip2}}</span>
+                <!--<ul v-for='item in scope.row.devices'>
                   <li v-text="item.ip"></li>
-                </ul>
+                </ul>-->
               </template>
             </el-table-column>
             <el-table-column
@@ -343,8 +351,42 @@ export default {
                 } else {
                   _this.diStatus = true;
                 }
+                
+                
+                if(ele.devices.length ==1){
+			    					var str1=ele.devices.find(item => {
+				    					return item['sign'] == 'd1' 
+				    				})
+			    					console.log(str1)
+				    				ele.devices_name1=str1.hostname
+				    				ele.devices_ip1=str1.ip;
+				    				ele.devices_sn1=str1.sn;
+				    				
+				    				ele.devices_name2='';
+				    				ele.devices_ip2='';
+				    				ele.devices_sn2='';
+			    				}else if(ele.devices.length ==2){
+			    					var str1=ele.devices.find(item => {
+
+				    					return item.sign == 'd1' 
+				    				})
+			    					
+			    					var str2=ele.devices.find(item => {
+				    					return item.sign =='d2' 
+				    				})
+	    					
+				    				ele.devices_name1=str1.hostname
+				    				ele.devices_ip1=str1.ip;
+				    				ele.devices_sn1=str1.sn;
+				    				
+				    				ele.devices_name2=str2.hostname
+				    				ele.devices_ip2=str2.ip;
+				    				ele.devices_sn2=str2.sn;
+			    				}
+                
+                
               });
-              
+
                _this.users = res.data.data.items;
               _this.total = res.data.data.page.total;
             }

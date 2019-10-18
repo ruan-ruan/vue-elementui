@@ -243,20 +243,17 @@
 				let time={};
 
 				this.sendType.forEach(ele => {
-					time={
+					time={//根据时间进行数据的获取
 						search_date :ele.toString(),
 					}
-					
-					
-					
 					this.chartLoading=true;
 					this.$ajax.get('/vll/get_vll_flow/'+ids+'?token='+this.token,time)
 					.then(res => {
 						console.log(res)
 						this.chartLoading=false;
-						
 						if(res.status==200){
 							if(res.data.status==0){	
+								//数据请求完成     组网的流量数据    判断数据里面的是数据中还是云的      选择什么数据   就对该数据 分别   对该数据进行处理  显示
 								let Obj={
 									
 								}

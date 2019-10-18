@@ -7,20 +7,13 @@ import Login from '@/views/Login.vue'
 import NotFound from '@/views/404.vue'
 //主组件
 import Home from '@/views/Home.vue'
-//import Main from '@/views/Main.vue'
 
+////日志
+//import Open_log from '@/views/log/Open_log'
+//import Link_log from '@/views/log/Link_log'
+//import Opera_log from '@/views/log/Opera_log'
+//import Login_log from '@/views/log/Login_log'
 
-//订单
-import Port from '@/views/bill/Port'
-import Link from '@/views/bill/Link'
-
-
-
-//日志
-import Open_log from '@/views/log/Open_log'
-import Link_log from '@/views/log/Link_log'
-import Opera_log from '@/views/log/Opera_log'
-import Login_log from '@/views/log/Login_log'
 import Topology from'@/views/nav1/Topology'
 
 import parent from '@/views/parent'
@@ -37,7 +30,6 @@ var router = new Router({
     {
     	path: '/',
         component: Home,
-//      name: '密码修改',
         hidden: true,
         meta:{
         	requireAuth:true
@@ -56,7 +48,6 @@ var router = new Router({
 		path: '/',
 		component: Home,
 		name: '个人中心',
-//		iconCls: 'fa fa-user-circle-o',  '../assets/images/aside/left.png'
 		iconCls: require('../assets/images/aside/myself.png'),
 		leaf:false,
 		meta:{
@@ -102,7 +93,7 @@ var router = new Router({
 			{path:'/location/index/unknown_details/:unknownID',component:() => import('@/views/nav1/node/details/child/node'),name:'未知节点详情',hidden:true,leaf:true},
 			
 			{path:'/location/',name:'链路管理',component: () => import('@/views/parent'),redirect:'user',hidden:false,leaf:false,
-//			component:user,
+
 			children:[{path:'/location/line/link',component:() => import('@/views/nav1/user.vue'),name:'链路',leaf:true},
 			{path:'/location/line/cloun',component:() => import('@/views/nav1/line/cloun.vue'),name:'云对接链路',leaf:true},
 			]},
@@ -133,8 +124,7 @@ var router = new Router({
 			{path:'/resource/virtualLine',component: () => import ('@/views/parent'), name: '虚拟专线',leaf:false,children:[
 				{path:'/resource/virtualLine/pointTo',component: () => import ('@/views/resources/pointTo'), name: '点到点专线',leaf:true},
 				{path:'/resource/virtualLine/pointsTos',component: () => import ('@/views/resources/pointsTos'), name: '虚拟组网专线',leaf:true},
-//				{path:'/resource/virtualLine/chart',component: () => import ('@/views/resources/virtualDetails/pointsDetails/chartData.vue'), name: '图表',leaf:true},
-				
+
 			]},
 			{path:'/resource/virtualLine/pointdetails',component: () => import ('@/views/resources/virtualDetails/poinDetail'), name: '点到点详情',leaf:true,hidden:true},
 			
@@ -163,20 +153,7 @@ var router = new Router({
             { path: '/business/detailsMultipoint', component:() => import ('@/views/business/multi/multFile/detailsTab') , name: '虚拟组网详情',leaf:true,hidden:true},     
         ]
     },
-//  {
-//  	path:'/',
-//  	component:Home,
-//  	name:'订单',
-//  	iconCls:'fa fa-envelope',
-//  	leaf:false,
-//  	meta:{
-//      	requireAuth:true
-//      },
-//  	children:[
-//		    	{path:'/bill/port',component:Port,name:'端口订单'},
-//		    	{path:'/bill/link',component:Link,name:'链路订单'}    	 
-//  	]
-//  },
+
     {
     	path:'/',
     	component:Home,
@@ -193,9 +170,7 @@ var router = new Router({
     		//租户的编辑
     		{path:'/customer/editCus',component:() => import ('@/views/customer/Details/cusOperation'),name:'租户编辑',leaf:true,hidden:true},
     		{path:'/customer/details/tenant/:id',component:() => import ('@/views/customer/Details/tenant'),name:'租户详情',leaf:true,hidden:true},
-    		
-    		//租户的详情和信息部分
-//  		{path:'/customer/details/tenant/:id',component:() => import ('@/views/customer/Details/tenant'),leaf:true,hidden:true},
+
     	]
     },
     {
@@ -219,27 +194,27 @@ var router = new Router({
     			{path:'/account/set',component:() => import('@/views/account/Set'),name:'人员设置',leaf:true,}
     	]
     },
-		{
-			path:'/',
-			component:Home,
-			name:'日志',
-			iconCls:require('../assets/images/aside/updateLog.png'),
-			leaf:false,
-			meta:{
-        		requireAuth:true
-        	},
-			children:[
-				{path:'/log/open',component:Open_log,name:'业务开通日志'},
-				{path:'/log/link',component:Link_log,name:'设备链路日志'},
-				{path:'/log/opera',component:Opera_log,name:'系统操作日志'},
-				{path:'/log/login',component:Login_log,name:'账户登录日志'}
-			]
-		},
-	    {
-	        path: '*',
-	        hidden: true,
-	        redirect: { path: '/404' }
-	    }
+//	{
+//		path:'/',
+//		component:Home,
+//		name:'日志',
+//		iconCls:require('../assets/images/aside/updateLog.png'),
+//		leaf:false,
+//		meta:{
+//  		requireAuth:true
+//  	},
+//		children:[
+//			{path:'/log/open',component:Open_log,name:'业务开通日志'},
+//			{path:'/log/link',component:Link_log,name:'设备链路日志'},
+//			{path:'/log/opera',component:Opera_log,name:'系统操作日志'},
+//			{path:'/log/login',component:Login_log,name:'账户登录日志'}
+//		]
+//	},
+    {
+        path: '*',
+        hidden: true,
+        redirect: { path: '/404' }
+    }
   ]
 })
 

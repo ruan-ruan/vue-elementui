@@ -32,10 +32,16 @@ export function getTime(value) {
  * chart里面的传参所需的时间格式
  * */
 export function isChartTime(value){
-	let date = new Date(parseInt(value) * 1000);//时间戳为10位的时候，需要*1000    如果四13位的时候，不需要
-    let Y = date.getFullYear();
-    let M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1 ;
-    let D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() ;
+	var str=Math.round(value)//取整数
+	let date = new Date(parseInt(str) * 1000);//时间戳为10位的时候，需要*1000    如果四13位的时候，不需要
+	let Y = date.getFullYear() + '';
+    let M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) + '' : date.getMonth() + 1 + '';
+    let D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
+//  let Y = date.getFullYear();
+//  let M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1 ;
+//  let D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() ;
+//	console.log(Y+M+D)
+
     return Y + M + D 
 }
 /**
@@ -272,7 +278,10 @@ export var isTopo={
 
 
 
-
+export function isNumberInteger(str){//正整数
+	const reg=/^[1-9]\d/g;
+	return reg.test(str);
+}
 
 
 export function isValidNumber(str){

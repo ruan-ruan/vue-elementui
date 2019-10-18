@@ -178,6 +178,8 @@
 			},
 			submitBtn(){
 				// newForm     基础的信息  dc_a   a端   dc_z   editForm
+				
+				
 				let str=[this.$refs.dc_a.$refs.editForm,this.$refs.dc_z.$refs.editForm,this.$refs.newForm.$refs.editForm]
 				
 				
@@ -188,6 +190,14 @@
 							.then(() => {
 								console.log(this.editForm);
 								console.log(this.basic)
+								if(this.editForm.endpoints_logic_port_id_a == this.editForm.endpoints_logic_port_id_z){
+									this.$message({
+										message:'两端不能选择相同的逻辑口，请重新选择!',
+										type:'warning'
+									})
+								}else {
+									
+
 								let para={
 									name:this.basic.name,
 									tenant_id:this.basic.tenant_id,
@@ -216,7 +226,7 @@
 									if(res.status==200){
 										if(res.data.status==0){
 											this.$message({
-												message:'开通成功!',
+												message:res.data.message,
 												type:'success'
 											})
 											this.reset();
@@ -230,11 +240,11 @@
 								}).catch(e => {
 									console.log(e)
 								})
+								}
 							}).catch(() => {})
 						}
 					})
-				})
-				
+				})	
 			},
 		}
 	}

@@ -82,7 +82,7 @@
 				filters:{
 					unit:'Mbps',
 					selVal:'平均值',
-					selTime:'最近一天',	
+					selTime:'最近一小时',	
 					time:'',
 				},
 				unitData:['Mbps','PPS'],
@@ -119,7 +119,7 @@
 		created(){
 			this.token=sessionStorage.getItem('token');
 			this.valType=this.seaVal();
-			this.trafficData=this.getTimeData('最近一天');
+			this.trafficData=this.getTimeData();
 //			var str=[this.titData,this.topoId];
 //
 //			str.forEach(ele => {
@@ -143,7 +143,7 @@
 				this.$router.go(-1)
 			},
 			ChartData(ids){//获取id下 对应的数据
-				console.log('进入选择呀')
+				
 				let newData=[];//保存每次获取的数据
 
 				let staIndex='';
@@ -153,11 +153,13 @@
 				var sortID=[];//将id相同的部分里面flow合并即可
 
 //				//遍历以后再进行树的排序
-				let time={};	
+				let time={};
+				console.log(this.sendType)
 				this.sendType.forEach(ele => {
 					time={
 						search_date :ele.toString(),
 					}
+					console.log(time)
 					this.chartLoading=true;
 					this.$ajax.get('/vll/get_vll_flow/'+ids+'?token='+this.token,time)
 					.then(res => {
@@ -725,7 +727,7 @@
 					chartsZ.setOption(this.optionTraZ);
 				
 			},
-			getTimeData(type='最近一天'){   //获取时间的间隔所有的数据//时间轴的循环的是按照 秒计算的			
+			getTimeData(type='最近一小时'){   //获取时间的间隔所有的数据//时间轴的循环的是按照 秒计算的			
 				let strTime=[];//用来保存的所选时间，的时间间隔 
 				let  end_time='';
 				let  start_time='';
@@ -797,7 +799,9 @@
 					timeObj.data.push(arrayPro.datedialogFormat(item/1000))  //获取时间的区间    item现在是毫秒时间  所以需要/1000
 					arr.push( isChartTime(item/1000) );
 				}
+//				console.log(arr)
 				timeObj.send=arr.map(Number);
+
 				return timeObj;//数组
 			},
 		}

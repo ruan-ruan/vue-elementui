@@ -31,17 +31,16 @@
 						</el-dropdown>
 					</el-col>
 				</el-col>
-				<!--<div class="table-top">
-					<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">批量删除</el-button>
-				</div>-->
+
 				<el-table  :data="users" highlight-current-row @selection-change="selsChange" style="width: 100%;" 
 					v-loading='loading' :default-sort = "{prop: 'creation_time', order: 'descending'}">
 					<el-table-column type="selection"  align='center'>
 					</el-table-column>
 					<el-table-column type="index"  label='序号' align='center'>
+						<template slot-scope='scope'>
+							<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+						</template>
 					</el-table-column>
-					<!--<el-table-column prop="id" label="ID" align='center' min-width='120' >
-					</el-table-column>-->
 					<el-table-column prop="creation_time" sortable label="创建时间" align='center' width='101' :formatter='dateFormat' >
 					</el-table-column>
 					<el-table-column prop="name" label="名称" align='center' min-width='120'>

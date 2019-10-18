@@ -42,7 +42,11 @@
 			<el-table :data='users' highlight-current-row @selection-change="selsChange"style='width: 100%;' 
 				v-loading='loading' :default-sort = "{prop: 'creation_time', order: 'descending'}">
 				<el-table-column type='selection' width='60' v-if='(typeof clounID !=="undefined"?false:true)'></el-table-column>
-				<el-table-column type='index' width='80' label='序号'></el-table-column>
+				<el-table-column type='index' width='80' label='序号'>
+					<template slot-scope='scope'>
+						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+					</template>
+				</el-table-column>
 				<el-table-column prop="creation_time" sortable label="时间" align='center' width='95' :formatter='dateFormat' >
 				</el-table-column>
 				<el-table-column prop='name'label='组网名称' align='center'min-width='150' ></el-table-column>
@@ -195,7 +199,7 @@
 				this.getUsers()
 			},
 			getUsers(){
-
+				this.loading=true;
 				let para={
 					page: this.currentPage,
 			        per_page:this.pagesize,
@@ -209,11 +213,10 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
+							this.loading=false
 							console.log(res)
 							descriptionValue(res.data.data.items);
-//							res.data.data.items.forEach(ele =>{
-//								
-//							})
+
 							this.users=res.data.data.items;
 							this.total=res.data.data.page.total
 						}
@@ -290,7 +293,7 @@
 			handleDel(index,row){//删除
 				this.$confirm('确定要删除该数据吗？','提示',{})
 				.then(() => {
-					this.$ajax.del('/'+row.id+'?token='+this.token)
+					this.$ajax.del('/vll/del_vll/'+row.id+'?token='+this.token)
 					.then(res => {
 						console.log(res);
 						if(res.status==200){
