@@ -52,7 +52,7 @@
 
 				</el-col>
 
-			<el-table :data='users' empty-text='暂无数据' highlight-current-row @selection-change="selsChange" style='width: 100%;' 
+			<el-table :data='users' highlight-current-row @selection-change="selsChange" style='width: 100%;' 
 				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
 				<el-table-column type='selection' min-width='40'></el-table-column>
 				<el-table-column type='index' min-width='50' label='序号' align='center'></el-table-column>
