@@ -301,9 +301,9 @@
 				rows.forEach(ele => {
 					ids.push(ele.id)
 				})
+				let para = {ids: ids}
 				this.$confirm('确定要删除所选中的数据吗?','提示',{})
 				.then(() => {
-					
 					this.$ajax.del('/link/del_cloud_links'+'?token='+this.token,para)
 					.then(res => {
 						if(res.status==200){

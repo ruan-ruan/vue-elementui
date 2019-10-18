@@ -52,7 +52,7 @@
       </el-col>
 
       <el-col :span='24'>
-        <span>
+        <span style="float:right;">
           <el-button
             type="success"
             @click='markTap'
@@ -89,7 +89,7 @@
           label='标题'
           prop='title'
           align='center'
-
+          width="240"
         >
           <template slot-scope="scope">
             <el-popover
