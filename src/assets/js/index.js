@@ -276,18 +276,61 @@ export var isTopo={
 
 
 
-
+//export function isEnglish(str){
+//	const reg=/^[a-zA-Z]*$/g;
+//	return reg.test(str);
+//}
 
 export function isNumberInteger(str){//正整数
 	const reg=/^[1-9]\d/g;
 	return reg.test(str);
 }
+export function isTest(val){
+	var num=val.split(',');//首先将输入的字符串分割开成数组
+	var newVal=[];
+	var newData=[];
+	var  str={
+		bool:null,//未知节点添加的端口区间，处理
+		dataVal:[]
+	};
+	var data=[]
 
+	num.forEach(ele => {//获取切割后的数组
+		newVal.push(ele.split('-'))
+	})
+	newVal.forEach(ele => {
+		if(ele.length>1){//判断  数据是区间还是单个的 
+			for(var i=parseInt(ele[0]);i<= parseInt(ele[1]);i++ ){//区间的时候   遍历
+				data.push(i)
+			}
+		}else {  //当为单个的数据的时候   直接转化为数字  添加
+			data.push( parseInt(ele[0]))
+		}
+	})
+	data.forEach(ele => {
+		if(!isNaN(ele)){
+			if(ele>54 || ele<0){
+				str.bool=false
+			}
+			else{
+				str.bool=true
+			}
+			if( newData.indexOf(ele) == -1 ){
+				newData.push(ele)
+			}	
+		}else if(isNaN(ele)){
+			str.bool=false
+		}
+	})
+	str.dataVal=newData
+	console.log(str)
+	return str;
+};
 
 export function isValidNumber(str){
 	const reg=/^\d/g;
 	return reg.test(str);
-}
+};
 
 
 //逻辑口的状态的判断

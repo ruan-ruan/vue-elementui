@@ -480,6 +480,7 @@
 								message:res.data.message,
 								type:'warning'
 							})
+							this.getUsers()	
 						}
 		          	}
 

@@ -2,7 +2,7 @@
 	<div >
 		<!--设置-->
 		<section>
-			<goback></goback>
+			<goback v-if='typeof id !="undefined" '></goback>
 			<el-form  :model='editForm' label-width='100px' :rules='editFormRules' ref='editForm' v-loading='Loading'>
 				<el-form-item label='名称' prop='name'>
 					<el-input v-model='editForm.name'  class='ipt_sels' :disabled='disUp'></el-input>
@@ -43,7 +43,7 @@
 				</el-form-item>
 			</el-form>
 			<div style="text-align: right; margin-right: 30px;" v-if='disNo'>
-				<el-button @click='reset(editForm)'>取消</el-button>
+				<el-button @click='reset(editForm)'>返回</el-button>
 				<!--角色的添加部分-->
 				<el-button  type="primary" @click="addUsers" v-if="roleBtnStatus">保存</el-button>
 				<!--角色的编辑的界面-->

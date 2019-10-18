@@ -594,9 +594,7 @@ export default {
 							descriptionValue(res.data.data.items);
               res.data.data.items.forEach(ele => {
               	//设置   a端  z端数据
-              	
-              	
-              	
+
                 if (ele.type == "d2d") {
                   ele.typeName = "DCI";
                 } else if (ele.type == "d2c") {
@@ -621,7 +619,7 @@ export default {
                   ele.statusColor = "stopVal";
                   ele.creat = true;
                   ele.btn=false;
-                } else if (ele.status == "serving") {
+                } else if (ele.status == "servicing") {
                   ele.statusHTML = "运行中";
                   ele.specialName = "停止";
                   ele.statusColor = "ServerVal";
@@ -688,21 +686,24 @@ export default {
                   }
                 }
               });
-						let creatData=[],failureData=[],stopData=[],servData=[];
-						let strData=res.data.data.items;
-							creatData=strData.filter(item => {
-								return item.status==='creating'
-							})
-							failureData=strData.filter(item => {
-								return item.status==='failure'
-							})
-							stopData=strData.filter(item => {
-								return item.status==='stopping'
-							})
-							servData=strData.filter(item => {
-								return item.status==='serving'
-							})
-							this.users=creatData.concat(failureData,stopData,servData)
+//						let creatData=[],failureData=[],stopData=[],servData=[];
+//						let strData=res.data.data.items;
+						this.users=res.data.data.items
+						console.log(strData)
+//							creatData=strData.filter(item => {
+//								return item.status==='creating'
+//							})
+//							failureData=strData.filter(item => {
+//								return item.status==='failure'
+//							})
+//							stopData=strData.filter(item => {
+//								return item.status==='stopping'
+//							})
+//							servData=strData.filter(item => {
+//								return item.status==="servicing"
+//							})
+							this.users=creatData.concat(failureData,stopData,servData);
+							console.log(this.users)
 
             }
           }
@@ -873,6 +874,7 @@ export default {
                     message: res.data.message,
                     type: "warning"
                   });
+                  this.getUsers();
                 }
               }
             })

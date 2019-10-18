@@ -1,11 +1,9 @@
 <template>
 	<div>
-		<goback v-if=" typeof id !=='undefined'"></goback>
 		<section>
 			<h3 class="tit_h3" v-if=" typeof id !=='undefined'" v-text="title.nav"></h3>
 			<el-row>
 				<el-col :span='24'>
-					<!--<el-col :span='12'>-->
 					<el-form :model='editForm' ref='editForm'label-width='100px' v-loading='basicLoading' :rules='editFormRules'>
 						<el-form-item label='创建时间' prop='creation_time'>
 							<el-input v-model='editForm.creation_time' class='ipt' disabled></el-input>
@@ -19,8 +17,11 @@
 						<el-form-item label='备注' prop='dec'>
 							<el-input type='textarea' cols='6' v-model='editForm.dec' class='ipt':disabled=" !(typeof id !=='undefined')"></el-input>
 						</el-form-item>
+						<el-form-item v-if=" typeof id !=='undefined'" class='tc_L'>
+							<el-button size='small'  @click='goback'>返回</el-button>
+							<el-button size='small'  type='primary' @click='editSubmit' v-if=" typeof id !=='undefined'">提交</el-button>
+						</el-form-item>
 					</el-form>
-					<!--</el-col>-->
 				</el-col>
 			</el-row>
 			<h3 class="tit_h3" v-text="title.hea" v-if=" typeof id !=='undefined'"></h3>
@@ -31,15 +32,25 @@
 			</el-row>
 			<el-table :data='users' highlight-current-row style="width: 100%;" v-loading='loading'>
 				<el-table-column type="index"label='序号' min-width="30" align='center'></el-table-column>
-				<el-table-column prop="name"label='名称' min-width="80" align='center'></el-table-column>
-				<el-table-column prop="logic_port.name"label='逻辑口' min-width="80" align='center'></el-table-column>
+				<el-table-column prop="node.name"label='节点名称' min-width="80" align='center'></el-table-column>
+				<el-table-column prop="statusName"label='状态' min-width="60" align='center'>
+					<template slot-scope='scope'>
+						<span :class='scope.row.statusColor'>{{scope.row.statusName}}</span>
+					</template>
+				</el-table-column>		
+				<el-table-column prop="logic_port.name"label='逻辑口' min-width="80" align='center'>
+					<template slot-scope='scope'> 
+						<span>{{scope.row.logic_port.name}}</span> <br />
+						<span>{{scope.row.vlanName}}</span>
+					</template>
+				</el-table-column>
 				<el-table-column prop="logicStatus"label='逻辑口状态' min-width="80" align='center'>
 					<template slot-scope='scope'>
-						<span :class="scope.row.LogicColor">{{scope.row.logicStatus}}</span>
+						<span :class="scope.row.LogicColor">{{scope.row.logicStatus}}</span> 
 					</template>
 				</el-table-column>
 				<el-table-column prop="bandwidth"label='带宽(Mbps)' min-width="60" align='center'></el-table-column>
-				<el-table-column prop="type"label='类型' min-width="60" align='center'></el-table-column>
+				<el-table-column prop="typeName"label='类型' min-width="60" align='center'></el-table-column>
 				<el-table-column prop="charge_mode"label='计费模式' min-width="80" align='center'></el-table-column>
 				
 				<el-table-column prop="charge"label='计费时间' width="95" align='center'>					
@@ -57,7 +68,7 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			<el-button style='margin-left: 50%;'type='primary' @click='editSubmit' v-if=" typeof id !=='undefined'">提交</el-button>
+
 		</section>
 		
 		<el-dialog :title='textMap[dialogStatus]':visible.sync="dialogFormVisible" :close-on-click-modal="false" v-loading='editLoading'>
@@ -65,7 +76,7 @@
 				<h3>类型选择:</h3>		
 				<el-tabs v-model='activeName'type="border-card" class='marT5'>
 					<el-tab-pane label='数据中心端口'name='first'>
-						<dc-port @sendFormData='getFormData' ref='dcForm'></dc-port> <!-- @sendNdoe='getNodeObj' @sendLogic='getLogicObj'-->                                                                                 
+						<dc-port @sendFormData='getFormData' ref='editForm' ></dc-port> <!-- @sendNdoe='getNodeObj' @sendLogic='getLogicObj'-->                                                                                 
 						<basic-details @sendBasic='getBasic' ref='basicForm'></basic-details>
 						<el-button style='margin-left: 50%;' type='primary' size='small' @click='dcSubmit'>提交</el-button>
 					</el-tab-pane>
@@ -152,10 +163,7 @@
 				this.getDetails(this.id);
 				console.log(1111)
 			}
-//			else{
-//				this.getTenant()
-//				console.log(33333)
-//			}
+
 			if(typeof this.detailsID !=='undefined'){
 				console.log(this.detailsID)
 				this.getDetails(this.detailsID);
@@ -163,19 +171,9 @@
 
 		},
 		methods:{
-//			getTenant(){//获取租户的数据
-//				this.$ajax.get('/tenant/tenants'+'?token='+this.token)
-//				.then(res => {
-//					console.log(res);
-//					if(res.status==200){
-//						if(res.data.status==0){
-//							
-//						}
-//					}
-//				}).catch(e => {
-//					console.log(e)
-//				})
-//			},
+			goback(){
+				this.$router.go(-1)
+			},
 			getClounBasic(msg){
 				console.log(msg);
 				this.clounBasic=Object.assign({},msg);
@@ -187,7 +185,7 @@
 			clounSubmit(){//云列表的提交
 				
 				let that=this;
-				var str=[this.$refs.clounForm.$refs.editForm,this.$refs.basicForm.$refs.basicForm];
+				var str=[this.$refs['clounForm'].$refs['editForm'],this.$refs['basicForm'].$refs['basicForm']];
 				//				,this.$refs.clounForm.$refs.dockListObj
 				let obj={};
 				str.forEach(ele => {
@@ -242,65 +240,62 @@
 				
 			},
 			dcSubmit(){//数据中心的部分的提交 弹窗的提交
-				
 				let that=this;
-				var str=[this.$refs.dcForm.$refs.editForm,this.$refs.basicForm.$refs.basicForm]
+				var str=[this.$refs['editForm'].$refs['editForm']  , this.$refs['basicForm'].$refs['basicForm']]
+				console.log(str)
 				let obj={};
 				str.forEach(ele => {
 					console.log(ele)
 					ele.validate(valid => {
 						if(valid){
-							// this.$confirm('确定要添加吗?','提示',{})
-							// .then(() => {
-								this.editLoading=true;
-								obj={
-									node_id:that.dcObj.nodeName,
-									logic_port_id:that.dcObj.logic,
-									vlan:this.dcObj.vlan,
-									bandwidth:that.basicObj.bandwidth,
-									charge_mode:that.basicObj.charge_mode,
-									charge_time:that.basicObj.charge_time,
-									expiration_time:that.basicObj.expiration_time,
-									description:that.basicObj.description,
-								}
-								this.$ajax.post('/vll/add_endpoint/'+this.id+'?token='+this.token,obj)
-								.then(res => {
-									this.editLoading=false;
-									if(res.status==200){
-										if(res.data.status==0){
-											this.$message({
-												messsage:'添加成功!',
-												type:'success'
-											})
-											this.resetFields();
-											that.dialogFormVisible=false;
-											this.$router.push({
-												path:'/business/editMultipoint',
-												query:{
-													id:this.id,
-												}
-											})
-										}else{
+							console.log('kkkk')
+							this.editLoading=true;
+							
+							console.log(that.basicObj)
+							obj={
+								node_id:that.dcObj.nodeName,
+								logic_port_id:that.dcObj.logic,
+								vlan:this.dcObj.vlan,
+								bandwidth:that.basicObj.bandwidth,								
+								charge_mode:that.basicObj.charge_mode,
+								
+								charge_time:that.basicObj.charge_time=='' ?null : new Date(that.basicObj.charge_time).getTime()/1000,
+								expiration_time:that.basicObj.expiration_time==''?null :new Date(that.basicObj.expiration_time).getTime()/1000,
+								
+								description:that.basicObj.description,
+							}
+							console.log(that.basicObj.charge_time)
+							console.log(Number(that.basicObj.charge_time))
+							console.log(obj)
+							this.$ajax.post('/vll/add_endpoint/'+this.id+'?token='+this.token,obj)
+							.then(res => {
+								this.editLoading=false;
+								if(res.status==200){
+									if(res.data.status==0){
+										console.log(res)
 										this.$message({
-												message:res.data.message,
-												type:'warning'
-											})
-										}
+											message:res.data.message,
+											type:'success'
+										})
+										ele.resetFields();
+										that.dialogFormVisible=false;
+										this.getDetails(this.id)
+
+									}else{
+									this.$message({
+											message:res.data.message,
+											type:'warning'
+										})
 									}
-								})
-								.catch(e => {console.log(e)})
-							// }).catch(() => {})
+								}
+							})
+							.catch(e => {console.log(e)})
 							
 						}
 					})
 				})	
 			},
-//			getLogicObj(obj){//根据选择逻辑口传过来的对象
-//				this.logicObj=Object.assign({},obj);
-//			},
-//			getNodeObj(obj){//获取子组件选择节点后传过来对应的对象
-//				this.nodeObj=Object.assign({},obj);
-//			},
+
 			getFormData(msg){
 				console.log(msg)
 				this.dcObj=msg;
@@ -352,8 +347,16 @@
 							
 							
 							//将dc的数据和云的数据整合后在一个新的数组里面        是两个数组   
+							//需要将数据中心和公有云的部分整合到一个新的数组   然后展示出来
 							if(str.endpoints){
 								str.endpoints.forEach(ele => {
+									if(ele.vlan < 0){
+										ele.vlanName='透传'
+									}else if(ele.vlan == 0){
+										ele.vlanName='UNTAG'
+									}else if(ele.vlan > 0){
+										ele.vlanName=ele.vlan
+									}
 									ele.changeBtn='禁用'
 //									getPortStatus
 									if(getPortStatus(ele.ports) =='UP'){
@@ -381,8 +384,20 @@
 									}else{
 										ele.expiration=datedialogFormat(ele.expiration_time)
 									}
+									if(ele.status == 'success'){
+										ele.statusName='创建成功'
+										ele.statusColor='suc'
+									}else if(ele.status == 'creating'){
+										ele.statusName='创建中'
+										ele.statusColor='pri'
+										
+									}else if(ele.status == 'failure'){
+										ele.statusName='创建失败'
+										ele.statusColor='dan'	
+									}
 									ele.dataType='endpoints';//添加新的字段判断  改数据是dc还是云  该数据是dc的
-//									this.users.push(ele);
+									ele.typeName='数据中心'
+									this.users.push(ele);
 								})
 							}
 							
@@ -390,12 +405,10 @@
 								str.cloud_endpoints.forEach(ele => {
 									ele.changeBtn='禁用'
 									ele.dataType='cloud_endpoints';//数据为云的数据
-//									this.users.push(ele);
+									ele.typeName='公有云'
+									this.users.push(ele);
 								})
 							}
-//							this.users=str.endpoints;
-							console.log(str.endpoints)
-							this.users=JSON.parse(JSON.stringify(str.endpoints))
 						}else{
 							this.$message({
 								message:res.data.message,
@@ -526,10 +539,17 @@
 				this.basicObj=Object.assign({},row);
 			},
 			handleDel(index,row){//删除
+				console.log(row)
+				var strType=''
+				if(row.dataType =="endpoints"){
+					strType='node'
+				}else if(row.dataType =="cloud_endpoints"){
+					strType='cloud'
+				}
 				this.$confirm('确定要删除吗?','提示',{})
 				.then(() => {
 					this.loading=true;
-					this.$ajax.del('/vll/del_endpoint/'+row.type+'/'+this.id+'/'+row.id+'?token='+this.token)
+					this.$ajax.del('/vll/del_endpoint/'+strType+'/'+this.id+'/'+row.id+'?token='+this.token)
 					.then(res => {
 						this.loading=false;
 						if(res.status==200){
@@ -577,5 +597,14 @@
 	}
 </script>
 
-<style>
+<style scoped>
+	.suc{
+		color: #67C23A;
+	}
+	.pri{
+		color: #409EFF;
+	}
+	.dan{
+		color: #F56C6C;
+	}
 </style>

@@ -387,6 +387,7 @@ export default {
                       messaeg: res.data.message,
                       type: "warning"
                     });
+                    this.getData();
                   }
                 }
               })

@@ -100,11 +100,6 @@
 			</el-table>
 			
 			<el-row class='toolbar'>
-				<!--<el-col :span='24' >-->
-					<!--<el-col :span='4'>
-						<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">
-							批量删除</el-button>
-					</el-col>-->
 					<el-col :span='24'>
 						<el-pagination
 						:total="total"
@@ -118,7 +113,6 @@
 				     	:prev-text='prev'
 				     	:next-text='next'></el-pagination>
 					</el-col>
-				<!--</el-col>-->
 			</el-row>
 			
 			
@@ -318,6 +312,7 @@
 									message:res.data.message,
 									type:'warning'
 								})
+								this.getUser()
 							}
 						}
 					})

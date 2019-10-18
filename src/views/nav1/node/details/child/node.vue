@@ -123,7 +123,7 @@
 
 <script>
 	
-	import {isValidNumber} from '@/assets/js/index.js'
+	import {isValidNumber,isTest} from '@/assets/js/index.js'
 	export default{
 		name:'node',
 		//这里的title是节点的额详情的时候额界面
@@ -139,13 +139,9 @@
 			let validNumber = (rule,value,callback) => {
 				if(!value){
 					callback(new Error('请输入的端口号'))
-				}else if(!isValidNumber(value)){
+				}else if(!isValidNumber(value) || !isTest(value).bool ){
 					callback(new Error('请输入正确的端口号，详细规则请点击右侧'))
-				} 
-//				else if(value <1 || value >54){
-//					callback( new Error('请填写正确的端口区间'))
-//				}
-				else {
+				} else {
 					callback()
 				}
 			}

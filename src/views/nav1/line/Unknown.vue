@@ -101,10 +101,7 @@
 			</el-table>
 			
 			<!--底部数据导航部分-->
-			<!--<el-col :span='24' class='toolbar'>-->
-				<!--<el-col :span='3'>
-					<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">批量删除</el-button>
-				</el-col>-->
+
 				<el-col :span='24' class='toolbar'>
 					<el-pagination
 						:total="total"
@@ -118,7 +115,6 @@
 				     	:prev-text='prev'
 				     	:next-text='next'></el-pagination>
 				</el-col>
-			<!--</el-col>-->
 
 			<!--添加部分/编辑部分/发现链路-->
 			<el-dialog :title='textMap[dialogStatus]':visible.sync='dialogFormVisible':close-on-click-modal="false" v-loading='editLoading'>
@@ -806,6 +802,7 @@
 									message:res.data.message,
 									type:'danger'
 								})
+								this.getUsers()	
 							}
 						}
 					})

@@ -104,24 +104,23 @@
 							<el-input v-model="editForm.name"  auto-complete="off" class='ipt_sels'></el-input>
 						</el-form-item>
 						<el-form-item label='所属区域' prop='region_id' >		
-								<el-select  v-model='editForm.region_id'  filterable  @change='selectAreaDia(editForm.region_id)' class='sel' >
-									<el-option
-										v-for='(item,index) in areaData'
-										:key='index'
-										:label='item.name'
-										:value='item.id'>	
-									</el-option>
-								</el-select>
-								<el-select v-model='editForm.city_id' class='sel'>
-									<el-option
-										v-for='(item,index) in cityData'
-										:key='index'
-										:label='item.name'
-										:value='item.id'>										
-									</el-option>
-									
-								</el-select>
-							</el-form-item>
+							<el-select  v-model='editForm.region_id'  filterable  @change='selectAreaDia(editForm.region_id)' class='sel' >
+								<el-option
+									v-for='(item,index) in areaData'
+									:key='index'
+									:label='item.name'
+									:value='item.id'>	
+								</el-option>
+							</el-select>
+							<el-select v-model='editForm.city_id' class='sel'>
+								<el-option
+									v-for='(item,index) in cityData'
+									:key='index'
+									:label='item.name'
+									:value='item.id'>										
+								</el-option>
+							</el-select>
+						</el-form-item>
 						<el-form-item label="备注" prop='description'>
 							<el-input type="textarea" v-model="editForm.description" class='ipt_sels'></el-input>
 						</el-form-item>
@@ -398,6 +397,9 @@
 		    handleAdd: function() {
 		      	this.dialogStatus = "create";
 		      	this.dialogFormVisible = true;
+				this.$nextTick(() => {
+					this.$refs["editForm"].resetFields();
+				})
 		      	this.editForm = {
 			        id: "",
 			        name: "",
@@ -514,6 +516,7 @@
 									message:res.data.message,
 									type:'warning'
 								})
+								this.getDatas();
 							}
 			          	}
 			        }).catch(e => {console.log(e)})
