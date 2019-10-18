@@ -72,7 +72,7 @@
       </el-col>
 
       <el-col :span='24'>
-        <span>
+        <span style="float:right;">
           <el-button
             type="success"
             :disabled="this.sels.length===0"

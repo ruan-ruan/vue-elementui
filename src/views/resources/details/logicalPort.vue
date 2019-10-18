@@ -3,7 +3,6 @@
 		<!--创建的逻辑端口-->
 		<section>
 			<h3 class="title_h3" v-text="seePortDetails?seeTopTitle: editTopTitle" ></h3>
-			
 			<el-form :model='filters' ref='filters' :rules='filtersRules' label-width='140px'>
 				<el-row>
 					<el-col :span='24'>
@@ -85,7 +84,7 @@
 				</el-table-column>
 				<el-table-column prop='device.hostname'label='设备名称' width='120' align='center'>					
 				</el-table-column>
-				<el-table-column prop='port.name'label='设备端口' width='120' align='center'>					
+				<el-table-column prop='port.port_no'label='设备端口' width='120' align='center'>					
 				</el-table-column>
 				<el-table-column prop='port.status'label='端口状态' width='120' align='center'>					
 				</el-table-column>
@@ -116,7 +115,6 @@
 				<!--编辑-->
 				<el-button size='small' type="primary" @click="updateData" v-if='!createStatus'>保存</el-button>
 			</div>
-			
 			<!--关联端口的日志部分-->
 			<el-dialog :title='textMap[dialogStatus]':visible.sync='dialogFormVisible' :close-on-click-modal="false" v-loading='editLoading'>
 				<el-form :model='editForm' label-width='120px' ref='editForm':rules='editFormRules'>
@@ -190,8 +188,6 @@
 </template>
 
 <script>
-
-
 	import {datedialogFormat} from '@/assets/js/index.js'
 	export default{
 		name:'logicalPort',
@@ -338,6 +334,7 @@
 //			},
 			physical_ports:function(newVal,oldVal){
 				this.physicalData=JSON.parse(JSON.stringify(newVal))
+				console.log(this.physicalData)
 			}
 		},
 		created(){
@@ -842,7 +839,7 @@
 				this.editForm={
 					node_id:row.node.name,
 					device_id:row.device.hostname,
-					port_id:row.port.name,
+					port_id:row.port.port_no,
 					position:row.position,
 					rack:row.rack,
 					device_type:row.device_type,

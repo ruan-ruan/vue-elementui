@@ -15,13 +15,14 @@
 								</el-form-item>
 							</el-col>
 							<el-col :span='12'>								
-								<el-form-item label='数据中心:'prop='dc_id'>
+								<el-form-item label='数据中心:' prop='dc_id'>
 									<el-input v-model='seeForm.dc_id' :disabled='StaEditForm' v-show='StaEditForm' class='ipt'></el-input>
-									<el-select v-model='seeForm.dc_id' filterable class='ipt' v-show='!StaEditForm'placeholder='请选择数据中心'>
-										<el-option v-for='(item,index) in itemData'
+									<el-select v-model='seeForm.dc_id' @change="change" filterable class='ipt' v-show='!StaEditForm' placeholder='请选择数据中心'>
+										<el-option v-for='item in itemData'
 											:value='item.id'
-											:key='index'
-											:label='item.name'></el-option>
+											:key='item.name'
+											:label='item.name'>
+										</el-option>
 									</el-select>
 								</el-form-item>
 							</el-col>
@@ -162,7 +163,6 @@
 					id:'',
 					name:'',
 					vtep:'',
-
 					devices0_id:'',
 					devices0_hostname:'',
 					devices0_ip:'',
@@ -188,7 +188,6 @@
 					devices1_rack:'',
 					devices1_description:'',
 					port_section1:'',
-					
 					dc_id:'',
 					dc_name:'',
 				},
@@ -320,13 +319,16 @@
 			this.$refs['seeForm'].resetFields();
 		},
 		methods:{
+			change(){
+				this.$forceUpdate()
+			},
 			getDataCenter(){
 				this.$ajax.get('/location/dcs'+'?token='+this.token)
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
 							this.itemData=res.data.data.items;
-
+							console.log(this.itemData)
 						}
 					}
 				})
@@ -606,7 +608,6 @@
 											type:'success'
 										})
 										this.$store.state.statusname=true;
-
 										this.$router.push('/location/backbone')
 
 									}else{
