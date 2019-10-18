@@ -130,11 +130,12 @@
 		props:['tit',],
 		data(){
 			var logic_port= (rule ,value ,callback) => {
-				if(this.baseObj){
-					if(this.baseObj.statusVal == 0 && this.editForm.chooseVlan){
-						callback(new Error('当前端口已为UNTAG端口'))
-					}
-				}else  if(! value){
+//				if(this.baseObj){
+//					if(this.baseObj.statusVal == 0 && this.editForm.chooseVlan){
+//						callback(new Error('当前端口已为UNTAG端口'))
+//					}
+//				}else
+				if(! value){
 					callback(new Error('不能为空'))
 				}else {
 					callback()

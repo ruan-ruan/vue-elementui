@@ -109,12 +109,12 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			<div slot='footer' class='dailog-footer right' v-if='!seePortDetails'>
-				<el-button @click.native='goback'>返回</el-button>
+			<div slot='footer' class='dailog-footer right tc_L' v-if='!seePortDetails'>
+				<el-button size='small' @click.native='goback'>返回</el-button>
 				<!--添加-->
-				<el-button type='primary' @click='createData' v-if='createStatus'>保存</el-button>
+				<el-button size='small' type='primary' @click='createData' v-if='createStatus'>保存</el-button>
 				<!--编辑-->
-				<el-button type="primary" @click="updateData" v-if='!createStatus'>保存</el-button>
+				<el-button size='small' type="primary" @click="updateData" v-if='!createStatus'>保存</el-button>
 			</div>
 			
 			<!--关联端口的日志部分-->

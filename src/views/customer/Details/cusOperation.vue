@@ -4,7 +4,6 @@
 		<section >
 			<el-row>
 				<el-col :span='24'style='margin-left: 40px;'>
-					<!--<el-col :span='12'>-->
 						<el-form :model='customer' ref='customer' :rules='customerRules' v-loading='editLoading' label-width='95px'>
 							<el-form-item label='创建时间'v-show='editOpera'>
 								<el-input disabled v-model='customer.creation_time' class='ipt_sels'  ></el-input>
@@ -27,15 +26,6 @@
 							<el-form-item label='关联租户标识' v-show='false' prop='tenant_id'>
 								<el-input v-model='customer.tenant_id' class='ipt_sels' disabled></el-input>
 							</el-form-item>
-							<!--<el-form-item label='租户标识' prop='name'>
-								<el-select v-model='customer.name'class='ipt_sels' filterable  :disabled='!btnStatus'placeholder='请输入租户标识'>
-									<el-option v-for='(item ,index) in tenantData'
-										:value='item.value'
-										:label='item.name'
-										:key='index'></el-option>
-								</el-select>
-								
-							</el-form-item>-->
 							<el-form-item label='公司行业类型'>
 								<template>
 									<el-select v-model='customer.company_type':disabled='!btnStatus'class='ipt_sels'>
@@ -64,12 +54,14 @@
 							<el-form-item label='备注'>
 								<el-input v-model='customer.description'placeholder='请输入客户标识'type="textarea" cols="4" class='ipt_sels':disabled='!btnStatus'></el-input>
 							</el-form-item>
-							<el-form-item v-show='btnStatus'>
+							<el-form-item v-show='btnStatus'class='tc_L'>
+								<el-button size='small' @click='goback'>返回</el-button>
+								
 								<!--添加-->
-								<el-button type='primary' v-show='addOpera' @click='handleAdd'>保存</el-button>
+								<el-button size='small' type='primary' v-show='addOpera' @click='handleAdd'>保存</el-button>
 								<!--编辑-->
-								<el-button type='primary' v-show='!addOpera' @click='handleEdit'>保存</el-button>
-								<el-button @click='goback'>返回</el-button>
+								<el-button size='small' type='primary' v-show='!addOpera' @click='handleEdit'>保存</el-button>
+
 							</el-form-item>
 						</el-form>
 					<!--</el-col>-->

@@ -266,6 +266,7 @@ export default {
     this.token = sessionStorage.getItem("token");
 
     this.selectData();
+    this.getUsers()
   },
   methods: {
 
@@ -498,6 +499,7 @@ export default {
                     message: res.data.message,
                     type: "warning"
                   });
+                  this.getUsers();
                 }
               }
             });
@@ -569,10 +571,7 @@ export default {
       return jsonData.map(v => filterVal.map(j => v[j]));
     }
   },
-  mounted() {
-    //执行钩子函数
-    this.getUsers();
-  }
+
 };
 </script>
 

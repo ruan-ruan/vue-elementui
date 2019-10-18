@@ -142,7 +142,9 @@
 .table-top{
 	text-align: right;
 }
-
+.tc_L{
+	text-align: center;
+}
 /*逻辑口的状态的对应的颜色*/
 .colorGreen{
 	color: #409EFF;

@@ -680,6 +680,7 @@
 									message:'删除失败!',
 									type:'danger'
 								})
+								this.getUsers()
 							}
 						}
 					})

@@ -100,11 +100,6 @@
 			</el-table>
 			
 			<el-row class='toolbar'>
-				<!--<el-col :span='24' >-->
-					<!--<el-col :span='4'>
-						<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">
-							批量删除</el-button>
-					</el-col>-->
 					<el-col :span='24'>
 						<el-pagination
 						:total="total"
@@ -118,7 +113,6 @@
 				     	:prev-text='prev'
 				     	:next-text='next'></el-pagination>
 					</el-col>
-				<!--</el-col>-->
 			</el-row>
 			
 			
@@ -301,9 +295,12 @@
 				rows.forEach(ele => {
 					ids.push(ele.id)
 				})
+				
 				this.$confirm('确定要删除所选中的数据吗?','提示',{})
 				.then(() => {
-					
+					let para={
+						ids:ids
+					}
 					this.$ajax.del('/link/del_cloud_links'+'?token='+this.token,para)
 					.then(res => {
 						if(res.status==200){
@@ -318,6 +315,7 @@
 									message:res.data.message,
 									type:'warning'
 								})
+								this.getUser()
 							}
 						}
 					})

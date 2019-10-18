@@ -55,12 +55,7 @@
 				</el-table-column>
 			</el-table>
 			
-			<!--底部工具栏-->
-			<!--<el-col :span='24'>
-				<el-col :span='3'>
-					<el-button type='danger'  @click='batchRemove(sels)' :disabled="this.sels.length===0">批量删除</el-button>
-				</el-col>
-			</el-col>-->
+
 		</section>
 	</div>
 </template>
@@ -267,6 +262,7 @@
 									message:res.data.message,
 									type:'danger'
 								})
+								this.getUsers()
 							}
 						}
 					})

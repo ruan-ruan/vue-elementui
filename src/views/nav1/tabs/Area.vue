@@ -224,17 +224,19 @@
 		      this.getUsers();
 		    }, 
 		    getUsers() {
+		    	this.loading=true;
 		      	let para = {
 			        page: this.currentPage,
 			        per_page:this.pagesize,
 			        search_name:this.filters.name,
 		      	};
-				this.loading=true;
+				
 				this.$ajax.get('/location/regions'+'?token='+this.token,para)
 		      	.then(res => {
 			      	if(res.status==200){
-			      		this.loading=false;
+			      		
 			      		if(res.data.status==0){
+			      			this.loading=false;
 							console.log(res)
 							descriptionValue(res.data.data.items)//处理   备注信息
 					        this.total=res.data.data.page.total;
@@ -245,7 +247,8 @@
 			      		}
 			      	}
 			    }).catch(e => {
-			      	console.log(e)
+			    	this.loading=false;
+			    	console.log(e)
 			    })
 		      
 		    },
@@ -305,7 +308,6 @@
 		    //显示新增界面
 		    handleAdd: function() {
 		      	this.dialogStatus = "create";
-		      //this.addFormVisible = true;
 		     	 this.dialogFormVisible = true;
 		      	this.editForm = {
 		        	name: "",
@@ -316,17 +318,14 @@
 		    updateData:function() {
 		    	
 		      this.$refs.editForm.validate(valid => {
-		//    	var str=JSON.stringify()
+
 		        if (valid) {
-		        //   this.$confirm("确认提交吗？", "提示", {})
-		        //     .then(() => {
-		            this.editLoading = true;
+
 		            let para = Object.assign({}, this.editForm);
 					this.$ajax.put('/location/edit_region/'+para.id+'?token='+this.token,para)
 		              .then( (res) => {             	
 		              	if(res.status=='200'){
 		              		if(res.data.status=='0'){
-		              			this.editLoading = false;
 				                this.$message({
 				                  message: "修改成功",
 				                  type: "success"
@@ -346,8 +345,7 @@
 		              .catch(e => {
 		              	console.log(e);
 		              })
-		            // })
-		            // .catch(() => { });
+
 		        }
 		      });
 		    },
@@ -355,34 +353,29 @@
 		    createData: function(index,row) {
 		      this.$refs.editForm.validate(valid => {
 		        if (valid) {
-		        //   this.$confirm("确认提交吗？", "提示", {})
-		        //     .then(() => {
-		                this.editLoading = true;
-		              let para = Object.assign({}, this.editForm);
-						this.$ajax.post('/location/add_region'+'?token='+this.token,para)
-						.then((res) => {
-							if(res.status=='200'){
-								if(res.data.status=='0'){
-									this.$message({
-						                message: "添加成功",
-						                type: "success"
-					                });
-					                this.$refs["editForm"].resetFields();
-									this.dialogFormVisible = false;
-									this.getUsers();
-								}else if(res.data.status){
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
-								}
-							}  
-						})
-						.catch(e => {
-							console.log(e)
-						})
-		            // })
-		            // .catch(() => {});
+	              let para = Object.assign({}, this.editForm);
+					this.$ajax.post('/location/add_region'+'?token='+this.token,para)
+					.then((res) => {
+						if(res.status=='200'){
+							if(res.data.status=='0'){
+								this.$message({
+					                message: "添加成功",
+					                type: "success"
+				                });
+				                this.$refs["editForm"].resetFields();
+								this.dialogFormVisible = false;
+								this.getUsers();
+							}else if(res.data.status){
+								this.$message({
+									message:res.data.message,
+									type:'warning'
+								})
+							}
+						}  
+					})
+					.catch(e => {
+						console.log(e)
+					})
 		        }
 		      });
 		
@@ -417,6 +410,7 @@
 			          				message:res.data.message,
 			          				type:'warning'
 			          			})
+			          			 this.getUsers();
 			          		}
 			          	}    
 		          	}).catch(e => {console.log(e)})
