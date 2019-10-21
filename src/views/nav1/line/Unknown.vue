@@ -194,8 +194,8 @@
 					<el-form-item v-if='detectionStatus' label='检测参数' prop='monitoring_param'>
 						<el-input v-model='editForm.monitoring_param':disabled='seeStatus' class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item  label='流量获取键入值'>
-						<el-input v-model='editForm.monitoring_param' class='ipt' :disabled='seeStatus'></el-input>
+					<el-form-item  label='流量获取键入值' prop='get_speed_key'>
+						<el-input v-model='editForm.get_speed_key' class='ipt' :disabled='seeStatus'></el-input>
 					</el-form-item>
 					<el-form-item label='备注' >
 						<el-input type='textarea'cols="7" v-model='editForm.description' :disabled='seeStatus' class='ipt' ></el-input>
@@ -240,11 +240,11 @@
 				if(!value){
 					callback(new Error('不能为空'))
 				}else if(! isValidNumber(value)){
-					 callback(new Error('只能输入数字'))
+					 callback(new Error('请输入正确的值'))
 				}else{
 					callback()
 				}
-			}
+			};
 			return{
 				radio: '1',
 				//获取用户的权限token
@@ -305,6 +305,7 @@
 					status:'',
 					creation_time:'',
 					description:'',
+					get_speed_key:'',
 				},
 				//添加的时候校验规则
 				editFormRules:{
@@ -513,6 +514,7 @@
 					monitoring_param:'',
 					link_cost:'',
 					description:'',
+					get_speed_key:'',
 //					token:this.token
 				};
 			},
@@ -538,6 +540,7 @@
 								monitoring_param:this.editForm.monitoring_param,
 								link_cost:this.editForm.link_cost,
 								description:this.editForm.description,	
+								get_speed_key:this.editForm.get_speed_key,
 							}
 							
 							
@@ -622,6 +625,7 @@
 					status:row.status,
 					creation_time:'',
 					description:row.description,
+					get_speed_key:row.get_speed_key,
 				}
 
 				this.editForm.creation_time=datedialogFormat(row.creation_time)
@@ -647,6 +651,7 @@
 								monitoring_param:this.editForm.monitoring_param,
 								link_cost:this.editForm.link_cost,
 								description:this.editForm.description,	
+								get_speed_key:this.editForm.get_speed_key
 							}
 							this.$ajax.put('/link/edit_unknown_link/'+this.editForm.id+'?token='+this.token,para)
 							.then( res => {

@@ -397,6 +397,7 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
+							console.log(res)
 							this.disabeldData=res.data.data;
 							this.disVlan=JSON.parse(JSON.stringify(this.conversion(this.vlanData))); 
 						}

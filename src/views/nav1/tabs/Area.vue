@@ -41,7 +41,7 @@
 							<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 						</template>
 					</el-table-column>
-					<el-table-column prop="creation_time" sortable label="创建时间" align='center' width='101' :formatter='dateFormat' >
+					<el-table-column prop="creation_time" sortable label="创建时间" align='center' width='150' :formatter='dateFormat' >
 					</el-table-column>
 					<el-table-column prop="name" label="名称" align='center' min-width='120'>
 					</el-table-column>
@@ -56,10 +56,6 @@
 					</el-table-column>
 				</el-table>
 				<!--工具条-->
-				<!--<el-col :span="24" >-->
-					<!--<el-col :span='3'>
-						<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">批量删除</el-button>
-					</el-col>-->
 				<el-col :span='24' class="toolbar">
 				     <el-pagination 
 						:total="total"
@@ -74,7 +70,6 @@
 				     	  :next-text='next' >						     	
 				     </el-pagination>
 				</el-col>
-				<!--</el-col>-->
 		
 				<!--编辑界面-->
 				<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false"  v-loading='editLoading'>
@@ -239,6 +234,7 @@
 			      			this.loading=false;
 							console.log(res)
 							descriptionValue(res.data.data.items)//处理   备注信息
+
 					        this.total=res.data.data.page.total;
 					        this.pageNum=res.data.data.page.pages;
 							this.users=res.data.data.items;
@@ -478,10 +474,12 @@
 		      	let date = new Date(parseInt(row.creation_time) * 1000);
 		      	let Y = date.getFullYear() + "-";
 		      	let M =date.getMonth() + 1 < 10  ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
-		      	let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
+		      	let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + "  ";
 		      	let h = date.getHours() < 10  ? "0" + date.getHours() + ":"  : date.getHours() + ":";
 		        let m = date.getMinutes() < 10  ? "0" + date.getMinutes() + ":"  : date.getMinutes() + ":";
 		        let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+//		        var str=Y + M + D+'<br/>' + h + m + s;
+//		        document.write(str)
 		      return Y + M + D + h + m + s;
 		    },
 		},

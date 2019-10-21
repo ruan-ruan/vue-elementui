@@ -12,7 +12,7 @@ export default {
     Default: 'Default'
   },
   route: {
-    AliIcons: 'AliIcons',
+    personalCenter: 'personalCenter',
     list: 'list',
     Digitalanimation: 'Digitalanimation',
     Rollingpositioning: 'Rollingpositioning',

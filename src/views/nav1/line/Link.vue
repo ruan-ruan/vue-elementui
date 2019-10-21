@@ -134,7 +134,7 @@
 			
 			<!--编辑界面操作和详情的操作的界面-->
 			<el-dialog :title='textMap[dialogStatus]':visible.sync='dialogFormVisible':close-on-click-modal="false" v-loading='editLoading'>
-				<el-form :model="editForm" label-width='80px'ref='editForm' label-position='left' >
+				<el-form :model="editForm" label-width='80px'ref='editForm':rules='ruleEditform' label-position='left' >
 					<!--:rules='editFormRules'-->
 					<el-form-item label='链路ID'>
 						<template>
@@ -176,10 +176,11 @@
 							<span v-text="editForm.z_desc"></span>
 						</template>
 					</el-form-item>
-					<el-form-item label='总带宽'>
+					
+					<el-form-item label='总带宽' prop='bandwidth'>
 						<el-input v-model='editForm.bandwidth' :disabled='editFormStatue'  class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='物理带宽'>
+					<el-form-item label='物理带宽' prop='physical_bandwidth'>
 						<el-input v-model='editForm.physical_bandwidth' :disabled='editFormStatue' class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item label='剩余带宽'>
@@ -187,17 +188,17 @@
 							<span v-text="editForm.bandwidth-editForm.physical_bandwidth"></span>
 						</template>
 					</el-form-item>
-					<el-form-item label='链路开销'>
+					<el-form-item label='链路开销' prop='link_cost'>
 						<el-input v-model='editForm.link_cost':disabled='editFormStatue'  class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='链路检测'>
+					<el-form-item label='链路检测' prop='monitoring'>
 						<el-radio-group v-model='editForm.monitoring' :disabled='editFormStatue' @change="mointradio">
 							<template v-for='item in needDown'>
 								<el-radio :value='item.label' :label='item.val'>{{item.name}}</el-radio>
 							</template>
 						</el-radio-group>
 					</el-form-item>
-					<el-form-item v-show='detectionStatus' label='检测类型'>
+					<el-form-item v-if='detectionStatus' label='检测类型' prop='monitoring_type'>
 						<el-select v-model='editForm.monitoring_type' :disabled='editFormStatue' class='ipt'>
 							<el-option v-for='(item,index) in detectionType'
 								:value='item.value'
@@ -207,10 +208,10 @@
 						</el-select>
 					</el-form-item>
 					<el-form-item v-show='detectionStatus' label='检测参数'>
-						<el-input v-model='editForm.monitoring_param' :disabled='editFormStatue'></el-input>
+						<el-input v-model='editForm.monitoring_param' :disabled='editFormStatue' class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item  label='流量获取键入值'>
-						<el-input v-model='editForm.monitoring_param' :disabled="editFormStatue" class='ipt'></el-input>
+					<el-form-item  label='流量获取键入值' prop='get_speed_key'>
+						<el-input v-model='editForm.get_speed_key' :disabled="editFormStatue" class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item label='备注'>
 						<!--<textarea name="" rows="" cols="7"></textarea>-->
@@ -228,14 +229,22 @@
 
 <script>
 
-	import {datedialogFormat ,descriptionValue,getTime} from '@/assets/js/index.js'
+	import {datedialogFormat ,descriptionValue,getTime , isValidNumber} from '@/assets/js/index.js'
 
 
 	export default{
 		name:'Data',
 		data(){
+			var isNumber= (rule,value,callback) => {
+				if(!value){
+					callback(new Error('不能为空'))
+				}else if(! isValidNumber(value)){
+					 callback(new Error('请输入正确的值'))
+				}else{
+					callback()
+				}
+			};
 			return{
-				
 				//获取用户的权限
 				token:'',
 				status:[
@@ -306,8 +315,16 @@
 					status:'',
 					creation_time:'',
 					description:'',
+					get_speed_key:'',
 //					maintenance_value:'',
 //					token:''
+				},
+				ruleEditform:{
+					monitoring_type:[  { required: true, message: '请选择检测类型', trigger: 'change' }],
+					bandwidth:[  { required: true,  validator:isNumber, trigger: 'blur' }],
+					physical_bandwidth:[  { required: true,  validator:isNumber, trigger: 'blur' }],
+					link_cost:[  { required: true,  validator:isNumber, trigger: 'blur' }],
+					monitoring:[  { required: true, message: '请输入检测类型', trigger: 'change' }],
 				},
 				//链路是否开启部分
 				needDown:[
@@ -630,6 +647,7 @@
 								monitoring_param:this.editForm.monitoring_param,
 								link_cost:this.editForm.link_cost,
 								description:this.editForm.description,
+								get_speed_key:this.editForm.get_speed_key,
 							};
 							this.$ajax.put('/link/edit_link/'+this.editForm.id+'?token='+this.token,para)
 							.then( res => {

@@ -726,17 +726,20 @@ export default {
           pointID: row.id
         }
       });
+
+//    this.$emit('send',true);
     },
     handleSeeA(index, row) {
     	console.log(row)
       //查看A的详情
-      console.log("进入A端的详情");
+
       this.$router.push({
         path: "/resource/see/logicalPort",
         query: {
           detailsID: row.endpoints[0].logic_port.id
         }
       });
+      this.$emit('send',row.endpoints[0].logic_port.id)//改组件被引用的时候  向父组件传值更新
     },
     handleSeeZ(index, row) {
     	console.log(row)
@@ -748,6 +751,8 @@ export default {
           detailsID: row.endpoints[1].logic_port.id
         }
       });
+      this.$emit('send',row.endpoints[1].logic_port.id)//改组件被引用的时候  向父组件传值更新
+      
     },
     handleEdit(index, row) {
     	console.log(row)

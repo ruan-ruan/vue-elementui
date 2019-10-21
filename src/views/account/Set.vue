@@ -206,7 +206,7 @@
 				classB:"classB",
 				filters:{
 					search_name:'',
-					search_status:'',
+					search_status:'true',
 					
 				},
 				status:[
@@ -268,11 +268,11 @@
 				editFormRules:{
 					name:[
 						{ required: true, message: '请输入账号', trigger: 'blur' },
-            			{ min: 3, max: 30, message: '长度在 2 到 30 个字符', trigger: 'blur' }
+            			{ min: 2, max: 30, message: '长度在 2 到 30 个字符', trigger: 'blur' }
 					],
 					real_name:[
 						{ required: true, message: '请输入姓名', trigger: 'blur' },
-            			{ min: 3, max: 30, message: '长度在 2 到 30 个字符', trigger: 'blur' }
+            			{ min: 2, max: 30, message: '长度在 2 到 30 个字符', trigger: 'blur' }
 					],
 					password:[ { validator: validatePass,required: true, trigger: 'blur' }],
 					password_confirm:[ { validator: validatePass2,required: true, trigger: 'blur' }],
@@ -466,11 +466,6 @@
 //					usable:'',
 					description:'',
 				}
-				
-//				this.$nextTick(() => {
-//					 this.$refs.editForm.resetFields();       
-//				});
-				console.log(this.editForm.usable)
 			},
 			creatData:function(){
 				//添加

@@ -20,6 +20,13 @@ import *as types from '@/api/types'
 import '@/assets/css/bus.css'
 import ajax from '@/api/api'
 
+import i18n from './lang'
+
+//语言处理
+Vue.use(ElementUI,{
+	size:'medium',
+	i18n:(key ,value) => i18n.t(key,value)
+})
 
 
 import VueClipboard from 'vue-clipboard2'
@@ -65,6 +72,7 @@ new Vue({
   el: '#app',
   router,
   store,
+  i18n,//语言处理
   components: { App },
   template: '<App/>'
 })

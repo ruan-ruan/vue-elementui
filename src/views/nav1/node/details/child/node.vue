@@ -360,6 +360,7 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
+							console.log(res)
 							this.loading=false
 							var strData=res.data.data;
 							this.baseData=res.data.data
@@ -467,10 +468,10 @@
 							{
 								id:this.seeForm.devices0_id,
 								port_section:this.seeForm.port_section0,
-								position:this.seeForm.devices0_id,
+								position:this.seeForm.devices0_position,
 								room:this.seeForm.devices0_room,
 								rack:this.seeForm.devices0_rack,
-								description:this.seeForm.devices0_position,
+								description:this.seeForm.devices0_description,
 							}
 						]
 					}
@@ -483,10 +484,10 @@
 							{
 								id:this.seeForm.devices0_id,
 								port_section:this.seeForm.port_section0,
-								position:this.seeForm.devices0_id,
+								position:this.seeForm.devices0_position,
 								room:this.seeForm.devices0_room,
 								rack:this.seeForm.devices0_rack,
-								description:this.seeForm.devices0_position,
+								description:this.seeForm.devices0_description,
 							},{
 								id:this.seeForm.devices1_id,
 								port_section:this.seeForm.port_section1,

@@ -3,12 +3,12 @@
 		<goback></goback>
 		
 		<!--逻辑端口列表的详情的界面-->
-		<el-tabs v-model='activeName'>
+		<el-tabs v-model='activeName' v-if='boolean'>
 			<el-tab-pane label='信息详情' name='first'>
-				<logical-port :title='id'></logical-port>
+				<logical-port :title='id' ></logical-port>
 			</el-tab-pane>
 			<el-tab-pane label='点到点专线' name='second'>
-				<points-to :customer='id'></points-to>
+				<points-to :customer='id' @send='getVal'></points-to>
 			</el-tab-pane>
 			<el-tab-pane label='虚拟组网专线' name='third'>
 				<virtual-network :clounId='id'></virtual-network>
@@ -31,8 +31,18 @@
 				token:'',
 				activeName:'first',
 				id:this.$route.query.detailsID,
+				boolean:true
 			}
 		},
+		methods:{
+			getVal(msg){
+				this.boolean=false;
+				this.$nextTick(() => {
+					this.boolean=true;
+					this.id=msg;
+				})
+			}
+		}
 	}
 </script>
 

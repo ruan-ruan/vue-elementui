@@ -3,7 +3,7 @@ import store from '@/store/index'
 import router from '@/router/index'
 import * as types from '@/api/types'
 // axios 配置
-axios.defaults.baseURL='http://api.tianchic.com'
+axios.defaults.baseURL='http://api.tianchi.com'
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 // http request 拦截器
 axios.interceptors.request.use(

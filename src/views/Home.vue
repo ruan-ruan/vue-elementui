@@ -37,11 +37,11 @@
                 </div>
               </el-popover>
             <el-col :span='7'>
-              <el-dropdown trigger="click">
+              <el-dropdown trigger="click" @command="Change">
                 <span class="el-dropdown-link userinfo-inner">语言</span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>中文</el-dropdown-item>
-                  <el-dropdown-item>English</el-dropdown-item>
+                  <el-dropdown-item command='zh'>中文</el-dropdown-item>
+                  <el-dropdown-item command='en'>English</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </el-col>
@@ -77,7 +77,7 @@
                 <img :src="item.iconCls" class='asideLogo'/>
 
                 <span slot="title">
-                	{{item.name}}
+                	{{item.name }}
                 </span>
                 
               </template>
@@ -233,6 +233,10 @@ export default {
     };
   },
   methods: {
+  	Change(type){
+  		this.$i18n.locale = type
+      this.$store.dispatch('setLanguage', type)
+  	},
     psd: function(row) {
       this.$confirm("确认要修改密码吗?", "提示", {})
         .then(() => {

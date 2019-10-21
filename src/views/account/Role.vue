@@ -237,6 +237,7 @@
 				this.sels=sels
 			},
 			batchRemove:function(rows){
+				console.log(rows)
 				//批量删除
 				var ids=[];
 				rows.forEach(ele => {
@@ -246,7 +247,9 @@
 					type:'warning '
 				})
 				.then(() => {
-					let para={ids:ids};
+					let para={ 
+						ids:ids
+					};
 				
 					this.$ajax.del('/role/del_roles'+'?token='+this.token,para)
 					.then(res => {

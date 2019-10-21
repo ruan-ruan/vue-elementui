@@ -5,9 +5,10 @@ const app={
 	
 	state:{
 		//中英文
-		language:Cookies.get('language')|| 'zh',
+//		language:Cookies.get('language')|| 'zh',
+		language:localStorage.getItem('language') || 'zh',
 		sidebar:{
-			opened: !+Cookies.get('sidebarStatus'),
+			opened: !+localStorage.getItem('sidebarStatus'),
 			withoutAnimation:false
 		},
 		device:'desktop'	
@@ -15,9 +16,9 @@ const app={
 	mutations:{
 		TOGGLE_SIDEBAR:state => {
 			if(state.sidebar.opened){
-				Cookies.set('sidebarStatus',1)
+				localStorage.setItem('sidebarStatus',1)
 			}else{
-				Cookies.set('sidebarStatus',0)
+				localStorage.setItem('sidebarStatus',0)
 			}
 			state.sidebar.opened = !state.sidebar.opened
 			state.sidebar.withoutAnimation=false
@@ -25,10 +26,10 @@ const app={
 		//中英文
 		SET_LANGUAGE:(state,language) => {
 			state.language = language
-			Cookies.set('language',language)
+			localStorage.setItem('language',language)
 		},
 		CLOSE_SIDEBAR:(state,withoutAnimation) => {
-			Cookies.set('sidebarStatus',1)
+			localStorage.setItem('sidebarStatus',1)
 			state.sidebar.opened=false
 			state.sidebar.withoutAnimation = withoutAnimation
 			

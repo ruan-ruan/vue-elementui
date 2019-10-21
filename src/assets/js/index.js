@@ -14,7 +14,7 @@ export function datedialogFormat(value){
 	let date = new Date(parseInt(value) * 1000);
     let Y = date.getFullYear() + '-';
     let M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) + '-' : date.getMonth() + 1 + '-';
-    let D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
+    let D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + '  ';
     let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
     let m = date.getMinutes()  < 10 ? '0' + date.getMinutes() + ':' : date.getMinutes() + ':';
     let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
@@ -30,6 +30,7 @@ export function getTime(value) {
   }
 /**
  * chart里面的传参所需的时间格式
+ * 在图表格数据请求的参数
  * */
 export function isChartTime(value){
 	var str=Math.round(value)//取整数
@@ -328,7 +329,7 @@ export function isTest(val){
 };
 
 export function isValidNumber(str){
-	const reg=/^\d/g;
+	const reg=/^[1-9]\d*$/g;
 	return reg.test(str);
 };
 

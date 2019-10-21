@@ -3,6 +3,8 @@ import Vuex from 'vuex'
 import axios from 'axios'
 import {base} from '@/api/api'
 import *as types from '@/api/types'
+import getters from './getters'
+import app from './modules/app.js'
 Vue.use(Vuex)
 
 
@@ -61,7 +63,11 @@ const store = new Vuex.Store({
     		commit('setRole',msg)
     	},
 
-    }
+    },
+    modules:{
+    	app
+    },
+    getters
 })
 
 export default store

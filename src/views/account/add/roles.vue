@@ -11,11 +11,10 @@
 					<template>
 						<el-radio-group v-model='editForm.usable' :disabled='disUp'>
 							<el-radio v-for='(item,index) in Sta'
-								:value='item.value'  
-								:label='item.name'
-								:key='index' >
-								<!--{{editForm.usable}}-->
-							</el-radio>
+								:value='item.value'
+								:label='item.value'
+								:key='index'
+								 >{{item.name}}</el-radio>
 						</el-radio-group>			
 					</template>		
 				</el-form-item>
@@ -35,7 +34,6 @@
 						:expand-on-click-node="false"
 						:default-checked-keys="roleDetails"
 						@check='setrole'
-						
 						>
 					</el-tree>
 					<!--@check-change="handleCheckChange"-->
@@ -86,11 +84,10 @@
 				roleDetails:[],
 				editForm:{
 					name:'',
-					usable:'',
+					usable:null,
 					description:'',
-					rights:'',
+					rights:[],
 					dataCen:[],
-					statusName:'',
 				},
 				editFormRules:{
 					name:[
@@ -101,19 +98,29 @@
 					rights:[{ required: true, message: '权限不能为空', trigger: 'change' }]
 				},
 				//角色的状态
-				Sta:[
-					{
+				Sta:[{
 						name:'启用',
-						value:'true',
+						value:true,
 					},{
 						name:'禁用',
-						value:'false',
-					}
-				],
+						value:false,
+					}],
 				Loading:false,
 				//角色的添加按钮默认的时候是显示，编辑的时候按钮是隐藏的
 				roleBtnStatus:true,
 				backUpdata:[],//权限列表数据的备份
+				basicData:[],//编辑的时候 ，数据备份
+			}
+		},
+		watch:{
+			'editForm.usable':function(newVal,oldVal){
+				
+				console.log(typeof  Boolean(newVal))
+				console.log(typeof newVal)
+				console.log(newVal)
+			},
+			'editForm.rights':function(newVal,oldVal){
+				console.log(typeof newVal)
 			}
 		},
 		created(){
@@ -151,6 +158,7 @@
 				.then( res => {
 					if(res.status==200){
 						if(res.data.status==0){
+							console.log(res)
 							var str=res.data.data;
 							if(val){
 								deepClone(str);
@@ -177,9 +185,11 @@
 					if(valid){
 						let para={
 							name:this.editForm.name,
-							usable:this.editForm.usable,
+//							usable:Boolean(this.editForm.usable) ,
+							usable:this.editForm.usable ,
+							
 							description:this.editForm.description,
-							rights:this.editForm.rights,
+							rights:this.editForm.rights.join(','),
 						}
 						this.$ajax.post('/role/add_role'+"?token="+this.token,para)
 						.then(res => {
@@ -216,23 +226,24 @@
 					console.log(res);
 					if(res.status==200){
 						if(res.data.status==0){
-							this.roleDetails=res.data.data.rights.split(',');
-							if(res.data.data.usable){
-								this.editForm.statusName='启用'
-							}else{
-								this.editForm.statusName='禁用'
-							}
+							this.basicData=res.data.data;
+
 							if(res.data.data.rights==='all'){
 								console.log(this.organizationData)
 								this.getALl()//当时超级管理员的时候   这个时候直接获取所有的底层的数据既可
 							}else{
-//								this.$refs.organizationData.setCheckedNodes(this.roleDetails);
-								this.$refs.organizationData.setCheckedNodes(this.roleDetails);
+								if (!res.data.data.rights && typeof(res.data.data.rights)!="undefined" && res.data.data.rights!=0){
+									return ;
+								}else{
+									this.roleDetails=res.data.data.rights.split(',');//将字符串转换为数组
+									this.$refs.organizationData.setCheckedNodes(this.roleDetails);
+								}
+								
 							}
 							 this.editForm={
 							 	id:res.data.data.id,
 								name:res.data.data.name,
-								usable:this.editForm.statusName,
+								usable:res.data.data.usable,
 								description:res.data.data.description,
 //								rights:res.data.data.rights,
 								rights:this.roleDetails,
@@ -271,16 +282,27 @@
 				})
 			},
 			handleEdit(){//编辑的保存界面
-				console.log('执行编辑');
+
+
+				var str=''
+				if (!this.editForm.rights && typeof(this.editForm.rights)!="undefined" && this.editForm.rights!=0){
+					this.editForm.rights='';
+					str=''
+				}else if(typeof this.editForm.rights ==='undefined'){
+					str=''
+				}else{
+					str=this.editForm.rights.join(',');
+				}
 				this.$refs.editForm.validate(valid => {
 					if(valid){
 						//编辑的角色的时候按钮
 						var para={
 							name:this.editForm.name,
-							rights:this.editForm.dataCen,
-							usable:this.editForm.usableStatus,
+							rights:str,
+							usable:this.editForm.usable ,
 							description:this.editForm.description
 						}
+
 						this.$ajax.put('/role/edit_role/'+this.editForm.id+'?token='+this.token,para)
 						.then(res => {
 							console.log(res)
@@ -314,22 +336,17 @@
 					console.log(res);
 					if(res.status==200){
 						if(res.data.status==0){
-							this.roleDetails=res.data.data.rights.split(',');
-							if(res.data.data.usable){
-								this.editForm.statusName='启用'
-							}else{
-								this.editForm.statusName='禁用'
-							}
+							
 							if(res.data.data.rights=='all'){
-//								this.roleDetails=this.organizationData;
 								this.getALl()
 								
 							}else{
+								this.roleDetails=res.data.data.rights.split(',');
 								this.$refs.organizationData.setCheckedNodes(this.roleDetails);
 							}
 							 this.editForm={
 								name:res.data.data.name,
-								usable:this.editForm.statusName,
+								usable:res.data.data.usable,
 								description:res.data.data.description,
 								rights:this.roleDetails
 							}
@@ -340,8 +357,19 @@
 				})
 			},
 			setrole(data,checked){
-				this.editForm.dataCen=checked.checkedKeys;
-				this.editForm.rights=this.editForm.dataCen.join(',');
+
+				var str=[]
+				checked.checkedKeys.forEach(ele => {
+					if(typeof ele !=='undefined'){
+						str.push(ele)
+						this.editForm.rights.push(ele)
+					}
+				})
+
+				this.editForm.dataCen=str;
+
+				console.log( this.editForm.rights)
+
 			},
 
 		}

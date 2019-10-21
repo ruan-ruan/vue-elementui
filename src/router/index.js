@@ -124,7 +124,6 @@ var router = new Router({
 			{path:'/resource/virtualLine',component: () => import ('@/views/parent'), name: '虚拟专线',leaf:false,children:[
 				{path:'/resource/virtualLine/pointTo',component: () => import ('@/views/resources/pointTo'), name: '点到点专线',leaf:true},
 				{path:'/resource/virtualLine/pointsTos',component: () => import ('@/views/resources/pointsTos'), name: '虚拟组网专线',leaf:true},
-
 			]},
 			{path:'/resource/virtualLine/pointdetails',component: () => import ('@/views/resources/virtualDetails/poinDetail'), name: '点到点详情',leaf:true,hidden:true},
 			
