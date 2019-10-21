@@ -454,16 +454,60 @@
 			},
 			editForm(){
 				console.log('节点的编辑')
+				console.log(this.seeForm)
+				console.log(this.baseData)
+				var  para={};
+				
+				if(this.baseData.devices.length ==1){
+					para={
+						name:this.seeForm.name,
+						dc_id:this.seeForm.dc_id == this.baseData.dc.name?this.baseData.dc.id:this.seeForm.dc_id,
+						vtep:this.seeForm.vtep,
+						device:[
+							{
+								id:this.seeForm.devices0_id,
+								port_section:this.seeForm.port_section0,
+								position:this.seeForm.devices0_id,
+								room:this.seeForm.devices0_room,
+								rack:this.seeForm.devices0_rack,
+								description:this.seeForm.devices0_position,
+							}
+						]
+					}
+				}else if(this.baseData.devices.length ==2){
+					para={
+						name:this.seeForm.name,
+						dc_id:this.seeForm.dc_id==this.baseData.dc.name?this.baseData.dc.id:this.seeForm.dc_id,
+						vtep:this.seeForm.vtep,
+						device:[
+							{
+								id:this.seeForm.devices0_id,
+								port_section:this.seeForm.port_section0,
+								position:this.seeForm.devices0_id,
+								room:this.seeForm.devices0_room,
+								rack:this.seeForm.devices0_rack,
+								description:this.seeForm.devices0_position,
+							},{
+								id:this.seeForm.devices1_id,
+								port_section:this.seeForm.port_section1,
+								position:this.seeForm.devices1_position,
+								room:this.seeForm.devices1_room,
+								rack:this.seeForm.devices1_rack,
+								description:this.seeForm.devices1_description,
+							}
+						]
+					}
+				}
+				
+				
+				
+				console.log(para)
 				//节点界面的 编辑部分的提交的数据
 				this.$refs.seeForm.validate(valid => {					
 					if(valid){
 						this.$confirm('确认要修改吗?','提示',{})
 						.then(() => {
-							let para=Object.assign({},this.seeForm);
-//							para.dc_id=this.seeForm.dc_id;
-							para.dc_id=this.seeForm.dc_id==this.baseData.dc.name?this.baseData.dc.id:this.seeForm.dc_id;
-							
-							this.$ajax.put('/node/edit_node/'+para.id+'?token='+this.token,para)
+							this.$ajax.put('/node/edit_node/'+this.seeForm.id+'?token='+this.token,para)
 							.then(res => {
 								console.log(res);
 								if(res.status==200){

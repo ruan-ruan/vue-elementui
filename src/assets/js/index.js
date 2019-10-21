@@ -309,7 +309,7 @@ export function isTest(val){
 	})
 	data.forEach(ele => {
 		if(!isNaN(ele)){
-			if(ele>54 || ele<0){
+			if(ele>54 || ele<1){
 				str.bool=false
 			}
 			else{
