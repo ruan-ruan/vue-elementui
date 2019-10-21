@@ -304,6 +304,8 @@ export default {
     if (user) {
       this.sysUserName = user || "";
     }
+    // const timer = setInterval(() =>{                    
+    // 某些定时器操作 
     var para = {
       page: '',
       per_page: '',
@@ -335,7 +337,9 @@ export default {
       })
       .catch(e => {
         console.log(e);
-      });
+      });               
+    // }, 500000);   
+    
   }
 };
 </script>

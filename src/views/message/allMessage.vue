@@ -3,12 +3,30 @@
 
     <section>
       <!--工具条-->
-      <el-col :span='24' class='toolbar' style='padding-bottom: 0px;' >
-        <el-form :inline='true' :model='formList' ref='formList' @submit.native.prevent >
-          <el-form-item label='标题'  prop='name' >
-            <el-input  v-model='formList.name' class="sel" ></el-input>
+      <el-col
+        :span='24'
+        class='toolbar'
+        style='padding-bottom: 0px;'
+      >
+        <el-form
+          :inline='true'
+          :model='formList'
+          ref='formList'
+          @submit.native.prevent
+        >
+          <el-form-item
+            label='标题'
+            prop='name'
+          >
+            <el-input
+              v-model='formList.name'
+              class="sel"
+            ></el-input>
           </el-form-item>
-          <el-form-item label='类型' prop='mesType' >
+          <el-form-item
+            label='类型'
+            prop='mesType'
+          >
             <el-select
               class='ipt_sta'
               v-model='formList.mesType'
@@ -93,27 +111,32 @@
         style='width: 100%;'
         empty-text='暂无数据'
         v-loading='loading'
-        :default-sort = "{prop: 'time', order: 'descending'}"
+        :default-sort="{prop: 'time', order: 'descending'}"
       >
-      	
+
         <el-table-column
           type='selection'
           align='center'
           width='50'
         ></el-table-column>
-        <el-table-column type='index' width='50' align='center'label='序号' >
-					<template slot-scope='scope'>
-						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
-					</template>
-				</el-table-column>
+        <el-table-column
+          type='index'
+          width='50'
+          align='center'
+          label='序号'
+        >
+          <template slot-scope='scope'>
+            <span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           label='标题'
           prop='title'
-          align='center'
+          align='left'
           width="240"
         >
           <template slot-scope="scope">
-            <el-popover
+             <el-popover
               ref="visible"
               placement="right"
               trigger="hover"
@@ -121,19 +144,22 @@
               <span class="warptitle">
                 {{scope.row.content | ellipsis}}
               </span>
-            </el-popover>
+              
+              <span
+              style="margin-left: 5px;"
+              class='cli_spn'
+              slot="reference"
+              @click="handleClick(scope.$index,scope.row)"
+            >
             <span v-show="!scope.row.is_read"><img
                 src="../../assets/images/message/unread.png.png"
                 alt=""
                 style="width:12px;height:12px;"
               ></span>
-            <span
-              style="margin-left: 5px;"
-              class='cli_spn'
-              v-popover:visible
-              @click="handleClick(scope.$index,scope.row)"
-            >{{ scope.row.title}}</span>
-
+            {{ scope.row.title}}
+            </span>
+            </el-popover>
+           
           </template>
         </el-table-column>
         <el-table-column
@@ -181,7 +207,10 @@
           :next-text='next'
         ></el-pagination>
       </el-col>
-      <messageDialog :mesdetail="mesdetail" @getData='getData'></messageDialog>
+      <messageDialog
+        :mesdetail="mesdetail"
+        @getData='getData'
+      ></messageDialog>
 
     </section>
   </div>
@@ -189,7 +218,7 @@
 
 <script>
 import messageDialog from "@/components/dialog/messageDialog";
-import {getTime} from '@/assets/js/index.js'
+import { getTime } from "@/assets/js/index.js";
 export default {
   name: "read",
   components: {
@@ -291,7 +320,7 @@ export default {
   methods: {
     //重置按钮
     reset() {
-      this.$refs['formList'].resetFields()
+      this.$refs["formList"].resetFields();
     },
     selsChange(val) {
       this.sels = val;
@@ -356,10 +385,10 @@ export default {
         ids += item.id + ",";
       }
       console.log(ids);
-        var id = ids.substring(0, ids.lastIndexOf(","));
-        this.isid = id.split(",");
-        const paras = { ids: this.isid};
-        console.log(paras)
+      var id = ids.substring(0, ids.lastIndexOf(","));
+      this.isid = id.split(",");
+      const paras = { ids: this.isid };
+      console.log(paras);
       if (!ids) {
         this.$message({
           message: "请选择你要删除的选项",
@@ -402,8 +431,12 @@ export default {
     getData() {
       var _this = this;
       this.loading = true;
-      this.formList.start_time= this.formList.timeVal[0] ? this.formList.timeVal[0] : ''
-      this.formList.end_time = this.formList.timeVal[1] ? this.formList.timeVal[1] : ''
+      this.formList.start_time = this.formList.timeVal[0]
+        ? this.formList.timeVal[0]
+        : "";
+      this.formList.end_time = this.formList.timeVal[1]
+        ? this.formList.timeVal[1]
+        : "";
       var para = {
         page: this.currentPage,
         per_page: this.pagesize,
@@ -411,7 +444,7 @@ export default {
         search_type: this.formList.mesType,
         search_level: this.formList.level,
         search_start_time: getTime(this.formList.start_time),
-        search_end_time: getTime(this.formList.end_time),
+        search_end_time: getTime(this.formList.end_time)
       };
       this.$ajax
         .get("/public/get_news" + "?token=" + this.token, para)
@@ -452,8 +485,8 @@ export default {
         date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
       return Y + M + D + h + m + s;
     },
-    timeValSearchBtn(value){
-      this.formList.start_time= this.formList.timeVal[0];
+    timeValSearchBtn(value) {
+      this.formList.start_time = this.formList.timeVal[0];
       this.formList.end_time = this.formList.timeVal[1];
     },
     //分页的选择页面显示个数和点击其他的分页的时候显示数据
@@ -473,7 +506,7 @@ export default {
       this.mesdetail.type = row.level + "级";
       this.mesdetail.timeVal = row.time;
       this.mesdetail.text = row.content;
-       this.readid = row.id.split(",");
+      this.readid = row.id.split(",");
       let para = { ids: this.readid };
       this.$ajax
         .put("/public/read_news" + "?token=" + this.token, para)

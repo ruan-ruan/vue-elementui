@@ -88,7 +88,7 @@
         <el-table-column
           label='标题'
           prop='title'
-          align='center'
+          align='left'
           width="240"
         >
           <template slot-scope="scope">
@@ -100,19 +100,19 @@
               <span class="warptitle">
                 {{scope.row.content | ellipsis}}
               </span>
-            </el-popover>
-            <span v-show="!scope.row.is_read"><img
+            <span
+              style="margin-left: 5px;"
+              class='cli_spn'
+              slot="reference"
+              @click="handleClick(scope.$index,scope.row)"
+            >
+             <span v-show="!scope.row.is_read"><img
                 src="../../assets/images/message/unread.png.png"
                 alt=""
                 style="width:12px;height:12px;"
               ></span>
-            <span
-              style="margin-left: 5px;"
-              class='cli_spn'
-              v-popover:visible
-              @click="handleClick(scope.$index,scope.row)"
-            >{{ scope.row.title}}</span>
-
+            {{ scope.row.title}}</span>
+            </el-popover>
           </template>
         </el-table-column>
         <el-table-column
@@ -411,6 +411,7 @@ export default {
               _this.tableData = res.data.data.items;
               console.log(_this.tableData);
               _this.total = res.data.data.page.total;
+              this.$store.state.message = _this.total;
             }
           }
         })
