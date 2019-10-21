@@ -50,7 +50,7 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop="bandwidth"label='带宽(Mbps)' min-width="60" align='center'></el-table-column>
-				<el-table-column prop="typeName"label='类型' min-width="60" align='center'></el-table-column>
+				<el-table-column prop="typeName"label='逻辑口类型' min-width="60" align='center'></el-table-column>
 				<el-table-column prop="charge_mode"label='计费模式' min-width="80" align='center'></el-table-column>
 				
 				<el-table-column prop="charge"label='计费时间' width="95" align='center'>					
@@ -59,7 +59,7 @@
 				</el-table-column>
 				
 				<el-table-column prop="description"label='备注'min-width="60" align='center'></el-table-column>
-				<el-table-column label='操作' width="300" align='center' v-if=" typeof id !=='undefined'">
+				<el-table-column label='操作' width="120" align='center' v-if=" typeof id !=='undefined'">
 					<template slot-scope='scope'>
 						<el-button size='small' @click='handleTabStatus(scope.$index,scope.row)'>{{scope.row.changeBtn}}</el-button>
 						<el-button size='small' type='primary' @click='handleEdit(scope.$index,scope.row)'>编辑</el-button>

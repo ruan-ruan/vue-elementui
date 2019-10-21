@@ -53,13 +53,13 @@
 				<el-table-column prop='len'label='关联端点数' align='center'min-width='150' ></el-table-column>
 				<el-table-column prop='tenant.name'label='租户标识' align='center'min-width='150' ></el-table-column>
 				<el-table-column prop='descriptionVal'label='备注' align='center'min-width='150' ></el-table-column>
-				<el-table-column label='操作' align='center' width='300'>
+				<el-table-column label='操作' align='center' width='80'>
 					<template slot-scope='scope'>
 						<el-button size='small' type='info' @click='handleDetails(scope.$index,scope.row)'>详情</el-button>
-						<el-button size='small' type='primary' @click='handleEdit(scope.$index,scope.row)' v-if='(typeof clounID !=="undefined"?false:true)'>
+						<!-- <el-button size='small' type='primary' @click='handleEdit(scope.$index,scope.row)' v-if='(typeof clounID !=="undefined"?false:true)'>
 							编辑</el-button>
 						<el-button size='small' type='danger'@click='handleDel(scope.$index,scope.row)'v-if='(typeof clounID !=="undefined"?false:true)'>
-							删除</el-button>
+							删除</el-button> -->
 						
 					</template>
 				</el-table-column>

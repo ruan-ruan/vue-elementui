@@ -14,7 +14,7 @@
 								<el-input v-model='filters.name'placeholder="请输入逻辑口名称" class='ipt':disabled='addPortStatus'></el-input>
 							</el-form-item>
 							<el-form-item label='租户标识' prop='tenant_id'>
-								<el-select v-model='filters.tenant_id' class='ipt' :disabled='addPortStatus'>
+								<el-select v-model='filters.tenant_id' class='ipt' :disabled='addPortStatus' filterable>
 									<el-option v-for='(item,index) in tenantLogo'
 										:value='item.id'
 										:label='item.name'
