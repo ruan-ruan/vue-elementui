@@ -2,7 +2,7 @@
 	<div>
 		<!--虚拟机的详情界面-->   <!--基本的信息basicForm里面展示-->
 		<!--Dc-->
-		<el-form :model='detailsForm' ref='detailsForm' label-width='120px' v-loading='detaLoading' v-if='basicObj.dataType==="endpoints"'>
+		<el-form label-position='left' :model='detailsForm' ref='detailsForm' label-width='120px' v-loading='detaLoading' v-if='basicObj.dataType==="endpoints"'>
 			<el-form-item label='节点名称'>
 				<el-input v-model='detailsForm.name' disabled class='ipt'></el-input>
 			</el-form-item>

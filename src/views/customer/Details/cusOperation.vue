@@ -128,7 +128,7 @@
 				},
 				customerRules:{
 					name:[{ required: true, message: '请输入租户标识', trigger: 'blur' },
-            			{ min: 2, max: 10, message: '长度在2到 10 个字符', trigger: 'blur' }],
+            			{ min: 2, message: '最少2个字符', trigger: 'blur' }],
             		contact:[{ required: true, message: '请输入租户联系人', trigger: 'blur' }],
             		email:[{ required: true, trigger: 'blur', validator: validEamil }],
      				mobile:[{ required: true, trigger: 'blur', validator: validPhone }],

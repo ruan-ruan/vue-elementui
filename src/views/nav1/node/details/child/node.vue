@@ -135,16 +135,16 @@
 				}else{
 					callback()
 				}
-			}
+			};
 			let validNumber = (rule,value,callback) => {
 				if(!value){
 					callback(new Error('请输入的端口号'))
-				}else if(!isValidNumber(value) || !isTest(value).bool ){
+				}else if(!isTest(value).bool){
 					callback(new Error('请输入正确的端口号，详细规则请点击右侧'))
 				} else {
 					callback()
 				}
-			}
+			};
 			return{
 				portRules:'格式:填写1~54内的正整数;"-"代表端口区间并取两边的数值;","代表单个端口隔离 ,例:1-23,25,26-48代表除去24口的所有端口 ',
 				//获取用户的权限信息
@@ -242,7 +242,7 @@
 		},
 		watch:{
 			'seeForm.port_section0':function(newVal,oldVal){
-				console.log(newVal)
+//				console.log(newVal)
 			}
 		},
 		created(){

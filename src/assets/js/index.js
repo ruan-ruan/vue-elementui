@@ -71,14 +71,25 @@ export var arrayPro={
 	    return Y + M + D + h + m + s;
 	},
 	findIndex(arr,value){//表格数据里面   ，根据时间轴  开始和结束时间   获取  下标，   用于数组的截取
+//		console.log(new Date(arr[0].time).getTime()/1000   );
+//		console.log(new Date(value).getTime()/1000   );
+//		for(var i=0;i<arr.length;i++){
+//			if(arr[i].time === value){
+//				console.log(i)
+//				return i;//根据时间找到对应的下标位置
+//			}
+//		}
 		for(var i=0;i<arr.length;i++){
-			if(arr[i].time === value){
+			if( new Date(arr[i].time).getTime()   === new Date(value).getTime()  ){
+//				console.log(i)
 				return i;//根据时间找到对应的下标位置
 			}
 		}
 		return -1;
 	},
 	sortArr(arr, str) {//arr数组   str是属性   查找相同的属性的值  
+		console.log(arr);
+		console.log(str)
 	    var _arr = [],
 	        _t = [],
 	        // 临时的变量
@@ -91,7 +102,7 @@ export var arrayPro={
 	
 	        return s < t ? -1 : 1;
 	    });
-	
+		console.log(arr)
 	    if ( arr.length ){
 	        _tmp = arr[0][str];
 	    }
@@ -108,6 +119,7 @@ export var arrayPro={
 	    }
 	    // 将最后的内容推出新数组
 	    _arr.push( _t );
+	    console.log(_arr);
 	    return _arr;
 	},
 	test(arr){
@@ -227,6 +239,7 @@ export var arrayPro={
 			d1:d1Data,
 			d2:d2Data
 		}
+		console.log(obj)
 		return obj;
 	},
 	totalData(data1,data2){//两个数组进行相加
@@ -287,6 +300,7 @@ export function isNumberInteger(str){//正整数
 	return reg.test(str);
 }
 export function isTest(val){
+	console.log(val)
 	var num=val.split(',');//首先将输入的字符串分割开成数组
 	var newVal=[];
 	var newData=[];
@@ -312,19 +326,20 @@ export function isTest(val){
 		if(!isNaN(ele)){
 			if(ele>54 || ele<1){
 				str.bool=false
-			}
-			else{
+			}else{
 				str.bool=true
 			}
 			if( newData.indexOf(ele) == -1 ){
 				newData.push(ele)
 			}	
 		}else if(isNaN(ele)){
+			console.log(ele)
 			str.bool=false
 		}
 	})
-	str.dataVal=newData
 	console.log(str)
+	str.dataVal=newData;
+	console.log(str);
 	return str;
 };
 
@@ -378,6 +393,31 @@ export function isPortStatus(arr){//针对于 单个逻辑口内的时候数据�
 	}
 	return statusVal
 }
+
+export function isPort(arr){//针对于 单个逻辑口内的时候数据处理
+	let statusVal='';
+	if(arr.length>1){
+//		console.log('进入两个端口');
+		if(arr[0].status==='UP'&& arr[0].status==="UP"){
+			statusVal='UP';
+		}else if(arr[0].status==='DOWN'&& arr[0].status==="DOWN"){
+			statusVal='DOWN';
+		}else{
+			statusVal='异常';
+		}
+	}else if(arr.length==1){
+//		console.log('进入一个端口')
+		if(arr[0].status==='UP'){
+			statusVal='UP';
+		}else if(arr[0].status==='DOWN'){
+			statusVal='DOWN';
+		}
+	}
+	return statusVal
+}
+
+
+
 //正整数的验证
 export function isValidinteger(str){
 	let reg=/^[1-9]\d*$/;
@@ -464,3 +504,11 @@ export function sortVal(attr,rev){
             return 0;
         }
     }
+
+
+//当获取当详情的时候  处理里面的数据
+export function isNull(val,prototype){
+	if (! val[prototype] && typeof( val[prototype])!="undefined" &&  val[prototype]!=0){ 
+	   val[prototype]=''
+	}
+}

@@ -41,7 +41,7 @@
 							<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 						</template>
 					</el-table-column>
-					<el-table-column prop="creation_time" sortable label="创建时间" align='center' width='150' :formatter='dateFormat' >
+					<el-table-column prop="creation_time" sortable label="创建时间" align='center' width='101' :formatter='dateFormat' >
 					</el-table-column>
 					<el-table-column prop="name" label="名称" align='center' min-width='120'>
 					</el-table-column>

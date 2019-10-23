@@ -96,8 +96,8 @@
 					clounDoc_z:'',
 					target_z:'',
 					
-					charge_time:'',
-					expiration_time:''
+					charge_time:null,
+					expiration_time:null
 				},
 
 				selectFormA:{},//A云对接获取后转换后的form表单
@@ -183,6 +183,7 @@
 					expiration_time:this.editForm.expiration_time,
 					cloud_endpoints:cloud_endpoint	
 				}
+				console.log(para)
 				let str=[this.$refs.editForm_a.$refs.editForm,this.$refs.editForm_z.$refs.editForm,this.$refs.newForm.$refs.editForm]
 				
 				str.forEach(ele => {

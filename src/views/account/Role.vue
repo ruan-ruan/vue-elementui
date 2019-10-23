@@ -54,7 +54,20 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			
+			<el-col :span='24'  class='toolbar'>
+	          <el-pagination
+	            :total="total"
+	            @size-change="handleSizeChange"
+	            @current-change="handleCurrentChange"
+	            layout="total, sizes, prev, pager, next, jumper"
+	            :page-sizes="[10, 20, 30,50]"
+	            :current-page.sync="currentPage"
+	            :page-count='pageNum'
+	            :pager-count="pagecount"
+	            :prev-text='prev'
+	            :next-text='next'
+	          ></el-pagination>
+        </el-col>
 
 		</section>
 	</div>
@@ -74,6 +87,13 @@
 				users:[],
 				loading:false,
 				sels:[],
+				total: 0,
+			    pagesize: 10,
+			    currentPage: 1,
+			    pageNum: 1,
+			    pagecount: 5,
+			    next: "下一页",
+			    prev: "上一页",
 			}
 		},
 		created(){
@@ -90,10 +110,24 @@
 				//添加
 				this.$router.push({path:'/account/roles/add'})
 			},
+			//分页的选择页面显示个数和点击其他的分页的时候显示数据
+		    handleSizeChange(val) {
+		      this.pagesize = val;
+		      this.getUsers();
+		    },
+		    handleCurrentChange(val) {
+		      this.currentPage = val;
+		      this.getUsers();
+		    },
 			getUsers(){
 				this.loading=true;
 				//获取所有数据
-				this.$ajax.get('/role/roles'+'?token='+this.token)
+				let para={
+					 page: this.currentPage,
+				        per_page: this.pagesize,
+				        search_name: this.filters.name,
+				}
+				this.$ajax.get('/role/roles'+'?token='+this.token,para)
 				.then(res => {
 					console.log(res)
 					if(res.status==200){
@@ -116,6 +150,7 @@
 								}
 							})
 							this.users=res.data.data.items;
+							this.total = res.data.data.page.total;
 							this.$store.state.roles=this.users;
 						}
 					}
@@ -218,7 +253,7 @@
 								this.getUsers()
 							}else if(res.data.status){
 								this.$message({
-									message:'删除失败!',
+									message:res.data.message,
 									type:'danger'
 								})
 							}

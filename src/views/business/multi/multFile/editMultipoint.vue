@@ -59,10 +59,10 @@
 				</el-table-column>
 				
 				<el-table-column prop="description"label='备注'min-width="60" align='center'></el-table-column>
-				<el-table-column label='操作' width="120" align='center' v-if=" typeof id !=='undefined'">
-					<template slot-scope='scope'>
-						<el-button size='small' @click='handleTabStatus(scope.$index,scope.row)'>{{scope.row.changeBtn}}</el-button>
-						<el-button size='small' type='primary' @click='handleEdit(scope.$index,scope.row)'>编辑</el-button>
+				<el-table-column label='操作' width="290" align='center' v-if=" typeof id !=='undefined'">
+					<template slot-scope='scope'v-if='scope.row.status == "creating"? false : true '>
+						<el-button size='small' v-if='scope.row.status == "success" ' @click='handleTabStatus(scope.$index,scope.row)'>{{scope.row.changeBtn}}</el-button>
+						<el-button size='small'v-if='scope.row.status == "success" ' type='primary' @click='handleEdit(scope.$index,scope.row)'>编辑</el-button>
 						<el-button size='small' type='info' @click='handleDetails(scope.$index,scope.row)'>详情</el-button>
 						<el-button size='small' type='danger' @click='handleDel(scope.$index,scope.row)'>删除</el-button>
 					</template>
@@ -95,7 +95,9 @@
 				<virDetails :basicObj='basicObj'></virDetails>  <!--根据不同的内容云和dc显示不同的文本     //编辑文本-->
 				<basic-details ref='basicForm' :basicObj='basicObj'></basic-details>
 			</div>
-			
+			<div class="toolbar">
+				<el-button @click='dialogFormVisible===false'>返回</el-button>
+			</div>
 		</el-dialog>
 	</div>
 </template>
@@ -192,48 +194,44 @@
 					
 					ele.validate(valid => {
 						if(valid) {
-							// this.$confirm('确定要提交吗?','提示',{})
-							// .then(() => {
-								this.editLoading=true;
-								var colun={
-									cloud_type:this.clounBasic.cloun,
-									region:this.clounBasic.targetRegion,
-									cloud_config_id:this.clounBasic.clounDock
-								}
-								
-								obj=Object.assign({},this.clounList,colun,this.basicObj);
-								
-								this.$ajax.post('/vll/add_cloud_endpoint/'+this.id+'?token='+this.token)
-								.then(res => {
-									this.editLoading=false;
-									console.log(res)
-									if(res.status==200){
-										if(res.data.status==0){
-											this.$message({
-												message:"添加成功!",
-												type:'success'
-											})
-											this.resetFields();
-											that.dialogFormVisible=false;
-											this.$router.push({
-												path:'/business/editMultipoint',
-												query:{
-													id:this.id,
-												}
-											})
-										}else{
-											this.$message({
-												message:res.data.message,
-												type:'warning'
-											})
-										}
+							this.editLoading=true;
+							var colun={
+								cloud_type:this.clounBasic.cloun,
+								region:this.clounBasic.targetRegion,
+								cloud_config_id:this.clounBasic.clounDock
+							}
+							
+							obj=Object.assign({},this.clounList,colun,this.basicObj);
+							
+							this.$ajax.post('/vll/add_cloud_endpoint/'+this.id+'?token='+this.token)
+							.then(res => {
+								this.editLoading=false;
+								console.log(res)
+								if(res.status==200){
+									if(res.data.status==0){
+										this.$message({
+											message:"添加成功!",
+											type:'success'
+										})
+										this.resetFields();
+										that.dialogFormVisible=false;
+										this.$router.push({
+											path:'/business/editMultipoint',
+											query:{
+												id:this.id,
+											}
+										})
+									}else{
+										this.$message({
+											message:res.data.message,
+											type:'warning'
+										})
 									}
-								})
-								.catch(e => {
-									console.log(e)
-								})
-								
-							// }).catch(() => {})
+								}
+							})
+							.catch(e => {
+								console.log(e)
+							})
 						}
 					})
 				})
@@ -534,6 +532,7 @@
 				}
 			},
 			handleDetails(index,row){//详情
+				console.log(row)
 				this.dialogStatus='see';
 				this.dialogFormVisible=true;
 				this.basicObj=Object.assign({},row);

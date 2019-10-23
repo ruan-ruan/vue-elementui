@@ -686,24 +686,9 @@ export default {
                   }
                 }
               });
-//						let creatData=[],failureData=[],stopData=[],servData=[];
-//						let strData=res.data.data.items;
+
 						this.users=res.data.data.items
-						console.log(strData)
-//							creatData=strData.filter(item => {
-//								return item.status==='creating'
-//							})
-//							failureData=strData.filter(item => {
-//								return item.status==='failure'
-//							})
-//							stopData=strData.filter(item => {
-//								return item.status==='stopping'
-//							})
-//							servData=strData.filter(item => {
-//								return item.status==="servicing"
-//							})
-							this.users=creatData.concat(failureData,stopData,servData);
-							console.log(this.users)
+
 
             }
           }

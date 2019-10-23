@@ -53,13 +53,13 @@
 				<el-table-column prop='len'label='关联端点数' align='center'min-width='150' ></el-table-column>
 				<el-table-column prop='tenant.name'label='租户标识' align='center'min-width='150' ></el-table-column>
 				<el-table-column prop='descriptionVal'label='备注' align='center'min-width='150' ></el-table-column>
-				<el-table-column label='操作' align='center' width='80'>
+				<el-table-column label='操作' align='center' width='220'>
 					<template slot-scope='scope'>
 						<el-button size='small' type='info' @click='handleDetails(scope.$index,scope.row)'>详情</el-button>
-						<!-- <el-button size='small' type='primary' @click='handleEdit(scope.$index,scope.row)' v-if='(typeof clounID !=="undefined"?false:true)'>
+						 <el-button size='small' type='primary' @click='handleEdit(scope.$index,scope.row)' v-if='(typeof clounID !=="undefined"?false:true)'>
 							编辑</el-button>
 						<el-button size='small' type='danger'@click='handleDel(scope.$index,scope.row)'v-if='(typeof clounID !=="undefined"?false:true)'>
-							删除</el-button> -->
+							删除</el-button> 
 						
 					</template>
 				</el-table-column>
@@ -68,16 +68,17 @@
 			<el-row class='toolbar' v-if='(typeof clounID !=="undefined"?false:true)'>
 				<el-col :span='24'>
 					<el-pagination
-					:total="total"
-			     	@size-change="handleSizeChange"
-               		@current-change="handleCurrentChange"
-			     	layout="total, sizes, prev, pager, next, jumper"
-			     	:page-sizes="[10, 20, 30,50]" 						     	 
-			     	:current-page.sync="currentPage"  
-			     	:page-count='pageNum'
-			     	:pager-count="pagecount"
-			     	:prev-text='prev'
-			     	:next-text='next'></el-pagination>
+            :total="total"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            layout="total, sizes, prev, pager, next, jumper"
+            :page-sizes="[10, 20, 30,50]"
+            :current-page.sync="currentPage"
+            :page-count='pageNum'
+            :pager-count="pagecount"
+            :prev-text='prev'
+            :next-text='next'
+          ></el-pagination>
 				</el-col>
 			</el-row>
 			
@@ -131,13 +132,13 @@
 				sels:[],
 				loading:false,
 				//分页所需要的参数
-				total:0,
-				pagesize:10,
-				currentPage:1,
-				pageNum:1,
-				pagecount:5,
-				next:'下一页',
-				prev:'上一页',
+			      total: 0,
+			      pagesize: 10,
+			      currentPage: 1,
+			      pageNum: 1,
+			      pagecount: 5,
+			      next: "下一页",
+			      prev: "上一页",
 				
 				tenantData:[],
 				textMap:{
@@ -188,16 +189,14 @@
 					console.log(e)
 				})
 			},
-			handleSizeChange(val){
-//				console.log(`每页${val}条`);
-				this.pagesize=val;
-				this.getUsers()
-			},
-			handleCurrentChange(val){
-//				console.log(`当前页数是:${val}`)
-				this.currentPage=val;
-				this.getUsers()
-			},
+			handleSizeChange(val) {
+		      this.pagesize = val;
+		      this.getUsers();
+		    },
+		    handleCurrentChange(val) {
+		      this.currentPage = val;
+		      this.getUsers();
+		    },
 			getUsers(){
 				this.loading=true;
 				let para={

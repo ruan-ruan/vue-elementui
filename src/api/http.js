@@ -35,36 +35,9 @@ axios.interceptors.response.use(
 		return response	
 	}  
 
-
-
-	// if(response.status===200){
-	// 	if(response.data.status==101){//如果返回的状态码是101的时候  ，直接返回到登录界面，否则返回对应信息
-	// 		store.commit(types.LOGOUT)   
-	//           // 只有在当前路由不是登录页面才跳转
-	//         router.currentRoute.path !== '/login' &&
-	//         router.replace({
-	//           path: '/login',
-	//           query: { redirect: router.currentRoute.path },
-	//         })
-	// 	}else{
-	// 		return response
-	// 	}
-	// }
-	//下面的也可以实现拦截
-//	if(response.data.status==101){
-//		store.commit(types.LOGOUT)   
-//        // 只有在当前路由不是登录页面才跳转
-//      router.currentRoute.path !== '/login' &&
-//      router.replace({
-//        path: '/login',
-//        query: { redirect: router.currentRoute.path },
-//      })
-//	}else{
-//		return response
-//	}
   },
   error => {
-    return Promise.reject(error.response.data)
+    return Promise.reject(error)
   },
 )
 

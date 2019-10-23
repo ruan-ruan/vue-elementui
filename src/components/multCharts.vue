@@ -4,6 +4,23 @@
 		<!--<goback></goback>-->
 		<el-button type='info' size='small' @click='goback' v-show='typeof topoId ==="undefined" ? false:true'>
 			<i class="el-icon-d-arrow-left" aria-hidden="true"></i>返回</el-button>
+		<el-form :model='filters' ref='filters' :inline='true' v-if='networkingStatus'>
+			<el-form-item label='请选择端点'>
+				<el-select v-model='filters.type' class='sel_chart'>
+					<el-option v-for='(item,index) in  typeData'
+						:label='item.label'
+						:value='item.value'
+						:key='index'></el-option>
+				</el-select>
+				<el-select v-model='filters.logic_name' class='sel_chart'>
+					<el-option v-for='(item,index) in  logicData'
+						:label='item.name'
+						:value='item.id'
+						:key='index'></el-option>
+				</el-select>
+				<el-button size='small' type='primary' @click=''>查询</el-button>
+			</el-form-item>
+		</el-form>
 		<el-form :model='filters' ref='filters' :inline='true'>
 			<el-form-item >
 				<el-select v-model='filters.unit'class='sel_chart'>
@@ -82,9 +99,21 @@
 				filters:{
 					unit:'Mbps',
 					selVal:'平均值',
-					selTime:'最近一小时',	
+					selTime:'最近一天',	
 					time:'',
+					type:'',
+					logic_name:''
 				},
+				typeData:[
+					{
+						label:'公有云',
+						value:'cloud'
+					},{
+						label:'数据中心',
+						value:'dataCenter'
+					}
+				],
+				logicData:[],
 				unitData:['Mbps','PPS'],
 				valData:['平均值','最大值','最小值'],
 				timeData:['最近一小时','最近一天','最近一周','自定义'],
@@ -99,6 +128,10 @@
 				baseObjZ:{},//z的表格属性
 				
 				valType:'',
+				
+				basicData:[],//这是拿到素有的点和云的数据，需要做一步监听，判断是否存在值
+				networkingStatus:false,//控制组网的部分的针对数据筛选的控制显示和隐藏  ，可根据里面下面的筛选的数据   name是否为null的来筛选
+
 			}
 		},
 		watch:{
@@ -112,22 +145,47 @@
 						this.valType=this.seaVal(newVal.selVal)   // 返回值的值的类型   对应的字段
 //						console.log(this.valType)
 					}
+
 				},
 				deep:true
-			}
+			},
+//			
+//			basicData:{
+//				handler(newVal,oldVal){
+//					console.log(newVal);
+//					newVal.forEach(ele => {
+//						if(ele.type == "dataCenter"){//存在数据中心
+//							console.log('进入节点');
+//							this.filters.type='dataCenter';
+//							this.filters.logic_name=ele.logic.id;
+//						}else if(ele.type == "cloud"){//存在云端点
+//							console.log('进入云');
+//							this.filters.type='cloud';
+//							this.filters.logic_name=ele.logic.id;
+//						}
+//					})
+//				},
+//				deep:true,
+//			},
+			'filters.type':function(newVal,oldVal){//根据选择的端点的类型   选择对应的logic的数据
+				console.log(newVal)
+				console.log(this.basicData)
+				this.basicData.forEach(item => {
+					console.log(item)
+					if(newVal == item.type){
+						this.logicData.push(item.logic)
+					}
+				})
+				console.log(this.logicData);
+			},
+			
 		},
 		created(){
 			this.token=sessionStorage.getItem('token');
 			this.valType=this.seaVal();
 			this.trafficData=this.getTimeData();
-//			var str=[this.titData,this.topoId];
-//
-//			str.forEach(ele => {
-//				console.log(  ele)
-//				if( ele !=='undefined'){
-//					this.ChartData(ele);
-//				}
-//			})
+
+
 			let strVal=''
 			if(typeof this.titData !=='undefined'){
 				strVal=this.titData
@@ -154,6 +212,11 @@
 
 //				//遍历以后再进行树的排序
 				let time={};
+				
+				
+				var selData=[];//选择的时候  展示数据
+
+				
 				console.log(this.sendType)
 				this.sendType.forEach(ele => {
 					time={
@@ -163,35 +226,80 @@
 					this.chartLoading=true;
 					this.$ajax.get('/vll/get_vll_flow/'+ids+'?token='+this.token,time)
 					.then(res => {
-						console.log(res)
 						this.chartLoading=false;
 						if(res.status==200){
 							if(res.data.status==0){
-								console.log(res)
+								console.log(res);
+								var endObj={};
+								var endData=[];
 								if(res.data.data.endpoints){
-									newData=res.data.data.endpoints;
+									//判断   里面的点的name属性是否为null   ，不是null的时候，这个时候是点到点的数据，否则是虚拟组网的数据
+									res.data.data.endpoints.forEach(item => {
+										endObj={//后期可根据逻辑口的id进行数据筛选
+											type:'dataCenter',
+											logic:item.logic_port,
+										}
+										endData.push(endObj)
+										
+										if(!item.name && typeof (item.name) != 'undefined' && item.name !=0){												
+											//这个时候   item.name是null 应该是虚拟组网的数据   这个时候    当隐藏A和Z的表格插件，显示组网的数据的插件  单个插件
+											this.networkingStatus=true;//显示组网的部分的 顶部分的筛选的数据
+											newData.push(item);  //组网的数据
+										}else if(item.name && typeof (item.name) != 'undefined' && item.name !=0){//这个时候  name不是null   当为点到的数据
+										//   分别找到对应的点到点的数据   根据时间的不同进行整合
+//											if(item.name == 'A端'){//获取A端的数据
+//												console.log(item);
+//											}else if(item.name == 'Z端'){//获取Z端的数据
+//												console.log(item)
+//											}
+											this.networkingStatus=false;//此时Wie点到点的数据   所以不需要显示
+											//  当item.name不为null的时候   这个时候分为两种情况，A端和Z端
+											newData.push(item);//为点到点的数据
+										}
+									})
 								}else if(res.data.data.cloud_endpoints){
-									newData=res.data.data.cloud_endpoints;
+									res.data.data.cloud_endpoints.forEach(item => {
+										if(!item.name && typeof (item.name) != 'undefined' && item.name !=0){	
+											//这个时候   item.name是null 应该是虚拟组网的数据   这个时候    当隐藏A和Z的表格插件，显示组网的数据的插件  单个插件
+											newData.push(item);  //组网的数据
+											
+										}else if(item.name && typeof (item.name) != 'undefined' && item.name !=0){//这个时候  name不是null   当为点到的数据
+										//   分别找到对应的点到点的数据   根据时间的不同进行整合
+//											if(item.name == 'A端'){//获取A端的数据
+//												console.log(item);
+//											}else if(item.name == 'Z端'){//获取Z端的数据
+//												console.log(item)
+//											}
+											//  当item.name不为null的时候   这个时候分为两种情况，A端和Z端
+											newData.push(item);//为点到点的数据
+										}
+										
+										endObj={
+											type:'cloud',
+											logic:item.logic_port,
+										}
+										endData.push(endObj)
+									})
 								}
-								newData.forEach(el => {
-									obj={
-										id:el.id,
-										name:el.name,
-										vlan:el.vlan,
-										flow:el.flow,
-										logic_port:el.logic_port,
-										physical_ports:el.physical_ports
-									}
-									ChartsData.push(obj)  //获取  筛选后的数组    用于数据的遍历
-								})
-								sortID=arrayPro.sortArr(ChartsData,'id');//根据id相同部分合并     处理数据	
-							var flowType=[]
+								this.basicData=endData;
+								console.log(endData)
+								var selLogicData=[]
+
+								console.log(newData);
+								console.log(newData.length)
 								
-							var flowObj={},
-							obj={};
+
+								sortID=arrayPro.sortArr(newData,'id');//根据id相同部分合并     处理数据	
+								
+								console.log(sortID)
+							var flowType=[];
+								
+							var flowObj={}, obj={};
 								sortID.forEach( item => {
 									var data=[],vals=[];
+									
 									item.forEach(index => {
+										
 										data.push(index.flow);
 										obj={
 											id:index.id,
@@ -202,8 +310,10 @@
 										}
 									})
 									data.map(function (value,index,array){
-									vals=vals.concat(value)
-								})
+										vals=vals.concat(value);
+										
+									})
+									console.log(vals)
 									flowObj={
 										id:obj.id,
 										name:obj.name,
@@ -214,15 +324,39 @@
 									}
 									flowType.push(flowObj)
 								})
-								this.selData=flowType   //筛选后的数据   
-								let sliData=[],setObj={} //根据选择的开始和结束时间，对该新拼接的数组进行筛选
+								console.log(flowType)
+								this.selData=flowType;   //筛选后的数据
+								
+								let sliData=[],setObj={}; //根据选择的开始和结束时间，对该新拼接的数组进行筛选
 								
 								flowType.forEach(item => {
+									console.log(this.trafficData);
+									console.log(item.flow[0].time);
+									//根据选择的是时间与流量的时间进行对比；
+									
+									
+									
+//									console.log(item)
 //									console.log(item)  this.trafficData
 //									staIndex=arrayPro.findIndex(item.flow,'2019-08-11 11:42:00');//获取将要截
 //									endIndex=arrayPro.findIndex(item.flow,'2019-08-11 12:42:00');//获取截取的
 									staIndex=arrayPro.findIndex(item.flow,this.trafficData[0]);//获取将要截旗起点
 									endIndex=arrayPro.findIndex(item.flow,this.trafficData[this.trafficData.length-1]);//获取截取的终点
+//									console.log(staIndex);
+//									console.log(endIndex);
+									
+									//根据开始时间 截取对应的值  查到的时候返回对应的下标   否则返回-1    结束时间也是  对应的额flow的值
+									if(staIndex < 0){//没有找到开始时间对应的流量的值   说明  流量的数据不够   这个时候可以用空的来拼接
+										
+									}else{//返回对应的下边的既可
+										
+									}
+									
+									if(endIndex <0){//没有查到结束的时候对应的额flow的值，这个时候 直接拼接既可，
+										
+									}else {//查找到对应下边的flow的值
+										
+									}
 									setObj={
 										id:item.id,
 										name:item.name,
@@ -231,147 +365,149 @@
 										physical_ports:item.physical_ports,
 										flow:item.flow.slice(staIndex,endIndex),
 									}
+									console.log(setObj)
 									sliData.push(setObj)
 								})
 								this.sliData=sliData;
-								// arrayPro.chartData( data  ,'key ','type' )//获取某一个属性的值集合   这里获取数据 还需要  根据单位的不同  进行处理   
-							//selData   是根据时间的类型获取的数据    data      后面根据时间和值的类型获取对应的值
-								
-								var AData=this.selectVal(sliData)[0].data;//A端的数据
-								var ZData=this.selectVal(sliData)[1].data;//A端的数据
-								
-								console.log()
-								
-								
-								let  objA={//    这里面 的数据   是两个单位情况下显示的数据        所以根据单位的不同 进行判断
-									input_bytes_d1:this.dealData('input_bytes',arrayPro.testCharts(AData,'input_bytes',this.valType).d1),
-									input_packages_d1:this.dealData('input_packages',arrayPro.testCharts(AData,'input_packages',this.valType).d1),
-									output_bytes_d1:this.dealData('output_bytes',arrayPro.testCharts(AData,'output_bytes',this.valType).d1),
-									output_packages_d1:this.dealData('output_packages',arrayPro.testCharts(AData,'output_packages',this.valType).d1),
-									
-									input_bytes_d2:this.dealData('input_bytes',arrayPro.testCharts(AData,'input_bytes',this.valType).d2),
-									input_packages_d2:this.dealData('input_packages',arrayPro.testCharts(AData,'input_packages',this.valType).d2),
-									output_bytes_d2:this.dealData('output_bytes',arrayPro.testCharts(AData,'output_bytes',this.valType).d2),
-									output_packages_d2:this.dealData('output_packages',arrayPro.testCharts(AData,'output_packages',this.valType).d2),
-
-								}
-								let objA_total={
-									input_bytes_total:arrayPro.totalData(objA.input_bytes_d1,objA.input_bytes_d2),
-									input_packages_total:arrayPro.totalData(objA.input_packages_d1,objA.input_packages_d2),
-									
-									output_bytes_total:arrayPro.totalData(objA.output_bytes_d1,objA.output_bytes_d2),
-									output_packages_total:arrayPro.totalData(objA.output_packages_d1,objA.output_packages_d2),
-
-								}
-
-					
-								let  objZ={//    这里面 的数据   是两个单位情况下显示的数据        所以根据单位的不同 进行判断
-									input_bytes_d1:this.dealData('input_bytes',arrayPro.testCharts(ZData,'input_bytes',this.valType).d1),
-									input_packages_d1:this.dealData('input_packages',arrayPro.testCharts(ZData,'input_packages',this.valType).d1),
-									output_bytes_d1:this.dealData('output_bytes',arrayPro.testCharts(ZData,'output_bytes',this.valType).d1),
-									output_packages_d1:this.dealData('output_packages',arrayPro.testCharts(ZData,'output_packages',this.valType).d1),
-									
-									input_bytes_d2:this.dealData('input_bytes',arrayPro.testCharts(ZData,'input_bytes',this.valType).d2),
-									input_packages_d2:this.dealData('input_packages',arrayPro.testCharts(ZData,'input_packages',this.valType).d2),
-									output_bytes_d2:this.dealData('output_bytes',arrayPro.testCharts(ZData,'output_bytes',this.valType).d2),
-									output_packages_d2:this.dealData('output_packages',arrayPro.testCharts(ZData,'output_packages',this.valType).d2),
-
-								}
-								
-								let objZ_total={
-									input_bytes_total:arrayPro.totalData(objZ.input_bytes_d1,objZ.input_bytes_d2),
-									input_packages_total:arrayPro.totalData(objZ.input_packages_d1,objZ.input_packages_d2),
-									
-									output_bytes_total:arrayPro.totalData(objZ.output_bytes_d1,objZ.output_bytes_d2),
-									output_packages_total:arrayPro.totalData(objZ.output_packages_d1,objZ.output_packages_d2),
-									
-								}
-
-								this.baseObjA={//A端的基本信息    将数据处理后   页添加进去
-									logic_port:sliData[0].logic_port.name,
-									dev_name1:sliData[0].physical_ports[0].dev.name,
-									dev_name2:sliData[0].physical_ports[1].dev.name,
-									vlan:sliData[0].vlan,
-									
-									input_data_d1:this.filters.unit === 'Mbps'? objA.input_bytes_d1 : objA.input_packages_d1,
-									output_data_d1:this.filters.unit === 'Mbps'? objA.output_bytes_d1 : objA.output_packages_d1,
-									
-									input_data_d2:this.filters.unit === 'Mbps'? objA.input_bytes_d2 : objA.input_packages_d2,
-									output_data_d2:this.filters.unit === 'Mbps'? objA.output_bytes_d2 : objA.output_packages_d2,
-									
-									input_data_total:this.filters.unit === 'Mbps'? objA_total.input_bytes_total : objA_total.input_packages_total,
-									output_data_total:this.filters.unit === 'Mbps'? objA_total.output_bytes_total : objA_total.output_packages_total,
-									
-								}
-								
-								let usersA=[]
-								if(this.baseObjA.input_data_total.length ===0 || this.baseObjA.output_data_total.length===0){
-									usersA=[]
-								}else{
-									let input_nameA={
-										name:this.baseObjA.logic_port+'-'+this.baseObjA.vlan,
-									}
-									
-									let input_tabA=arrayPro.tim(this.baseObjA.input_data_total)
-									console.log(input_tabA)
-									let output_nameA={
-										name:this.baseObjA.logic_port+'-'+this.baseObjA.vlan,
-									}
-									
-									let output_tabA=arrayPro.tim(this.baseObjA.output_data_total)
-									
-									let input_tableA=Object.assign({},input_nameA,input_tabA);
-									let output_tableA=Object.assign({},output_nameA,output_tabA);
-//									let input_tableA={
-//										input_nameA.name:input_tabA
-//									}
-//									let output_tableA={
-//										output_nameA.name:output_tabA
+//								console.log(sliData)
+//								// arrayPro.chartData( data  ,'key ','type' )//获取某一个属性的值集合   这里获取数据 还需要  根据单位的不同  进行处理   
+//							//selData   是根据时间的类型获取的数据    data      后面根据时间和值的类型获取对应的值
+//								
+//								var AData=this.selectVal(sliData)[0].data;//A端的数据
+//								var ZData=this.selectVal(sliData)[1].data;//A端的数据
+//								
+//								console.log()
+//								
+//								
+//								let  objA={//    这里面 的数据   是两个单位情况下显示的数据        所以根据单位的不同 进行判断
+//									input_bytes_d1:this.dealData('input_bytes',arrayPro.testCharts(AData,'input_bytes',this.valType).d1),
+//									input_packages_d1:this.dealData('input_packages',arrayPro.testCharts(AData,'input_packages',this.valType).d1),
+//									output_bytes_d1:this.dealData('output_bytes',arrayPro.testCharts(AData,'output_bytes',this.valType).d1),
+//									output_packages_d1:this.dealData('output_packages',arrayPro.testCharts(AData,'output_packages',this.valType).d1),
+//									
+//									input_bytes_d2:this.dealData('input_bytes',arrayPro.testCharts(AData,'input_bytes',this.valType).d2),
+//									input_packages_d2:this.dealData('input_packages',arrayPro.testCharts(AData,'input_packages',this.valType).d2),
+//									output_bytes_d2:this.dealData('output_bytes',arrayPro.testCharts(AData,'output_bytes',this.valType).d2),
+//									output_packages_d2:this.dealData('output_packages',arrayPro.testCharts(AData,'output_packages',this.valType).d2),
+//
+//								}
+//								let objA_total={
+//									input_bytes_total:arrayPro.totalData(objA.input_bytes_d1,objA.input_bytes_d2),
+//									input_packages_total:arrayPro.totalData(objA.input_packages_d1,objA.input_packages_d2),
+//									
+//									output_bytes_total:arrayPro.totalData(objA.output_bytes_d1,objA.output_bytes_d2),
+//									output_packages_total:arrayPro.totalData(objA.output_packages_d1,objA.output_packages_d2),
+//
+//								}
+//
+//					
+//								let  objZ={//    这里面 的数据   是两个单位情况下显示的数据        所以根据单位的不同 进行判断
+//									input_bytes_d1:this.dealData('input_bytes',arrayPro.testCharts(ZData,'input_bytes',this.valType).d1),
+//									input_packages_d1:this.dealData('input_packages',arrayPro.testCharts(ZData,'input_packages',this.valType).d1),
+//									output_bytes_d1:this.dealData('output_bytes',arrayPro.testCharts(ZData,'output_bytes',this.valType).d1),
+//									output_packages_d1:this.dealData('output_packages',arrayPro.testCharts(ZData,'output_packages',this.valType).d1),
+//									
+//									input_bytes_d2:this.dealData('input_bytes',arrayPro.testCharts(ZData,'input_bytes',this.valType).d2),
+//									input_packages_d2:this.dealData('input_packages',arrayPro.testCharts(ZData,'input_packages',this.valType).d2),
+//									output_bytes_d2:this.dealData('output_bytes',arrayPro.testCharts(ZData,'output_bytes',this.valType).d2),
+//									output_packages_d2:this.dealData('output_packages',arrayPro.testCharts(ZData,'output_packages',this.valType).d2),
+//
+//								}
+//								
+//								let objZ_total={
+//									input_bytes_total:arrayPro.totalData(objZ.input_bytes_d1,objZ.input_bytes_d2),
+//									input_packages_total:arrayPro.totalData(objZ.input_packages_d1,objZ.input_packages_d2),
+//
+//									output_bytes_total:arrayPro.totalData(objZ.output_bytes_d1,objZ.output_bytes_d2),
+//									output_packages_total:arrayPro.totalData(objZ.output_packages_d1,objZ.output_packages_d2),
+//									
+//								}
+//
+//								this.baseObjA={//A端的基本信息    将数据处理后   页添加进去
+//									logic_port:sliData[0].logic_port.name,
+//									dev_name1:sliData[0].physical_ports[0].dev.name,
+////									dev_name2:sliData[0].physical_ports[1].dev.name,
+//									vlan:sliData[0].vlan,
+//									
+//									input_data_d1:this.filters.unit === 'Mbps'? objA.input_bytes_d1 : objA.input_packages_d1,
+//									output_data_d1:this.filters.unit === 'Mbps'? objA.output_bytes_d1 : objA.output_packages_d1,
+//									
+//									input_data_d2:this.filters.unit === 'Mbps'? objA.input_bytes_d2 : objA.input_packages_d2,
+//									output_data_d2:this.filters.unit === 'Mbps'? objA.output_bytes_d2 : objA.output_packages_d2,
+//									
+//									input_data_total:this.filters.unit === 'Mbps'? objA_total.input_bytes_total : objA_total.input_packages_total,
+//									output_data_total:this.filters.unit === 'Mbps'? objA_total.output_bytes_total : objA_total.output_packages_total,
+//									
+//								}
+//								
+//								let usersA=[]
+//								if(this.baseObjA.input_data_total.length ===0 || this.baseObjA.output_data_total.length===0){
+//									usersA=[]
+//								}else{
+//									let input_nameA={
+//										name:this.baseObjA.logic_port+'-'+this.baseObjA.vlan,
 //									}
 //									
-									usersA.push(input_tableA)
-									usersA.push(output_tableA)
-								}
-								console.log(usersA)
-								this.users=usersA;
-
-								this.baseObjZ={//Z端的基本信息   将数据处理完成以后  添加进去
-									logic_port:sliData[1].logic_port.name,
-									dev_name1:sliData[1].physical_ports[0].dev.name,
-									dev_name2:sliData[1].physical_ports[1].dev.name,
-									vlan:sliData[1].vlan,
-									
-									input_data_d1:this.filters.unit === 'Mbps'? objZ.input_bytes_d1 : objZ.input_packages_d1,
-									output_data_d1:this.filters.unit === 'Mbps'? objZ.output_bytes_d1 : objZ.output_packages_d1,
-									
-									input_data_d2:this.filters.unit === 'Mbps'? objZ.input_bytes_d2 : objZ.input_packages_d2,
-									output_data_d2:this.filters.unit === 'Mbps'? objZ.output_bytes_d2 : objZ.output_packages_d2,
-									
-									input_data_total:this.filters.unit === 'Mbps'? objZ_total.input_bytes_total : objZ_total.input_packages_total,
-									output_data_total:this.filters.unit === 'Mbps'? objZ_total.output_bytes_total : objZ_total.output_packages_total,
-								}
-								
-								let usersZ=[]
-								if(this.baseObjZ.output_data_total.length===0 || this.baseObjZ.input_data_total.length===0){
-									usersZ=[]
-								}else{
-									let input_nameZ={
-										name:this.baseObjZ.logic_port+'-'+this.baseObjZ.vlan,
-									}
-									let input_tabZ=arrayPro.tim(this.baseObjZ.input_data_total)
-									
-									let output_nameZ={
-										name:this.baseObjZ.logic_port+'-'+this.baseObjZ.vlan,
-									}
-									let output_tabZ=arrayPro.tim(this.baseObjZ.output_data_total)
-									
-									let input_tableZ=Object.assign({},input_nameZ,input_tabZ);
-									let output_tableZ=Object.assign({},output_nameZ,output_tabZ);
-									usersZ.push(input_tableZ)
-									usersZ.push(output_tableZ)
-								}
-								this.usersZ=usersZ;
-								this.getCharts(this.baseObjA,this.baseObjZ);//画图
+//									let input_tabA=arrayPro.tim(this.baseObjA.input_data_total)
+//									console.log(input_tabA)
+//									let output_nameA={
+//										name:this.baseObjA.logic_port+'-'+this.baseObjA.vlan,
+//									}
+//									
+//									let output_tabA=arrayPro.tim(this.baseObjA.output_data_total)
+//									
+//									let input_tableA=Object.assign({},input_nameA,input_tabA);
+//									let output_tableA=Object.assign({},output_nameA,output_tabA);
+////									let input_tableA={
+////										input_nameA.name:input_tabA
+////									}
+////									let output_tableA={
+////										output_nameA.name:output_tabA
+////									}
+////									
+//									usersA.push(input_tableA)
+//									usersA.push(output_tableA)
+//								}
+//								console.log(usersA)
+//								this.users=usersA;
+//
+//								this.baseObjZ={//Z端的基本信息   将数据处理完成以后  添加进去
+//									logic_port:sliData[1].logic_port.name,
+//									dev_name1:sliData[1].physical_ports[0].dev.name,
+//									dev_name2:sliData[1].physical_ports[1].dev.name,
+//									vlan:sliData[1].vlan,
+//									
+//									input_data_d1:this.filters.unit === 'Mbps'? objZ.input_bytes_d1 : objZ.input_packages_d1,
+//									output_data_d1:this.filters.unit === 'Mbps'? objZ.output_bytes_d1 : objZ.output_packages_d1,
+//									
+//									input_data_d2:this.filters.unit === 'Mbps'? objZ.input_bytes_d2 : objZ.input_packages_d2,
+//									output_data_d2:this.filters.unit === 'Mbps'? objZ.output_bytes_d2 : objZ.output_packages_d2,
+//									
+//									input_data_total:this.filters.unit === 'Mbps'? objZ_total.input_bytes_total : objZ_total.input_packages_total,
+//									output_data_total:this.filters.unit === 'Mbps'? objZ_total.output_bytes_total : objZ_total.output_packages_total,
+//								}
+//								
+//								let usersZ=[]
+//								if(this.baseObjZ.output_data_total.length===0 || this.baseObjZ.input_data_total.length===0){
+//									usersZ=[]
+//								}else{
+//									let input_nameZ={
+//										name:this.baseObjZ.logic_port+'-'+this.baseObjZ.vlan,
+//									}
+//									let input_tabZ=arrayPro.tim(this.baseObjZ.input_data_total)
+//									
+//									let output_nameZ={
+//										name:this.baseObjZ.logic_port+'-'+this.baseObjZ.vlan,
+//									}
+//									let output_tabZ=arrayPro.tim(this.baseObjZ.output_data_total)
+//									
+//									let input_tableZ=Object.assign({},input_nameZ,input_tabZ);
+//									let output_tableZ=Object.assign({},output_nameZ,output_tabZ);
+//									usersZ.push(input_tableZ)
+//									usersZ.push(output_tableZ)
+//								}
+//								this.usersZ=usersZ;
+//								this.getCharts(this.baseObjA,this.baseObjZ);//画图
 							}
 
 						}
@@ -727,7 +863,7 @@
 					chartsZ.setOption(this.optionTraZ);
 				
 			},
-			getTimeData(type='最近一小时'){   //获取时间的间隔所有的数据//时间轴的循环的是按照 秒计算的			
+			getTimeData(type='最近一天'){   //获取时间的间隔所有的数据//时间轴的循环的是按照 秒计算的			
 				let strTime=[];//用来保存的所选时间，的时间间隔 
 				let  end_time='';
 				let  start_time='';

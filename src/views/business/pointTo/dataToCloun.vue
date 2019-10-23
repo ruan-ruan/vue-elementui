@@ -92,8 +92,8 @@
 					logic_z:'',
 					endpoints_vlan:'trunk',
 					vlan:'',
-					charge_time:'',
-					expiration_time:''
+					charge_time:null,
+					expiration_time:null
 				},
 
 				creatFormDetails:{

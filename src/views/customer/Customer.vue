@@ -76,7 +76,8 @@
 					</template>
         </el-table-column>
           <!--:formatter='dateTableFormat'-->
-        <el-table-column prop='creation_time'sortable :formatter='dateTableFormat' width='101' label='创建时间' align='center'></el-table-column>
+        <el-table-column prop='creation_time'sortable :formatter='dateTableFormat' width='101' label='创建时间' align='center'>	
+        </el-table-column>
         <el-table-column  min-width='120'align='center'label='租户标识(公司名称)' >
           <template slot-scope='scope'>
             <span class="tem_span" @click="handleSee(scope.$index, scope.row)"

@@ -64,10 +64,10 @@ const store = new Vuex.Store({
     	},
 
     },
-    modules:{
-    	app
-    },
-    getters
+//  modules:{
+//  	app
+//  },
+//  getters
 })
 
 export default store

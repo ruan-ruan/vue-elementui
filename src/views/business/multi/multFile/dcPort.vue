@@ -41,7 +41,7 @@
 					<el-switch v-model='editForm.chooseVlan'
 						active-text="UNTAG"
 						title='默认逻辑口为trunk,vlan为UNTAG'></el-switch>	
-						<el-button v-text='editForm.selVlan?editForm.selVlan:"选择vlan"'
+						<el-button v-text='editForm.selVlan ? editForm.selVlan:"选择vlan"'
 							size='small' 
 							@click='addVlan' 
 							title='请先选择节点和逻辑口'
@@ -79,15 +79,6 @@
 				</el-form-item>
 				<el-form-item >
 					<template slot-scope='scope'>
-						<!--<div  v-model='portVlan.vlanVal' id="idData" style="height: 300px; overflow-y: auto;">
-							<span class="bor_data" 
-								v-for='(item ,index) in vlanData' 
-								:key='index'
-								:value='item'
-								@click='cliData(index,item)'
-								:class='timeIndex===index ? "active" :"" '
-								>{{item }}</span>
-						</div>-->
 						<div  v-model='portVlan.vlanVal' id="idData" style="height: 300px; overflow-y: auto;">
 							<el-button	 class="bor_data" 
 								v-for='(item ,index) in disVlan' 
@@ -217,23 +208,58 @@
 				handler(newVal,oldVal){
 					this.$emit('sendFormData_a',newVal)
 					this.$emit('sendFormData_z',newVal)
-					
-					if(newVal.endpoints_vlan){
+					if(this.baseObj){
+						if(this.baseObj.statusVal>= 0){
+							if(newVal.endpoints_vlan=='透传'){
+								this.$message({
+									message:'请重新选择,该逻辑口已经选择trunk模式，不能再选择透传模式',
+									type:'warning'
+								})
+								newVal.logic=''
+							}
+							
+							if(this.baseObj.statusVal == 0){
+								if(newVal.chooseVlan){
+									this.$message({
+										message:'该逻辑口已经为UNTAG模式，不可在为该模式！',
+										type:'warning'
+									})
+									newVal.chooseVlan='false';
+									this.editForm.selVlan='';
+								}
+							}else if(this.baseObj.statusVal != 0){//透传  和 vlan
+								if(newVal.chooseVlan){
+									this.editForm.vlan='0'  //当时untag模式的是vlan为0
+									this.editForm.selVlan=''
+								}
+							}
+						}else if(this.baseObj.statusVal < 0){
+							if(newVal.endpoints_vlan=='透传'){
+								this.$message({
+									message:'请重新选择,该逻辑口已经选择透传模式，不能再选择透传模式',
+									type:'warning'
+								})
+								newVal.logic=''
+							}
+						}
+
+					}else{
 						if(newVal.endpoints_vlan=='透传'){
 							this.editForm.vlan='-1'  //透传模式的时候，vlan的值为-1
-							this.editForm.selVlan=''
-	//						this.$emit('sendType',newVal.endpoints_vlan)
+							this.editForm.selVlan='';
+							this.$emit('sendType',newVal.endpoints_vlan)
 						}
-						this.$emit('sendType',newVal.endpoints_vlan)
+						
+						if(newVal.chooseVlan){
+							this.editForm.vlan='0'  //当时untag模式的是vlan为0
+							this.editForm.selVlan=''
+						}
 					}
 					
-					if(newVal.chooseVlan){  
-						this.editForm.vlan='0'  //当时untag模式的是vlan为0
+					if(newVal.chooseVlan){
 						this.editForm.selVlan=''
-						
-					}else{
-//						this.editForm.vlan=this.portVlan.vlanVal   //否则  vlan的值和vlan里面的表格内点击选择的数据是一样的
 					}
+
 					
 					//下面的form表单的转换 ，是当触发的时候，将需要传的参数放在一个新对象内，以便于，，在监听的是偶向父组件传值
 					if(newVal.vlan){
@@ -306,8 +332,8 @@
 			      			var str=res.data.data.items;
 			      			str.forEach(ele => {
 			      				ele.endpoints.forEach(item => { //用statusVal   来判断   该逻辑口的状态
-			      					item.logic_port.statusVal=item.vlan
-			      					this.pointData.push(item.logic_port)
+			      					item.logic_port.statusVal=item.vlan;
+			      					this.pointData.push(item.logic_port);
 			      				})
 			      			})
 			      			console.log(this.pointData)
@@ -381,9 +407,7 @@
 				}).catch(e => {
 					console.log(e)
 				})
-				
-				console.log(this.pointData)
-				
+
 				this.baseObj=this.pointData.find(item => {
 					return item.id=ids;
 				})

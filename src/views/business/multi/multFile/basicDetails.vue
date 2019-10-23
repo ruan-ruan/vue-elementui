@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-form :model='basicForm' ref='basicForm' :rules='basicFormRules' v-loading='basicLoading' label-width='100px' >
+		<el-form :model='basicForm' ref='basicForm' :rules='basicFormRules' label-position='left' v-loading='basicLoading' label-width='120px' >
 			<el-form-item label='带宽(Mbps)' prop='bandwidth'>
 				<el-input v-model='basicForm.bandwidth'class='ipt' :disabeld='DataStatus'></el-input>
 			</el-form-item>

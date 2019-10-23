@@ -92,8 +92,8 @@
 					endpoints_logic_port_id_z:'',
 					vlan_z:'',
 					
-					charge_time:'',//计费时间
-					expiration_time:'',//过期时间
+					charge_time:null,//计费时间
+					expiration_time:null,//过期时间
 				},
 				creatFormDetails:{
 					//配置详情
@@ -177,12 +177,9 @@
 
 			},
 			submitBtn(){
-				// newForm     基础的信息  dc_a   a端   dc_z   editForm
-				
-				
+
 				let str=[this.$refs.dc_a.$refs.editForm,this.$refs.dc_z.$refs.editForm,this.$refs.newForm.$refs.editForm]
-				
-				
+
 				str.forEach(ele => {
 					ele.validate(valid => {
 						if(valid){
