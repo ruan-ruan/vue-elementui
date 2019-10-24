@@ -494,11 +494,6 @@ export default {
         .then(res => {
           if (res.status == 200) {
             if (res.data.status == 0) {
-              // this.$message({
-              //   message: "标记成功!",
-              //   type: "success"
-              // });
-              // this.getData();
               this.$store.state.message = this.$store.state.message - 1;
               if (this.$store.state.message < 0) {
                 this.$store.state.message = 0;

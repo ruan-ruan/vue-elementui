@@ -32,7 +32,6 @@
                 style="cursor:pointer;"
                 @click="tapmes"
                 v-popover:visible
-                @mouseenter="enter"
               >消息</span>
               <el-badge
                 :value="this.$store.state.message"
@@ -340,20 +339,14 @@ export default {
       tokenkey: ""
     };
   },
-  methods: {
-    Change(type) {
-      this.$i18n.locale = type;
-      this.$store.dispatch("setLanguage", type);
-    },
-    psd: function(row) {
-      this.$confirm("确认要修改密码吗?", "提示", {})
-        .then(() => {
-          this.$router.push({ path: "/changepassword" });
-        })
-        .catch(() => {});
-    },
-    enter() {
-      var para = {
+   mounted() {
+    this.tokenkey = sessionStorage.getItem("token");
+    var user = sessionStorage.getItem("user");
+    if (user) {
+      this.sysUserName = user || "";
+    }
+    const timers = setInterval(() => {
+       var para = {
         page: "",
         per_page: "",
         search_title: "",
@@ -368,25 +361,38 @@ export default {
           console.log(res);
           if (res.status == 200) {
             if (res.data.status == 0) {
-              this.tableData = res.data.data.items
-                ? res.data.data.items.slice(0, 5)
-                : [];
-              let datas = [];
-              res.data.data.items.map(items => {
-                if (items.is_read == false) {
-                  datas.push(items);
-                }else {
-                  datas=[]
-                }
-              });
-              this.$store.state.message = datas.length;
-              
+               let ress = res.data.data.items;
+            let datas=[];
+            ress.map(items =>{
+              if(items.is_read==false) {
+                datas.push(items);
+              }
+            })
+            this.$store.state.message=datas.length;
+            this.tableData = res.data.data.items?res.data.data.items.slice(0,5):[];
             }
           }
         })
         .catch(e => {
           console.log(e);
         });
+    }, 3000);
+    var that = this;
+    Utils.$on("demo", function(msg) {
+      that.tableData = msg;
+    });
+  },
+  methods: {
+    Change(type) {
+      this.$i18n.locale = type;
+      this.$store.dispatch("setLanguage", type);
+    },
+    psd: function(row) {
+      this.$confirm("确认要修改密码吗?", "提示", {})
+        .then(() => {
+          this.$router.push({ path: "/changepassword" });
+        })
+        .catch(() => {});
     },
     timestamp(timestamp) {
       let timestampString = null;
@@ -448,19 +454,6 @@ export default {
         "submenu-hook-" + i
       )[0].style.display = status ? "block" : "none";
     }
-  },
-  mounted() {
-    this.tokenkey = sessionStorage.getItem("token");
-    var user = sessionStorage.getItem("user");
-    if (user) {
-      this.sysUserName = user || "";
-    }
-    var that = this;
-    Utils.$on("demo", function(msg) {
-      console.log(msg);
-      that.tableData = msg;
-      console.log(that.tableData);
-    });
   }
 };
 </script>

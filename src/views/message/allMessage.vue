@@ -456,14 +456,11 @@ export default {
           if (res.status == 200) {
             if (res.data.status == 0) {
               _this.tableData = res.data.data.items;
-              console.log(_this.tableData);
               _this.total = res.data.data.page.total;
               let datas = [];
               _this.tableData.map(items => {
                 if (items.is_read == false) {
                   datas.push(items);
-                }else {
-                  datas=[]
                 }
               });
               this.$store.state.message = datas.length;
