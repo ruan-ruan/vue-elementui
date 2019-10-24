@@ -1,39 +1,19 @@
 <template>
 	<div>
 		<!--详情的图表部分-->
-		<!--<el-form :inline='true' :model='filters' ref='filters'  >
-			<el-form-item label='请选择'>
-				<el-select v-model='filters.type'class='sel_chart'>
-					<el-option v-for='(item , index) in typeData' 
-						:label='item.label'
-						:value='item.value'
-						:key='index'></el-option>
-				</el-select>
-				<el-select v-model='filters.logic' class='sel_chart'>
-					<el-option v-for='(item , index) in logicData'
-						:label='item.label'
-						:value='item.value'
-						:key='index'></el-option>
-				</el-select>
-			</el-form-item>
-			<el-form-item>
-				<el-button size='small'  type='primary' @click='getFilters'> 搜索</el-button>
-			</el-form-item>
-		</el-form>
-		<span v-text="chartTit.traffic"></span>-->-
-		<traf-chart :titData='networkID'></traf-chart>
+		<multCharts :titData='networkID'></multCharts>
 	</div>
 </template>
 
 <script>
 //	import chartData from '@/views/resources/virtualDetails/pointsDetails/chartData'
-	import trafChart from '@/components/trafChart'
+	import multCharts from '@/components/multCharts.vue'
 
 	export default{
 		name:'detailsChart',
 		props:['detailsID'],
 		components:{
-			trafChart,
+			multCharts,
 		},
 		data(){
 			return{

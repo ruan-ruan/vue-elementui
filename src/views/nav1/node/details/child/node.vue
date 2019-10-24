@@ -1,5 +1,7 @@
 <template>
 	<div>
+		<el-button size='small' @click='unknowgoback' v-if='!unkownBtn'  >返回</el-button>
+		
 		<section>
 			<!--<h4 v-show='unknown_editForm_status'>骨干ID:{{seeForm.id}}</h4>-->
 				<el-form label-position='left'style='margin-left: 50px;' :model='seeForm'ref='seeForm' label-width="100px"  v-loading='loading' :rules='rulesForm'>
@@ -109,7 +111,7 @@
 				<div slot='footer' class="dialog-footer footer_right">
 					<el-button size='small' @click='goback' v-if='editFormBtn' >返回</el-button>
 					
-					<el-button size='small' @click='unknowgoback' v-else-if='!editFormBtn'  >返回</el-button>
+					<el-button size='small' @click='unknowgoback' v-if='unkownBtn'  >返回</el-button>
 					<!--节点的编辑保存-->
 					<el-button size='small' v-if='editFormBtn' @click='editForm' type="primary">保存</el-button>
 					<!--未知节点的添加按钮-->
@@ -238,6 +240,9 @@
 				itemData:[],
 				dc_id:'',
 				baseData:{},//数据备份
+
+				unkownBtn:false,
+				
 			}
 		},
 		watch:{
@@ -254,7 +259,7 @@
 				//此时是节点编辑界面
 				this.StaEditForm=false;
 				this.editFormBtn=true;
-				
+				this.unkownBtn=false;
 				this.creatFormBtn=false;
 				this.unknownStatusBtn=false;
 				this.backstatus=true;
@@ -269,6 +274,7 @@
 				//此处是节点的详情的界面
 				this.StaEditForm=true;
 				this.editFormBtn=false;
+				this.unkownBtn=true;
 				this.creatFormBtn=false;
 				this.unknownStatusBtn=false;			
 				this.devices_id_status=true;
@@ -282,6 +288,7 @@
 				this.StaNot=false;
 				this.unknownStatusBtn=false;
 				this.editFormBtn=false;
+				this.unkownBtn=true;
 				this.creatFormBtn=true;
 				this.devices_id_status=false;
 				this.addEquipStatus=true;
@@ -292,6 +299,7 @@
 				this.StaEditForm=true;
 				
 				this.editFormBtn=false;
+				this.unkownBtn=false;
 				this.creatFormBtn=false;
 				this.unknownStatusBtn=false;
 				this.devices_id_status=true;
@@ -307,6 +315,7 @@
 				this.StaEditForm=false;
 				this.StaNot=false;
 				this.editFormBtn=false;
+				this.unkownBtn=true;
 				this.creatFormBtn=false;
 				this.unknownStatusBtn=true;
 				this.devices_id_status=true;

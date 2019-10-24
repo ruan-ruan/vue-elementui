@@ -107,7 +107,7 @@
 	import {getPortStatus,isPortStatus,descriptionValue} from '@/assets/js/index'
 	export default{
 		name:'port',
-		props:['tit','LogicTitle'],//来判断进入的界面的，控制添加和操作按钮显示
+		props:['titleOne','titleTwo','LogicTitle'],//来判断进入的界面的，控制添加和操作按钮显示
 		data(){
 			return{			
 				token:'',
@@ -147,11 +147,26 @@
 				//用来控制删除按钮的显示和隐藏
 				statusDel:null,
 				tenantData:[],//租户数据
+				tit:''
+			}
+		},
+		watch:{
+			'titleOne':function(newVal,oldVal){
+				console.log(newVal)
+				this.tit=newVal;
+				this.getUsers()
+			},
+			'titleTwo':function(newVal,oldVal){
+				console.log(newVal);
+				this.tit=newVal;
+				this.getUsers()
 			}
 		},
 		created(){
 			//获取token
 			this.token=sessionStorage.getItem('token');
+			console.log(this.titleOne)
+			console.log(this.titleTwo)
 			
 			this.getUsers();
 			this.getTenantData()

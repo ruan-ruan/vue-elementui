@@ -75,10 +75,8 @@
             <el-table-column   prop='creation_time'
               :formatter='dateFormat'   width='101'  label='创建时间' sortable  align='center'  ></el-table-column>
             <el-table-column   prop='name'  min-width='80'  label='节点名称'   align='center' ></el-table-column>
-            <el-table-column   prop='exist_status'   min-width='80'  label='节点状态'  align='center' >
-              <template slot-scope="scope">
-                {{scope.row.exist_status=='normal'?'运行中':scope.row.exist_status=='found'?'离线':'单一运行中'}}
-              </template>
+            <el-table-column   prop='nodeStatus'   min-width='80'  label='节点状态'  align='center' >
+            
             </el-table-column>
             <el-table-column   min-width='80'  label='设备名称'   align='center'  >
               <template slot-scope="scope">
@@ -312,12 +310,8 @@ export default {
     getUsers() {
       var _this = this;
       this.loading = true;
-       this.filters.start_time = this.filters.timeVal[0]
-        ? this.filters.timeVal[0]
-        : "";
-      this.filters.end_time = this.filters.timeVal[1]
-        ? this.filters.timeVal[1]
-        : "";
+       this.filters.start_time = this.filters.timeVal[0] ? this.filters.timeVal[0] : "";
+      this.filters.end_time = this.filters.timeVal[1] ? this.filters.timeVal[1] : "";
       //				顶部工具栏内的对应的数据
       var para = {
         page: this.currentPage,
@@ -333,13 +327,14 @@ export default {
           _this.loading = false;
           if (res.status == 200) {
             if (res.data.status == 0) {
-            	console.log(res.data.data.items)
+            	console.log(res)
             	descriptionValue(res.data.data.items)
             	
 //          	res.data.data.items.sort( sortVal( 'creation_time',false ) )
               let params = res.data.data.items;
 
               params.forEach((ele, index) => {
+              	console.log(ele)
                 //将数据的状态保
                 //根据状态对删除的按钮的显示是否渲染到模板做处理
                 if (ele.status == "运行中") {
@@ -347,6 +342,9 @@ export default {
                 } else {
                   _this.diStatus = true;
                 }
+                
+                
+                
                 
                 
                 if(ele.devices.length ==1){
@@ -361,16 +359,34 @@ export default {
 				    				ele.devices_name2='';
 				    				ele.devices_ip2='';
 				    				ele.devices_sn2='';
+				    				
+				    				if(str1.exist_status == "normal"){
+				    					ele.nodeStatus='单一运行';
+				    				}else{
+				    						ele.nodeStatus='离线';
+				    				}
+				    				
+				    				
+				    				
 			    				}else if(ele.devices.length ==2){
 			    					var str1=ele.devices.find(item => {
-
 				    					return item.sign == 'd1' 
 				    				})
 			    					
 			    					var str2=ele.devices.find(item => {
 				    					return item.sign =='d2' 
 				    				})
-	    					
+	    							
+	    							if(str1.exist_status == "normal" && str2.exist_status == "normal"){
+				    					ele.nodeStatus='运行中';
+				    				}else if( (str1.exist_status == "normal" && str2.exist_status == "found") || (str2.exist_status == "normal" && str1.exist_status == "found") ){
+				    					ele.nodeStatus='单一运行';
+				    				}else{
+				    						ele.nodeStatus='离线';
+				    				}
+	    							
+	    							
+	    							
 				    				ele.devices_name1=str1.hostname
 				    				ele.devices_ip1=str1.ip;
 				    				ele.devices_sn1=str1.sn;

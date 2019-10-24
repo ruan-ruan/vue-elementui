@@ -1,7 +1,8 @@
 <template>
 	<div>
 		<!--逻辑端口1-2-->
-		<logic-port :tit='data' ></logic-port>
+		<logic-port :tit='titleOne' ></logic-port>
+		<span>{{titleOne}}</span>
 	</div>
 </template>
 
@@ -14,25 +15,46 @@
 		props:['titleOne','titleTwo'],
 		data(){
 			return{
+				
 				data:''
 			}
 		},
-		created(){
-			console.log(this.titleOne)
-			if(typeof this.titleOne !=='undefined'){
-				this.data=this.titleOne
-			}
+		watch:{
+			titleOne:{
+				handler:function (newVal){
+					console.log(newVal);
+//					console.log(newVal.id);
+//					this.obj.id=newVal.id;
+//					this.obj=JSON.parse( JSON.stringify(newVal))
+//					this.getList(newVal.id)
+//					this.title.id=newVal.id;
+//					this.title.name=newVal.hostname;
+//					this.title.ip=newVal.ip
+				},
+				deep:true
+			},
 			
-			if(typeof this.titleTwo !=='undefined'){
-				this.data=this.titleTwo
+			titleTwo:{
+				handler(newVal,oldVal){
+//					this.data=newVal.id;
+					console.log(newVal)
+//					this.getList(newVal.id)
+//					this.title.id=newVal.id;
+//					this.title.name=newVal.hostname;
+//					this.title.ip=newVal.ip
+				},
+				deep:true
 			}
-//			let str=[this.titleOne,this.titleTwo];
-//			str.forEach(ele => {
-//				if(ele){
-//					this.data=ele
-//				}
-//			})
+		},
+		mounted(){
+			
+			this.$nextTick(() => {
+				console.log(this.titleOne)
+			})
+			
+			
 		}
+
 	}
 </script>
 

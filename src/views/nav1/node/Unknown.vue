@@ -83,7 +83,7 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop='vtep' min-width='80' max-width='100' label='Vtep' align='center'></el-table-column>		
-				<el-table-column prop='dc.name' min-width='80'max-width='100' label='设备中心' align='center'></el-table-column>
+				<el-table-column prop='dc.name' min-width='80'max-width='100' label='数据中心' align='center'></el-table-column>
 				<el-table-column prop='description' min-width='60'max-width='80' label='备注' align='center'></el-table-column>
 				<el-table-column width='300' align='center'label='操作'>
 					<template slot-scope='scope'>

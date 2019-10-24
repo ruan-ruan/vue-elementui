@@ -48,6 +48,7 @@ export function isChartTime(value){
 /**
  * 数组去重*/
 export var arrayPro={
+	
 	unique(arr){
 	  	var hash=[];
 	  	for (var i = 0; i < arr.length; i++) {
@@ -80,16 +81,79 @@ export var arrayPro={
 //			}
 //		}
 		for(var i=0;i<arr.length;i++){
-			if( new Date(arr[i].time).getTime()   === new Date(value).getTime()  ){
+			if( new Date(arr[i].time).getTime() === new Date(value).getTime()  ){
 //				console.log(i)
 				return i;//根据时间找到对应的下标位置
 			}
 		}
 		return -1;
 	},
+	dataIsNot(start,end,type){//当根据时间截取对应的下标的时候，数据不够的时候   ，需要补填数据
+		//start 开始时间   end结束时间    type  选择是开始时间下标找不到  补数据  还是  结束时间下标找不到返回数据  timeVal是选择的时间类型
+		var  data=[];
+		if(type == 'startIndex'){
+			for(var index = new Date(start).getTime()/1000; index < new Date(end).getTime()/1000 ; index +=60){
+				var obj={
+					d1:{
+						input_bytes: 0,
+						input_packages: 0,
+						mac_address: 0,
+						output_bytes: 0,
+						output_packages: 0,
+						total_input_bytes: 0,
+						total_input_packages: 0,
+						total_output_bytes: 0,
+						total_output_packages: 0,
+					},
+					d2:{
+						input_bytes: 0,
+						input_packages: 0,
+						mac_address: 0,
+						output_bytes: 0,
+						output_packages: 0,
+						total_input_bytes: 0,
+						total_input_packages: 0,
+						total_output_bytes: 0,
+						total_output_packages: 0,
+					},
+					time:datedialogFormat(index)
+				};
+				data.push(obj);
+			}
+		}else if(type == 'endIndex'){
+			for(var index = new Date(start).getTime()/1000; index < new Date(end).getTime()/1000 ; index +=60){
+				var obj={
+					d1:{
+						input_bytes: 0,
+						input_packages: 0,
+						mac_address: 0,
+						output_bytes: 0,
+						output_packages: 0,
+						total_input_bytes: 0,
+						total_input_packages: 0,
+						total_output_bytes: 0,
+						total_output_packages: 0,
+					},
+					d2:{
+						input_bytes: 0,
+						input_packages: 0,
+						mac_address: 0,
+						output_bytes: 0,
+						output_packages: 0,
+						total_input_bytes: 0,
+						total_input_packages: 0,
+						total_output_bytes: 0,
+						total_output_packages: 0,
+					},
+					time:datedialogFormat(index)
+				};
+				data.push(obj);
+			}
+		}
+		return data;
+	},
 	sortArr(arr, str) {//arr数组   str是属性   查找相同的属性的值  
-		console.log(arr);
-		console.log(str)
+
 	    var _arr = [],
 	        _t = [],
 	        // 临时的变量
@@ -102,7 +166,7 @@ export var arrayPro={
 	
 	        return s < t ? -1 : 1;
 	    });
-		console.log(arr)
+//		console.log(arr)
 	    if ( arr.length ){
 	        _tmp = arr[0][str];
 	    }
@@ -119,7 +183,7 @@ export var arrayPro={
 	    }
 	    // 将最后的内容推出新数组
 	    _arr.push( _t );
-	    console.log(_arr);
+//	    console.log(_arr);
 	    return _arr;
 	},
 	test(arr){
@@ -131,13 +195,14 @@ export var arrayPro={
 	},
 
 	flowObj(data,property){//  data 数组     property是要对比的对象里面的属性
+//		console.log(data);
+//		console.log(property)
 		let d1=[],d2=[];
 		for(var item =0 ;item <data.length;item++){
 			d1.push(data[item].d1)
 			d2.push(data[item].d2)
 		}
 		//首先判断   d1和d2 内的对象是否为空
-		
 		
 		let avg=0,num=0,obj1={};
 		if(JSON.stringify(d1[index]) == '{}'){
@@ -175,6 +240,7 @@ export var arrayPro={
 			d1:obj1,
 			d2:obj2
 		}
+//		console.log(obj);
 		return obj;//获取flow里面的属性的各个的值的集合
 	},
 	tim(data){//获取数组里面的数据的最大，最小，平均值，实时流量等
@@ -185,7 +251,6 @@ export var arrayPro={
 				num+= eval(data[index])
 				avg=num/data.length
 			}
-			
 			obj={
 				min:Math.min.apply(Math, data.map(function(o) {return o})),
 				max:Math.max.apply(Math, data.map(function(o) {return o})),
@@ -212,13 +277,25 @@ export var arrayPro={
 			return value1-value2;
 		}
 	},
-	testCharts (data,property,val){   //获取  z  或者a    端 的数据
+	testCharts (data ,property, val){   //获取  z  或者a    端 的数据
+		data.forEach((str,index) => {//线对数据进行处理  判断里面的是否存在NAN
+			for(var item in str){
+				for (var val in str[item]){
+					for(var index in str[item][val]){
+						if( isNaN( str[item][val][index] )){
+							str[item][val][index]=0;
+						}
+					}
+				}
+			}
+		})
+
 		let d1=[],d2=[];
 		for(var index=0;index<data.length;index++){
 			d1.push(data[index].d1)
 			d2.push(data[index].d2)
 		}
-
+		
 		let d1Charts=[];
 		let d2Charts=[];
 		d1.forEach(ele => {
@@ -227,10 +304,13 @@ export var arrayPro={
 		d2.forEach(ele => {
 			d2Charts.push(ele[property])
 		})
+
+		let d1Data=[],d2Data=[];
 		
-		let d1Data=[],d2Data=[]
+		
 		d1Charts.forEach(ele => {
-			d1Data.push(ele[val])
+			d1Data.push(ele[val]);
+			
 		})
 		d2Charts.forEach(ele => {
 			d2Data.push(ele[val])
@@ -239,10 +319,11 @@ export var arrayPro={
 			d1:d1Data,
 			d2:d2Data
 		}
-		console.log(obj)
+		
 		return obj;
 	},
-	totalData(data1,data2){//两个数组进行相加
+
+	totalData(data1,data2){//两个数组进行相加  d1 与d2数据进行进行相加
 		if(isNaN(data1[0])  &&   !isNaN(  data2[0]) ){
 			return data2;
 		}else if(! isNaN(data1[0]) &&   isNaN(data2[0])){

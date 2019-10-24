@@ -35,7 +35,7 @@
 					</el-radio-group>
 				</template>
 			</el-form-item>
-			<el-form-item label='vlan'prop='vlan' v-if='editForm.endpoints_vlan==="trunk"'>
+			<el-form-item label='vlan'prop='vlan' v-if='editForm.endpoints_vlan==="trunk"? true :false '>
 				<template>
 					<el-input v-model='editForm.vlan' v-show='false'></el-input>
 					<el-switch v-model='editForm.chooseVlan'
@@ -118,7 +118,7 @@
 	import {datedialogFormat,getPortStatus ,isPortStatus} from '@/assets/js/index.js'
 	export default{
 		name:'dcPort',
-		props:['tit',],
+		props:['tit','users'],
 		data(){
 			var logic_port= (rule ,value ,callback) => {
 //				if(this.baseObj){
@@ -192,7 +192,8 @@
 				disVlan:[],
 				itable:null,
 				pointData:[],//获取所有的点到点的所有数据，用来判断里面的逻辑口的状态
-				baseObj:{}
+				baseObj:{},
+
 				
 			}
 		},
@@ -218,21 +219,7 @@
 								newVal.logic=''
 							}
 							
-							if(this.baseObj.statusVal == 0){
-								if(newVal.chooseVlan){
-									this.$message({
-										message:'该逻辑口已经为UNTAG模式，不可在为该模式！',
-										type:'warning'
-									})
-									newVal.chooseVlan='false';
-									this.editForm.selVlan='';
-								}
-							}else if(this.baseObj.statusVal != 0){//透传  和 vlan
-								if(newVal.chooseVlan){
-									this.editForm.vlan='0'  //当时untag模式的是vlan为0
-									this.editForm.selVlan=''
-								}
-							}
+							
 						}else if(this.baseObj.statusVal < 0){
 							if(newVal.endpoints_vlan=='透传'){
 								this.$message({
@@ -256,7 +243,15 @@
 						}
 					}
 					
-					if(newVal.chooseVlan){
+					if(newVal.chooseVlan && this.baseObj.statusVal==0 ){
+						this.$message({
+							message:'该逻辑口已经为UNTAG模式，不可在为该模式！',
+							type:'warning'
+						})
+						newVal.logic=''
+						this.editForm.endpoints_vlan="trunk"
+
+						this.editForm.selVlan='';
 						this.editForm.selVlan=''
 					}
 
@@ -274,15 +269,16 @@
 				},
 				deep:true,
 			},
+			'editForm.logic':function(newVal,oldVal){
+				console.log(newVal)
+			},
 			sendForm:{
 				handler(newVal,oldVal){
 					this.$emit('sendFormData',newVal)
-					
-
 //					this.$emit('sendFormData_z',newVal)
 				},
 				deep:true,
-			}
+			},
 		},
 		created(){
 			this.token=sessionStorage.getItem('token');
@@ -293,6 +289,8 @@
 			if(typeof this.tit !=='undefined'){
 				this.textMap.title=this.tit;
 			}
+	
+			
 		},
 		methods:{
 			
@@ -329,10 +327,13 @@
 			      	console.log(res)
 			      	if(res.status==200){
 			      		if(res.data.status==0){
+			      			console.log(res)
 			      			var str=res.data.data.items;
 			      			str.forEach(ele => {
 			      				ele.endpoints.forEach(item => { //用statusVal   来判断   该逻辑口的状态
+
 			      					item.logic_port.statusVal=item.vlan;
+
 			      					this.pointData.push(item.logic_port);
 			      				})
 			      			})
@@ -345,7 +346,6 @@
 			    })
 			},
 			selectNode(ids){//根据选择的节点获取逻辑口的数据
-				console.log(ids)
 				this.editForm.logic=''
 				this.logicPort=[]
 				var para={
@@ -356,7 +356,9 @@
 					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
+							console.log(res)
 							//pointData
+							console.log(this.pointData)
 							res.data.data.items.forEach(ele => {
 								let strVal={};
 								if(getPortStatus(ele.physical_ports)=='UP'){
@@ -375,6 +377,7 @@
 								}
 								this.logicPort.push(portObj)
 							})
+							console.log(this.pointData)
 							for(var item1 of this.logicPort){
 								for(var item2 of this.pointData){
 									if(item1.id == item2.id){
@@ -382,9 +385,24 @@
 									}
 								}
 							}
-							
-							console.log(this.logicPort)
-							console.log(this.pointData)
+//							console.log(this.logicPort)
+//							console.log(this.users)
+//							this.logicPort.forEach(ele => {
+////								if(ele.id)
+//								this.users.forEach(item => {
+//									if(ele.id == item.logic_port.id){
+//										ele.statusVal = item.vlan;
+//									}
+//								})
+//							})
+//							this.users.forEach(ele => {
+//								ele.str=this.logicPort.find(item => {
+//									return ele.logic_port.id == item.id;
+//								})
+//								if(ele.str){
+//									
+//								}
+//							})
 						}
 					}
 				}).catch(e => {console.log(e)})
@@ -407,11 +425,28 @@
 				}).catch(e => {
 					console.log(e)
 				})
-
-				this.baseObj=this.pointData.find(item => {
-					return item.id=ids;
+				console.log(this.users)
+				console.log(this.pointData)
+//				this.baseObj
+				
+				var obj1=this.pointData.find(item => {
+					return item.id == ids;
 				})
-				console.log(this.baseObj)
+				
+				var obj2=this.users.find(item => {
+					return item.id == ids;
+				})
+				if(typeof obj1 !='undefined'){
+					this.baseObj=obj1
+				}
+				if(obj2 !='undefined'){
+
+					this.baseObj=obj2
+				}
+				console.log(obj1);
+				
+				console.log(obj2)
+
 				
 //				this.logicPort=this.logicPort.filter(item => {
 //					return item.id !== ids

@@ -10,10 +10,10 @@
 				<portChilds :titleTwo='base2'></portChilds>
 			</el-tab-pane>
 			<el-tab-pane label='逻辑端口1'>
-				<logicalPort :titleOne='base1.id'></logicalPort>
+				<logicalPort :titleOne='base1ID'></logicalPort>
 			</el-tab-pane>
 			<el-tab-pane label='逻辑端口2' v-if='equipStatue'>
-				<logicalPort :titleTwo='base2.id'></logicalPort>
+				<logicalPort :titleTwo='base2ID'></logicalPort>
 			</el-tab-pane>
 		</el-tabs>
 	</div>
@@ -21,8 +21,8 @@
 
 <script>
 	import portChilds from '@/views/nav1/node/details/child/portsChild/portChilds'
-	import logicalPort from '@/views/nav1/node/details/child/portsChild/logicalPort'
-	
+//	import logicalPort from '@/views/nav1/node/details/child/portsChild/logicalPort'
+	import logicalPort from '@/views/resources/port'
 
 	export default{
 		name:'port',
@@ -42,6 +42,8 @@
 				base1:{},
 				base2:{},
 				dataVal:[],
+				base1ID:'',
+				base2ID:'',
 				ids1:''
 			}
 		},
@@ -49,6 +51,22 @@
 			console.log(this.title)
 			this.token=sessionStorage.getItem('token');
 			this.getUsers(this.title)
+		},
+		watch:{
+			base1:{
+				handler(newVal,oldVal){
+					console.log(newVal);
+					this.base1ID=newVal.id;
+				},
+				deep:true,
+			},
+			base2:{
+				handler(newVal,oldVal){
+					console.log(newVal);
+					this.base2ID=newval.id;
+				},
+				deep:true
+			}
 		},
 		methods:{
 			getUsers(id){

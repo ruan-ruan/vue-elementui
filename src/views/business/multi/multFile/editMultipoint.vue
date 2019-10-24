@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-if='componentStatus'>
 		<section>
 			<h3 class="tit_h3" v-if=" typeof id !=='undefined'" v-text="title.nav"></h3>
 			<el-row>
@@ -76,8 +76,9 @@
 				<h3>类型选择:</h3>		
 				<el-tabs v-model='activeName'type="border-card" class='marT5'>
 					<el-tab-pane label='数据中心端口'name='first'>
-						<dc-port @sendFormData='getFormData' ref='editForm' ></dc-port> <!-- @sendNdoe='getNodeObj' @sendLogic='getLogicObj'-->                                                                                 
+						<dc-port @sendFormData='getFormData' ref='editForm' :users='dcPortData' ></dc-port> <!-- @sendNdoe='getNodeObj' @sendLogic='getLogicObj'-->                                                                                 
 						<basic-details @sendBasic='getBasic' ref='basicForm'></basic-details>
+						
 						<el-button style='margin-left: 50%;' type='primary' size='small' @click='dcSubmit'>提交</el-button>
 					</el-tab-pane>
 					<el-tab-pane label='公有云端口'name="second">
@@ -141,6 +142,7 @@
 					name:[ { required: true, message: '请输入名称', trigger: 'blur' },]
 				},
 				users:[],
+				dcPortData:[],
 				textMap:{
 					edit:'编辑',
 					creat:'添加',
@@ -155,6 +157,7 @@
 				basicObj:{},//获取基本的form表单信息
 				clounBasic:{},//云选择公共部分
 				clounList:{},
+				componentStatus:true,
 			}
 		},
 		created(){
@@ -238,9 +241,11 @@
 				
 			},
 			dcSubmit(){//数据中心的部分的提交 弹窗的提交
+				
 				let that=this;
 				var str=[this.$refs['editForm'].$refs['editForm']  , this.$refs['basicForm'].$refs['basicForm']]
-				console.log(str)
+				console.log(str);
+				
 				let obj={};
 				str.forEach(ele => {
 					console.log(ele)
@@ -262,8 +267,7 @@
 								
 								description:that.basicObj.description,
 							}
-							console.log(that.basicObj.charge_time)
-							console.log(Number(that.basicObj.charge_time))
+
 							console.log(obj)
 							this.$ajax.post('/vll/add_endpoint/'+this.id+'?token='+this.token,obj)
 							.then(res => {
@@ -277,6 +281,11 @@
 										})
 										ele.resetFields();
 										that.dialogFormVisible=false;
+										that.componentStatus=false;
+										that.$nextTick(() => {
+											that.componentStatus=true;
+										})
+										
 										this.getDetails(this.id)
 
 									}else{
@@ -325,7 +334,7 @@
 				console.log(this.basicObj)
 			},
 			getDetails(ids){//获取数据
-				console.log(ids)
+				this.users=[];
 				this.$ajax.get('/vll/multi_vll_info/'+ids+'?token='+this.token)
 				.then(res => {
 					console.log(res);
@@ -340,10 +349,6 @@
 								dec:str.description,
 								creation_time:datedialogFormat(str.creation_time)
 							}
-							console.log(str.endpoints)
-							
-							
-							
 							//将dc的数据和云的数据整合后在一个新的数组里面        是两个数组   
 							//需要将数据中心和公有云的部分整合到一个新的数组   然后展示出来
 							if(str.endpoints){
@@ -407,12 +412,23 @@
 									this.users.push(ele);
 								})
 							}
+							
+							
+							
+							console.log(this.users)
+//							this.dcPort
+							this.users.forEach(item => {
+								item.logic_port.statusVal=item.vlan;
+								this.dcPortData.push(item.logic_port)
+							})
+							
+							console.log(this.dcPortData)
+							
 						}else{
 							this.$message({
 								message:res.data.message,
 								type:'warning'
 							})
-//							this.$router.replace('/business/multipoint')
 						}
 					}
 				})
@@ -479,6 +495,7 @@
 //									row.status='启用'
 //									row.statusHTML='禁用'
 									this.getDetails(this.id);//从新获取数据
+									
 								}else{
 									this.$message({
 										message:res.data.message,
@@ -538,7 +555,6 @@
 				this.basicObj=Object.assign({},row);
 			},
 			handleDel(index,row){//删除
-				console.log(row)
 				var strType=''
 				if(row.dataType =="endpoints"){
 					strType='node'
