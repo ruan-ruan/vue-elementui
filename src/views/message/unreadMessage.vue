@@ -168,6 +168,7 @@
 <script>
 import messageDialog from "@/components/dialog/messageDialog";
 import { getTime } from "@/assets/js/index.js";
+import Utils from '@/assets/js/eventBus.js';
 export default {
   name: "unread",
   components: {
@@ -245,7 +246,8 @@ export default {
       prev: "上一页",
       loading: false,
       isid: [],
-      readid: []
+      readid: [],
+      tableDatas:[]
     };
   },
   created() {
@@ -255,6 +257,29 @@ export default {
   mounted() {
     //执行钩子函数
     this.getData();
+    var para = {
+      page: '',
+      per_page: '',
+      search_title: '',
+      search_type: '',
+      search_level: '',
+      search_start_time: '',
+      search_end_time: '',
+    };
+      this.$ajax
+        .get("/public/get_news" + "?token=" + this.token, para)
+        .then(res => {
+          console.log(res);
+          if (res.status == 200) {
+            if (res.data.status == 0) {
+              this.tableDatas = res.data.data.items?res.data.data.items.slice(0,5):[];
+               Utils.$emit('demo', this.tableDatas)
+            }
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
   },
   filters: {
     ellipsis(value) {

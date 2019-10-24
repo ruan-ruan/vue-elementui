@@ -96,7 +96,7 @@
 				<basic-details ref='basicForm' :basicObj='basicObj'></basic-details>
 			</div>
 			<div class="toolbar">
-				<el-button @click='dialogFormVisible===false'>返回</el-button>
+				<el-button @click='dialogFormVisible=false'>返回</el-button>
 			</div>
 		</el-dialog>
 	</div>
@@ -432,7 +432,7 @@
 								tenant_id:this.editForm.tenant_id,
 								description:this.editForm.dec
 							}
-							this.$ajax.put('/vll/edit_virtual_host/'+this.editForm.id+'?token='+this.token)
+							this.$ajax.put('/vll/edit_virtual_host/'+this.editForm.id+'?token='+this.token,para)
 							.then(res => {
 								this.basicLoading=false;
 								if(res.status==200){

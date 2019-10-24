@@ -224,7 +224,7 @@
 										message:'该逻辑口已经为UNTAG模式，不可在为该模式！',
 										type:'warning'
 									})
-									newVal.chooseVlan='false';
+									// newVal.chooseVlan='false';
 									this.editForm.selVlan='';
 								}
 							}else if(this.baseObj.statusVal != 0){//透传  和 vlan

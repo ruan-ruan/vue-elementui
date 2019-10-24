@@ -103,7 +103,7 @@
 			
 			<!--编辑，添加，详情的部分-->
 			<el-dialog :title='textMap[dialogStatus]' :visible.sync='dialogFormVisible' :close-on-click-modal="false" v-loading='loading'>
-				<el-form :model='editForm' label-width='100px'  status-icon :rules='editFormRules' ref='editForm'>
+				<el-form :model='editForm' label-width='100px' :rules='editFormRules' ref='editForm'>
 					<el-form-item label='创建时间'  v-show='staCreat'>
 						<el-input v-model='editForm.creation_time' class='ipt' disabled ></el-input>
 					</el-form-item>
@@ -131,8 +131,16 @@
 					</el-form-item>
 					<!--当弹出的是天际的时候显示密码部分，否则隐藏-->
 					<el-form-item label='密码' prop='password'  v-if='psd'>
-						<el-input type="password" v-model="editForm.password" auto-complete="off" class='ipt' placeholder="请输入密码"></el-input>
+						<el-input type="password" v-popover:popover v-model="editForm.password" auto-complete="off" class='ipt' placeholder="请输入密码"></el-input>
+						 <el-popover
+							ref="popover"
+							placement="right"
+							width="30"
+							trigger="focus"
+							content="密码必须包含数字，小写、大写字母">
+						</el-popover>
 					</el-form-item>
+					
 					<el-form-item label='确认密码' prop='password_confirm' v-if='psd'>
 						<el-input type="password" v-model='editForm.password_confirm' auto-complete="off" class='ipt'  placeholder="请确认密码"></el-input>
 					</el-form-item>
@@ -167,23 +175,25 @@
 			this.getUsers()
 		},
 		data(){
+			var regex=new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/)
 			var validatePass2 =(rule,value ,callback) => {
 				if(value===''){
 					 callback(new Error('请再次输入密码'));
 				}else if(value !==this.editForm.password){
 					 callback(new Error('两次输入密码不一致!'));
-				}else{
+				}
+				//  else if(!regex.test(this.editForm.password_confirm)){
+		       	// 	 callback(new Error('密码必须包含数字，小写、大写字母'))
+				// }
+				else{
 					 callback();
 				}
 			};
 			 var validatePass = (rule, value, callback) => {
 		        if (value === '') {
 		          callback(new Error('请输入密码'));
-		        } else {
-//		          if (this.editForm.passwd !== '') {
-//		            this.$refs['editForm'].validateField('passwd');
-//		          }
-		          callback();
+		        } else if(!regex.test(this.editForm.password)){
+		       		 callback(new Error('密码必须包含数字，小写、大写字母'))
 		        }
 		      };
 			var Mobile =(rule,value ,callback) => {

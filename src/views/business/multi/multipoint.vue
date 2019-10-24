@@ -50,7 +50,11 @@
 				<el-table-column prop="creation_time" sortable label="时间" align='center' width='95' :formatter='dateFormat' >
 				</el-table-column>
 				<el-table-column prop='name'label='组网名称' align='center'min-width='150' ></el-table-column>
-				<el-table-column prop='len'label='关联端点数' align='center'min-width='150' ></el-table-column>
+				<el-table-column prop='len'label='关联端点数' align='center'min-width='150' >
+					<template slot-scope='scope'>
+						<span>{{scope.row.endpoints.length}}</span>
+					</template>
+				</el-table-column>
 				<el-table-column prop='tenant.name'label='租户标识' align='center'min-width='150' ></el-table-column>
 				<el-table-column prop='descriptionVal'label='备注' align='center'min-width='150' ></el-table-column>
 				<el-table-column label='操作' align='center' width='220'>
