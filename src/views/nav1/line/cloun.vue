@@ -197,8 +197,9 @@
 					page: this.currentPage,
 			        per_page:this.pagesize,
 					search_name:this.filters.name,
-					search_type:this.filters.cloun,
-					search_status:this.filters.status
+					search_cloud:this.filters.cloun,
+					search_status:this.filters.status,
+					search_region:""
 				}
 				this.$ajax.get('/link/cloud_links'+'?token='+this.token,para)
 				.then(res => {

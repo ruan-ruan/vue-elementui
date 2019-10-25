@@ -522,5 +522,9 @@ export default {
   .el-date-editor--timerange.el-input__inner {
     width: 290px;
   }
+  .el-table__empty-block{
+		/*display: none !important;*/
+		display: block  !important;
+	}
 }
 </style>

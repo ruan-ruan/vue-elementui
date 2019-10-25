@@ -357,19 +357,23 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							//pointData
-							res.data.data.items.forEach(ele => {
+							res.data.data.items.map(ele => {
+								let staus=[]
+								ele.physical_ports.map(items => {
+									staus.push(items.port)
+								})
 								let strVal={};
-								if(getPortStatus(ele.physical_ports)=='UP'){
+								if(getPortStatus(staus)=='UP'){
 									strVal.statusColor='statusUP'
-								}else if(getPortStatus(ele.physical_ports)=='DOWN'){
+								}else if(getPortStatus(staus)=='DOWN'){
 									strVal.statusColor='statusDOWN'
-								}else if(getPortStatus(ele.physical_ports)=='异常'){
+								}else if(getPortStatus(staus)=='异常'){
 									strVal.statusColor='statusAbno'
 								}
 								let portObj={
 									id:ele.id,
 									name:ele.name,
-									status:getPortStatus(ele.physical_ports),
+									status:getPortStatus(staus),
 									statusColor:strVal.statusColor,
 									statusVal:2,//statusVal  根据点到点的列表的数据   来判断该逻辑口的是否为可用的 默认的逻辑扣是全部可用的
 								}
@@ -382,9 +386,6 @@
 									}
 								}
 							}
-							
-							console.log(this.logicPort)
-							console.log(this.pointData)
 						}
 					}
 				}).catch(e => {console.log(e)})
