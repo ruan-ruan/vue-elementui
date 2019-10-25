@@ -225,11 +225,11 @@ export default {
       //状态的转换
       status: [
         {
-          value: "运行中",
+          value: "UP",
           label: "运行中"
         },
         {
-          value: "已离线",
+          value: "DOWN",
           label: "已离线"
         }
       ],

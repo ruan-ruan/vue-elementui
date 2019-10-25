@@ -514,7 +514,6 @@ export default {
   created() {
     this.token = sessionStorage.getItem("token");
     this.getFiltersData();
-//  let str = [this.customer, this.nodeID];
     if (
       typeof this.customer !== "undefined" ||
       typeof this.nodeID !== "undefined" ||
@@ -775,8 +774,8 @@ export default {
 								name:this.editForm.name,
 								charge_mode:this.editForm.charge_mode,
 								bandwidth:this.editForm.bandwidth,
-								charge_time:this.editForm.charge_time=='Invalid Date'?"": Number(this.editForm.charge_time)/1000,
-								expiration_time:this.editForm.expiration_time=='Invalid Date'?"": Number(this.editForm.expiration_time)/1000,
+								charge_time:this.editForm.charge_time=='Invalid Date'?null: Number(this.editForm.charge_time)/1000,
+								expiration_time:this.editForm.expiration_time=='Invalid Date'?null: Number(this.editForm.expiration_time)/1000,
 								description:this.editForm.description
 							}
 							console.log(para)
