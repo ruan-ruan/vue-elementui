@@ -242,12 +242,12 @@
 		methods:{
 			getPointDetails(ids){
 				//获取点到点的详细信息
-				
+				this.seeLoading=true;
 				this.$ajax.get('/vll/p2p_vll_info/'+ids+'?token='+this.token)
 				.then(res =>{
 					if(res.status==200){
 						if(res.data.status==0){
-							
+							this.seeLoading=false;
 							var  str=res.data.data;
 							let statusVal='';
 							statusVal=str.status==='serving'?'运行中':"stopping"?'停止中':'failure'?'创建失败':'creating'?'创建中':''
@@ -255,7 +255,7 @@
 							
 
 							if (!str.charge_time && typeof(str.charge_time)!="undefined" && str.charge_time!=0){ 
-							     alert("null"); 
+//							     alert("null"); 
 							 }
 							isNull(str,'charge_time');
 							isNull(str,'creation_time');
@@ -330,6 +330,8 @@
 									},
 									vlan:objZ.vlan < 0 ? '透传' : 0 ? 'UNTAG':objZ.vlan
 								}
+								console.log(this.dcFormA)
+								console.log(objA)
 
 							}
 							if(str.type=='c2c'){
@@ -349,7 +351,7 @@
 								this.clFormZ.region=objZ.region;
 								this.clFormZ.vlan=objZ.vlan < 0 ? '透传' : 0 ? 'UNTAG':objZ.vlan;
 
-
+								
 								this.getClounDetails(objA.id,objA.name);
 								this.getClounDetails(objA.id,objZ.name);
 							}

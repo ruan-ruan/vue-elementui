@@ -107,7 +107,7 @@
 	import {getPortStatus,isPortStatus,descriptionValue} from '@/assets/js/index'
 	export default{
 		name:'port',
-		props:['titleOne','titleTwo','LogicTitle'],//来判断进入的界面的，控制添加和操作按钮显示
+		props:['titleOne','titleTwo','LogicTitle','tenantID'],//来判断进入的界面的，控制添加和操作按钮显示
 		data(){
 			return{			
 				token:'',
@@ -160,6 +160,9 @@
 				console.log(newVal);
 				this.tit=newVal;
 				this.getUsers()
+			},
+			'tenantID':function(newVal,oldVal){
+				console.log(newVal)
 			}
 		},
 		created(){
@@ -169,7 +172,9 @@
 			console.log(this.titleTwo)
 			
 			this.getUsers();
-			this.getTenantData()
+			this.getTenantData();
+			console.log(this.tenantID)
+			
 		},
 		methods:{
 			getTenantData(){
@@ -191,7 +196,8 @@
 			handleCurrentChange(val){
 //				console.log(`当前页数是:${val}`)
 				this.currentPage=val;
-				this.getUsers()
+				this.getUsers();
+
 			},
 			getUsers(){
 				this.loading=true;
@@ -199,7 +205,7 @@
 					page:this.currentPage,
 					per_page:this.pagesize,
 					search_name:this.filters.name,
-					search_tenant:this.filters.nameLogo,
+					search_tenant:typeof this.tenantID !='undefined'? this.tenantID:  this.filters.nameLogo,
 					search_device: typeof this.tit !=='undefined' ?this.tit:''
 //					search_usable:this.filters.status,
 				}

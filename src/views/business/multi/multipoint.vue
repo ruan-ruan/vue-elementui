@@ -50,7 +50,11 @@
 				<el-table-column prop="creation_time" sortable label="时间" align='center' width='95' :formatter='dateFormat' >
 				</el-table-column>
 				<el-table-column prop='name'label='组网名称' align='center'min-width='150' ></el-table-column>
-				<el-table-column prop='len'label='关联端点数' align='center'min-width='150' ></el-table-column>
+				<el-table-column prop='len'label='关联端点数' align='center'min-width='150' >
+					<template slot-scope='scope'>
+						<span>{{scope.row.endpoints.length}}</span>
+					</template>
+				</el-table-column>
 				<el-table-column prop='tenant.name'label='租户标识' align='center'min-width='150' ></el-table-column>
 				<el-table-column prop='descriptionVal'label='备注' align='center'min-width='150' ></el-table-column>
 				<el-table-column label='操作' align='center' width='220'>
@@ -118,7 +122,7 @@
 	
 	export default{
 		name:'multipoint',
-		props:['virTit','clounID','logicID'],//虚拟组网专线  控制添加按钮的隐藏    clounID//节点里面的组网的详情     logicID逻辑口的详情里的id
+		props:['virTit','clounID','logicID','tenantID'],//虚拟组网专线  控制添加按钮的隐藏    clounID//节点里面的组网的详情     logicID逻辑口的详情里的id
 		data(){
 			return{
 				token:'',
@@ -203,7 +207,7 @@
 					page: this.currentPage,
 			        per_page:this.pagesize,
 			        search_name:this.filters.name,
-			        search_tenant:this.filters.tenant_id,
+			        search_tenant: typeof this.tenantID !='undefined'?this.tenantID: this.filters.tenant_id,
 			        search_node:(typeof this.clounID !=='undefined' ? this.clounID:''),
 			        search_logic_port:(typeof this.logicID !=='undefined' ?this.logicID:''),
 				}

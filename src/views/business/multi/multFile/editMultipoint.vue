@@ -76,7 +76,7 @@
 				<h3>类型选择:</h3>		
 				<el-tabs v-model='activeName'type="border-card" class='marT5'>
 					<el-tab-pane label='数据中心端口'name='first'>
-						<dc-port @sendFormData='getFormData' ref='editForm' :users='dcPortData' ></dc-port> <!-- @sendNdoe='getNodeObj' @sendLogic='getLogicObj'-->                                                                                 
+						<dc-port @sendFormData='getFormData' ref='editForm'  ></dc-port> <!-- @sendNdoe='getNodeObj' @sendLogic='getLogicObj'-->                                                                                 
 						<basic-details @sendBasic='getBasic' ref='basicForm'></basic-details>
 						
 						<el-button style='margin-left: 50%;' type='primary' size='small' @click='dcSubmit'>提交</el-button>
@@ -97,7 +97,7 @@
 				<basic-details ref='basicForm' :basicObj='basicObj'></basic-details>
 			</div>
 			<div class="toolbar">
-				<el-button @click='dialogFormVisible===false'>返回</el-button>
+				<el-button @click='dialogFormVisible=false'>返回</el-button>
 			</div>
 		</el-dialog>
 	</div>
@@ -412,18 +412,7 @@
 									this.users.push(ele);
 								})
 							}
-							
-							
-							
-							console.log(this.users)
-//							this.dcPort
-							this.users.forEach(item => {
-								item.logic_port.statusVal=item.vlan;
-								this.dcPortData.push(item.logic_port)
-							})
-							
-							console.log(this.dcPortData)
-							
+
 						}else{
 							this.$message({
 								message:res.data.message,
@@ -448,7 +437,7 @@
 								tenant_id:this.editForm.tenant_id,
 								description:this.editForm.dec
 							}
-							this.$ajax.put('/vll/edit_virtual_host/'+this.editForm.id+'?token='+this.token)
+							this.$ajax.put('/vll/edit_virtual_host/'+this.editForm.id+'?token='+this.token,para)
 							.then(res => {
 								this.basicLoading=false;
 								if(res.status==200){

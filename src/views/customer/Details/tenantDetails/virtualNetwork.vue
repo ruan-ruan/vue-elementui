@@ -1,7 +1,7 @@
 <template>
 	<div>
 		虚拟组网
-		<virNetwork :clounID='clounID'></virNetwork>
+		<virNetwork :tenantID='clounID'></virNetwork>
 	</div>
 </template>
 

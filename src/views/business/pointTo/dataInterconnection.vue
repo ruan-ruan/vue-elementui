@@ -13,7 +13,7 @@
 						<el-col :span='24'>
 							<el-col :span='12'>
 								<h4 class="title_h4"title="虚拟专线受控的起始端">A端配置<span class="cli_toTip" >?</span></h4>
-								<dc-port @sendFormData_a='getFormData_a':tit='vlanSel.label1' ref='dc_a'></dc-port>
+								<dc-port @sendFormData_a='getFormData_a':tit='vlanSel.label1'  ref='dc_a'></dc-port>
 							</el-col>
 							<el-col :span='12'>
 								<h4 class="title_h4"title='虚拟专线受控的终止端'>Z端配置<span class="cli_toTip">?</span></h4>
@@ -227,6 +227,13 @@
 												type:'success'
 											})
 											this.reset();
+											this.$confirm('业务提价成功，正在处理请在消息列表中查看具体进度!',{
+								    			cancelButtonText:'继续开通',
+								    			confirmButtonText:'前往查看',
+											}).then(() => {
+												this.$router.push('/resource/virtualLine/pointTo')
+											}).catch(() => {})
+											
 										}else{
 											this.$message({
 												message:res.data.message,

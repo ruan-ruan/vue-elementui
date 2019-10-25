@@ -31,7 +31,7 @@ const store = new Vuex.Store({
         nodeID:"",//直接赋值 
         linkObj:{},
         filters:{},//接收拓扑图的默认的数据
-        statusname:false
+        statusname:false,
     },
     mutations:{
     	setRole(state,msg){

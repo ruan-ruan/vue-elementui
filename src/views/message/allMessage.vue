@@ -136,7 +136,7 @@
           width="240"
         >
           <template slot-scope="scope">
-             <el-popover
+            <el-popover
               ref="visible"
               placement="right"
               trigger="hover"
@@ -144,22 +144,22 @@
               <span class="warptitle">
                 {{scope.row.content | ellipsis}}
               </span>
-              
+
               <span
-              style="margin-left: 5px;"
-              class='cli_spn'
-              slot="reference"
-              @click="handleClick(scope.$index,scope.row)"
-            >
-            <span v-show="!scope.row.is_read"><img
-                src="../../assets/images/message/unread.png.png"
-                alt=""
-                style="width:12px;height:12px;"
-              ></span>
-            {{ scope.row.title}}
-            </span>
+                style="margin-left: 5px;"
+                class='cli_spn'
+                slot="reference"
+                @click="handleClick(scope.$index,scope.row)"
+              >
+                <span v-show="!scope.row.is_read"><img
+                    src="../../assets/images/message/unread.png.png"
+                    alt=""
+                    style="width:12px;height:12px;"
+                  ></span>
+                {{ scope.row.title}}
+              </span>
             </el-popover>
-           
+
           </template>
         </el-table-column>
         <el-table-column
@@ -219,6 +219,7 @@
 <script>
 import messageDialog from "@/components/dialog/messageDialog";
 import { getTime } from "@/assets/js/index.js";
+import Utils from "@/assets/js/eventBus.js";
 export default {
   name: "read",
   components: {
@@ -297,7 +298,8 @@ export default {
       prev: "上一页",
       loading: false,
       isid: [],
-      readid: []
+      readid: [],
+      tableDatas: []
     };
   },
   created() {
@@ -454,8 +456,18 @@ export default {
           if (res.status == 200) {
             if (res.data.status == 0) {
               _this.tableData = res.data.data.items;
-              console.log(_this.tableData);
               _this.total = res.data.data.page.total;
+              let datas = [];
+              _this.tableData.map(items => {
+                if (items.is_read == false) {
+                  datas.push(items);
+                }
+              });
+              this.$store.state.message = datas.length;
+              this.tableDatas = res.data.data.items
+                ? res.data.data.items.slice(0, 5)
+                : [];
+              Utils.$emit("demo", this.tableDatas);
             }
           }
         })

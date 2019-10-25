@@ -118,7 +118,7 @@
 	import {datedialogFormat,getPortStatus ,isPortStatus} from '@/assets/js/index.js'
 	export default{
 		name:'dcPort',
-		props:['tit','users'],
+		props:['tit','resVal'],
 		data(){
 			var logic_port= (rule ,value ,callback) => {
 //				if(this.baseObj){
@@ -158,7 +158,7 @@
 					logic:[  { required: true,  validator:logic_port ,trigger: 'change' }],
 					
 					endpoints_vlan:[  { required: true, message: '请选择逻辑口类型', trigger: 'change' }],
-					vlan:[  { required: true, message: '请选择vlan', trigger: 'change' }],
+//					vlan:[  { required: true, message: '请选择vlan', trigger: 'change' }],
 				},
 				portType:[{label:'透传',value:'-1'},{label:'trunk',value:'0'}],//逻辑口的类型
 				textMap:{
@@ -191,9 +191,8 @@
 				disabeldData:[],//vlan不可用的数据
 				disVlan:[],
 				itable:null,
-				pointData:[],//获取所有的点到点的所有数据，用来判断里面的逻辑口的状态
+				pointData:[],//获取所有的点到点的所有数据，用来判断里面的逻辑口的状态 //获取组网的数据列表   也是为了获取逻辑口的数据  
 				baseObj:{},
-
 				
 			}
 		},
@@ -218,8 +217,7 @@
 								})
 								newVal.logic=''
 							}
-							
-							
+
 						}else if(this.baseObj.statusVal < 0){
 							if(newVal.endpoints_vlan=='透传'){
 								this.$message({
@@ -254,7 +252,7 @@
 						this.editForm.selVlan='';
 						this.editForm.selVlan=''
 					}
-
+//editForm.selVlan
 					
 					//下面的form表单的转换 ，是当触发的时候，将需要传的参数放在一个新对象内，以便于，，在监听的是偶向父组件传值
 					if(newVal.vlan){
@@ -265,6 +263,8 @@
 					}
 					if(newVal.logic){
 						this.sendForm.logic=newVal.logic;
+					}else{
+						newVal.selVlan=''
 					}
 				},
 				deep:true,
@@ -324,26 +324,36 @@
 			    
 			    this.$ajax.get('/vll/p2p_vlls'+'?token='+this.token)
 			    .then(res => {
-			      	console.log(res)
 			      	if(res.status==200){
 			      		if(res.data.status==0){
 			      			console.log(res)
 			      			var str=res.data.data.items;
 			      			str.forEach(ele => {
 			      				ele.endpoints.forEach(item => { //用statusVal   来判断   该逻辑口的状态
-
 			      					item.logic_port.statusVal=item.vlan;
-
 			      					this.pointData.push(item.logic_port);
 			      				})
 			      			})
 			      			console.log(this.pointData)
 			      		}
 			      	}
-			    })
-			    .catch(e => {
-			      	console.log(e)
-			    })
+			    }) .catch(e => { console.log(e) })
+			    
+			    this.$ajax.get('/vll/multi_vlls'+'?token='+this.token)
+			    .then(res => {
+			    	if(res.status==200){
+			    		if(res.data.status==0){
+			    			console.log(res)
+			    			var str=res.data.data.items;
+			    			str.forEach(ele => {
+			    				ele.endpoints.forEach( item => {
+			    					item.logic_port.statusVal=item.vlan;
+			      					this.pointData.push(item.logic_port);
+			    				})
+			    			})
+			    		}
+			    	}
+			    }).catch(e => {console.log(e)})
 			},
 			selectNode(ids){//根据选择的节点获取逻辑口的数据
 				this.editForm.logic=''
@@ -361,22 +371,24 @@
 							console.log(this.pointData)
 							res.data.data.items.forEach(ele => {
 								let strVal={};
-								if(getPortStatus(ele.physical_ports)=='UP'){
+								if(isPortStatus(ele.physical_ports)=='UP'){
 									strVal.statusColor='statusUP'
-								}else if(getPortStatus(ele.physical_ports)=='DOWN'){
+								}else if(isPortStatus(ele.physical_ports)=='DOWN'){
 									strVal.statusColor='statusDOWN'
-								}else if(getPortStatus(ele.physical_ports)=='异常'){
+								}else if(isPortStatus(ele.physical_ports)=='异常'){
 									strVal.statusColor='statusAbno'
 								}
 								let portObj={
 									id:ele.id,
 									name:ele.name,
-									status:getPortStatus(ele.physical_ports),
+									status:isPortStatus(ele.physical_ports),
 									statusColor:strVal.statusColor,
 									statusVal:2,//statusVal  根据点到点的列表的数据   来判断该逻辑口的是否为可用的 默认的逻辑扣是全部可用的
 								}
 								this.logicPort.push(portObj)
 							})
+							console.log(this.logicPort)
+							
 							console.log(this.pointData)
 							for(var item1 of this.logicPort){
 								for(var item2 of this.pointData){
@@ -385,24 +397,7 @@
 									}
 								}
 							}
-//							console.log(this.logicPort)
-//							console.log(this.users)
-//							this.logicPort.forEach(ele => {
-////								if(ele.id)
-//								this.users.forEach(item => {
-//									if(ele.id == item.logic_port.id){
-//										ele.statusVal = item.vlan;
-//									}
-//								})
-//							})
-//							this.users.forEach(ele => {
-//								ele.str=this.logicPort.find(item => {
-//									return ele.logic_port.id == item.id;
-//								})
-//								if(ele.str){
-//									
-//								}
-//							})
+
 						}
 					}
 				}).catch(e => {console.log(e)})
@@ -425,32 +420,19 @@
 				}).catch(e => {
 					console.log(e)
 				})
-				console.log(this.users)
+
 				console.log(this.pointData)
-//				this.baseObj
+
 				
 				var obj1=this.pointData.find(item => {
 					return item.id == ids;
 				})
-				
-				var obj2=this.users.find(item => {
-					return item.id == ids;
-				})
+
 				if(typeof obj1 !='undefined'){
 					this.baseObj=obj1
 				}
-				if(obj2 !='undefined'){
-
-					this.baseObj=obj2
-				}
 				console.log(obj1);
-				
-				console.log(obj2)
 
-				
-//				this.logicPort=this.logicPort.filter(item => {
-//					return item.id !== ids
-//				})
 				//获取逻辑口下的vlan的信息
 				this.$ajax.get('/vll/get_disable_vlan/'+ids+'?token='+this.token)
 				.then(res => {

@@ -6,7 +6,7 @@
 				<cusDetails :tit='cusSeeID'></cusDetails>
 			</el-tab-pane>
 			<el-tab-pane label='逻辑端口列表'name='second'>
-				<logicPort :tit='cusPortData'></logicPort>
+				<logicPort :tenantID='cusSeeID'></logicPort>
 			</el-tab-pane>
 			<el-tab-pane label='点到点专线'name='three'>
 				<points-to :customerID='cusSeeID'></points-to>  <!--向子组件传id即可    根据id在子组件内进行判断-->
@@ -40,35 +40,11 @@
 				token:'',
 				cusSeeID:this.$route.params.id,
 				activeName:'first',
-//				logicData:[],
-				cusPortData:[],
+
 			}
 		},
-		created(){
-			this.token=sessionStorage.getItem('token');
-			console.log('即将进入详情的界面');
-			console.log(this.$route.params.id)
-			let url='/'
-//			this.logicData=this.getLogic(this.cusSeeID,url);//逻辑口的数据
-			this.cusPortData=this.getLogic(this.cusSeeID,url)//端口的数据
-		},
-		methods:{
-			getLogic(ids,url){
-				let data=[]
-				
-				this.$ajax.get(url+'?token='+this.token)
-				.then(res => {
-					if(res.status==200){
-						if(res.data.status==0){
-							data=res.data.data.items
-						}
-					}
-				}).catch(e => {
-					console.log(e)
-				})
-				return data;
-			}
-		}
+	
+
 	}
 </script>
 

@@ -52,7 +52,8 @@
 								<el-input v-model='customer.extra' placeholder='请输入详细地址' class='ipt_sels':disabled='!btnStatus'></el-input>
 							</el-form-item>
 							<el-form-item label='备注'>
-								<el-input v-model='customer.description'placeholder='请输入客户标识'type="textarea" cols="4" class='ipt_sels':disabled='!btnStatus'></el-input>
+								<el-input v-model='customer.description'placeholder='备注字符最长为200'type="textarea"
+									maxlength="200"cols="4" class='ipt_sels':disabled='!btnStatus'></el-input>
 							</el-form-item>
 							<el-form-item v-show='btnStatus'class='tc_L'>
 								<el-button size='small' @click='goback'>返回</el-button>

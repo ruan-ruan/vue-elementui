@@ -101,8 +101,10 @@
 		methods:{
 			getFormData(){
 				//获取租户标识的数据
-
-				this.$ajax.get('/tenant/tenants'+'?token='+this.token)
+				var para={
+					search_usable:true
+				}
+				this.$ajax.get('/tenant/tenants'+'?token='+this.token,para)
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){

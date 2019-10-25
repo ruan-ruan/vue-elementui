@@ -33,7 +33,7 @@
           <el-form-item label='创建时间' prop='timeVal' >
             <el-date-picker
               v-model="filters.timeVal"
-              type="daterange"
+              type="datetimerange"
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
@@ -303,15 +303,30 @@ export default {
       this.sels = sels;
     },
     timeValSearchBtn(value) {
-      this.filters.start_time = this.filters.timeVal[0];
-      this.filters.end_time = this.filters.timeVal[1];
+    	console.log(value)
+    	if( (!value   && typeof (value) !='undefined' && value !=0) || typeof value =='undefined' ){
+    		return 
+    		this.filters.start_time='';
+    		this.filters.end_time='';
+    	}else {
+    		this.filters.start_time = this.filters.timeVal[0];
+      	this.filters.end_time = this.filters.timeVal[1];
+    	}
+      
     },
     //获取列表的所有的数据
     getUsers() {
       var _this = this;
       this.loading = true;
-       this.filters.start_time = this.filters.timeVal[0] ? this.filters.timeVal[0] : "";
-      this.filters.end_time = this.filters.timeVal[1] ? this.filters.timeVal[1] : "";
+      console.log(this.filters.timeVal )
+      var str=this.filters.timeVal;
+      if(   ! str &&  typeof(str) !='undefined' && str!=0 ){
+      	this.filters.start_time='';
+      	this.filters.end_time=''
+      }else {
+      	this.filters.start_time = this.filters.timeVal[0]  ? this.filters.timeVal[0] : "";
+      	this.filters.end_time = this.filters.timeVal[1] ? this.filters.timeVal[1] : "";
+      }
       //				顶部工具栏内的对应的数据
       var para = {
         page: this.currentPage,

@@ -473,7 +473,7 @@
 						name:this.seeForm.name,
 						dc_id:this.seeForm.dc_id == this.baseData.dc.name?this.baseData.dc.id:this.seeForm.dc_id,
 						vtep:this.seeForm.vtep,
-						device:[
+						devices:[
 							{
 								id:this.seeForm.devices0_id,
 								port_section:this.seeForm.port_section0,
@@ -489,7 +489,7 @@
 						name:this.seeForm.name,
 						dc_id:this.seeForm.dc_id==this.baseData.dc.name?this.baseData.dc.id:this.seeForm.dc_id,
 						vtep:this.seeForm.vtep,
-						device:[
+						devices:[
 							{
 								id:this.seeForm.devices0_id,
 								port_section:this.seeForm.port_section0,

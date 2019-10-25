@@ -217,7 +217,7 @@
 					access_type:'',
 					tenant_id:'',
 					description:'',
-					physical_ports:[],
+					physical:[],
 					creation_time:'',
 					status:'',
 					description:''
@@ -333,6 +333,7 @@
 //				deep:true
 //			},
 			physical_ports:function(newVal,oldVal){
+				this.physicalData=[];
 				this.physicalData=JSON.parse(JSON.stringify(newVal))
 				console.log(this.physicalData)
 			}
@@ -604,20 +605,26 @@
 						if(valid){
 							this.$confirm('确认要修改吗?','提示',{})
 							.then(() => {
-								console.log(this.filters)
+								console.log(this.filters);
+								console.log(this.physical_ports)
 								let obj={};
 								let str=[]
-								this.filters.physical_ports.forEach(ele => {
-									obj.node_id=ele.node.id;
-									obj.device_id=ele.device.id;
-									obj.description=ele.description;
-									obj.port_id=ele.port.id;
-									obj.position=ele.position;
-									obj.rack=ele.rack;
-									obj.device_type=ele.device_type;
-									obj.port_type=ele.port_type;
-									str.push(obj)
+								this.physical_ports.forEach(ele => {
+									console.log(ele)
+									ele.para={
+										node_id:ele.node.id,
+										device_id:ele.device.id,
+										description:ele.description,
+										port_id:ele.port.id,
+										position:ele.position,
+										rack:ele.rack,
+										device_type:ele.device_type,
+										port_type:ele.port_type
+									}
+
+									str.push(ele.para)
 								})
+
 								console.log(str)
 								let para={
 									name:this.filters.name,
@@ -629,7 +636,7 @@
 									physical_ports:str
 								}
 								
-								
+//								debug
 								this.$ajax.put('/port/edit_logic_port/'+this.filters.id+'?token='+this.token,para)
 								.then(res => {
 									if(res.status==200){
@@ -691,8 +698,7 @@
 				this.disabeldSee=false;
 
 				this.$nextTick(() => {
-					console.log('执行')
-					this.$refs["editForm"].clearValidate();
+					this.$refs["editForm"].resetFields();
 				})
 			},
 			contantCreatedData:function(){
@@ -702,23 +708,23 @@
 				this.$refs.editForm.validate(valid => {
 					if(valid){
 						let para={}
-							para={
-								node_id:this.editForm.node_id,
-								device_id:this.editForm.device_id,
-								port_id:this.editForm.port_id,
-								position:this.editForm.position,
-								rack:this.editForm.rack,
-								device_type:this.editForm.device_type,
-								port_type:this.editForm.port_type,
-								description:this.editForm.description,
-								node_name:this.editForm.node_name,
-								device_name:this.editForm.device_name,
-								port_name:this.editForm.port_name,
-								device_status:this.editForm.device_status,
-								dc_name:this.editForm.dc_name,
-								dc_id:this.editForm.dc_id
-							}
-							this.filters.physical_ports.push(para)
+//							para={
+//								node_id:this.editForm.node_id,
+//								device_id:this.editForm.device_id,
+//								port_id:this.editForm.port_id,
+//								position:this.editForm.position,
+//								rack:this.editForm.rack,
+//								device_type:this.editForm.device_type,
+//								port_type:this.editForm.port_type,
+//								description:this.editForm.description,
+//								node_name:this.editForm.node_name,
+//								device_name:this.editForm.device_name,
+//								port_name:this.editForm.port_name,
+//								device_status:this.editForm.device_status,
+//								dc_name:this.editForm.dc_name,
+//								dc_id:this.editForm.dc_id
+//							}
+//							this.filters.physical.push(para)
 							//表格的里面的数据
 							let paraData={}
 							paraData={
@@ -794,7 +800,10 @@
 					if(valid){
 							console.log(this.editForm)
 							console.log(this.basicForm)
-							this.filters.physical_ports[this.editForm.index]=Object.assign({},this.editForm);
+							console.log(this.physical_ports)
+							this.filters.physical[this.editForm.index]=Object.assign({},this.editForm);
+							
+							
 							console.log(this.filters)
 							var obj={
 								description:this.editForm.description,
@@ -858,7 +867,7 @@
 				this.$confirm('确定要删除该物理端口吗?','提示',{type:'warning'})
 				.then(() => {
 					this.physical_ports.splice(index,1);
-					this.filters.physical_ports.splice(index,1)
+					this.filters.physical.splice(index,1)
 				}).catch(() => {})
 			},
 			goback(){

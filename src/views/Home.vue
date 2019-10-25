@@ -1,43 +1,84 @@
 <template>
   <el-row class="container">
-    <el-col :span="24" class="header">
-      <el-col :span="10" class="logo" :class="collapsed?'logo-collapse-width':'logo-width'">
-        <img  :src="(collapsed?sysImg:sysName)" :class="collapsed?'':'Img_left'"/>
+    <el-col
+      :span="24"
+      class="header"
+    >
+      <el-col
+        :span="10"
+        class="logo"
+        :class="collapsed?'logo-collapse-width':'logo-width'"
+      >
+        <img
+          :src="(collapsed?sysImg:sysName)"
+          :class="collapsed?'':'Img_left'"
+        />
       </el-col>
       <el-col :span="8">
-          <img :src="collapsed?asideRigth:asideLeft" class="tools"  @click.prevent="collapse"/>
+        <img
+          :src="collapsed?asideRigth:asideLeft"
+          class="tools"
+          @click.prevent="collapse"
+        />
       </el-col>
-      <el-col  :span="6"class="userinfo">
+      <el-col
+        :span="6"
+        class="userinfo"
+      >
         <el-row>
           <el-col :span='24'>
             <el-col :span='7'>
-              <span style="cursor:pointer;" @click="tapmes" v-popover:visible>消息</span>
-              <el-badge :value="this.$store.state.message" :max="99"  class="item" >
+              <span
+                style="cursor:pointer;"
+                @click="tapmes"
+                v-popover:visible
+              >消息</span>
+              <el-badge
+                :value="this.$store.state.message"
+                :max="99"
+                class="item"
+              >
                 <i class="el-icon-bell"></i>
               </el-badge>
             </el-col>
-             <el-popover  placement="left-start" ref="visible"
-                title="站内消息通知列表"  width="300" trigger="hover">
-                <ul v-if="tableData.length>0" style="border-top:1px solid #ccc;">
-                  <li style="border-top:1px solid #ccc;padding:8px 0;padding-bottom:2px;" v-for="(item,is) in tableData" :key="is">
-                    <span><img
+            <el-popover
+              placement="left-start"
+              ref="visible"
+              title="站内消息通知列表"
+              width="300"
+              trigger="hover"
+            >
+              <ul
+                v-if="tableData.length>0"
+                style="border-top:1px solid #ccc;"
+              >
+                <li
+                  style="border-top:1px solid #ccc;padding:8px 0;padding-bottom:2px;"
+                  v-for="(item,is) in tableData"
+                  :key="is"
+                >
+                  <span><img
                       src="../assets/images/message/unread.png.png"
                       alt=""
+                      v-show="!item.is_read"
                       style="width:12px;height:12px;"
                     ></span>
-                    <span>{{item.content}}</span>
-                    <div style="margin-top:6px;">
-                      <span>{{timestamp(item.time)}}</span>
-                      <span style="float:right;font-size:14px;font-weight:700;">{{item.level}}级</span>
-                    </div>
-                  </li>
-                </ul>
-                <div v-else>
-                                    暂无消息
-                </div>
-              </el-popover>
+                  <span>{{item.content}}</span>
+                  <div style="margin-top:6px;">
+                    <span>{{timestamp(item.time)}}</span>
+                    <span style="float:right;font-size:14px;font-weight:700;">{{item.level}}级</span>
+                  </div>
+                </li>
+              </ul>
+              <div v-else>
+                暂无消息
+              </div>
+            </el-popover>
             <el-col :span='7'>
-              <el-dropdown trigger="click" @command="Change">
+              <el-dropdown
+                trigger="click"
+                @command="Change"
+              >
                 <span class="el-dropdown-link userinfo-inner">语言</span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command='zh'>中文</el-dropdown-item>
@@ -47,8 +88,14 @@
             </el-col>
             <el-col :span='10'>
               <el-dropdown trigger="click">
-                <span class="el-dropdown-link userinfo-inner" :title='sysUserName' >
-                	<img :src="sysUserAvatar" alt="头像" /> {{sysUserName}}</span>
+                <span
+                  class="el-dropdown-link userinfo-inner"
+                  :title='sysUserName'
+                >
+                  <img
+                    :src="sysUserAvatar"
+                    alt="头像"
+                  /> {{sysUserName}}</span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item @click.native="logout">退出登录</el-dropdown-item>
                   <el-dropdown-item @click.native='psd'>修改密码</el-dropdown-item>
@@ -59,83 +106,134 @@
         </el-row>
       </el-col>
     </el-col>
-    
-    <el-col :span="24"  class="main" >
+
+    <el-col
+      :span="24"
+      class="main"
+    >
       <aside :class="collapsed?'menu-collapsed':'menu-expanded'">
         <!--导航菜单-->
-        <el-menu  :default-active="$route.path"  
-        	class="el-menu-vertical-demo el-menus" 
-        	unique-opened  router  v-show="!collapsed" id="menuClass" 
-        	background-color='#EEEEEE' 
-        	>
+        <el-menu
+          :default-active="$route.path"
+          class="el-menu-vertical-demo el-menus"
+          unique-opened
+          router
+          v-show="!collapsed"
+          id="menuClass"
+          background-color='#EEEEEE'
+        >
           <!--  一级菜单 -->
-          <template  v-for="(item,index) in $router.options.routes"  v-if="!item.hidden" >
-          	
-            <el-submenu  :index="index+''"  v-if="!item.leaf" >
-            	
+          <template
+            v-for="(item,index) in $router.options.routes"
+            v-if="!item.hidden"
+          >
+
+            <el-submenu
+              :index="index+''"
+              v-if="!item.leaf"
+            >
+
               <template slot="title">
-                <img :src="item.iconCls" class='asideLogo'/>
+                <img
+                  :src="item.iconCls"
+                  class='asideLogo'
+                />
 
                 <span slot="title">
-                	{{item.name }}
+                  {{item.name }}
                 </span>
-                
+
               </template>
-							<!--  ：二级菜单  在二级菜单的不能使用el-menu-item-group 标签    因为改标签插件  中间多一个div造成  间隔不同  -->
-              <template v-for='child  in item.children' v-if="!child.hidden">
-                <el-submenu :index='child.path':key="child.path"  v-if='!child.leaf'>
-                  <template  class="child_title "  >
-                  	<span class="padL10" slot="title"> <!--改标签   是为了  在调整name未知而定  并无实用-->
-                  		{{child.name}}
-                  	</span>
-          				</template>
-          				<!-- 	三级菜单  -->
-                  <el-menu-item v-for="sun  in child.children" :index="sun.path" :key="sun.path" >
-                  	<span slot="title">
-                  		{{sun.name}}
-                  	</span>
-                    
+              <!--  ：二级菜单  在二级菜单的不能使用el-menu-item-group 标签    因为改标签插件  中间多一个div造成  间隔不同  -->
+              <template
+                v-for='child  in item.children'
+                v-if="!child.hidden"
+              >
+                <el-submenu
+                  :index='child.path'
+                  :key="child.path"
+                  v-if='!child.leaf'
+                >
+                  <template class="child_title ">
+                    <span
+                      class="padL10"
+                      slot="title"
+                    >
+                      <!--改标签   是为了  在调整name未知而定  并无实用-->
+                      {{child.name}}
+                    </span>
+                  </template>
+                  <!-- 	三级菜单  -->
+                  <el-menu-item
+                    v-for="sun  in child.children"
+                    :index="sun.path"
+                    :key="sun.path"
+                  >
+                    <span slot="title">
+                      {{sun.name}}
+                    </span>
 
                   </el-menu-item>
                 </el-submenu>
-                
-                <el-menu-item v-else-if="child.leaf" :index="child.path" :key="child.path"
-                	class='padL50' > 
-                	<span slot="title">
-                		{{child.name}}
-                	</span>
+
+                <el-menu-item
+                  v-else-if="child.leaf"
+                  :index="child.path"
+                  :key="child.path"
+                  class='padL50'
+                >
+                  <span slot="title">
+                    {{child.name}}
+                  </span>
                 </el-menu-item>
-                
+
               </template>
-              
+
             </el-submenu>
-            
-            <el-menu-item  v-if="item.leaf && item.children.length>0" :index="item.children[0].path" style='padding-left: 10px; '>
-	            <img :src="item.iconCls" class='asideLogo'/>
-	            <span slot="title">
-	            	 {{item.children[0].name}}
-	            </span>
-	           
+
+            <el-menu-item
+              v-if="item.leaf && item.children.length>0"
+              :index="item.children[0].path"
+              style='padding-left: 10px; '
+            >
+              <img
+                :src="item.iconCls"
+                class='asideLogo'
+              />
+              <span slot="title">
+                {{item.children[0].name}}
+              </span>
+
             </el-menu-item>
-            
+
           </template>
-          
+
         </el-menu>
- 
-        
+
         <!--导航菜单-折叠后-->
-        <ul class="el-menu el-menu-vertical-demo collapsed"
+        <ul
+          class="el-menu el-menu-vertical-demo collapsed"
           v-show="collapsed"
-          ref="menuCollapsed" style="background-color: #EEEEEE;">
+          ref="menuCollapsed"
+          style="background-color: #EEEEEE;"
+        >
           <li
             v-for="(item,index) in $router.options.routes"
             v-if="!item.hidden"
-            class="el-submenu item" >
+            class="el-submenu item"
+          >
             <template v-if="!item.leaf">
-              <div class="el-submenu__title" style="padding-left: 20px;"
-              	 @mouseover="showMenu(index,true)"  @mouseout="showMenu(index,false)"  >
-	              <img :src="item.iconCls" class='asideLogo'/>
-	            </div>
+              <div
+                class="el-submenu__title"
+                style="padding-left: 20px;"
+                @mouseover="showMenu(index,true)"
+                @mouseout="showMenu(index,false)"
+              >
+                <img
+                  :src="item.iconCls"
+                  class='asideLogo'
+                />
+              </div>
               <ul
                 class="el-menu submenu"
                 :class="'submenu-hook-'+index"
@@ -150,68 +248,76 @@
                   style="padding-left: 40px;"
                   :class="$route.path==child.path?'is-active':''"
                   @click="$router.push(child.path)"
-                  
                 >{{child.name}}</li>
               </ul>
             </template>
-            
+
             <template v-else>
-			        <li class="el-submenu">
-		            <div class="el-submenu__title el-menu-item" style="padding-left: 20px;height: 56px;line-height: 56px;padding-top: 0; "
-		              :class="$route.path==item.children[0].path?'is-active':''"
-		              @click="$router.push(item.children[0].path)" >
-		              
-			            <img :src="item.iconCls" class='asideLogo'/>
-			          </div>
-			        </li>
-						</template>
-					</li>
-				</ul>
-			</aside>
+          <li class="el-submenu">
+            <div
+              class="el-submenu__title el-menu-item"
+              style="padding-left: 20px;height: 56px;line-height: 56px;padding-top: 0; "
+              :class="$route.path==item.children[0].path?'is-active':''"
+              @click="$router.push(item.children[0].path)"
+            >
 
-			<section class="content-container">
-			  <div class="grid-content bg-purple-light">
-			    <el-col :span="24" class="breadcrumb-container marB8" >
-			      <h2  class="title"> {{$route.name}}</h2>
-			      <el-breadcrumb
-			        separator="/"
-			        class="breadcrumb-inner"
-			      >
-			        <el-breadcrumb-item
-			          v-for="item in $route.matched"
-			          :key="item.path"
-			        >
-			          {{ item.name }}
-			        </el-breadcrumb-item>
-			      </el-breadcrumb>
-			    </el-col>
-			    <el-col
-			      :span="24"
-			      class="content-wrapper"
-			    >
-			      <transition
-			        name="fade"
-			        mode="out-in"
-			      >
-			        <router-view></router-view>
-			      </transition>
-			    </el-col>
-			  </div>
-			</section>
+              <img
+                :src="item.iconCls"
+                class='asideLogo'
+              />
+            </div>
+          </li>
+</template>
+</li>
+</ul>
+</aside>
 
+<section class="content-container">
+  <div class="grid-content bg-purple-light">
+    <el-col
+      :span="24"
+      class="breadcrumb-container marB8"
+    >
+      <h2 class="title"> {{$route.name}}</h2>
+      <el-breadcrumb
+        separator="/"
+        class="breadcrumb-inner"
+      >
+        <el-breadcrumb-item
+          v-for="item in $route.matched"
+          :key="item.path"
+        >
+          {{ item.name }}
+        </el-breadcrumb-item>
+      </el-breadcrumb>
+    </el-col>
+    <el-col
+      :span="24"
+      class="content-wrapper"
+    >
+      <transition
+        name="fade"
+        mode="out-in"
+      >
+        <router-view></router-view>
+      </transition>
+    </el-col>
+  </div>
+</section>
 
-		</el-col>
-	</el-row>
+</el-col>
+</el-row>
 </template>
 
 <script>
 import * as types from "@/api/types";
 import { base } from "@/api/api";
+import Utils from "@/assets/js/eventBus.js";
 export default {
   data() {
     return {
-      asideLeft:require('../assets/images/aside/left.png'),
-			asideRigth:require('../assets/images/aside/right.png'),
+      asideLeft: require("../assets/images/aside/left.png"),
+      asideRigth: require("../assets/images/aside/right.png"),
       sysImg: require("../assets/images/logo.png"),
       sysName: require("../assets/images/LOG.png"),
       collapsed: false,
@@ -229,51 +335,98 @@ export default {
         desc: ""
       },
       cen: this.$router.options.routes,
-      tableData:[]
+      tableData: [],
+      tokenkey: ""
     };
   },
+   mounted() {
+    this.tokenkey = sessionStorage.getItem("token");
+    var user = sessionStorage.getItem("user");
+    if (user) {
+      this.sysUserName = user || "";
+    }
+    const timers = setInterval(() => {
+       var para = {
+        page: "",
+        per_page: "",
+        search_title: "",
+        search_type: "",
+        search_level: "",
+        search_start_time: "",
+        search_end_time: ""
+      };
+      this.$ajax
+        .get("/public/get_news" + "?token=" + this.tokenkey, para)
+        .then(res => {
+//        console.log(res);
+          if (res.status == 200) {
+            if (res.data.status == 0) {
+               let ress = res.data.data.items;
+            let datas=[];
+            ress.map(items =>{
+              if(items.is_read==false) {
+                datas.push(items);
+              }
+            })
+            this.$store.state.message=datas.length;
+            this.tableData = res.data.data.items?res.data.data.items.slice(0,5):[];
+            }
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    }, 3000);
+    var that = this;
+    Utils.$on("demo", function(msg) {
+      that.tableData = msg;
+    });
+  },
   methods: {
-  	Change(type){
-  		this.$i18n.locale = type
-      this.$store.dispatch('setLanguage', type)
-  	},
+    Change(type) {
+      this.$i18n.locale = type;
+      this.$store.dispatch("setLanguage", type);
+    },
     psd: function(row) {
       this.$confirm("确认要修改密码吗?", "提示", {})
         .then(() => {
           this.$router.push({ path: "/changepassword" });
         })
         .catch(() => {});
-  },
-    timestamp(timestamp){
+    },
+    timestamp(timestamp) {
       let timestampString = null;
-      if(String(timestamp).length==10) {
-        timestampString = timestamp*1000;
-      }else {
+      if (String(timestamp).length == 10) {
+        timestampString = timestamp * 1000;
+      } else {
         timestampString = timestamp;
       }
       var date = new Date(Number(timestampString));
 
-      var Y = date.getFullYear() +'-';
-      var M = (date.getMonth() +1<10 ?'0'+(date.getMonth() +1 +'-'):(date.getMonth()+1)+'-');
-      var D = this.timeChange(date.getDate()) +'';
-      var h = this.timeChange(date.getHours()) +':';
-      var m = this.timeChange(date.getMinutes()) +':';
+      var Y = date.getFullYear() + "-";
+      var M =
+        date.getMonth() + 1 < 10
+          ? "0" + (date.getMonth() + 1 + "-")
+          : date.getMonth() + 1 + "-";
+      var D = this.timeChange(date.getDate()) + "";
+      var h = this.timeChange(date.getHours()) + ":";
+      var m = this.timeChange(date.getMinutes()) + ":";
       var s = date.getSeconds();
-      return Y + M + D + '  '+ h + m + this.timeChange(s);
+      return Y + M + D + "  " + h + m + this.timeChange(s);
     },
-    timeChange(time){
+    timeChange(time) {
       time = String(time);
-      if(time.length ==1) {
-        return '0' +time;
-      }else {
+      if (time.length == 1) {
+        return "0" + time;
+      } else {
         return time;
       }
     },
-	tapmes(){
-		this.$router.push({
-			path:'/message/unreadMessage'
-		})
-	},
+    tapmes() {
+      this.$router.push({
+        path: "/message/unreadMessage"
+      });
+    },
     //退出登录
     logout: function() {
       var _this = this;
@@ -301,49 +454,6 @@ export default {
         "submenu-hook-" + i
       )[0].style.display = status ? "block" : "none";
     }
-  },
-  mounted() {
-    var tokenkey = sessionStorage.getItem("token");
-    var user = sessionStorage.getItem("user");
-    if (user) {
-      this.sysUserName = user || "";
-    }
-    // const timer = setInterval(() =>{                    
-    // 某些定时器操作 
-    var para = {
-      page: '',
-      per_page: '',
-      search_title: '',
-      search_type: '',
-      search_level: '',
-      search_start_time: '',
-      search_end_time: '',
-    };
-    this.$ajax
-      .get("/public/get_news" + "?token=" + tokenkey, para)
-      .then(res => {
-        // console.log(res);
-        if (res.status == 200) {
-          if (res.data.status == 0) {
-            let ress = res.data.data.items;
-            let datas=[];
-            ress.map(items =>{
-              if(items.is_read==false) {
-                datas.push(items);
-              }
-            })
-            // console.log(datas)
-            this.$store.state.message=datas.length;
-            this.tableData = res.data.data.items?res.data.data.items.slice(0,5):[];
-            // console.log(this.tableData)
-          }
-        }
-      })
-      .catch(e => {
-        console.log(e);
-      });               
-    // }, 500000);   
-    
   }
 };
 </script>
@@ -351,7 +461,7 @@ export default {
 <style scoped lang="scss">
 @import "~scss_vars";
 /*@import '~scss_vars';*/
-.el-popover__title{
+.el-popover__title {
   font-weight: 700;
 }
 .container {
@@ -364,13 +474,12 @@ export default {
     line-height: 60px;
     background: $color-primary;
     color: #fff;
-    
+
     .userinfo {
-    
       text-align: right;
       padding-right: 35px;
       float: right;
-      
+
       .userinfo-inner {
         cursor: pointer;
         color: #fff;
@@ -409,14 +518,14 @@ export default {
       width: 60px;
     }
     .tools {
-        padding: 0px 10px;
-				width:26px;
-				height: 26px;
-				line-height: 26px;
-				position: absolute;
-				top: 30px;
-				margin-top: -13px;
-				cursor: pointer;
+      padding: 0px 10px;
+      width: 26px;
+      height: 26px;
+      line-height: 26px;
+      position: absolute;
+      top: 30px;
+      margin-top: -13px;
+      cursor: pointer;
     }
   }
   .main {
@@ -467,11 +576,10 @@ export default {
       padding: 20px;
 
       .breadcrumb-container {
-        
         .title {
           width: 200px;
           float: left;
-         display: inline-block;
+          display: inline-block;
         }
         .breadcrumb-inner {
           float: right;
@@ -490,12 +598,12 @@ export default {
   margin-left: -23px !important;
   margin-top: 11px !important;
 }
-.el-menu-item-group__title{
-		display: none !important; 
-		/*padding-top: 0px !important;*/
-	}
-.asideLogo{
-		width: 22px;
-		height: 22px;
-	}
+.el-menu-item-group__title {
+  display: none !important;
+  /*padding-top: 0px !important;*/
+}
+.asideLogo {
+  width: 22px;
+  height: 22px;
+}
 </style>

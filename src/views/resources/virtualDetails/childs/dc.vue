@@ -7,7 +7,8 @@
 					<span>{{dcForm.node_name}}</span>
 				</el-form-item>
 				<el-form-item label='逻辑口名称：'>
-					<span>{{dcForm.logic_name}}</span>
+					<span>{{dcForm.logic_name}}</span>-
+					<span>{{dcForm.vlan}}</span>
 				</el-form-item>
 				<el-form-item label='逻辑口状态：'>
 					<span>{{dcForm.port_status}}</span>
@@ -33,11 +34,13 @@
 			}
 		},
 		created(){
+			console.log(this.dcData)
 			this.dcForm={
 				node_name:this.dcData.node_name,
 				name:this.dcData.name,
 				logic_name:this.dcData.logic_name,
 				port_status:this.dcData.port_status,
+				vlan:this.dcData.vlan
 			}
 //			console.log(this.dcData)
 		}
