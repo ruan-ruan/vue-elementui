@@ -796,6 +796,7 @@ export default {
                         message: res.data.message,
                         type: "warning"
                       });
+                      this.getUsers()
                     }
                   }
                 })
@@ -828,6 +829,7 @@ export default {
                     message: res.data.message,
                     type: "warning"
                   });
+                  this.getUsers()
                 }
               }
             })
@@ -889,7 +891,8 @@ export default {
     					this.$message({
     						message:res.data.message,
     						type:'warning'
-    					})
+              })
+              this.getUsers()
     				}
     				
     			}
@@ -903,13 +906,14 @@ export default {
     					this.$message({
     						message:'运行成功!',
     						type:'success'
-    					})
-    					this.getUsers()
+              })
+              this.getUsers()
     				}else{
     					this.$message({
     						message:res.data.message,
     						type:'warning'
-    					})
+              })
+              this.getUsers()
     				}
     			}
     		})
