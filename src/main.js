@@ -20,7 +20,8 @@ import *as types from '@/api/types'
 import '@/assets/css/bus.css'
 import ajax from '@/api/api'
 
-import i18n from './lang'
+//import i18n from './lang'
+import i18n from './lang/i18n';
 
 //语言处理
 Vue.use(ElementUI,{

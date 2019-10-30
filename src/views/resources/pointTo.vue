@@ -637,7 +637,7 @@ export default {
                         if (str[0].vlan == "-1") {
                           ele.vlanHTMLA = "透传";
                         } else if (str[0].vlan == "0") {
-                          ele.vlanHTMLA = "trunk";
+                          ele.vlanHTMLA = "UNTAG";
                         } else {
                           ele.vlanHTMLA = str[0].vlan;
                         }
@@ -668,7 +668,7 @@ export default {
                         if (str[0].vlan == "-1") {
                           ele.vlanHTMLA = "透传";
                         } else if (str[0].vlan == "0") {
-                          ele.vlanHTMLA = "trunk";
+                          ele.vlanHTMLA = "UNTAG";
                         } else {
                           ele.vlanHTMLA = str[0].vlan;
                         }
@@ -676,7 +676,7 @@ export default {
                         if (str[1].vlan == "-1") {
                           ele.vlanHTMLZ = "透传";
                         } else if (str[1].vlan == "0") {
-                          ele.vlanHTMLZ = "trunk";
+                          ele.vlanHTMLZ = "UNTAG";
                         } else {
                           ele.vlanHTMLZ = str[1].vlan;
                         }

@@ -2,23 +2,26 @@
 	<div>
 		<!--节点的详情-->
 		<el-form :model='seeForm' ref='seeForm'label-wdith='80px'  v-loading='seeLoading' >
-			<el-form-item label='创建时间:'>
+			<el-form-item :label='$t("Public.creatime")'>
 				<span v-text="seeForm.time"></span>
 			</el-form-item>
-			<el-form-item label='骨干名称:'>
+			<el-form-item :label='$t("Public.backboneName")'>
 				<span v-text="seeForm.name"></span>
 			</el-form-item>
-			<el-form-item label='骨干状态:'>
-				<!--<span v-text="seeForm.status"></span>-->
+			<el-form-item :label='$t("Public.backboneStatus")'>
+				<span v-text="seeForm.status"></span>
 			</el-form-item>
-			<el-form-item label='数据中心:'>
-				<!--<span v-text="seeForm.data"></span>-->
+			<el-form-item :label='$t("Public.dataCen")'>
+				<span v-text="seeForm.data"></span>
 			</el-form-item>
 			<el-form-item label='Vtep:'>
 				<span v-text="seeForm.vtep"></span>
 			</el-form-item>
 			<el-form-item>
-				<el-button @click='seedetails' type='primary' size='small'>查看设备详情</el-button>
+				<el-button @click='seedetails' type='primary' size='small'>
+					<!--查看设备详情-->
+					{{$t('topology.details.deviceDetails')}}
+				</el-button>
 			</el-form-item>
 		</el-form>
 	</div>

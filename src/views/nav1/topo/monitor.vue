@@ -3,23 +3,37 @@
 	
 	<div class="toolbar z-one">
 		<el-tabs v-model='activeName'  >
-			<el-tab-pane label='监控记录' name='first'>
+			<el-tab-pane :label='$t("topology.details.wat")' name='first'>
 				<el-form>
 					<el-form-item v-for='(item , index) in itemsData' :key='index' class='label_tit'>
 						<template>
-							<label>时间</label>
+							<label>
+								<!--时间-->
+								{{$t('Public.time')}}
+							</label>
 							<sapn v-text='item.time'></sapn>
 						</template>
 						<template>
-							<label>类型</label>
+							<label> 
+								<!--类型-->
+								{{$t('Public.type')}}
+								
+							</label>
 							<sapn v-text='item.type'></sapn>
 						</template>
 						<template>
-							<label>状态</label>
+							<label> 
+								<!--状态-->
+								{{$t('Public.status')}}
+								
+							</label>
 							<sapn v-text='item.status'></sapn>
 						</template>
 						<template>
-							<label>名称</label>
+							<label>
+								<!--名称-->
+								{{$t('Public.name')}}
+							</label>
 							<sapn v-text='item.name'></sapn>
 						</template>
 					</el-form-item>
@@ -42,7 +56,7 @@
 				token:'',
 				activeName:'first',
 				itemsData:[],//获取监记录的数据
-				foolter:'更多数据请到信息列表中查看',
+				foolter:this.$t('topology.details.notDatatip'),
 				status:true,
 			}
 		},

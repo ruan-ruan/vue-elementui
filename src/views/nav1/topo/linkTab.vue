@@ -3,7 +3,7 @@
 		<el-row>
 			<el-col :span='22'>
 				<el-tabs v-model='activeName' >
-					<el-tab-pane label='链路详情' name='first'>
+					<el-tab-pane :label='$t("Public.linkDetails")' name='first'>
 						<linkDetails :seeDetails='seeForm'></linkDetails>
 					</el-tab-pane>
 				</el-tabs>

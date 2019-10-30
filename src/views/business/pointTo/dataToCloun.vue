@@ -74,7 +74,6 @@
 	
 	import topForm from '@/views/business/pointTo/topForm'
 	import billing from '@/views/business/pointTo/billing'
-//	import selVlan from '@/views/business/pointTo/selVlan'
 	export default{
 		name:'dataToCloun',
 		components:{topForm,billing ,sharedCloun,dcPort},

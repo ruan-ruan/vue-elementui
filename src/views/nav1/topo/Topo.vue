@@ -5,8 +5,15 @@
 					<el-form>
 						<el-form-item>
 							<template>
-								<el-button @click='Save' >保存布局</el-button>
-								<el-button @click='reset' id='reset'>还原布局</el-button>
+								<el-button @click='Save' >
+									<!--保存布局-->
+									{{$t('topology.topBtn.save')}}
+								</el-button>
+								<el-button @click='reset' id='reset'>
+									<!--还原布局-->
+									{{$t('topology.topBtn.reduction')}}
+									
+								</el-button>
 							</template>
 						</el-form-item>
 					</el-form>

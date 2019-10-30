@@ -3,7 +3,7 @@
 		<!--计费时间的选择-->
 		<el-row>
 			<el-col :span='24'>
-				<el-form :model='editForm' ref='editForm' label-width='120px'>
+				<el-form :model='editForm' ref='editForm'label-position='left' label-width='100px'>
 					<el-form-item label='计费时间'prop='billing_time'>
 						<el-date-picker
 			                v-model="editForm.billing_time"  

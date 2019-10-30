@@ -247,11 +247,20 @@
 				.then(res =>{
 					if(res.status==200){
 						if(res.data.status==0){
+							console.log(res)
 							this.seeLoading=false;
 							var  str=res.data.data;
 							let statusVal='';
-							statusVal=str.status==='serving'?'运行中':"stopping"?'停止中':'failure'?'创建失败':'creating'?'创建中':''
-
+//							statusVal=(str.status==='servicing'?'运行中':'stopping'?'停止中':'failure'?'创建失败':'creating'?'创建中':'')
+							if(str.status==='servicing'){
+								statusVal='运行中'
+							}else if(str.status==='stopping'){
+								statusVal='停止中'
+							}else if(str.status==='failure'){
+								statusVal='创建失败'
+							}else if(str.status==='creating'){
+								statusVal='创建中'
+							}
 							
 
 							if (!str.charge_time && typeof(str.charge_time)!="undefined" && str.charge_time!=0){ 
@@ -280,7 +289,7 @@
 									id:str.tenant.id
 								},
 								endpoints:{},
-								typeHtml:str.type==='d2d'?'数据中心互联':'d2c'?'数据中心到云':'云到云互联',
+								typeHtml:str.type==='d2d'?'DCI':'d2c'?'云互联':'云直连',
 							};
 							var  objA={},objZ={};
 							if(str.type=='d2d'){

@@ -311,7 +311,9 @@
 			if(typeof this.unknown_editFormID !='undefined'){
 				//未知节点的编辑
 				this.unknown_editForm_status=false;
-				this.addEquipStatus=false;
+				
+//				this.addEquipStatus=true;
+				
 				this.StaEditForm=false;
 				this.StaNot=false;
 				this.editFormBtn=false;
@@ -639,7 +641,7 @@
 				var para;
 				console.log(this.seeForm);
 				console.log(this.unknown_editFormData)
-				var str=this.unknown_editFormData.devices
+				var str=this.unknown_editFormData.devices;
 				let obj={
 					name:'',
 					id:''
@@ -661,6 +663,7 @@
 						id:this.unknown_editFormData.dc.id
 					}
 				}
+				
 				if(str.length=1){
 					para={
 						id:this.seeForm.id,
@@ -729,7 +732,9 @@
 						]
 					}
 				}
-				console.log(para)
+				console.log(para);
+				
+//				debug
 				this.$refs.seeForm.validate(valid => {
 					if(valid){
 						this.$confirm('确认要修改吗?','提示',{})
@@ -764,7 +769,7 @@
 			},
 			getUnknownDetail(id){
 				
-				//获取未知节点的详情
+				//获取未知节点的详情   编辑的数据
 				this.loading=true;				
 				this.$ajax.get('/node/unknown_node_info/'+id+'?token='+this.token)
 				.then(res => {

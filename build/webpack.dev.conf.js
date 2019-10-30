@@ -58,7 +58,6 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       inject: true,
       favicon: path.resolve('logo.ico'),
       title: '天弛SDN网络系统'
-
     }),
     // copy custom static assets
     new CopyWebpackPlugin([

@@ -89,16 +89,21 @@
 				</el-tabs>
 			</div>
 			<div v-if='dialogStatus=="see"'>
-				<virDetails :basicObj='basicObj'></virDetails>  <!--根据不同的内容云和dc显示不同的文本     详情文本-->
-				<basic-details ref='basicForm' :basicObj='basicObj'></basic-details>
+				<virDetails :basicObj='childForm'></virDetails>  <!--根据不同的内容云和dc显示不同的文本     详情文本-->
+				<basic-details ref='basicForm' :basicObj='childForm' :type='dialogStatus'></basic-details>
+				<div class="toolbar"style="text-align: center;">
+					<el-button @click='dialogFormVisible=false'>返回</el-button>
+				</div>
 			</div>
 			<div v-if='dialogStatus=="edit"'>
-				<virDetails :basicObj='basicObj'></virDetails>  <!--根据不同的内容云和dc显示不同的文本     //编辑文本-->
-				<basic-details ref='basicForm' :basicObj='basicObj'></basic-details>
+				<virDetails :basicObj='childForm' ref='virForm'></virDetails>  <!--根据不同的内容云和dc显示不同的文本     //编辑文本-->
+				<basic-details ref='basicForm' :basicObj='childForm' @sendBasic='getBasic'></basic-details>
+				<div class="toolbar"style="text-align: center;">
+					<el-button  size='small' @click='dialogFormVisible=false'>返回</el-button>
+					<el-button type='primary' size='small' @click='editDataType' >提交</el-button>
+				</div>
 			</div>
-			<div class="toolbar">
-				<el-button @click='dialogFormVisible=false'>返回</el-button>
-			</div>
+			
 		</el-dialog>
 	</div>
 </template>
@@ -158,6 +163,7 @@
 				clounBasic:{},//云选择公共部分
 				clounList:{},
 				componentStatus:true,
+				childForm:{},//获取数据 传送给子组件
 			}
 		},
 		created(){
@@ -176,6 +182,44 @@
 
 		},
 		methods:{
+			editDataType(){//虚拟机点修改保存
+				var str='';//虚拟机点的类型
+				console.log(this.childForm)
+				console.log(this.basicObj);
+				console.log(this.editForm);
+				if(this.childForm.dataType == "endpoints"){
+					str='node';
+				}else if(this.childForm.dataType == "cloud_endpoints"){
+					str='cloud'
+				}
+//				var para={
+//					charge_mode:this.basicObj.charge_mode
+//				}
+				var para=Object.assign({},this.basicObj);
+				this.$ajax.put('/vll/edit_endpoint/'+str+'/'+this.editForm.id+'/'+this.childForm.id+'?token='+this.token,para)
+				.then(res => {
+					console.log(res);
+					if(res.status == 200){
+						if(res.data.status ==0 ){
+							this.$message({
+								message:'修改成功!',
+								type:"success"
+							})
+							this.dialogFormVisible=false;
+							this.$refs['virForm'].$refs['detailsForm'].resetFields();
+							this.$refs['basicForm'].$refs['basicForm'].resetFields();
+							this.getDetails(this.editForm.id);
+						}else {
+							this.$message({
+								message:res.data.message,
+								type:'warning'
+							})
+						}
+						
+					}
+				}).catch(e => {console.log(e)})
+				
+			},
 			goback(){
 				this.$router.go(-1)
 			},
@@ -314,15 +358,18 @@
 					billing_time:''
 				}
 				if(msg.billing_time==''){
-					obj.billing_time=''
+					obj.billing_time=null
 				}else{
-					obj.billing_time=datedialogFormat(msg.billing_time/1000)
+//					obj.billing_time=datedialogFormat(msg.billing_time/1000)
+					obj.billing_time=msg.billing_time/1000
 				}
 				
 				if(msg.overdue_time==''){
-					obj.overdue_time=''
+					obj.overdue_time=null
 				}else{
-					obj.overdue_time=datedialogFormat(msg.overdue_time/1000)
+					obj.overdue_time= msg.overdue_time/1000
+					
+//					obj.overdue_time= datedialogFormat(msg.overdue_time/1000)
 				}
 				this.basicObj={
 					expiration_time:obj.overdue_time,
@@ -360,28 +407,35 @@
 									}else if(ele.vlan > 0){
 										ele.vlanName=ele.vlan
 									}
-									ele.changeBtn='禁用'
+									if(ele.usable){
+										ele.changeBtn='禁用';
+										if(getPortStatus(ele.ports) =='UP'){
+											ele.logicStatus='UP'
+											ele.LogicColor='colorGreen'
+										}
+										if(getPortStatus(ele.ports) =='DOWN'){
+											ele.logicStatus='DOWN'
+											ele.LogicColor='colorRed'
+										}
+										if(getPortStatus(ele.ports) =='故障'){
+											ele.logicStatus='DOWN'
+											ele.LogicColor='colorWarning'
+										}
+									}else if(!ele.usable){
+										ele.logicStatus='禁用'
+										ele.changeBtn='启用'
+									}
+									
 //									getPortStatus
-									if(getPortStatus(ele.ports) =='UP'){
-										ele.logicStatus='UP'
-										ele.LogicColor='colorGreen'
-									}
-									if(getPortStatus(ele.ports) =='DOWN'){
-										ele.logicStatus='DOWN'
-										ele.LogicColor='colorRed'
-									}
-									if(getPortStatus(ele.ports) =='故障'){
-										ele.logicStatus='DOWN'
-										ele.LogicColor='colorWarning'
-									}
+									
 									console.log(ele)
-									if(!ele.charge_time && typeof(ele.charge_time)!='undefined' && ele.charge_time!=0){
+									if( (!ele.charge_time && typeof(ele.charge_time)!='undefined' && ele.charge_time!=0) || ele.charge_time=='' ){
 										ele.charge_time=''
 										ele.charge=''
 									}else{
 										ele.charge=datedialogFormat(ele.charge_time)
 									}
-									if(!ele.expiration_time && typeof(ele.expiration_time)!='undefined' && ele.expiration_time!=0){
+									if((!ele.expiration_time && typeof(ele.expiration_time)!='undefined' && ele.expiration_time!=0)|| ele.expiration_time=='' ){
 										ele.expiration_time=''
 										ele.expiration=''
 									}else{
@@ -467,12 +521,67 @@
 				
 			},
 			handleTabStatus(index,row){//禁用和启用的装填的切换
-				console.log(row)
-				if(row.changeBtn==='禁用'){
-					this.$confirm('确定要启用吗?','提示',{})
+				console.log(row);
+				var str='';
+				if(row.dataType == "endpoints"){
+					str='node'
+				}else if(row.dataType == 'cloud_endpoints'){
+					str='cloud'
+				}
+
+				if(row.usable){//禁用
+					const newDatas=[];
+					const confirmText = ['请确认是否确认禁用?', '逻辑口：'+row.logic_port.name] ;
+					const h=this.$createElement;
+					for(const i in confirmText){
+						newDatas.push( h ( 'p' , null ,confirmText[i]) );
+					}
+					this.$confirm('提示',{
+						title:'提示',
+						message:h ( 'div',null,newDatas),
+						showCancelButton: true,
+			            confirmButtonText: '确定',
+			            cancelButtonText: '取消',
+			            type: 'warning'
+					})
 					.then(() => {
-						this.loading=true;
-						this.$ajax.put('/vll/enable_endpoint/'+row.dataType+'/'+this.id+'/'+row.id+'?token='+this.token)
+						this.$ajax.put('/vll/disable_endpoint/'+str+'/'+this.editForm.id+'/'+row.id+'?token='+this.token)
+						.then(res => {
+							if(res.status==200){
+								if(res.data.status==0){
+									this.$message({
+										message:'禁用成功!',
+										type:'success'
+									})
+									this.getDetails(this.editForm.id);
+									
+								}else {
+									this.$message({
+										message:res.data.message,
+										type:'warning'
+									})
+								}
+								
+							}
+						}).catch(e => {console.log(e)})
+					}).catch( () => {})
+				}else if(!row.usable){
+					const newDatas=[];
+					const confirmText = ['请确认是否确认启用?', '逻辑口：'+row.logic_port.name] ;
+					const h=this.$createElement;
+					for(const i in confirmText){
+						newDatas.push( h ( 'p' , null ,confirmText[i]) );
+					}
+					this.$confirm('提示',{
+						title:'提示',
+						message:h ( 'div',null,newDatas),
+						showCancelButton: true,
+			            confirmButtonText: '确定',
+			            cancelButtonText: '取消',
+			            type: 'warning'
+					})
+					.then(() => {
+						this.$ajax.put('/vll/enable_endpoint/'+str+'/'+this.editForm.id+'/'+row.id+'?token='+this.token)
 						.then(res => {
 							if(res.status==200){
 								if(res.data.status==0){
@@ -480,68 +589,41 @@
 										message:'启用成功!',
 										type:'success'
 									})
-									this.loading=false;
-//									row.status='启用'
-//									row.statusHTML='禁用'
-									this.getDetails(this.id);//从新获取数据
+									this.getDetails(this.editForm.id);
 									
-								}else{
+								}else {
 									this.$message({
 										message:res.data.message,
 										type:'warning'
 									})
 								}
+								
 							}
-						})
-						.catch(e => {console.log(e)})
-					})
-					.catch( () => {})
-				}else if(row.changeBtn==='启用'){
-					this.$confirm('确定要禁用吗?','提示',{})
-					.then(() => {
-						this.loading=true;
-						this.$ajax.put('/vll/disable_endpoint/'+row.type+'/'+this.id+'/'+row.id+'?token='+this.token)
-						.then(res => {
-							this.loading=false;
-							if(res.status==200){
-								if(res.data.status==0){
-									this.$message({
-										message:'禁用成功!',
-										type:'success'
-									})
-//									row.status='禁用'
-//									row.statusHTML='启用'
-									this.getDetails(this.id);//从新获取数据
-								}else{
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
-								}
-							}
-						})
-						.catch(e => {console.log(e)})
-					})
-					.catch(() => {})
+						}).catch(e => {console.log(e)})
+						
+					}).catch(() => {})
 				}
+
 			},
 			handleEdit(index,row){//编辑
 				this.dialogStatus='edit';
 				this.dialogFormVisible=true;
-				console.log(row)
-				this.basicObj={
-					bandwidth:row.bandwidth,
-					changeModel:row.charge_mode,
-					billing_time:row.charge_time,
-					overdue_time:row.expiration_time,
-					des:row.description
-				}
+				console.log(row);
+				this.childForm=Object.assign({},row);
+//				this.basicObj={
+//					bandwidth:row.bandwidth,
+//					changeModel:row.charge_mode,
+//					billing_time:row.charge_time,
+//					overdue_time:row.expiration_time,
+//					des:row.description
+//				}
 			},
 			handleDetails(index,row){//详情
 				console.log(row)
 				this.dialogStatus='see';
 				this.dialogFormVisible=true;
-				this.basicObj=Object.assign({},row);
+				this.childForm=Object.assign({},row);
+
 			},
 			handleDel(index,row){//删除
 				var strType=''

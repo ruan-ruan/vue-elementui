@@ -1,17 +1,17 @@
 <template>
 	<div>
+		<!--<span>{{$t('message.select')}}</span>-->
 		<el-tabs v-model='activeName' @tab-click="handleClick">
-			<el-tab-pane label='区域' name='first'>
+			<el-tab-pane :label='$t("physicalPosition.tab.area")' name='first'>
 				<Area v-if='activeName=="first"'></Area>
 			</el-tab-pane>
-			<el-tab-pane label='城市' name='second'>
+			<el-tab-pane :label='$t("physicalPosition.tab.city")' name='second'>
 				<City v-if='activeName=="second"'></City>
 			</el-tab-pane>
-			<el-tab-pane label='数据中心' name='third'>
+			<el-tab-pane :label='$t("physicalPosition.tab.data")' name='third'>
 				<Data v-if='activeName=="third"'></Data>
 			</el-tab-pane>		
 		</el-tabs>
-	
 	</div>
 </template>
 

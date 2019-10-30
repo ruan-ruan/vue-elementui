@@ -79,7 +79,7 @@
 	
 	import topForm from '@/views/business/pointTo/topForm'
 	import billing from '@/views/business/pointTo/billing'
-//	import selVlan from '@/views/business/pointTo/selVlan'
+
 	export default{
 		name:'clounInterconnection',
 		components:{topForm,billing,sharedCloun},
