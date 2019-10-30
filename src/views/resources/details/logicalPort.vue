@@ -785,7 +785,7 @@
 					device_name:row.device.hostname,
 					port_name:row.port.name,
 					device_status:row.port.status,
-					dc_name:'',
+					dc_name:row.dc_name,
 					dc_id:row.device.id,
 					port_no:row.port.port_no,
 					port_status:row.port.status,
@@ -802,8 +802,6 @@
 							console.log(this.basicForm)
 							console.log(this.physical_ports)
 							this.filters.physical[this.editForm.index]=Object.assign({},this.editForm);
-							
-							
 							console.log(this.filters)
 							var obj={
 								description:this.editForm.description,
@@ -824,14 +822,12 @@
 								},
 								port_type:this.editForm.port_type,
 								position:this.editForm.position,
-								rack:this.editForm.rack
+								rack:this.editForm.rack,
+								dc_name:this.editForm.dc_name
 							}
-							
 							this.$refs["editForm"].resetFields();
 							this.dialogFormVisible = false;
 //							this.$refs["basicForm"].resetFields();
-							
-							
 							console.log(this.physical_ports)
 //							this.physical_ports[this.editForm.index]=obj;
 							this.physical_ports.splice(this.editForm.index,1,obj)
