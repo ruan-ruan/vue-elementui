@@ -8,8 +8,9 @@
 				 <el-radio-group v-model="basicForm.changeModel" :disabled='typeof type != "undefined"'>
 				 	<el-radio-button border v-for='item in modelData'
 				 	:value='item.value'
+					 :key="item"
 				 	:label="item.label" 
-				 	border></el-radio-button>
+				 	></el-radio-button>
 				 </el-radio-group>
 			</el-form-item>
 			<el-form-item label='计费时间'prop='billing_time'>
