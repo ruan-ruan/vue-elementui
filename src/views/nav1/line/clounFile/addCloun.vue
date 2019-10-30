@@ -9,8 +9,6 @@
 							<h3 class="tit_h3" v-if='clounStatus'>云链路基础信息配置</h3>
 							<el-form-item label='公有云' prop='type'>
 								<template>
-									
-								
 									<el-autocomplete class='ipt' :disabled='!clounStatus'
 									  	popper-class="my-autocomplete"
 									  	v-model="editForm.type"
@@ -161,6 +159,8 @@
 				btnStatus:true,
 				bakcUpData:{},
 				clounStatus:false,//云的详情控制下面的操作按钮以及界面的显示 以及配置title
+				pointLogic:[],//将点的的逻辑口的数据,点到多点的逻辑口的数据
+//				multiLogic:[],//
 			}
 		},
 		created(){
@@ -187,6 +187,7 @@
 				this.$router.go(-1)
 			},
 			getData(){
+				this.sliceLogic=[];
 				let obj={}
 				this.$ajax.get('/node/nodes'+'?token='+this.token)
 				.then(res => {//获取节点的数据
@@ -194,7 +195,7 @@
 						if(res.data.status==0){
 							console.log(res)
 							this.clounData=res.data.data.items;
-
+	
 						}
 					}
 				}).catch( e => {console.log(e)})
@@ -204,25 +205,62 @@
 						console.log(res)
 						if(res.data.status==0){
 							this.driveData=res.data.data;
-
 						}
 					}
 				}).catch(e => {console.log(e)})
+				
+				//获取点到点 ，点到多点所有使用过的逻辑口   在这个对接逻辑口的时候 就不能再使用
+				this.$ajax.get('/vll/p2p_vlls'+'?token='+this.token)
+				.then(res => {//点到点数据
+					console.log(res);
+					res.data.data.items.forEach(ele => {
+						ele.endpoints.forEach(item => {
+							this.pointLogic.push(item.logic_port)
+						})
+					})
+//					sliceLogic
+				}).catch(e => {console.log(e)})
+				this.$ajax.get('/vll/multi_vlls'+'?token='+this.token)
+				.then(res => {//获取点到多点的里面所有的逻辑口
+					console.log(res);
+					res.data.data.items.forEach(ele => {
+						ele.endpoints.forEach(item => {
+							this.pointLogic.push(item.logic_port)
+						})
+					})
+				}).catch(e =>{console.log(e)})
 			},
 			selNode(ids){//根据所选取的节点获取逻辑口
-				
 				this.editForm.logic_port_id=''
 				var para={
 					search_node:ids
+				};
+				var obj={};
+//				console.log(this.multiLogic);
+				console.log(this.pointLogic);
+				var logic=[];//保存  去重后的数据
+				
+				let res = []
+				let objSet = {}
+				var arr=this.pointLogic;
+				for (let i = 0; i < arr.length; i++) {
+				  if (!objSet[arr[i].id]) { // name  对应数组中的name
+				    logic.push(arr[i])
+				    objSet[arr[i].id] = true
+				  }
 				}
-				var obj={}
+				console.log(logic)
 				this.$ajax.get('/port/logic_ports'+'?token='+this.token,para)
 				.then(res => {
 					console.log(res);
 					if(res.status==200){
 						if(res.data.status==0){
-							this.logicData=res.data.data.items;
-
+//							this.logicData=res.data.data.items;
+							console.log(res);
+							this.logicData=res.data.data.items.filter( item => {//根据id删除业务开通的额时候  占用 逻辑口
+								let idList=logic.map(v => v.id);
+								return  !idList.includes(item.id)
+							})
 						}
 					}
 				}).catch(e => {console.log(e)})

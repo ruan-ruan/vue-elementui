@@ -5,12 +5,17 @@
 				<!--工具条-->
 				<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 					<el-form :inline="true" :model="filters" ref='filters' @submit.native.prevent >
-						<el-form-item label='名称' prop='name'>
+						<el-form-item :label='$t("Public.name")' prop='name'>
 							<el-input v-model="filters.name" placeholder="请输入名称"></el-input>
 						</el-form-item>
 						<el-form-item>
-							<el-button type="primary" v-on:click="getUsers" >查询</el-button>
-							<el-button type='info' @click='reset'>重置</el-button>
+							<el-button type="primary" v-on:click="getUsers" >
+								{{$t('topFilters.search')}}
+							</el-button>
+							<el-button type='info' @click='reset'>
+								<!--重置-->
+								{{$t('topFilters.reset')}}
+							</el-button>
 						</el-form-item>
 					</el-form>	
 				</el-col>
@@ -18,15 +23,29 @@
 				<!--列表-->
 				<el-col :span='24'>
 					<el-col :span='4'>
-						<el-button type="primary" @click="handleAdd">新增</el-button>
+						<el-button type="primary" @click="handleAdd">
+							<!--新增-->
+							{{$t('tabOperation.add')}}
+						</el-button>
 					</el-col>
 					<el-col :span='20'class="table-top"	>
-						<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">批量删除</el-button>
+						<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">
+							<!--批量删除-->
+							{{$t('tabOperation.batchDel')}}
+						</el-button>
 						<el-dropdown split-button type='success'@command="handleExport">
-							导出数据
+							<!--导出数据-->
+								{{$t('tabOperation.derived.tit')}}
 							<el-dropdown-menu slot='dropdown'>
-								<el-dropdown-item command="current">当前页 </el-dropdown-item>									
-								<el-dropdown-item command="all">所有页</el-dropdown-item>																				
+								<el-dropdown-item command="current">
+								{{$t('tabOperation.derived.currentPage')}}
+									
+								</el-dropdown-item>									
+								<el-dropdown-item command="all">
+									<!--所有页-->
+								{{$t('tabOperation.derived.allPage')}}
+									
+								</el-dropdown-item>																				
 							</el-dropdown-menu>
 						</el-dropdown>
 					</el-col>
@@ -36,22 +55,31 @@
 					v-loading='loading' :default-sort = "{prop: 'creation_time', order: 'descending'}">
 					<el-table-column type="selection"  align='center'>
 					</el-table-column>
-					<el-table-column type="index"  label='序号' align='center'>
+					<el-table-column type="index"  :label='$t("Public.index")' align='center'>
 						<template slot-scope='scope'>
 							<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 						</template>
 					</el-table-column>
-					<el-table-column prop="creation_time" sortable label="创建时间" align='center' width='101' :formatter='dateFormat' >
+					<el-table-column prop="creation_time" sortable :label='$t("Public.creation")' align='center' width='101' :formatter='dateFormat' >
 					</el-table-column>
-					<el-table-column prop="name" label="名称" align='center' min-width='120'>
+					<el-table-column prop="name" :label='$t("Public.name")' align='center' min-width='120'>
 					</el-table-column>
-					<el-table-column prop="descriptionVal" label="备注"  align='center' min-width='120'>
+					<el-table-column prop="descriptionVal" :label='$t("Public.description")'  align='center' min-width='120'>
 					</el-table-column>
-					<el-table-column label="操作"  align='center' width='220'>
+					<el-table-column :label='$t("Public.operation")'  align='center'  >
 						<template slot-scope="scope" style="width: 100%;">
-							<el-button size='small' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
-							<el-button size="small"type='success' @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-							<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+							<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>
+								<!--详情-->
+								{{$t('tabOperation.info')}}
+							</el-button>
+							<el-button size="mini"type='success' @click="handleEdit(scope.$index, scope.row)">
+								<!--编辑-->
+								{{$t('tabOperation.edit')}}
+							</el-button>
+							<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)">
+								<!--删除-->
+								{{$t('tabOperation.delete')}}
+							</el-button>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -487,6 +515,23 @@
 	};
 </script>
 
-<style scoped>
 
+<style>
+	.el-table .cell{
+  position:relative;
+}
+.el-table .caret-wrapper{
+  position:absolute;
+  top:2px;
+  right:0;
+}
+	 /*.el-table td .cell {
+	    overflow: hidden !important;
+	    text-overflow: ellipsis !important;
+	    white-space: nowrap !important;
+	    vertical-align: middle;
+	}*/
+	/*.el-table .cell .el-tooltip{
+		white-space: nowrap;
+	}*/
 </style>

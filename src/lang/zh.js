@@ -13,6 +13,72 @@ export default {
     Purple: '贵族紫',
     Default: '默认'
   },
+  
+  aside:{
+    	myself:'个人中心',
+    	standLetter:'站内信',
+    	unMessage:'未读消息',
+    	allMessage:'全部消息',
+    	backManage:'骨干管理',
+    	topoView:'拓扑视图',
+    	physicalLocation:'物理位置',
+    	nodeManage:'节点管理',
+    	backNode:'骨干节点',
+    	nodeDetails:'节点详情',
+    	nodeEditor:'节点编辑',
+    	unknown:'未知节点编辑',
+    	addUnknown:"添加未知节点",
+    	unknownDetails:'未知节点详情',
+    	lineManage:'链路管理',
+    	line:'链路',
+    	cloudLine:'云对接链路',
+    	addCloud:'添加云',
+    	cloudLineEdit:"云对接编辑",
+    	cloudLineDeta:'云对接详情',
+    	
+    	
+    	
+    	
+    	
+    	
+    	resourcesManage:'资源管理',
+    	logicManage:'逻辑口管理',
+    	
+    	creatLogic:'创建逻辑端口',
+    	editLogic:'编辑逻辑端口',
+    	logicDetails:'逻辑端口详情',
+    	
+    	virtual:'虚拟专线',
+    	pointSpecial:'点到点专线',
+    	virtualSpecial:'虚拟组网专线',
+    	
+    	pointSpecialDeta:'点到点详情',
+    	
+    	
+    	business:'业务开通',
+    	pointsTo:"点到点互联",
+    	dataCenterInter:'数据中心互联',
+    	dataCenterCloud:'数据中心到云',
+    	cloudInter:'云到云互联',
+    	pointsMultiInter:'点到多点互联',
+    	virtualNetEdit:'虚拟组网编辑',
+    	virtualNetDeta:'虚拟组网详情',
+    	
+    	tenantManage:'租户管理',
+    	tenantList:'租户信息列表',
+    	addTenant:'租户添加',
+    	editTenant:'租户编辑',
+    	detaTenant:'租户详情',
+    	
+    	accountManage:'账户管理',
+    	peopleRole:'人员角色',
+    	addRole:'添加角色',
+    	roleDetails:'角色详情',
+    	roleEditor:'角色编辑',
+    	peopleSet:'人员设置'
+    },
+  
+  
   route: {
     personalCenter: '个人中心',
     standInsideLetter: '站内信',

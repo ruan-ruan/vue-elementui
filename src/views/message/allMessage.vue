@@ -15,7 +15,7 @@
           @submit.native.prevent
         >
           <el-form-item
-            label='标题'
+            :label="$t('mesModule.unMessage.table.title')"
             prop='name'
           >
             <el-input
@@ -24,13 +24,13 @@
             ></el-input>
           </el-form-item>
           <el-form-item
-            label='类型'
+            :label="$t('mesModule.unMessage.table.type')"
             prop='mesType'
           >
             <el-select
               class='ipt_sta'
               v-model='formList.mesType'
-              placeholder='全部'
+              :placeholder='$t("topFilters.placeholder")' 
             >
               <el-option
                 v-for='(item,index) in mesTypeList'
@@ -42,13 +42,13 @@
             </el-select>
           </el-form-item>
           <el-form-item
-            label='级别'
+            :label="$t('mesModule.unMessage.table.level')"
             prop='level'
           >
             <el-select
               class='ipt_sta'
               v-model='formList.level'
-              placeholder='全部'
+              :placeholder='$t("topFilters.placeholder")' 
             >
               <el-option
                 v-for='(vals,index) in levelList'
@@ -66,9 +66,9 @@
             <el-date-picker
               v-model="formList.timeVal"
               type="daterange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
+              :range-separator="$t('mesModule.sea.time.to')"
+              :start-placeholder="$t('mesModule.sea.time.start')"
+              :end-placeholder="$t('mesModule.sea.time.end')"
               class='ipt_sels'
               @change="timeValSearchBtn"
             >
@@ -79,11 +79,11 @@
               <el-button
                 type='primary'
                 @click='getData'
-              >查询</el-button>
+              >{{ $t('topFilters.search')}}</el-button>
               <el-button
                 type='info'
                 @click='reset'
-              >重置</el-button>
+              >{{$t('topFilters.reset')}}</el-button>
             </span>
           </el-form-item>
         </el-form>
@@ -95,12 +95,12 @@
             type="success"
             :disabled="this.sels.length===0"
             @click='markTap'
-          >标记已读</el-button>
+          >{{$t('mesModule.operation.marked')}}</el-button>
           <el-button
             type='danger'
             :disabled="this.sels.length===0"
             @click='delMes'
-          >删除</el-button>
+          >{{$t('tabOperation.delete')}}</el-button>
         </span>
       </el-col>
       <!--列表-->
@@ -123,14 +123,14 @@
           type='index'
           width='50'
           align='center'
-          label='序号'
+          :label= "$t('mesModule.unMessage.table.serial')"
         >
           <template slot-scope='scope'>
             <span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label='标题'
+          :label=" $t('mesModule.unMessage.table.title') "
           prop='title'
           align='left'
           width="240"
@@ -165,27 +165,27 @@
         <el-table-column
           prop='time'
           :formatter='dateFormat'
-          label='时间'
+          :label="$t('mesModule.unMessage.table.time')"
           sortable
           width='101'
           align='center'
         ></el-table-column>
         <el-table-column
           prop='level'
-          label='级别'
+          :label="$t('mesModule.unMessage.table.level')"
           align='center'
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.level}}级</span>
+            <span>{{ scope.row.level}}{{$t('mesModule.sea.leType')}}</span>
           </template>
         </el-table-column>
         <el-table-column
           prop='type'
-          label='类型'
+          :label="$t('mesModule.unMessage.table.type')"
           align='center'
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.type=='notice'?'产品信息':'警告信息'}}</span>
+            <span>{{ scope.row.type=='notice'?$t('mesModule.sea.mesTypeList.product'):$t('mesModule.sea.mesTypeList.police')}}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -254,35 +254,34 @@ export default {
       //类型
       mesTypeList: [
         {
-          name: "产品消息",
+          name: this.$t('mesModule.sea.mesTypeList.product'),
           value: "notice"
         },
         {
-          name: "报警消息",
+          name:this.$t('mesModule.sea.mesTypeList.police'),
           value: "warning"
         }
       ],
       //状态的转换
       levelList: [
-        {
-          name: "一级",
+         {
+          name: this.$t('mesModule.sea.lea.one'),
           value: "1"
         },
         {
-          name: "二级",
+          name:this.$t('mesModule.sea.lea.two'),
           value: "2"
         },
         {
-          name: "三级",
+          name:this.$t('mesModule.sea.lea.three'),
           value: "3"
         },
         {
-          name: "四级",
-          value: "4",
-          label: "四级"
+          name:this.$t('mesModule.sea.lea.four'),
+          value: "4"
         },
         {
-          name: "五级",
+          name:this.$t('mesModule.sea.lea.five'),
           value: "5"
         }
       ],
@@ -514,8 +513,8 @@ export default {
     handleClick(index, row) {
       this.mesdetail.dialogVisible = true;
       this.mesdetail.header = row.title;
-      this.mesdetail.title = row.type == "notice" ? "产品信息" : "警告信息";
-      this.mesdetail.type = row.level + "级";
+      this.mesdetail.title = row.type == "notice" ?this.$t('mesModule.sea.mesTypeList.product'): this.$t('mesModule.sea.mesTypeList.police');
+      this.mesdetail.type = row.level + this.$t('mesModule.sea.leType');
       this.mesdetail.timeVal = row.time;
       this.mesdetail.text = row.content;
       this.readid = row.id.split(",");

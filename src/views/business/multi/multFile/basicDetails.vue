@@ -2,20 +2,18 @@
 	<div>
 		<el-form :model='basicForm' ref='basicForm' :rules='basicFormRules' label-position='left' v-loading='basicLoading' label-width='120px' >
 			<el-form-item label='带宽(Mbps)' prop='bandwidth'>
-				<el-input v-model='basicForm.bandwidth'class='ipt' :disabeld='DataStatus'></el-input>
+				<el-input v-model='basicForm.bandwidth'class='ipt'  :disabled='typeof type != "undefined"'></el-input>
 			</el-form-item>
 			<el-form-item label='计费模式' prop='changeModel'>
-				
-				 <el-radio-group v-model="basicForm.changeModel" >
-				 	<el-radio-button border v-for='(item,index) in modelData'
-				 	:key='index'
-				 	:value='item.value' 
+				 <el-radio-group v-model="basicForm.changeModel" :disabled='typeof type != "undefined"'>
+				 	<el-radio-button border v-for='item in modelData'
+				 	:value='item.value'
 				 	:label="item.label" 
 				 	border></el-radio-button>
 				 </el-radio-group>
 			</el-form-item>
 			<el-form-item label='计费时间'prop='billing_time'>
-				<el-date-picker
+				<el-date-picker :disabled='typeof type != "undefined"'
 	                v-model="basicForm.billing_time"  
 	                format="yyyy-MM-dd HH:mm:ss"
 	                value-format="timestamp"
@@ -25,11 +23,11 @@
 	                type="datetime"					                
 	                class='ipt' 
 	                placeholder="请选择计费开始日期时间"
-	                :disabeld='DataStatus'>
+	                >
 	            </el-date-picker>
 			</el-form-item>
 			<el-form-item label='过期时间' prop='overdue_time'>
-				<el-date-picker
+				<el-date-picker :disabled='typeof type != "undefined"'
 	                v-model="basicForm.overdue_time"  
 	                format="yyyy-MM-dd HH:mm:ss"
 	                value-format="timestamp"
@@ -39,11 +37,11 @@
 	                type="datetime"
 	                class='ipt'
 	                placeholder="请选择计费截止日期时间"
-	                :disabeld='DataStatus'>
+	                >
 	            </el-date-picker>
 			</el-form-item>
 			<el-form-item label='备注' prop='des'>
-				<el-input type='textarea'cols='4' v-model='basicForm.des' class='ipt':disabeld='DataStatus'></el-input>
+				<el-input type='textarea'cols='4' v-model='basicForm.des' class='ipt':disabled='typeof type != "undefined"'></el-input>
 			</el-form-item>
 		</el-form>
 	</div>
@@ -53,7 +51,7 @@
 	import {getPortStatus,isValidinteger,datedialogFormat} from '@/assets/js/index'  //逻辑口的状态的判断	
 	export default{
 		name:'basicDetails',
-		props:['basicObj'],//获取基本的信息
+		props:['basicObj','type'],//获取基本的信息
 		data(){
 			let isValidNumber= (rule ,value, callback) => {
 				if(!value){
@@ -69,7 +67,7 @@
 			return{
 				basicForm:{
 					bandwidth:'',
-					changeModel:'包年包月',
+					changeModel:"包年包月",
 					billing_time:'',
 					overdue_time:'',
 					des:''
@@ -80,7 +78,7 @@
 						label:'包年包月'
 					},
 				],
-				DataStatus:false,//默认的 时候是可以编辑的
+//				DataStatus:false,//默认的 时候是可以编辑的
 				basicFormRules:{
 					bandwidth:[ { required: true,  validator: isValidNumber, trigger: 'blur' }],
 					changeModel:[{ required: true, message:'请选择计费模式', trigger: 'change' }]
@@ -93,24 +91,28 @@
 		},
 		watch:{
 			basicForm:{
-				handler(newVal,oldVal){					
+				handler(newVal,oldVal){		
+					console.log(newVal)
 					this.$emit('sendBasic',newVal)
 				},
 				deep:true,
 			}
 		},
 		created(){
-			console.log(this.basicObj)
+			console.log(this.basicObj);
+			console.log(this.type);
+			console.log(this.basicForm.changeModel)
 			if(typeof this.basicObj!=='undefined'){  //详情的时候展示
 				this.basicForm={ 
 					bandwidth:this.basicObj.bandwidth,
-					changeModel:this.basicObj.changeModel,
-					billing_time:new Date(datedialogFormat(this.basicObj.billing_time)),
-					overdue_time:new Date(datedialogFormat(this.basicObj.overdue_time)),
+					changeModel:this.basicObj.charge_mode,
+					billing_time:this.basicObj.charge_time==''? '' : new Date(datedialogFormat(this.basicObj.charge_time)),
+					overdue_time:this.basicObj.expiration_time ==''? '':   new Date(datedialogFormat(this.basicObj.expiration_time)),
 					des:this.basicObj.description
 				}
-				this.DataStatus=true;//不可编辑
+//				this.DataStatus=true;//不可编辑
 			}
+			console.log(this.basicForm)
 		},
 		methods:{
 			//计费时间和结束时间

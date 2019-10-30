@@ -1,7 +1,7 @@
 <template>
   <div class="mesgdia">
     <el-dialog
-      title="消息详情"
+      :title="$t('mesModule.newDetails.title')"
       :visible.sync="mesdetail.dialogVisible"
       :before-close="handleClose"
     >
@@ -9,8 +9,8 @@
         <div>
           <h4>{{mesdetail.header}}</h4>
           <br>
-          <p>类型：{{mesdetail.title}}</p>
-          <p>时间：{{timestamp(mesdetail.timeVal)}}</p>
+          <p>{{$t('mesModule.unMessage.table.type')}}：{{mesdetail.title}}</p>
+          <p>{{$t('mesModule.unMessage.table.time')}}：{{timestamp(mesdetail.timeVal)}}</p>
         </div>
         <h3>
           {{mesdetail.type}}

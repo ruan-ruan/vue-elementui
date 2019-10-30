@@ -4,6 +4,71 @@ export default {
     languageSwitch: 'languageSwitch',
     theme: 'Theme'
   },
+  aside:{
+    	myself:'Personal center',
+    	standLetter:'message',
+    	unMessage:'Unread messages',
+    	allMessage:'All the news',
+    	backManage:'Backbone manage',
+    	topoView:'Topology',
+    	physicalLocation:'Physical location',
+    	nodeManage:'Node manage',
+    	backNode:'Backbone nodes',
+    	nodeDetails:'Node details',
+    	nodeEditor:'Node editor',
+    	unknown:'Unknown node editor',
+    	addUnknown:"Add unknown node",
+    	unknownDetails:'Unknown node details',
+    	
+    	lineManage:'Link manage',
+    	line:'Link',
+    	cloudLine:'Cloud docking',
+    	addCloud:'Add cloud',
+    	cloudLineEdit:"Cloud dock editor",
+    	cloudLineDeta:'Cloud dock details',
+    	
+    	resourcesManage:'Resources manage',
+    	logicManage:'Logic manage',
+    	
+    	creatLogic:'Creat logic port',
+    	editLogic:'Edit logic port',
+    	logicDetails:'Logic port details',
+    	
+    	virtual:'Virtual line',
+    	pointSpecial:'Point to point',
+    	virtualSpecial:'Virtual networking',
+    	
+    	pointSpecialDeta:'Point to point details',
+    	
+    	
+    	business:'Business open',
+    	pointsTo:"Point to interconnection ",
+    	dataCenterInter:'Data center interconnection',
+    	dataCenterCloud:'Data to cloud',
+    	cloudInter:'Cloud to cloud',
+    	pointsMultiInter:'Point to multipoint',
+    	virtualNetEdit:'Virtual network editor',
+    	virtualNetDeta:'Virtual network details',
+    	
+    	tenantManage:'Tenant manage',
+    	tenantList:'Tenant list',
+    	addTenant:'Add tenant',
+    	editTenant:'Tenant editor',
+    	detaTenant:'Tenant details',
+    	
+    	accountManage:'Account manage',
+    	peopleRole:'Personal role',
+    	
+    	addRole:'Add role',
+    	roleDetails:'Role details',
+    	roleEditor:'Role editor',
+    	
+    	peopleSet:'Personal set'
+    },
+  
+  
+  
+  
   skin: {
     Blue: 'Blue',
     Green: 'Green',

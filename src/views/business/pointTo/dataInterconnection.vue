@@ -71,7 +71,6 @@
 	
 	import topForm from '@/views/business/pointTo/topForm'  //基本信息的配置
 	import billing from '@/views/business/pointTo/billing'   //其他信息配置
-//	import selVlan from '@/views/business/pointTo/selVlan'	//vlan的弹窗的选择
 	export default{
 		name:'dataInterconnection',
 		components:{topForm,billing,dcPort},

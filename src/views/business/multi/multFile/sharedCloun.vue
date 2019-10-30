@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<!--公有云部分-->
-		<el-form :model='editForm':rules='editFormRules' ref='editForm'label-width='100px' v-loading='editLoading'>
+		<el-form :model='editForm':rules='editFormRules' ref='editForm'label-width='100px'label-position='left' v-loading='editLoading'>
 			<el-form-item label='公有云'prop='cloun'>
 				<el-select v-model='editForm.cloun' filterable  class='ipt'  @change='handleSelect(editForm.cloun)'>
 					<el-option v-for='(item ,index) in clounData'

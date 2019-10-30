@@ -26,12 +26,13 @@
 				      			<el-button class='btn_val'>
 				      				<span class="el-dropdown-link">
 									    <i class="fa fa-sliders marB4" aria-hidden="true"></i><br />
-									    带宽
+									    <!--带宽-->
+									    {{$t('topology.footerBtn.bandwidth')}}
 									</span>
 				      			</el-button>
 							  <el-dropdown-menu slot="dropdown">
 							  	<el-switch 
-							  		active-text="显示带宽标签"
+							  		:active-text="$t('topology.footerBtn.bandW.showBandwidth') "
 							  		v-model='filters.bandwidthLogo'>
 								</el-switch>
 								<template>
@@ -52,7 +53,8 @@
 				    			<el-button class="el-dropdown-link">
 				    				<span class="el-dropdown-link">
 									    <i class="fa fa-paper-plane marB4" aria-hidden="true"></i><br />
-									    显示网元
+									    <!--显示网元-->
+									    {{$t('topology.footerBtn.showNetwork')}}
 									</span>
 				    			</el-button>
 							  	<el-dropdown-menu slot="dropdown" >
@@ -66,7 +68,10 @@
 				    	<li class="spanVal"  @click='example'  >
 				    		<el-button class='btn_val'>
 				    			<i  class="fa fa-columns marB4" aria-hidden="true"></i>
-								<br /> 图例
+								<br /> 
+								<!--图例-->
+								{{$t('topology.footerBtn.legend')}}
+								
 				    		</el-button>
 				    	</li>
 				    </ul>
@@ -77,7 +82,10 @@
 		<!--图例的模板-->
 		<el-dialog :title="textMap[dialogStatus]" :close-on-click-modal="false" :visible.sync="dialog"  class='dia'>
 			<div class="sel">
-				<h3>流量的颜色的含义</h3>
+				<h3>
+					<!--流量的颜色的含义-->
+				{{$t('topology.footerBtn.leng.flowColor') }}
+				</h3>
 				<ul class="bor marT20" >
 					<li class="sp">
 						<div class="bac"></div>
@@ -94,24 +102,41 @@
 				</ul>
 			</div>
 			<div class="sel">
-				<h3>网元异常状态</h3>
+				<h3>
+					<!--网元异常状态-->
+					{{$t('topology.footerBtn.leng.netwotkAbnormal') }}
+				</h3>
 				<ul class="bor marT20">
 					<li class="sp">
 						<div class="bacImg"><img src="../../../assets/images/newTopo/error.png" class="Img" /></div>
-						<span class="spn">设备异常</span>
+						<span class="spn">
+							<!--设备异常-->
+							{{$t('topology.footerBtn.AbnormalStatus.deviceAb') }}
+						</span>
 					</li>
 					<li class="sp">
 						<div class="bac"></div>
-						<span class="spn">链路/VLL异常</span>
+						<span class="spn"> 
+							<!--链路/VLL异常-->
+							{{$t('topology.footerBtn.AbnormalStatus.linkAbnormal') }}
+						
+						</span>
 					</li>
 					<li class="sp">
 						<div class="bac"></div>
-						<span class="spn">链路保护</span>
+						<span class="spn">
+							<!--链路保护-->
+							{{$t('topology.footerBtn.AbnormalStatus.linkProtect') }}
+							
+						</span>
 					</li>
 				</ul>
 			</div>
 			<div class="sel">
-				<h3>网元类型说明</h3>
+				<h3> 
+					<!--网元类型说明--> 
+				{{$t('topology.footerBtn.leng.networkInstructions') }}
+				</h3>
 				<div class="network marT20">
 					<ul class="bor" >
 						<li class="sp" v-for='item in imgData'>
@@ -128,97 +153,84 @@
 </template>
 
 <script>
-	
-	const cityOptions = [
-		{
-			cla:'fa fa-paperclip marB4',
-			label:'显示标签',
-			value:'true'
-		},{
-			label:'显示流量',
-			value:'true',
-			cla:'fa fa-rss-square marB4'
-		}
-	];
 
 	export default{
 		name:'btnLeft',
 		data(){
 			return{
 				filters:{
-					checkboxGroup1: ['显示标签'],
+					checkboxGroup1: [this.$t('topology.footerBtn.showLabel')],
 					bandwidthLogo:true,//是否显示宽带标签
 					bandwidth:'显示所有带宽链路',
 					network:['显示骨干节点','显示公有云节点','显示骨干链接'],
 				},
-              	cities: cityOptions,             	
+              	cities:[
+					{
+						cla:'fa fa-paperclip marB4',
+			//			label:'显示标签',
+						label:this.$t('topology.footerBtn.showLabel'),
+						value:'true'
+					},{
+						//label:'显示流量',
+						label:this.$t('topology.footerBtn.showFlow'),
+						value:'true',
+						cla:'fa fa-rss-square marB4'
+					}
+				],             	
 				dis:true,
 				dialog:false,
 				textMap:{
-					example:'图例说明'
+					example:this.$t('topology.footerBtn.leng.tit')
 				},
 				dialogStatus:'',
 				imgData:[
 					{
 						img:require('../../../assets/images/newTopo/node.png'),
-						name:'骨干节点'
+						name:this.$t('topology.footerBtn.leng.backNode')
 					},
 					{
 						img:require('../../../assets/images/newTopo/ali.png'),						
-						name:'阿里云'
+						name:this.$t('topology.footerBtn.leng.ali')
 					},
 					{
 						img:require('../../../assets/images/newTopo/aws.png'),		
-						name:'AWS'
+						name:this.$t('topology.footerBtn.leng.AWS')
 					},
 					{
 						img:require('../../../assets/images/newTopo/tencent.png'),	
-						name:'腾讯云'
+						name:this.$t('topology.footerBtn.leng.tc')
 					},
 					{
 						img:require('../../../assets/images/newTopo/jinshan.png'),
-						name:'金山云'
+						name:this.$t('topology.footerBtn.leng.js')
 					},
 					{
 						img:require('../../../assets/images/newTopo/ucloud.png'),
-						name:'UCloud'
+						name:this.$t('topology.footerBtn.leng.UC')
 					},
 					{
 						img:require('../../../assets/images/newTopo/baidu.png'),				
-						name:'百度云'
+						name:this.$t('topology.footerBtn.leng.baidu')
 					},
 					{
 						img:require('../../../assets/images/newTopo/huawei.png'),
-						name:'华为云'
+						name:this.$t('topology.footerBtn.leng.huawei')
 					},
 					{
 						img:require('../../../assets/images/newTopo/other.png'),
-						name:'其他云'
+						name:this.$t('topology.footerBtn.leng.other')
 					}
 				],
 				//网元的显示的控制
-				networkData:['显示骨干节点','显示公有云节点','显示骨干链接'],
-				bandwidthData:['显示所有带宽链路','显示1G带宽链路','显示10G带宽链路','显示40G带宽链路','显示100G带宽链路','显示其他带宽链路'],
-//				bandwidthData:[
-//				{
-//					label:'显示所有带宽链路',
-//					value:1000
-//				},{
-//					label:'显示1G带宽链路',
-//					value:1
-//				},{
-//					label:'显示10G带宽链路',
-//					value:10
-//				},{
-//					label:'显示40G带宽链路',
-//					value:40
-//				},{
-//					label:'显示100G带宽链路',
-//					value:100
-//				},{
-//					label:'显示其他带宽链路',
-//					value:0
-//				}],
+				//networkData:['显示骨干节点','显示公有云节点','显示骨干链接'],
+				networkData:[this.$t('topology.footerBtn.shwoNet.showBackboneNode'),
+				this.$t('topology.footerBtn.shwoNet.showShardCloud'),
+				this.$t('topology.footerBtn.shwoNet.showBackboneLink'),],
+				//bandwidthData:['显示所有带宽链路','显示1G带宽链路','显示10G带宽链路','显示40G带宽链路','显示100G带宽链路','显示其他带宽链路'],
+				bandwidthData:[this.$t('topology.footerBtn.bandW.showAllbandwidth'),this.$t('topology.footerBtn.bandW.showbandwidth1'),
+				this.$t('topology.footerBtn.bandW.showbandwidth2'),this.$t('topology.footerBtn.bandW.showbandwidth3'),
+				this.$t('topology.footerBtn.bandW.showbandwidth4'),this.$t('topology.footerBtn.bandW.showbandwidth5')],
+				
 			}
 		},
 		watch:{

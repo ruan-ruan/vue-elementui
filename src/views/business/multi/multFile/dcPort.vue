@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<!--数据中心的端口-->
-		<el-form :model='editForm' ref='editForm':rules='editFormRules' v-loading='editLoading' label-width='100px'>
+		<el-form :model='editForm' ref='editForm':rules='editFormRules'label-position='left' v-loading='editLoading' label-width='100px'>
 			<el-form-item label='节点名称' prop='nodeName'>
 				<el-select v-model='editForm.nodeName' filterable  @change='selectNode(editForm.nodeName)' class='ipt'>
 					<el-option v-for='(item ,index) in nodeData'
@@ -193,7 +193,7 @@
 				itable:null,
 				pointData:[],//获取所有的点到点的所有数据，用来判断里面的逻辑口的状态 //获取组网的数据列表   也是为了获取逻辑口的数据  
 				baseObj:{},
-				
+				cloudLogic:[],//获取云对接链路列表里所有的逻辑口，将不可在用于开通业务
 			}
 		},
 		watch:{
@@ -205,10 +205,11 @@
 
 			},
 			editForm:{
-				handler(newVal,oldVal){
-					this.$emit('sendFormData_a',newVal)
-					this.$emit('sendFormData_z',newVal)
-					if(this.baseObj){
+				handler(newVal,oldVal){	
+					console.log(this.baseObj)
+					
+					if(JSON.stringify(this.baseObj) != '{}'){
+						console.log('进来')
 						if(this.baseObj.statusVal>= 0){
 							if(newVal.endpoints_vlan=='透传'){
 								this.$message({
@@ -217,7 +218,25 @@
 								})
 								newVal.logic=''
 							}
+							
+							if(newVal.chooseVlan){
+//								this.sendForm.vlan=0
+								newVal.vlan=0;  //当时untag模式的是vlan为0
+								newVal.selVlan=0;
+							}
 
+
+						}else if(this.baseObj.statusVal> 0){//UNTAG模式   
+							if(newVal.chooseVlan){
+								this.$message({
+									message:'该逻辑口已经为UNTAG模式，不可在为该模式！',
+									type:'warning'
+								})
+								newVal.logic=''
+								newVal.selVlan='';
+								newVal.vlan='';
+							}
+							
 						}else if(this.baseObj.statusVal < 0){
 							if(newVal.endpoints_vlan=='透传'){
 								this.$message({
@@ -226,46 +245,35 @@
 								})
 								newVal.logic=''
 							}
+							if(newVal.chooseVlan){
+//								this.sendForm.vlan=0
+								newVal.vlan=0;  //当时untag模式的是vlan为0
+								newVal.selVlan=0;
+							}
 						}
 
 					}else{
 						if(newVal.endpoints_vlan=='透传'){
-							this.editForm.vlan='-1'  //透传模式的时候，vlan的值为-1
-							this.editForm.selVlan='';
-							this.$emit('sendType',newVal.endpoints_vlan)
+//							this.sendForm.vlan='-1'  //透传模式的时候，vlan的值为-1
+							newVal.selVlan=-1;
+							newVal.vlan=-1; 
+//							this.$emit('sendType',newVal.endpoints_vlan)
 						}
 						
 						if(newVal.chooseVlan){
-							this.editForm.vlan='0'  //当时untag模式的是vlan为0
-							this.editForm.selVlan=''
+							console.log('进入chos')
+//							this.sendForm.vlan=0
+							newVal.vlan=0;  //当时untag模式的是vlan为0
+							newVal.selVlan=0;
 						}
 					}
 					
-					if(newVal.chooseVlan && this.baseObj.statusVal==0 ){
-						this.$message({
-							message:'该逻辑口已经为UNTAG模式，不可在为该模式！',
-							type:'warning'
-						})
-						newVal.logic=''
-						this.editForm.endpoints_vlan="trunk"
 
-						this.editForm.selVlan='';
-						this.editForm.selVlan=''
-					}
-//editForm.selVlan
-					
 					//下面的form表单的转换 ，是当触发的时候，将需要传的参数放在一个新对象内，以便于，，在监听的是偶向父组件传值
-					if(newVal.vlan){
-						this.sendForm.vlan=newVal.vlan
-					}
-					if(newVal.nodeName){
-						this.sendForm.nodeName=newVal.nodeName
-					}
-					if(newVal.logic){
-						this.sendForm.logic=newVal.logic;
-					}else{
-						newVal.selVlan=''
-					}
+					this.sendForm.vlan=newVal.vlan;
+					this.sendForm.nodeName=newVal.nodeName;
+					this.sendForm.logic=newVal.logic;
+
 				},
 				deep:true,
 			},
@@ -274,8 +282,10 @@
 			},
 			sendForm:{
 				handler(newVal,oldVal){
-					this.$emit('sendFormData',newVal)
-//					this.$emit('sendFormData_z',newVal)
+					console.log(newVal)
+//					this.$emit('sendFormData',newVal)
+					this.$emit('sendFormData_a',newVal)
+					this.$emit('sendFormData_z',newVal)
 				},
 				deep:true,
 			},
@@ -354,6 +364,22 @@
 			    		}
 			    	}
 			    }).catch(e => {console.log(e)})
+			    
+			    this.cloudLogic=[];
+			    var obj={}
+			    //获取云对接链路里面的数据  cloudLogic
+			    this.$ajax.get('/link/cloud_links'+'?token='+this.token)
+			    .then(res => {
+			    	console.log(res);
+			    	res.data.data.items.forEach(ele =>{
+			    		obj={
+			    			name:ele.logic_port.name,
+			    			id:ele.logic_port.id
+			    		};
+			    		this.cloudLogic.push(obj);
+//			    		this.cloudLogic.push(ele.logic_port)
+			    	})
+			    }).catch(e =>{console.log(e)})
 			},
 			selectNode(ids){//根据选择的节点获取逻辑口的数据
 				this.editForm.logic=''
@@ -368,7 +394,6 @@
 						if(res.data.status==0){
 							console.log(res)
 							//pointData
-<<<<<<< HEAD
 							console.log(this.pointData)
 							res.data.data.items.forEach(ele => {
 								let strVal={};
@@ -377,37 +402,27 @@
 								}else if(isPortStatus(ele.physical_ports)=='DOWN'){
 									strVal.statusColor='statusDOWN'
 								}else if(isPortStatus(ele.physical_ports)=='异常'){
-=======
-							res.data.data.items.map(ele => {
-								let staus=[]
-								ele.physical_ports.map(items => {
-									staus.push(items.port)
-								})
-								let strVal={};
-								if(getPortStatus(staus)=='UP'){
-									strVal.statusColor='statusUP'
-								}else if(getPortStatus(staus)=='DOWN'){
-									strVal.statusColor='statusDOWN'
-								}else if(getPortStatus(staus)=='异常'){
->>>>>>> 54687050805b11d3724b6f8450369e03ea10087b
+
 									strVal.statusColor='statusAbno'
 								}
 								let portObj={
 									id:ele.id,
 									name:ele.name,
-<<<<<<< HEAD
+
 									status:isPortStatus(ele.physical_ports),
-=======
-									status:getPortStatus(staus),
->>>>>>> 54687050805b11d3724b6f8450369e03ea10087b
+
 									statusColor:strVal.statusColor,
 									statusVal:2,//statusVal  根据点到点的列表的数据   来判断该逻辑口的是否为可用的 默认的逻辑扣是全部可用的
 								}
 								this.logicPort.push(portObj)
 							})
-							console.log(this.logicPort)
+//							console.log(this.logicPort)
+							this.logicPort= this.logicPort.filter(item => {//将云对接的所有的列表内的逻辑口用过的删除
+							     let idList= this.cloudLogic.map(v => v.id)
+							     return !idList.includes(item.id)
+							})
 							
-							console.log(this.pointData)
+//							console.log(this.pointData)
 							for(var item1 of this.logicPort){
 								for(var item2 of this.pointData){
 									if(item1.id == item2.id){
@@ -415,10 +430,7 @@
 									}
 								}
 							}
-<<<<<<< HEAD
 
-=======
->>>>>>> 54687050805b11d3724b6f8450369e03ea10087b
 						}
 					}
 				}).catch(e => {console.log(e)})

@@ -32,7 +32,7 @@
                 style="cursor:pointer;"
                 @click="tapmes"
                 v-popover:visible
-              >消息</span>
+              > {{ $t('nav.message')}}</span>
               <el-badge
                 :value="this.$store.state.message"
                 :max="99"
@@ -79,9 +79,9 @@
                 trigger="click"
                 @command="Change"
               >
-                <span class="el-dropdown-link userinfo-inner">语言</span>
+                <span class="el-dropdown-link userinfo-inner">{{$t('nav.language')}}</span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command='zh'>中文</el-dropdown-item>
+                  <el-dropdown-item command='cn'>中文</el-dropdown-item>
                   <el-dropdown-item command='en'>English</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -97,8 +97,8 @@
                     alt="头像"
                   /> {{sysUserName}}</span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="logout">退出登录</el-dropdown-item>
-                  <el-dropdown-item @click.native='psd'>修改密码</el-dropdown-item>
+                  <el-dropdown-item @click.native="logout">{{$t('nav.layout')}}</el-dropdown-item>
+                  <el-dropdown-item @click.native='psd'>{{$t('nav.changPsd')}}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </el-col>
@@ -106,6 +106,7 @@
         </el-row>
       </el-col>
     </el-col>
+
 
     <el-col
       :span="24"
@@ -140,7 +141,8 @@
                 />
 
                 <span slot="title">
-                  {{item.name }}
+                  <!--{{ item.name }}-->
+                  <span>{{$t(item.name)}}</span>
                 </span>
 
               </template>
@@ -160,7 +162,8 @@
                       slot="title"
                     >
                       <!--改标签   是为了  在调整name未知而定  并无实用-->
-                      {{child.name}}
+                      <!--{{child.name}}-->
+                      {{$t(child.name)}}
                     </span>
                   </template>
                   <!-- 	三级菜单  -->
@@ -170,7 +173,8 @@
                     :key="sun.path"
                   >
                     <span slot="title">
-                      {{sun.name}}
+                      <!--{{sun.name}}-->
+                      {{$t(sun.name)}}
                     </span>
 
                   </el-menu-item>
@@ -183,7 +187,9 @@
                   class='padL50'
                 >
                   <span slot="title">
-                    {{child.name}}
+                    <!--{{child.name}}-->
+                      {{$t(child.name)}}
+                    
                   </span>
                 </el-menu-item>
 
@@ -201,7 +207,9 @@
                 class='asideLogo'
               />
               <span slot="title">
-                {{item.children[0].name}}
+                <!--{{item.children[0].name}}-->
+                {{$t(item.children[0].name)}}
+                
               </span>
 
             </el-menu-item>
@@ -248,7 +256,12 @@
                   style="padding-left: 40px;"
                   :class="$route.path==child.path?'is-active':''"
                   @click="$router.push(child.path)"
-                >{{child.name}}</li>
+                >
+                <!--{{child.name}}-->
+                {{$t(child.name)}}
+                
+                
+                </li>
               </ul>
             </template>
 
@@ -278,7 +291,11 @@
       :span="24"
       class="breadcrumb-container marB8"
     >
-      <h2 class="title"> {{$route.name}}</h2>
+      <h2 class="title"> 
+      	<!--{{$route.name}}-->
+         {{$t($route.name)}}
+      
+      </h2>
       <el-breadcrumb
         separator="/"
         class="breadcrumb-inner"
@@ -287,7 +304,8 @@
           v-for="item in $route.matched"
           :key="item.path"
         >
-          {{ item.name }}
+        {{$t(item.name)}}
+          <!--{{ item.name }}-->
         </el-breadcrumb-item>
       </el-breadcrumb>
     </el-col>
@@ -306,7 +324,11 @@
 </section>
 
 </el-col>
+
+
+
 </el-row>
+
 </template>
 
 <script>
@@ -383,9 +405,20 @@ export default {
     });
   },
   methods: {
-    Change(type) {
-      this.$i18n.locale = type;
-      this.$store.dispatch("setLanguage", type);
+    Change(e='cn',type) {
+    	console.log(e);
+    	console.log(type);
+    	window.location.reload();//实现项目的刷新
+    	 localStorage.setItem('language',e)
+		    this.$i18n.locale = e;
+//		     document.title = this.$t('win.title');//网站的title
+		    //1.设置页面title这个是二级title
+//		     document.title = this.$t('message.title');
+		    // 2.三级title设置 得根据当前页面路由位置，去拿到title
+		    var page = this.$route.path.split('/').pop();
+//		    document.title = this.$t('message.pageTitle.'+page);
+    		
+
     },
     psd: function(row) {
       this.$confirm("确认要修改密码吗?", "提示", {})

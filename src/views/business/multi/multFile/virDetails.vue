@@ -2,27 +2,32 @@
 	<div>
 		<!--虚拟机的详情界面-->   <!--基本的信息basicForm里面展示-->
 		<!--Dc-->
-		<el-form label-position='left' :model='detailsForm' ref='detailsForm' label-width='120px' v-loading='detaLoading' v-if='basicObj.dataType==="endpoints"'>
+		<el-form label-position='left' :model='detailsForm' ref='detailsForm' label-width='120px' v-loading='detaLoading' 
+			v-if='basicObj.dataType==="endpoints"'>
+			<el-form-item label='逻辑口类型'>
+				<span>{{ detailsForm.dataType == "endpoints" ? "数据中心端口" :"公有云端口" }}</span>
+			</el-form-item>
 			<el-form-item label='节点名称'>
-				<el-input v-model='detailsForm.name' disabled class='ipt'></el-input>
+				<el-input v-model='detailsForm.node.name' disabled class='ipt'></el-input>
 			</el-form-item>
 			<el-form-item label='逻辑口'>
-				<el-input v-model='detailsForm.name' disabled class='ipt'></el-input>
+				<el-input v-model='detailsForm.logic_port.name' disabled class='ipt'></el-input>
 			</el-form-item>
 			<el-form-item label='逻辑口状态'>
-				<el-input v-model='detailsForm.status' disabled class='ipt'></el-input>
+				<el-input v-model='detailsForm.logicStatus' disabled class='ipt'></el-input>
 			</el-form-item>
 		</el-form>
-		
-		<el-from :model='detailsForm' ref='detailsForm' label-width='120px' v-loading='detaLoading' v-if="basicObj.dataType==='cloud_endpoints'">
+		<!--云的数据-->
+		<el-from :model='detailsForm' ref='detailsForm' label-width='120px' v-loading='detaLoading' 
+			v-if="basicObj.dataType==='cloud_endpoints'">
 			<el-form-item label='公有云'>
-				<el-input v-model='detailsForm.cloun' disabled class='ipt'></el-input>
+				<el-input v-model='detailsForm.cloud_type' disabled class='ipt'></el-input>
 			</el-form-item>
 			<el-form-item label='目标Region'>
-				<el-input v-model='detailsForm.cloun'disabled class='ipt'></el-input>
+				<el-input v-model='detailsForm.region'disabled class='ipt'></el-input>
 			</el-form-item>
 			<el-form-item label='云对接链路'>
-				<el-input v-model='detailsForm.cloun'disabled class='ipt'></el-input>
+				<el-input v-model='detailsForm.cloud_config.name'disabled class='ipt'></el-input>
 			</el-form-item>
 			<!--不同的云的对接获取不同的数据-->
 			<el-form-item v-for='(item,index) in dockCloun' :key='index' :label='item.show_name'>
@@ -46,18 +51,20 @@
 			}
 		},
 		created(){
+			console.log(this.basicObj);
+			this.detailsForm=Object.assign({},this.basicObj)
 			//根据dc和cloun，云对接的选择
-			if(typeof this.basicObj !=='undefined'){//详情数据存在的时候
-				if(this.basicObj.dataType==='endpoints'){//dc的数据结构   dc里面详情
-					this.detailsForm={
-						logic_port_name:this.basicObj.logic_port.name,
-						status:this.basicObj.ports.status
-					}
-					
-				}else if(this.basicObj.dataType==='cloud_endpoints'){//云的数据结构
-//					this.getClounList(this.basicObj.cloud_config.driver)//根据云对接所选择的类型获取
-				}
-			}
+//			if(typeof this.basicObj !=='undefined'){//详情数据存在的时候
+//				if(this.basicObj.dataType==='endpoints'){//dc的数据结构   dc里面详情
+//					this.detailsForm={
+//						logic_port_name:this.basicObj.logic_port.name,
+//						status:this.basicObj.ports.status
+//					}
+//					
+//				}else if(this.basicObj.dataType==='cloud_endpoints'){//云的数据结构
+////					this.getClounList(this.basicObj.cloud_config.driver)//根据云对接所选择的类型获取
+//				}
+//			}
 			
 		},
 		methods:{
