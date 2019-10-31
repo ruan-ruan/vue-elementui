@@ -416,7 +416,7 @@ export default {
         console.log(e);
       });
 
-    }, 3000);
+    }, 30000);
     var that = this;
     Utils.$on("demo", function(msg) {
       that.tableData = msg;
