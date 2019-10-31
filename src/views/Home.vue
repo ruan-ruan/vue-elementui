@@ -107,7 +107,6 @@
       </el-col>
     </el-col>
 
-
     <el-col
       :span="24"
       class="main"
@@ -188,8 +187,8 @@
                 >
                   <span slot="title">
                     <!--{{child.name}}-->
-                      {{$t(child.name)}}
-                    
+                    {{$t(child.name)}}
+
                   </span>
                 </el-menu-item>
 
@@ -209,7 +208,7 @@
               <span slot="title">
                 <!--{{item.children[0].name}}-->
                 {{$t(item.children[0].name)}}
-                
+
               </span>
 
             </el-menu-item>
@@ -257,10 +256,9 @@
                   :class="$route.path==child.path?'is-active':''"
                   @click="$router.push(child.path)"
                 >
-                <!--{{child.name}}-->
-                {{$t(child.name)}}
-                
-                
+                  <!--{{child.name}}-->
+                  {{$t(child.name)}}
+
                 </li>
               </ul>
             </template>
@@ -361,43 +359,62 @@ export default {
       tokenkey: ""
     };
   },
-   mounted() {
+  mounted() {
     this.tokenkey = sessionStorage.getItem("token");
     var user = sessionStorage.getItem("user");
     if (user) {
       this.sysUserName = user || "";
     }
+
     const timers = setInterval(() => {
-       var para = {
-        page: "",
-        per_page: "",
-        search_title: "",
-        search_type: "",
-        search_level: "",
-        search_start_time: "",
-        search_end_time: ""
-      };
-      this.$ajax
-        .get("/public/get_news" + "?token=" + this.tokenkey, para)
-        .then(res => {
-//        console.log(res);
-          if (res.status == 200) {
-            if (res.data.status == 0) {
-               let ress = res.data.data.items;
-            let datas=[];
-            ress.map(items =>{
-              if(items.is_read==false) {
-                datas.push(items);
-              }
-            })
-            this.$store.state.message=datas.length;
-            this.tableData = res.data.data.items?res.data.data.items.slice(0,5):[];
-            }
+      var para = {
+      page: "",
+      page: "",
+      per_page: "",
+      search_title: "",
+      search_type: "",
+      search_level: "",
+      search_start_time: "",
+      search_end_time: "",
+      search_read: "false"
+    };
+    this.$ajax
+      .get("/public/get_news" + "?token=" + this.tokenkey, para)
+      .then(res => {
+        console.log(res);
+        if (res.status == 200) {
+          if (res.data.status == 0) {
+            this.$store.state.message = res.data.data.page.total;
           }
-        })
-        .catch(e => {
-          console.log(e);
-        });
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    var para = {
+      page: "",
+      per_page: "",
+      search_title: "",
+      search_type: "",
+      search_level: "",
+      search_start_time: "",
+      search_end_time: ""
+    };
+    this.$ajax
+      .get("/public/get_news" + "?token=" + this.tokenkey, para)
+      .then(res => {
+        if (res.status == 200) {
+          if (res.data.status == 0) {
+            this.tableData = res.data.data.items
+              ? res.data.data.items.slice(0, 5)
+              : [];
+          }
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+
     }, 3000);
     var that = this;
     Utils.$on("demo", function(msg) {
@@ -405,20 +422,18 @@ export default {
     });
   },
   methods: {
-    Change(e='cn',type) {
-    	console.log(e);
-    	console.log(type);
-    	window.location.reload();//实现项目的刷新
-    	 localStorage.setItem('language',e)
-		    this.$i18n.locale = e;
-//		     document.title = this.$t('win.title');//网站的title
-		    //1.设置页面title这个是二级title
-//		     document.title = this.$t('message.title');
-		    // 2.三级title设置 得根据当前页面路由位置，去拿到title
-		    var page = this.$route.path.split('/').pop();
-//		    document.title = this.$t('message.pageTitle.'+page);
-    		
-
+    Change(e = "cn", type) {
+      console.log(e);
+      console.log(type);
+      window.location.reload(); //实现项目的刷新
+      localStorage.setItem("language", e);
+      this.$i18n.locale = e;
+      //		     document.title = this.$t('win.title');//网站的title
+      //1.设置页面title这个是二级title
+      //		     document.title = this.$t('message.title');
+      // 2.三级title设置 得根据当前页面路由位置，去拿到title
+      var page = this.$route.path.split("/").pop();
+      //		    document.title = this.$t('message.pageTitle.'+page);
     },
     psd: function(row) {
       this.$confirm("确认要修改密码吗?", "提示", {})
