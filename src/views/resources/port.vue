@@ -58,7 +58,7 @@
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
    	 		</el-table-column>
-   	 		<el-table-column prop='creation_time' sortable  label='创建时间' width='101'align='center':formatter='dateFormat'></el-table-column>
+   	 		<el-table-column prop='creation_time' sortable  label='创建时间' width='101'align='center'></el-table-column>
    	 		<el-table-column prop='name' label='逻辑端口名称' min-width='100'align='center'>
    	 			<template slot-scope='scope'>
    	 				<span class='cli_spn' @click="handleSee(scope.$index,scope.row)">{{scope.row.name}}</span>
@@ -72,8 +72,8 @@
    	 		</el-table-column>
    	 		<el-table-column prop='physical_ports_len' label='端口组合数' min-width='80'align='center'></el-table-column>
    	 		<el-table-column prop='access_type' label='用户连接方式' min-width='80'align='center'></el-table-column>
-   	 		<el-table-column prop='creation_time' label='合同开始时间' width='95'align='center':formatter='dateFormat'></el-table-column>
-   	 		<el-table-column prop='creation_time' label='合同结束时间' width='95'align='center':formatter='dateFormat'></el-table-column>
+   	 		<el-table-column prop='start_time' label='合同开始时间' width='95'align='center'></el-table-column>
+   	 		<el-table-column prop='end_time' label='合同结束时间' width='95'align='center'></el-table-column>
    	 		<el-table-column prop='descriptionVal' label='备注' min-width='80'align='center'></el-table-column>
    	 		<el-table-column  label='操作' width='230'  v-if=' !tit'align='center'>
    	 			<template slot-scope='scope'>
@@ -104,7 +104,7 @@
 </template>
 
 <script>
-	import {getPortStatus,isPortStatus,descriptionValue} from '@/assets/js/index'
+	import {getPortStatus,isPortStatus,descriptionValue,datedialogFormat,dealNull} from '@/assets/js/index'
 	export default{
 		name:'port',
 		props:['titleOne','titleTwo','LogicTitle','tenantID'],//来判断进入的界面的，控制添加和操作按钮显示
@@ -214,12 +214,26 @@
 					this.loading=false;
 					if(res.status==200){
 						if(res.data.status==0){
-//							console.log(res)
+							console.log(res)
 							descriptionValue(res.data.data.items)
 							this.total=res.data.data.page.total;
 							res.data.data.items.forEach(ele => {
+								if( (!ele.start_time && typeof(ele.start_time) !='undefined' && ele.start_time !='') || ele.start_time == ''){
+									ele.start_time=''
+								}else{
+									ele.start_time=datedialogFormat(ele.start_time)
+								}
+								if( (!ele.end_time && typeof(ele.end_time) !='undefined' && ele.end_time !='') || ele.end_time == ''){
+									ele.end_time=''
+								}else{
+									ele.end_time=datedialogFormat(ele.end_time)
+								}
+								ele.creation_time=datedialogFormat(ele.creation_time)
+								
+								
+								
 								ele.physical_ports_len=ele.physical_ports.length;
-								let portColor=document.getElementsByClassName('portColor');
+
 								if(ele.usable){
 									//根据物理端口下的port的status拼接出来的这个参数，并在不同的状态的时候显示不同的字体格式
 //									ele.usableText=this.getPortStatus(ele.physical_ports);

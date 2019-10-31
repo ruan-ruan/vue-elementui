@@ -384,7 +384,9 @@ export default {
 //      console.log(res);
         if (res.status == 200) {
           if (res.data.status == 0) {
+
             this.$store.state.message = res.data.data.items.length;;
+
           }
         }
       })
@@ -415,7 +417,7 @@ export default {
         console.log(e);
       });
 
-    }, 3000);
+    }, 30000);
     var that = this;
     Utils.$on("demo", function(msg) {
       that.tableData = msg;

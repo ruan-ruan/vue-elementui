@@ -20,6 +20,18 @@ export function datedialogFormat(value){
     let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
     return Y + M + D + h + m + s;
 }
+//export function dealNull(property){
+//	if( !property && typeof(property) !='undefined' && property !=0 ){
+//		property=''
+//	}else if(property =='undefined'){
+//		property=''
+//	}else if(property=''){
+//		property=''
+//	}else{
+//		property=datedialogFormat(property)
+//	}
+//	console.log(property)
+//}
 export function getTime(value) {
     if (value == "") {
       return "";

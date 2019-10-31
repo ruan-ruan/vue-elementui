@@ -410,7 +410,6 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							console.log(res)
-							//pointData
 
 							res.data.data.items.map(ele => {
 								let staus=[]
@@ -430,8 +429,8 @@
 									id:ele.id,
 									name:ele.name,
 
-									status:isPortStatus(ele.physical_ports),
 
+									status:isPortStatus(ele.physical_ports),
 
 									statusColor:strVal.statusColor,
 									statusVal:2,//statusVal  根据点到点的列表的数据   来判断该逻辑口的是否为可用的 默认的逻辑扣是全部可用的

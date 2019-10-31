@@ -140,7 +140,7 @@
 			submitBtn(){
 				var a_cloun_top={
 					cloud_type:this.editForm.sharedCloun,
-					region_id:this.editForm.target,
+					region:this.editForm.target,
 					cloud_config_id:this.editForm.clounDoc,
 				}
 				var a_cloun=Object.assign({},a_cloun_top,this.clounList);//clounList

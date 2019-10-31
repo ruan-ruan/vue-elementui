@@ -222,7 +222,7 @@
               prop='creation_time'
               label='创建时间'
               width='93'
-              :formatter='dateFormat'
+             
               align='center'
             >
             </el-table-column>
@@ -230,7 +230,7 @@
               prop='charge_time'
               label='计费时间'
               width='93'
-              :formatter='dateFormat'
+              
               align='center'
             >
             </el-table-column>
@@ -238,7 +238,7 @@
               prop='expiration_time'
               label='过期时间'
               width='93'
-              :formatter='dateFormat'
+              
               align='center'
             >
             </el-table-column>
@@ -393,7 +393,8 @@ import {
   datedialogFormat,
   isValidinteger,
   getPortStatus,
-  descriptionValue
+  descriptionValue,
+  
 } from "@/assets/js/index";
 export default {
   name: "pointsTo",
@@ -591,13 +592,24 @@ export default {
           if (res.status == 200) {
             if (res.data.status == 0) {
             	console.log(res)
+            	
             	this.getLoading=false;
               // this.users=res.data.data.items;
                  this.total=res.data.data.page.total;
 							descriptionValue(res.data.data.items);
               res.data.data.items.forEach(ele => {
-              	//设置   a端  z端数据
-
+              	//设置   a端  z端数据  datedialogFormat
+								if((!ele.charge_time&& typeof(ele.charge_time) !='undefined' && ele.charge_time !=0) || ele.charge_time==''){
+	            		ele.charge_time=''
+	            	}else {
+	            		ele.charge_time=datedialogFormat(ele.charge_time)
+	            	}
+	            	if((!ele.expiration_time&& typeof(ele.expiration_time) !='undefined' && ele.expiration_time !=0) || ele.expiration_time==''){
+	            		ele.expiration_time=''
+	            	}else {
+	            		ele.expiration_time=datedialogFormat(ele.expiration_time)
+	            	}
+	            	ele.creation_time=datedialogFormat(ele.creation_time)
                 if (ele.type == "d2d") {
                   ele.typeName = "DCI";
                 } else if (ele.type == "d2c") {
@@ -605,6 +617,8 @@ export default {
                 } else if (ele.type == "c2c") {
                   ele.typeName = "云直连";
                 }
+                
+                 var str = ele.endpoints;
                 if (ele.status == "failure") {
                   ele.statusHTML = "创建失败";
                   ele.statusColor = "creatFie";
@@ -617,20 +631,42 @@ export default {
                   ele.creat = false;
                   ele.btn=true;
                 } else if (ele.status == "stopping") {
+                	
                   ele.statusHTML = "停止中";
+
                   ele.specialName = "运行";
                   ele.statusColor = "stopVal";
                   ele.creat = true;
                   ele.btn=false;
                 } else if (ele.status == "servicing") {
-                  ele.statusHTML = "运行中";
+
+									if(getPortStatus(str[0].ports) ==='UP' || getPortStatus(str[0].ports) ==='异常' ){
+                  	if(getPortStatus(str[1].ports) ==='UP' || getPortStatus(str[1].ports) ==='异常'){
+                  		ele.statusHTML = "运行中";
+                  		 ele.statusColor = "ServerVal";
+                  	}else if(getPortStatus(str[1].ports)==='DOWN'){
+                  			ele.statusHTML = "故障";
+                  			ele.statusColor = "creatFie";
+                  	}
+                  }else if(getPortStatus(str[0].ports)==='DOWN'){
+                  	if(getPortStatus(str[1].ports) ==='UP' || getPortStatus(str[1].ports) ==='异常'){
+                  		ele.statusHTML = "故障";
+                  		ele.statusColor = "creatFie";
+                  		
+                  	}else if(getPortStatus(str[1].ports)==='DOWN'){
+                  			ele.statusHTML = "故障";
+                  			ele.statusColor = "creatFie";
+                  			
+                  	}
+                  }
+//                ele.colorZ='colorWarning'
                   ele.specialName = "停止";
-                  ele.statusColor = "ServerVal";
+//                ele.statusColor = "ServerVal";
                   ele.creat = true;
                   ele.btn=false;
                 }
 
-                var str = ele.endpoints;
+               
                 if (str) {
                   if (str.length !== 0) {
                     if (str.length == 1) {
@@ -665,6 +701,7 @@ export default {
                       }else if(getPortStatus(str[1].ports) ==='异常'){
                       	ele.colorZ='colorWarning'
                       }
+                      
                       
                       ele.logicPortA = ele.endpoints[0].logic_port.name;
                       ele.logicPortZ = ele.endpoints[1].logic_port.name;

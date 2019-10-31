@@ -157,13 +157,13 @@
 				obj_z={
 					name:'Z云',
 					cloud_type:this.editForm.sharedCloun_z,
-					region_id:this.editForm.target_z,
+					region:this.editForm.target_z,
 					cloud_config_id:this.editForm.clounDoc_z
 				}
 				obj_a={
 					name:'A云',
 					cloud_type:this.editForm.sharedCloun_a,
-					region_id:this.editForm.target_a,
+					region:this.editForm.target_a,
 					cloud_config_id:this.editForm.clounDoc_a
 				}
 				let cloun_a=Object.assign({},obj_a,this.selectFormA)
