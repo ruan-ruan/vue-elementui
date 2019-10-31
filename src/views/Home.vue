@@ -384,7 +384,8 @@ export default {
         console.log(res);
         if (res.status == 200) {
           if (res.data.status == 0) {
-            this.$store.state.message = res.data.data.page.total;
+            console.log(res.data.data.items);
+            this.$store.state.message = res.data.data.items.length;
           }
         }
       })
