@@ -27,7 +27,7 @@
 			</el-form-item>
 			<el-form-item label='逻辑口类型' prop='endpoints_vlan'>
 				<template>
-					<el-radio-group v-model='editForm.endpoints_vlan' >
+					<el-radio-group v-model='editForm.endpoints_vlan'>
 						<el-radio-button size='small' v-for='item in portType'
 							:label='item.label'
 							:value='item.value'
@@ -41,7 +41,7 @@
 					<el-switch v-model='editForm.chooseVlan'
 						active-text="UNTAG"
 						title='默认逻辑口为trunk,vlan为UNTAG'></el-switch>	
-						<el-button v-text='editForm.selVlan ? editForm.selVlan:"选择vlan"'
+						<el-button v-text=' editForm.logic==""?"选择vlan": (editForm.selVlan ? editForm.selVlan:"选择vlan")'
 							size='small' 
 							@click='addVlan' 
 							title='请先选择节点和逻辑口'
@@ -204,70 +204,74 @@
 				this.disVlan=JSON.parse(JSON.stringify(this.conversion(this.vlanData))); 
 
 			},
+			baseObj:{
+				handler(newVal,oldVal){
+					console.log(newVal)
+				},
+				deep:true
+			},
 			editForm:{
 				handler(newVal,oldVal){	
-					console.log(this.baseObj)
-					
-					if(JSON.stringify(this.baseObj) != '{}'){
-						console.log('进来')
-						if(this.baseObj.statusVal>= 0){
-							if(newVal.endpoints_vlan=='透传'){
+					console.log(newVal);
+					console.log(oldVal)
+					console.log(this.baseObj);
+////					验证逻辑口
+					if(newVal.endpoints_vlan == '透传' ){
+						console.log('touchuan')
+						if(JSON.stringify(this.baseObj) != '{}'){
+//							console.log('kkkk')
+							if(this.baseObj.statusVal>= 0){//当为trunk模式
 								this.$message({
 									message:'请重新选择,该逻辑口已经选择trunk模式，不能再选择透传模式',
 									type:'warning'
 								})
-								newVal.logic=''
-							}
-							
-							if(newVal.chooseVlan){
-//								this.sendForm.vlan=0
-								newVal.vlan=0;  //当时untag模式的是vlan为0
-								newVal.selVlan=0;
-							}
 
-
-						}else if(this.baseObj.statusVal> 0){//UNTAG模式   
-							if(newVal.chooseVlan){
-								this.$message({
-									message:'该逻辑口已经为UNTAG模式，不可在为该模式！',
-									type:'warning'
-								})
-								newVal.logic=''
-								newVal.selVlan='';
+								newVal.logic='';
 								newVal.vlan='';
-							}
-							
-						}else if(this.baseObj.statusVal < 0){
-							if(newVal.endpoints_vlan=='透传'){
+							}else if(this.baseObj.statusVal < 0){
 								this.$message({
 									message:'请重新选择,该逻辑口已经选择透传模式，不能再选择透传模式',
 									type:'warning'
 								})
-								newVal.logic=''
+								newVal.logic='';
+								newVal.vlan='';
 							}
-							if(newVal.chooseVlan){
-//								this.sendForm.vlan=0
+						}else{//为透传模式
+							newVal.selVlan=-1;
+							newVal.vlan=-1; 
+
+						}
+					}else if(newVal.endpoints_vlan == 'trunk'){
+						
+
+						if(newVal.chooseVlan){
+							console.log('天润k')
+							if(JSON.stringify(this.baseObj) != '{}'){
+								if(this.baseObj.statusVal == 0){
+									console.log('untage')
+									this.$message({
+										message:'该逻辑口已经为UNTAG模式，不可在为该模式！',
+										type:'warning'
+									})
+									newVal.logic='';
+									newVal.vlan='';
+									newVal.selVlan=''
+								}else if(this.baseObj.statusVal < 0){
+									this.$message({
+										message:'该逻辑口已经为trunk模式，不可在为透传模式！',
+										type:'warning'
+									})
+								}else if(this.baseObj.statusVal > 0){
+									newVal.vlan=0;  //当时untag模式的是vlan为0
+									newVal.selVlan=0;
+								}
+							}else {
 								newVal.vlan=0;  //当时untag模式的是vlan为0
 								newVal.selVlan=0;
 							}
 						}
-
-					}else{
-						if(newVal.endpoints_vlan=='透传'){
-//							this.sendForm.vlan='-1'  //透传模式的时候，vlan的值为-1
-							newVal.selVlan=-1;
-							newVal.vlan=-1; 
-//							this.$emit('sendType',newVal.endpoints_vlan)
-						}
-						
-						if(newVal.chooseVlan){
-							console.log('进入chos')
-//							this.sendForm.vlan=0
-							newVal.vlan=0;  //当时untag模式的是vlan为0
-							newVal.selVlan=0;
-						}
 					}
-					
+					//验证选择的模式
 
 					//下面的form表单的转换 ，是当触发的时候，将需要传的参数放在一个新对象内，以便于，，在监听的是偶向父组件传值
 					this.sendForm.vlan=newVal.vlan;
@@ -283,7 +287,7 @@
 			sendForm:{
 				handler(newVal,oldVal){
 					console.log(newVal)
-//					this.$emit('sendFormData',newVal)
+					this.$emit('sendFormData',newVal)
 					this.$emit('sendFormData_a',newVal)
 					this.$emit('sendFormData_z',newVal)
 				},
@@ -385,7 +389,8 @@
 				this.editForm.logic=''
 				this.logicPort=[]
 				var para={
-					search_node:ids
+					search_node:ids,
+					search_usable:true,
 				}
 				this.$ajax.get('/port/logic_ports'+'?token='+this.token,para)
 				.then(res => {
@@ -394,6 +399,19 @@
 						if(res.data.status==0){
 							console.log(res)
 							//pointData
+<<<<<<< HEAD
+
+							console.log(this.pointData)
+							res.data.data.items.forEach(ele => {
+								let strVal={};
+								if(isPortStatus(ele.physical_ports)=='UP'){
+									strVal.statusColor='statusUP'
+								}else if(isPortStatus(ele.physical_ports)=='DOWN'){
+									strVal.statusColor='statusDOWN'
+								}else if(isPortStatus(ele.physical_ports)=='异常'){
+
+
+=======
 							res.data.data.items.map(ele => {
 								let staus=[]
 								ele.physical_ports.map(items => {
@@ -405,12 +423,19 @@
 								}else if(getPortStatus(staus)=='DOWN'){
 									strVal.statusColor='statusDOWN'
 								}else if(getPortStatus(staus)=='异常'){
+>>>>>>> 472df4b589afb81fe5c1adb75c5e3ca8cbc98ffd
 									strVal.statusColor='statusAbno'
 								}
 								let portObj={
 									id:ele.id,
 									name:ele.name,
+<<<<<<< HEAD
+									status:isPortStatus(ele.physical_ports),
+
+
+=======
 									status:getPortStatus(staus),
+>>>>>>> 472df4b589afb81fe5c1adb75c5e3ca8cbc98ffd
 									statusColor:strVal.statusColor,
 									statusVal:2,//statusVal  根据点到点的列表的数据   来判断该逻辑口的是否为可用的 默认的逻辑扣是全部可用的
 								}
@@ -430,6 +455,10 @@
 									}
 								}
 							}
+<<<<<<< HEAD
+
+=======
+>>>>>>> 472df4b589afb81fe5c1adb75c5e3ca8cbc98ffd
 						}
 					}
 				}).catch(e => {console.log(e)})
@@ -453,17 +482,18 @@
 					console.log(e)
 				})
 
-				console.log(this.pointData)
+				console.log(this.pointData);
 
 				
-				var obj1=this.pointData.find(item => {
+				var obj1=this.pointData.filter(item => {
 					return item.id == ids;
 				})
-
+				console.log(obj)
+				this.baseObj={};
 				if(typeof obj1 !='undefined'){
 					this.baseObj=obj1
 				}
-				console.log(obj1);
+
 
 				//获取逻辑口下的vlan的信息
 				this.$ajax.get('/vll/get_disable_vlan/'+ids+'?token='+this.token)

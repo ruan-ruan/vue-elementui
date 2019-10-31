@@ -5,11 +5,11 @@
       <!--工具条-->
       <el-col :span='24' class='toolbar' style='padding-bottom: 0px;'  >
         <el-form :inline='true' :model='filters' ref='filters'>
-          <el-form-item label='名称' prop='name' >
+          <el-form-item :label='$t("Public.name")' prop='name' >
             <el-input  v-model='filters.name' class='sel' ></el-input>
           </el-form-item>
-          <el-form-item label='数据中心' prop='search_dc' >
-            <el-select class='ipt_sta' v-model='filters.search_dc' placeholder='全部' filterable  >
+          <el-form-item :label='$t("physicalPosition.tab.data")' prop='search_dc' >
+            <el-select class='ipt_sta' v-model='filters.search_dc' :placeholder='$t("topFilters.placeholder")' filterable  >
               <el-option
                 v-for='(item,index) in dataCenter'
                 :key='index'
@@ -19,8 +19,8 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item  label='状态' prop='search_status' >
-            <el-select  class='ipt_sta' v-model='filters.search_status'  placeholder='全部' >
+          <el-form-item  :label='$t("Public.status")' prop='search_status' >
+            <el-select  class='ipt_sta' v-model='filters.search_status'  :placeholder='$t("topFilters.placeholder")' >
               <el-option
                 v-for='(vals,index) in status'
                 :key='index'
@@ -30,33 +30,43 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label='创建时间' prop='timeVal' >
+          <el-form-item :label='$t("Form.creation")' prop='timeVal' >
             <el-date-picker
               v-model="filters.timeVal"
               type="datetimerange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
+              :range-separator="$t('Public.to')"
+              :start-placeholder="$t('Public.start')"
+              :end-placeholder="$t('Public.end')"
               class='ipt_sels'
               @change="timeValSearchBtn"
             >
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type='primary' v-on:click='getUsers' >查询</el-button>
-            <el-button  type='info'  @click='reset' >重置</el-button>
+            <el-button type='primary' v-on:click='getUsers' >
+            	<!--查询-->{{$t('topFilters.search')}}
+            </el-button>
+            <el-button  type='info'  @click='reset' >
+            	<!--重置-->{{$t('topFilters.reset')}}
+            </el-button>
           </el-form-item>
         </el-form>
       </el-col>
 
 
       <div class="table-top">
-          <el-button   type="danger"   @click="batchRemove(sels)"   :disabled="this.sels.length===0"  >批量删除</el-button>
+          <el-button   type="danger"   @click="batchRemove(sels)"   :disabled="this.sels.length===0"  >
+          	<!--批量删除-->{{$t('tabOperation.batchDel')}}
+          </el-button>
       	 <el-dropdown split-button  type='success'  @command="handleExport"  >
-         		 导出数据
+         		 <!--导出数据-->{{$t('tabOperation.derived.tit')}}
           <el-dropdown-menu slot='dropdown'>
-            <el-dropdown-item command="current">当前页 </el-dropdown-item>
-            <el-dropdown-item command="all">所有页</el-dropdown-item>
+            <el-dropdown-item command="current"> 
+            	<!--当前页-->{{$t('tabOperation.derived.currentPage')}}
+            </el-dropdown-item>
+            <el-dropdown-item command="all">
+            	<!--所有页-->{{$t('tabOperation.derived.allPage')}}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -67,18 +77,18 @@
           <el-table :data='users'   highlight-current-row   @selection-change='selsChange'   style='width: 100%;'   
           	v-loading='loading' :default-sort = "{prop: 'creation_time', order: 'descending'}">
             <el-table-column  type='selection'  min-width='40'  ></el-table-column>
-            <el-table-column   type='index'  min-width='50'   label='序号'   align='center' >
+            <el-table-column   type='index'  min-width='50'   :label='$t("Public.index")'   align='center' >
             	<template slot-scope='scope'>
 								<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 							</template>
             </el-table-column>
             <el-table-column   prop='creation_time'
-              :formatter='dateFormat'   width='101'  label='创建时间' sortable  align='center'  ></el-table-column>
-            <el-table-column   prop='name'  min-width='80'  label='节点名称'   align='center' ></el-table-column>
-            <el-table-column   prop='nodeStatus'   min-width='80'  label='节点状态'  align='center' >
+              :formatter='dateFormat'   width='101'  :label='$t("Public.creation")' sortable  align='center'  ></el-table-column>
+            <el-table-column   prop='name'  min-width='80'  :label='$t("Public.nodeName")'   align='center' ></el-table-column>
+            <el-table-column   prop='nodeStatus'   min-width='80'  :label='$t("Public.nodeStatus")'  align='center' >
             
             </el-table-column>
-            <el-table-column   min-width='80'  label='设备名称'   align='center'  >
+            <el-table-column   min-width='80'  :label='$t("Public.deviceName")'   align='center'  >
               <template slot-scope="scope">
               	<span>{{scope.row.devices_name1}}</span> <br />
               	<span>{{scope.row.devices_name2}}</span>
@@ -89,19 +99,19 @@
               prop='exist_status'
               min-width='80'
 
-              label='设备状态'
+              :label='$t("Public.deviceStatus")' 
               align='center'
             >
               <template slot-scope="scope">
                 <ul v-for='item in scope.row.devices'>
-                  <li>{{item.exist_status=='normal'?'运行':'离线'}}</li>
+                  <li>{{item.exist_status=='normal'?$t('Public.run') : $t('Public.leave') }}</li>
                 </ul>
               </template>
             </el-table-column>
             <el-table-column
               min-width='60'
 
-              label='SN号'
+              :label='$t("Public.snNumver")' 
               align='center'
             >
               <template slot-scope="scope">
@@ -115,7 +125,7 @@
             <el-table-column
               min-width='70'
              
-              label='管理IP'
+              :label='$t("Public.manageIP")' 
               align='center'
             >
               <template slot-scope="scope">
@@ -137,38 +147,44 @@
               prop='dc.name'
               min-width='70'
               
-              label='数据中心'
+              :label='$t("Public.dataCen")' 
               align='center'
             ></el-table-column>
             <el-table-column
               prop='descriptionVal'
               min-width='60'
               
-              label='备注'
+             :label='$t("Public.description")' 
               align='center'
             ></el-table-column>
             <el-table-column
             	width='220'
-              label='操作'
+              :label='$t("Public.operation")' 
               align='center'
             >
               <template slot-scope='scope'>
                 <el-button
                   type='info'
-                  size='small'
+                  size='mini'
                   @click='handleSee(scope.$index, scope.row)'
-                >详情</el-button>
+                > 
+                <!--详情-->{{ $t('tabOperation.info')}}
+                </el-button>
                 <el-button
                   type='success'
-                  size='small'
+                  size='mini'
                   @click='handleEdit(scope.$index, scope.row)'
-                >编辑</el-button>
+                >
+                <!--编辑-->{{ $t('tabOperation.edit')}}
+                </el-button>
                 <el-button
                   type='danger'
-                  size='small'
+                  size='mini'
                   @click='handleDel(scope.$index, scope.row)'
                   v-if='diStatus'
-                >删除</el-button>
+                >
+                <!--删除-->{{ $t('tabOperation.delete')}}
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -186,8 +202,6 @@
             :current-page.sync="currentPage"
             :page-count='pageNum'
             :pager-count="pagecount"
-            :prev-text='prev'
-            :next-text='next'
           ></el-pagination>
         </el-col>
 
@@ -226,11 +240,11 @@ export default {
       status: [
         {
           value: "UP",
-          label: "运行中"
+          label: this.$t('Public.run')
         },
         {
           value: "DOWN",
-          label: "已离线"
+          label: this.$t('Public.leave')
         }
       ],
       //时间戳的转换
@@ -243,8 +257,7 @@ export default {
       currentPage: 1,
       pageNum: 1,
       pagecount: 5,
-      next: "下一页",
-      prev: "上一页",
+
       //导出数据的时候用来保存数据
       excelData: [],
       loading: false,
@@ -376,9 +389,9 @@ export default {
 				    				ele.devices_sn2='';
 				    				
 				    				if(str1.exist_status == "normal"){
-				    					ele.nodeStatus='单一运行';
+				    					ele.nodeStatus = this.$t('Public.SingleRun');
 				    				}else{
-				    						ele.nodeStatus='离线';
+				    						ele.nodeStatus= this.$t('Public.leave');
 				    				}
 				    				
 				    				
@@ -393,11 +406,11 @@ export default {
 				    				})
 	    							
 	    							if(str1.exist_status == "normal" && str2.exist_status == "normal"){
-				    					ele.nodeStatus='运行中';
+				    					ele.nodeStatus= this.$t('Public.run');
 				    				}else if( (str1.exist_status == "normal" && str2.exist_status == "found") || (str2.exist_status == "normal" && str1.exist_status == "found") ){
-				    					ele.nodeStatus='单一运行';
+				    					ele.nodeStatus= this.$t('Public.SingleRun');
 				    				}else{
-				    						ele.nodeStatus='离线';
+				    						ele.nodeStatus= this.$t('Public.leave');
 				    				}
 	    							
 	    							
@@ -469,7 +482,7 @@ export default {
       this.$store.state.DataCenter = this.dataCenter;
     },
     handleDel: function(index, row) {
-      this.$confirm("确认要删除该记录吗？", "提示", {
+      this.$confirm(this.$t('confirm.title'), this.$t('confirm.tooltip'), {
         type: "warning"
       })
         .then(() => {
@@ -479,7 +492,7 @@ export default {
               if (res.status == "200") {
                 if (res.data.status == "0") {
                   this.$message({
-                    message: "删除成功!",
+                    message: this.$t('tooltipMes.delSuccess'),
                     type: "success"
                   });
                   this.getUsers();
@@ -503,7 +516,7 @@ export default {
       rows.forEach(element => {
         ids.push(element.id);
       });
-      this.$confirm("确认删除选中记录吗？", "提示", {
+      this.$confirm( this.$t('confirm.titles'), this.$t('confirm.title'), {
         type: "warning"
       })
         .then(() => {
@@ -516,7 +529,7 @@ export default {
               if (res.status == "200") {
                 if (res.data.status == "0") {
                   this.$message({
-                    message: "删除成功",
+                    message: this.$t('tooltipMes.delSuccess'),
                     type: "success"
                   });
                   this.getUsers();
@@ -535,9 +548,9 @@ export default {
     handleExport(command) {
       if (command == "all") {
         //导出所有的数据
-        this.$confirm("确定要导出所有的数据吗?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
+        this.$confirm( this.$t('tooltipMes.exportDataAll') , this.$t('confirm.title'), {
+          confirmButtonText: this.$t('confirm.confi'),
+          cancelButtonText: this.$t('tabOperation.cancel'),
           type: "warning"
         })
           .then(() => {
@@ -550,9 +563,9 @@ export default {
           .catch(() => {});
       } else if (command == "current") {
         //导出当前
-        this.$confirm("确定要导出当前页数据吗?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
+        this.$confirm( this.$t('tooltipMes.exportDataCurr'),  this.$t('confirm.title'), {
+         	confirmButtonText: this.$t('confirm.confi'),
+          cancelButtonText: this.$t('tabOperation.cancel'),
           type: "warning"
         })
           .then(() => {
@@ -580,7 +593,7 @@ export default {
       let that = this;
       require.ensure([], () => {
         const { export_json_to_excel } = require("@/excel/export2Excel");
-        const tHeader = ["创建时间", "数据中心", "设备ID", "管理Ip", "备注"];
+        const tHeader = [this.$t('Public.creation'), this.$t('Public.dataCen'), this.$t('Public.id'), this.$t('Public.manageIP'), this.$t('Public.description')];
         const filterVal = [
           "creation_time",
           "dc_name",
@@ -590,7 +603,7 @@ export default {
         ];
         const list = that.excelData;
         const data = that.formatJson(filterVal, list);
-        export_json_to_excel(tHeader, data, "下载数据excel");
+        export_json_to_excel(tHeader, data, this.$t('tooltipMes.download')+"excel");
       });
     },
     formatJson(filterVal, jsonData) {

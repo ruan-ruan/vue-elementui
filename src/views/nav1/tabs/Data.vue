@@ -5,11 +5,11 @@
 				<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 					<el-col :span='24'>
 						<el-form :inline="true" :model="filters" ref='filters'>
-							<el-form-item label='名称' prop='name'>
-								<el-input v-model="filters.name" placeholder="请输入名称"></el-input>
+							<el-form-item :label='$t("Public.name")' prop='name'>
+								<el-input v-model="filters.name" :placeholder="$t('validateMes.place')+$t('topFilters.name')"></el-input>
 							</el-form-item>
-							<el-form-item label='所属区域:' prop='search_region'>
-								<el-select v-model='filters.search_region' filterable placehoder='全部' class='sel' @change='selectArea(filters.search_region)'>
+							<el-form-item :label='$t("Public.SubordinateArea")' prop='search_region'>
+								<el-select v-model='filters.search_region' filterable :placehoder='$t("topFilters.placeholder")' class='sel' @change='selectArea(filters.search_region)'>
 									<el-option
 										v-for='(item,index) in areaData'
 										:key='index'
@@ -29,8 +29,12 @@
 								</el-select>
 							</el-form-item>
 							<el-form-item>
-								<el-button type="primary" v-on:click="getDatas">查询</el-button>
-								<el-button type='info' @click='reset'>重置</el-button>
+								<el-button type="primary" v-on:click="getDatas">
+									<!--查询-->{{$t('topFilters.search')}}
+								</el-button>
+								<el-button type='info' @click='reset'>
+									<!--重置-->{{$t('topFilters.reset')}}
+								</el-button>
 							</el-form-item>
 						</el-form>	
 					</el-col>
@@ -38,15 +42,23 @@
 				</el-col>
 				<el-col :span='24'>
 					<el-col :span='4'>
-						<el-button type="primary" @click="handleAdd">新增</el-button>
+						<el-button type="primary" @click="handleAdd">
+							<!--新增-->{{$t('tabOperation.add')}}
+						</el-button>
 					</el-col>
 					<el-col :span='20' class='table-top'>
-						<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">批量删除</el-button>
+						<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">
+							<!--批量删除-->{{$t('tabOperation.batchDel')}}
+						</el-button>
 						<el-dropdown split-button type='success'@command="handleExport">
-							导出数据
+							<!--导出数据-->{{$t('tabOperation.derived.tit')}}
 							<el-dropdown-menu slot='dropdown'>
-								<el-dropdown-item command="current">当前页 </el-dropdown-item>									
-								<el-dropdown-item command="all">所有页</el-dropdown-item>																				
+								<el-dropdown-item command="current">
+									<!--当前页-->{{$t('tabOperation.derived.currentPage')}}
+								</el-dropdown-item>									
+								<el-dropdown-item command="all">
+									<!--所有页-->{{$t('tabOperation.derived.allPage')}}
+								</el-dropdown-item>																				
 							</el-dropdown-menu>
 						</el-dropdown>
 					</el-col>
@@ -57,26 +69,32 @@
 					:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
 					<el-table-column type="selection" min-width="40" align='center'>
 					</el-table-column>
-					<el-table-column type="index" min-width="50" label='序号' align='center'>
+					<el-table-column type="index" min-width="50" :label='$t("Public.index")' align='center'>
 						<template slot-scope='scope'>
 							<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 						</template>
 					</el-table-column>
-					<el-table-column prop="creation_time" sortable label="时间" align='center' width='101' :formatter='dateFormat' >
+					<el-table-column prop="creation_time" sortable :label="$t('Public.creation')" align='center' width='101' :formatter='dateFormat' >
 					</el-table-column>
-					<el-table-column prop="name" label="名称" min-width="80" align='center'>
+					<el-table-column prop="name" :label="$t('Public.creation')" min-width="80" align='center'>
 					</el-table-column>
-					<el-table-column prop="region.name" label="所属区域" min-width="80" align='center'>
+					<el-table-column prop="region.name" :label="$t('Public.SubordinateArea')" min-width="80" align='center'>
 					</el-table-column>
-					<el-table-column prop="city.name" label="所属城市" min-width="80"  align='center'>
+					<el-table-column prop="city.name" :label="$t('Public.SubordinateArea')" min-width="80"  align='center'>
 					</el-table-column>
-					<el-table-column prop="descriptionVal" label="备注" align='center' >
+					<el-table-column prop="descriptionVal" :label="$t('Public.description')" align='center' >
 					</el-table-column>
-					<el-table-column label="操作" align='center'width='220'>
+					<el-table-column :label="$t('Public.operation')" align='center'width='260'>
 						<template slot-scope="scope">
-							<el-button size='small' type='info' @click='handleSee(scope.$index,scope.row)'>详情</el-button>
-							<el-button size="small"type='success' @click="handleEdit(scope.$index, scope.row)" >编辑</el-button>
-							<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)"  >删除</el-button>
+							<el-button size='mini' type='info' @click='handleSee(scope.$index,scope.row)'>
+								<!--详情-->{{$t('tabOperation.info')}}
+							</el-button>
+							<el-button size="mini"type='success' @click="handleEdit(scope.$index, scope.row)" >
+								<!--编辑-->{{$t('tabOperation.edit')}}
+							</el-button>
+							<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)"  >
+								<!--删除-->{{$t('tabOperation.delete')}}
+							</el-button>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -91,19 +109,18 @@
 						:page-sizes="[10, 20, 50, 100]"
 						:page-count='pageNum' 
 						:pager-count="pagecount"
-					    :prev-text='prev'
-					    :next-text='next'>
+					    >
 					</el-pagination>
 				</el-col>
 					
 		
 				<!--编辑界面-->
 				<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
-					<el-form label-position='left' :model="editForm" label-width="80px" label-ailgn='center' :rules="editFormRules" ref="editForm">
-						<el-form-item label="名称" prop='name'>
+					<el-form  :model="editForm" label-width="160px" label-ailgn='center' :rules="editFormRules" ref="editForm">
+						<el-form-item :label="$t('Public.name')+'：'" prop='name'>
 							<el-input v-model="editForm.name"  auto-complete="off" class='ipt_sels'></el-input>
 						</el-form-item>
-						<el-form-item label='所属区域' prop='region_id' >		
+						<el-form-item :label='$t("Public.SubordinateArea")+"："' prop='region_id' >		
 							<el-select  v-model='editForm.region_id'  filterable  @change='selectAreaDia(editForm.region_id)' class='sel' >
 								<el-option
 									v-for='(item,index) in areaData'
@@ -121,46 +138,54 @@
 								</el-option>
 							</el-select>
 						</el-form-item>
-						<el-form-item label="备注" prop='description'>
+						<el-form-item :label="$t('Public.description')+'：'" prop='description'>
 							<el-input type="textarea" v-model="editForm.description" class='ipt_sels'></el-input>
 						</el-form-item>
 					</el-form>
 					<div slot="footer" class="dialog-footer">
-						 <el-button @click.native="dialogFormVisible=false">取消</el-button>
+						 <el-button @click.native="dialogFormVisible=false">
+						 	<!--取消-->{{$t('tabOperation.cancel')}}
+						 </el-button>
 						<!--添加-->
-						<el-button v-if="dialogStatus=='create'" type="primary" @click="createData">保存</el-button>
+						<el-button v-if="dialogStatus=='create'" type="primary" @click="createData">
+							{{$t('tabOperation.save')}}
+						</el-button>
 						  <!--编辑-->
-			        	<el-button v-else type="primary" @click="updateData">保存</el-button>
-						<!-- <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button> -->
+			        	<el-button v-else type="primary" @click="updateData">
+			        		<!--保存-->{{$t('tabOperation.save')}}
+			        	</el-button>
+
 					</div>
 					
 				</el-dialog>
 				<!--详情界面-->
 				<el-dialog :title="textMap[dialogStatus]":visible.sync="dialog"  :close-on-click-modal="false">
-					<el-form label-position='left' :model="seeForm" label-width="80px"  ref="seeForm">
-						<el-form-item label="名称:" >
+					<el-form  :model="seeForm" label-width="160px"  ref="seeForm">
+						<el-form-item :label="$t('Public.name')+'：'" >
 							<template>
 								<span v-text="seeForm.name"></span>
 							</template>
 						</el-form-item>
-						<el-form-item label="所属区域:" >
+						<el-form-item :label="$t('Public.SubordinateArea')+'：'" >
 							<template>	
 								<span v-text="seeForm.region.name"></span>
 							</template>
 						</el-form-item>
-						<el-form-item label="所属城市:" >
+						<el-form-item :label="$t('Public.SubordinateCity')+'：'" >
 							<template>
 								<span v-text="seeForm.city.name"></span>
 							</template>
 						</el-form-item>
-						<el-form-item label="描述:">
+						<el-form-item :label="$t('Public.description')+'：'">
 							<template>
 								<span v-text="seeForm.description"></span>
 							</template>
 						</el-form-item>
 					</el-form>
 					<div slot="footer" class="dialog-footer">
-						 <el-button @click.native="dialog=false">取消</el-button>
+						 <el-button @click.native="dialog=false">
+						 	<!--取消-->{{$t('tabOperation.cancel')}}
+						 </el-button>
 					</div>
 				</el-dialog>
 			</section>	
@@ -180,9 +205,9 @@
 			    activeName:'first',
 			    dialogStatus: "",
 			    textMap: {
-			        update: "编辑",
-			        create: "新增",
-			        see:'详情'
+			        update: this.$t('tabOperation.edit'),
+			        create: this.$t('tabOperation.add'),
+			        see:this.$t('tabOperation.info')
 			    },
 			    dialogFormVisible: false,
 			    filters: {
@@ -220,14 +245,13 @@
 			    total: 0,
 			    pageNum:1,
 			    pagecount:5,
-			    next:'下一页',
-		  		prev:'上一页',
+
 			    sels: [], //列表选中列
 			    editFormRules: {
-			        id:[{required:true, message:'请输入id', trigger:'bur'}],
-			        name: [{ required: true, message: "请输入姓名", trigger: "blur" }],    
-			        region_id:[{ required: true, message: "请选择区域", trigger: "change , blur" },
-			        { required: true, message: "请选择城市", trigger: "change" }],
+			        id:[{required:true, message:this.$t('validateMes.place')+'id', trigger:'bur'}],
+			        name: [{ required: true, message: this.$t('validateMes.place')+this.$t('tooltipMes.name'), trigger: "blur" }],    
+			        region_id:[{ required: true, message: this.$t('validateMes.placeCh')+this.$t('tooltipMes.area'), trigger: "change , blur" },
+			        { required: true, message:  this.$t('validateMes.placeCh')+this.$t('tooltipMes.city'), trigger: "change" }],
 			        
 			    },
 			      //编辑界面数据
@@ -333,7 +357,7 @@
 		    },
 		    //删除
 		    handleDel: function(index, row) {
-		      this.$confirm("确认删除该记录吗?", "提示", {
+		      this.$confirm(this.$t('confirm.title'), this.$t('confirm.tooltip'), {
 		        type: "warning"
 		      })
 		        .then(() => {
@@ -344,7 +368,7 @@
 							if(res.data.status=='0'){
 
 								this.$message({
-									message:'删除成功!',
+									message:this.$t('tooltipMes.delSucess'),
 									type:'success'
 								})
 				                this.getDatas();
@@ -434,7 +458,7 @@
 			              		if(res.data.status=='0'){
 			              			this.editLoading = false;
 									this.$message({
-										message:'编辑成功!',
+										message:this.$t('tooltipMes.editSuccess'),
 										type:'success'
 									})
 									this.$refs["editForm"].resetFields();
@@ -466,7 +490,7 @@
 								if(res.data.status=='0'){
 									this.addLoading = false;
 									this.$message({
-										message:'添加成功!',
+										message:this.$t('tooltipMes.addSuccess'),
 										type:'success'
 									})
 									this.$refs["editForm"].resetFields();
@@ -495,7 +519,7 @@
 				rows.forEach(ele => {
 					ids.push(ele.id)
 				})
-		      	this.$confirm("确认删除选中记录吗？", "提示", {
+		      	this.$confirm(this.$t('confirm.titles'),this.$t('confirm.tooltip'), {
 		        	type: "warning"
 		      	})
 		        .then(() => {
@@ -507,7 +531,7 @@
 							if(res.data.status=='0'){
 
 								this.$message({
-									message:'删除成功!',
+									message:this.$t('tooltipMes.delSucess'),
 									type:'success'
 								})
 								this.getDatas();
@@ -525,9 +549,9 @@
 		    handleExport(command){
 		    		if(command=='all'){
 			    		//导出所有的数据
-			    		this.$confirm('确定要导出所有的数据吗?','提示',{
-			    			confirmButtonText:'确定',
-			    			cancelButtonText:'取消',
+			    		this.$confirm(this.$t('tooltipMes.exportDataAll'),this.$t('confirm.tooltip'),{
+			    			confirmButtonText:this.$t('confirm.confi'),
+			    			cancelButtonText:this.$t('tabOperation.cancel'),
 			    			type:'warning'
 			    		}).then(() => {
 			    			
@@ -536,7 +560,7 @@
                 			});
 			    	}else if(command=='current'){
 			    		//导出当前
-			    		this.$confirm('确定要导出当前页数据吗?','提示',{
+			    		this.$confirm(this.$t('tooltipMes.exportDataCurr'),this.$t('confirm.tooltip'),{
 			    			type:'warning'
 			    		}).then(() => {
 			    			var para={
@@ -553,10 +577,7 @@
 			    	.then(res => {
 			    		if(res.status==200){
 			    			if(res.data.status==0){
-			    				this.$message({
-			    					message:'正在下载，请稍等!',
-			    					type:'success'
-			    				})
+			    				
 			    				res.data.data.items.forEach(ele => {
 			    					ele.region_name=ele.region.name;
 			    				})
@@ -576,11 +597,11 @@
 				let that=this;
 				require.ensure([],() => {
 					const {export_json_to_excel} =require('@/excel/export2Excel');
-					const tHeader=['id','名称','所属区域','备注'];
+					const tHeader=['id',this.$t('Public.name'),this.$t('Public.SubordinateArea'),this.$t('Public.description')];
 					const filterVal=['id','name','region_name','description'];
 					const list=that.excelData;
 					const data=that.formatJson(filterVal,list);
-					export_json_to_excel(tHeader,data,'下载数据excel')
+					export_json_to_excel(tHeader,data,this.$t('tooltipMes.download')+'excel')
 				})
 			},
 			formatJson(filterVal,jsonData){

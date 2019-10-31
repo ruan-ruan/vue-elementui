@@ -2,17 +2,17 @@
 	<div>
 		<el-button size='small' @click='goBack()'><i class="fa fa-angle-double-left"></i>返回</el-button>
 		<el-tabs v-model='activeName'>
-			<el-tab-pane label='节点详情' name='first'>
+			<el-tab-pane :label='$t("Public.nodeDetails")' name='first'>
 				<Node :title='id' :physicalPort='physicalValue' :physicalData='physicalData'></Node>
 			</el-tab-pane>
-			<el-tab-pane label='端口信息' name='second'>
+			<el-tab-pane :label='$t("Public.portInfo")' name='second'>
 				<Port :title='id'></Port>
 			</el-tab-pane>
-			<el-tab-pane label='点到点专线' name='thired'>
+			<el-tab-pane  :label='$t("Public.pointLine")' name='thired'>
 				<!--<Port ></Port>-->
 				<points-to :nodeID='id'></points-to>
 			</el-tab-pane>
-			<el-tab-pane label='虚拟组网专线' name='fourth'>
+			<el-tab-pane :label='$t("Public.virtualLine")' name='fourth'>
 				<virtualNetwork :clounId='id'></virtualNetwork>
 			</el-tab-pane>
 		</el-tabs>
@@ -56,31 +56,7 @@
 				//返回
 				 this.$router.go(-1)
 			},
-			getUsers(id){  //获取节点的详情
-				this.$ajax.get('/node/node_info/'+id+'?token='+this.token)
-				.then(res => {
-					console.log(res)
-				})
-				.catch(e => {console.log(e)})
-//				this.$ajax.get('/node/device_info/'+id+'/ports'+'?token='+this.token)
-//				.then(res => {
-//					if(res.status==200){
-//						if(res.data.status==0){
-//							this.physicalData=res.data.data.items;
-//							console.log(res)
-//							if(res.data.data.items.length===1){
-//								console.log('这个时候只有一个物理端口')
-//								this.physicalValue=1
-//							}else if(res.data.data.items.length===2){
-//								console.log('这个时候只有两个物理端口');
-//								this.physicalValue=2
-//							}
-//						}
-//					}
-//				}).catch(e => {
-//					console.log(e)
-//				})
-			}
+
 		},
 	}
 </script>

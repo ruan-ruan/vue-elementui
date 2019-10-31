@@ -6,7 +6,7 @@
 				<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 					<el-form :inline="true" :model="filters" ref='filters' @submit.native.prevent >
 						<el-form-item :label='$t("Public.name")' prop='name'>
-							<el-input v-model="filters.name" placeholder="请输入名称"></el-input>
+							<el-input v-model="filters.name" :placeholder="$t('validateMes.place')+$t('topFilters.name')"></el-input>
 						</el-form-item>
 						<el-form-item>
 							<el-button type="primary" v-on:click="getUsers" >
@@ -66,7 +66,7 @@
 					</el-table-column>
 					<el-table-column prop="descriptionVal" :label='$t("Public.description")'  align='center' min-width='120'>
 					</el-table-column>
-					<el-table-column :label='$t("Public.operation")'  align='center'  >
+					<el-table-column :label='$t("Public.operation")'  align='center'  width='260'>
 						<template slot-scope="scope" style="width: 100%;">
 							<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>
 								<!--详情-->
@@ -94,33 +94,42 @@
 				     	  :current-page.sync="currentPage"  
 				     	  :page-count='pageNum'
 				     	  :pager-count="pagecount"
-				     	  :prev-text='prev'
-				     	  :next-text='next' >						     	
+				     	  
+				     	   >						     	
 				     </el-pagination>
 				</el-col>
 		
 				<!--编辑界面-->
 				<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false"  v-loading='editLoading'>
 					<el-form label-position='left' :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm" >
-						<el-form-item label="名字" prop="name">
+						<el-form-item :label="$t('Public.name')+'：'" prop="name">
 							<el-input v-model="editForm.name" auto-complete="off" class='ipt_sels' ></el-input>
 						</el-form-item>
-						<el-form-item label="备注">
+						<el-form-item :label="$t('Public.description')+':'">
 							<el-input type="textarea" v-model="editForm.description" class='ipt_sels' ></el-input>
 						</el-form-item>
 					</el-form>
 					<div slot="footer" class="dialog-footer">
-						 <el-button @click.native="dialogFormVisible=false">取消</el-button>
+						 <el-button @click.native="dialogFormVisible=false">
+						 	<!--取消-->
+						 	{{$t('tabOperation.cancel')}}
+						 </el-button>
 						<!--添加-->
-						<el-button v-if="dialogStatus=='create'" type="primary" @click="createData">保存</el-button>
+						<el-button v-if="dialogStatus=='create'" type="primary" @click="createData">
+							<!--保存-->
+						 	{{$t('tabOperation.save')}}
+						</el-button>
 						  <!--编辑-->
-			        	<el-button v-else type="primary" @click="updateData">保存</el-button>
+			        	<el-button v-else type="primary" @click="updateData">
+			        		<!--保存-->
+						 	{{$t('tabOperation.save')}}
+			        	</el-button>
 					</div>
 				</el-dialog>
 				<!--详情界面-->
 				<el-dialog  :title="textMap[dialogStatus]":visible.sync="dialog"  :close-on-click-modal="false" v-loading='editLoading'>
 					<el-form label-position='left' :model="seeForm" label-width="80px"  ref="seeForm">
-						<el-form-item label="创建时间:" >
+						<el-form-item  :label="$t('Form.creation')" >
 							<template>
 								<span v-text="Time"></span>
 							</template>
@@ -130,19 +139,22 @@
 								<span v-text='seeForm.id'></span>
 							</template>
 						</el-form-item>
-						<el-form-item label="区域名称:" >
+						<el-form-item :label="$t('physicalPosition.regionName')" >
 							<template>
 								<span v-text="seeForm.name"></span>
 							</template>
 						</el-form-item>
-						<el-form-item label="描述:">
+						<el-form-item :label="$t('Public.description')">
 							<template>
 								<span v-text="seeForm.description"></span>
 							</template>
 						</el-form-item>
 					</el-form>
 					<div slot="footer" class="dialog-footer">
-						 <el-button @click.native="dialog=false">取消</el-button>
+						 <el-button @click.native="dialog=false"> 
+						 	<!--取消-->
+						 	{{$t('tabOperation.cancel')}}
+						 </el-button>
 					</div>
 				</el-dialog>
 			</section>
@@ -167,9 +179,9 @@
 		      	dialogStatus: "",
 		      	dialog:'',
 		      	textMap: {
-		        	update: "编辑",
-		        	create: "新增",
-		        	see:'详情'
+		        	update: this.$t('tabOperation.edit'),
+		        	create: this.$t('tabOperation.add'),
+		        	see:this.$t('tabOperation.info')
 		      	},
 		      	dis:'disabled',
 		      	dialogFormVisible: false,
@@ -187,13 +199,12 @@
 			  	currentPage:1,
 			  	pageNum:1,
 			  	pagecount:5,
-			  	next:'下一页',
-			  	prev:'上一页',
+			  
 			  
 		      	sels: [], //列表选中列
 		        editLoading: false,
 		      	editFormRules: {
-		        	name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
+		        	name: [{ required: true, message:this.$t('validateMes.place')+this.$t('tooltipMes.name') , trigger: "blur" }]
 		      	},
 		      //编辑界面数据
 		      	editForm: {
@@ -213,7 +224,7 @@
 		      	dialog:false,
 		      	addFormVisible: false, //新增界面是否显示
 		      	addFormRules: {
-		        	name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
+		        	name: [{ required: true,  message:this.$t('validateMes.place')+this.$t('tooltipMes.name') , trigger: "blur" }]
 		      	},
 		      	excelData:[],
 		      	token:'',
@@ -278,7 +289,20 @@
 		    },
 		    //删除
 		    handleDel: function(index, row) {
-		    	this.$confirm('确定要删除该记录吗？','提示',{})
+		    	const confirmText=['确定要删除'+row.name+'区域信息?','注意：删除后该信息将不可找回!'];
+		    	const newDatas = [];
+        		const h = this.$createElement;
+        		 for (const i in confirmText) {
+		          	newDatas.push(h('p', null, confirmText[i]))
+		        }
+		    	this.$confirm(this.$t('confirm.tooltip'),{
+		    		title: this.$t('confirm.tooltip'),
+		    		message: h('div', null, newDatas),
+		    		showCancelButton: true,
+		    		confirmButtonText: this.$t('confirm.confi'),
+		            cancelButtonText: this.$t('tabOperation.cancel'),
+		            type: 'warning'
+		    	})
 		    	.then(()=> {
 
 		    		this.$ajax.del('/location/del_region/'+row.id+'?token='+this.token)

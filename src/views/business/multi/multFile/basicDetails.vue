@@ -6,9 +6,13 @@
 			</el-form-item>
 			<el-form-item label='计费模式' prop='changeModel'>
 				 <el-radio-group v-model="basicForm.changeModel" :disabled='typeof type != "undefined"'>
-				 	<el-radio-button border v-for='item in modelData'
+				 	<el-radio-button border v-for='(item,index) in modelData'
 				 	:value='item.value'
+<<<<<<< HEAD
+				 	:key='index'
+=======
 					 :key="item"
+>>>>>>> 472df4b589afb81fe5c1adb75c5e3ca8cbc98ffd
 				 	:label="item.label" 
 				 	></el-radio-button>
 				 </el-radio-group>
