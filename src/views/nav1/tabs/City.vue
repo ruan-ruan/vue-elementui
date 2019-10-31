@@ -317,6 +317,7 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							console.log(res)
+							this.editLoading = false;
 							this.seeForm=res.data.data;
 						}
 					}

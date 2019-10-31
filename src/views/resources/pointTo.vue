@@ -508,7 +508,7 @@ export default {
       parentStatus: true, //该组件被调用的S时候，上面控制部分隐藏
       isid: [],
       baseForm:{},//数据的备份
-     
+      timers:null
     };
   },
   created() {
@@ -524,6 +524,10 @@ export default {
       this.parentStatus = true;
     }
     this.getUsers();
+    // this.timers = setInterval(() => {
+    //    this.getUsers();
+    // }, 10000)
+   
   },
   methods: {
     getFiltersData() {
@@ -1009,7 +1013,12 @@ export default {
         }
       };
     }
-  }
+  },
+  // beforeDestroy(){
+  //   clearInterval(this.timers)
+  //   console.log(3333333)
+  //   this.timers=null;
+  // }
 };
 </script>
 

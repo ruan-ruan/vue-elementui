@@ -333,7 +333,7 @@
 								description:this.editForm.description,
 								node_id:this.editForm.node_id,
 								logic_port_id:this.editForm.logic_port_id,
-								interface_driver:this.editForm.name,
+								interface_driver:this.editForm.interface_driver,
 								api_url:this.editForm.api_url,
 								api_token:this.editForm.api_token,
 								api_uuid:this.editForm.api_uuid,
