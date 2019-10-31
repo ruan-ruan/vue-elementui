@@ -339,13 +339,10 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-<<<<<<< HEAD
+
 							console.log(res);
 							this.editLoading=false;
-=======
-							console.log(res)
-							this.editLoading = false;
->>>>>>> 472df4b589afb81fe5c1adb75c5e3ca8cbc98ffd
+
 							this.seeForm=res.data.data;
 						}
 					}

@@ -70,7 +70,7 @@
 				</el-table-column>
 				<el-table-column prop='status'  label='链路状态' min-width='80' align='center'>
 				</el-table-column>
-				<el-table-column prop='typeName'  label='公有云' min-width='80' align='center'>
+				<el-table-column prop='type'  label='公有云' min-width='80' align='center'>
 				</el-table-column>
 				<el-table-column prop='region'  label='区域 ' min-width='60' align='center'>
 				</el-table-column>
@@ -210,11 +210,11 @@
 							
 							descriptionValue(res.data.data.items)
 							res.data.data.items.forEach(ele => {
-								if(ele.type==='ali'){
-									ele.typeName='阿里云'
-								}else if(ele.type==='tencent'){
-									ele.typeName='腾讯云'
-								}
+//								if(ele.type == 'ali'){
+//									ele.typeName='阿里云'
+//								}else if(ele.type == 'tencent'){
+//									ele.typeName='腾讯云'
+//								}
 //								console.log(ele.logic_port.physical_port)
 								ele.portStatus=getPortStatus(ele.logic_port.physical_port)
 								if(getPortStatus(ele.logic_port.physical_port) === 'UP'){

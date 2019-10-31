@@ -381,10 +381,10 @@ export default {
     this.$ajax
       .get("/public/get_news" + "?token=" + this.tokenkey, para)
       .then(res => {
-        console.log(res);
+//      console.log(res);
         if (res.status == 200) {
           if (res.data.status == 0) {
-            this.$store.state.message = res.data.data.page.total;
+            this.$store.state.message = res.data.data.items.length;;
           }
         }
       })
