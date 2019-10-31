@@ -52,7 +52,7 @@
 				<el-table-column prop='name'label='组网名称' align='center'min-width='150' ></el-table-column>
 				<el-table-column prop='len'label='关联端点数' align='center'min-width='150' >
 					<template slot-scope='scope'>
-						<span>{{scope.row.endpoints.length}}</span>
+						<span>{{scope.row.endpoints?scope.row.endpoints.length:''}}</span>
 					</template>
 				</el-table-column>
 				<el-table-column prop='tenant.name'label='租户标识' align='center'min-width='150' ></el-table-column>

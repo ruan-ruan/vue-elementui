@@ -233,7 +233,8 @@
 			selNode(ids){//根据所选取的节点获取逻辑口
 				this.editForm.logic_port_id=''
 				var para={
-					search_node:ids
+					search_node:ids,
+					search_usable:true,
 				};
 				var obj={};
 //				console.log(this.multiLogic);
@@ -256,7 +257,7 @@
 					if(res.status==200){
 						if(res.data.status==0){
 //							this.logicData=res.data.data.items;
-							console.log(res);
+
 							this.logicData=res.data.data.items.filter( item => {//根据id删除业务开通的额时候  占用 逻辑口
 								let idList=logic.map(v => v.id);
 								return  !idList.includes(item.id)
@@ -389,7 +390,7 @@
 							let para={
 								type:this.editForm.type,
 								name:this.editForm.name,
-								region_id:this.editForm.region_id,
+								region:this.editForm.region_id,
 								access_point:this.editForm.access_point_id,
 								bandwidth:this.editForm.bandwidth,
 								description:this.editForm.description,
@@ -416,7 +417,7 @@
 										this.$router.replace('/location/line/cloun')
 									}else{
 										this.$message({
-											messsage:res.data.message,
+											message:res.data.message,
 											type:'warning'
 										})
 									}

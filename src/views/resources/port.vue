@@ -214,7 +214,7 @@
 					this.loading=false;
 					if(res.status==200){
 						if(res.data.status==0){
-
+//							console.log(res)
 							descriptionValue(res.data.data.items)
 							this.total=res.data.data.page.total;
 							res.data.data.items.forEach(ele => {

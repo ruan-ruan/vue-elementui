@@ -1,15 +1,15 @@
 <template>
 	<div>
-		<el-button size='small' @click='unknowgoback' v-if='!unkownBtn'  >返回</el-button>
+		<el-button size='small' @click='unknowgoback' v-if='!unkownBtn'  >{{$t('Public.goback')}}</el-button>
 		
 		<section>
 			<!--<h4 v-show='unknown_editForm_status'>骨干ID:{{seeForm.id}}</h4>-->
-				<el-form label-position='left'style='margin-left: 50px;' :model='seeForm'ref='seeForm' label-width="100px"  v-loading='loading' :rules='rulesForm'>
+				<el-form style='margin-left: 50px;' :model='seeForm'ref='seeForm' label-width="160px"  v-loading='loading' :rules='rulesForm'>
 					<el-row>
 						<el-col :span='24'>
 							<el-col :span='12'>
 								
-								<el-form-item label='骨干名称:' prop='name'>
+								<el-form-item :label='$t("Public.backboneName")+"："' prop='name'>
 									<el-input v-model='seeForm.name' :disabled='StaEditForm'class='ipt'placeholder='请输入骨干名称'></el-input>
 								</el-form-item>
 								<el-form-item label='Vtep:'prop='vtep'>
@@ -17,7 +17,7 @@
 								</el-form-item>
 							</el-col>
 							<el-col :span='12'>								
-								<el-form-item label='数据中心:' prop='dc_id'>
+								<el-form-item :label='$t("Public.dataCen")' prop='dc_id'>
 									<el-input v-model='seeForm.dc_id' :disabled='StaEditForm' v-show='StaEditForm' class='ipt'></el-input>
 									<el-select v-model='seeForm.dc_id' @change="change" filterable class='ipt' v-show='!StaEditForm' placeholder='请选择数据中心'>
 										<el-option v-for='item in itemData'
@@ -29,95 +29,95 @@
 								</el-form-item>
 							</el-col>
 						</el-col>
-						<el-button size='small' type='success' @click='equStatusTwo = !equStatusTwo' v-show='addEquipStatus' v-text='equStatusTwo?"收起物理设备2":"添加物理设备2"' ></el-button>
+						<el-button size='small' type='success' @click='equStatusTwo = !equStatusTwo' v-show='addEquipStatus' v-text='equStatusTwo?$t("Public.packUpDeviceTwo"):$t("Public.addphyDeviceTwo")' ></el-button>
 						<el-col :span='24'>		
 							<el-col :span='12' class='equipment'>
-								<h4>物理设备1:</h4>
-								<el-form-item label='设备名称:'prop='devices0_hostname'>
-									<el-input v-model='seeForm.devices0_hostname':disabled='StaNot' class='ipt'placeholder='请输入设备名称'></el-input>
+								<h4>{{$t('Public.phyDeviceOne')}}:</h4>
+								<el-form-item :label='$t("Public.deviceName")+"："'prop='devices0_hostname'>
+									<el-input v-model='seeForm.devices0_hostname':disabled='StaNot' class='ipt' :placeholder='$t("validateMes.place")+$t("Public.deviceName")'></el-input>
 								</el-form-item>
-								<el-form-item label='管理IP:'prop='devices0_ip'>
-									<el-input v-model='seeForm.devices0_ip':disabled='StaNot' class='ipt'placeholder='请输入管理IP'></el-input>
+								<el-form-item :label='$t("Public.manageIP")+"："'prop='devices0_ip'>
+									<el-input v-model='seeForm.devices0_ip':disabled='StaNot' class='ipt':placeholder='$t("validateMes.place")+$t("Public.manageIP")'></el-input>
 								</el-form-item>
-								<el-form-item label='硬件供应商:' prop='devices0_vendor'>
-									<el-input v-model='seeForm.devices0_vendor':disabled='StaNot'class='ipt'placeholder='请输入硬件供应商'></el-input>
+								<el-form-item :label='$t("Public.vendor")+"："' prop='devices0_vendor'>
+									<el-input v-model='seeForm.devices0_vendor':disabled='StaNot'class='ipt':placeholder='$t("validateMes.place")+$t("Public.vendor")'></el-input>
 								</el-form-item>
-								<el-form-item label='SN号:' prop='devices0_sn'>
-									<el-input v-model='seeForm.devices0_sn':disabled='StaNot'class='ipt'placeholder='请输入SN号'></el-input>
+								<el-form-item :label='$t("Public.snNumber")+"："' prop='devices0_sn'>
+									<el-input v-model='seeForm.devices0_sn':disabled='StaNot'class='ipt':placeholder='$t("validateMes.place")+$t("Public.snNumber")'></el-input>
 								</el-form-item>
-								<el-form-item label='设备型号:'prop='devices0_model'>
-									<el-input v-model='seeForm.devices0_model':disabled='StaNot'class='ipt'placeholder='请输入设备型号'></el-input>
+								<el-form-item :label='$t("Public.deviceModel")+"："' prop='devices0_model'>
+									<el-input v-model='seeForm.devices0_model':disabled='StaNot'class='ipt':placeholder='$t("validateMes.place")+$t("Public.deviceModel")'></el-input>
 								</el-form-item>
 								<!--业务端口区间-->
-								<el-form-item label='端口区间:' prop='port_section0'>
+								<el-form-item :label='$t("Public.portSection")+"："' prop='port_section0'>
 									<template>						
-										<el-input v-model='seeForm.port_section0':disabled='StaNot'class='ipt' placeholder='请输入设备1端口'></el-input>
+										<el-input v-model='seeForm.port_section0':disabled='StaNot'class='ipt' :placeholder='$t("Public.place1")'></el-input>
 										<span class="cli_toTip":title='portRules'>*?</span>
 									</template>
 								</el-form-item>
-								<el-form-item label='所在位置:'>
-									<el-input v-model='seeForm.devices0_position':disabled='StaEditForm'class='ipt'placeholder="所在位置"></el-input>
+								<el-form-item :label='$t("Public.position")+"："'>
+									<el-input v-model='seeForm.devices0_position':disabled='StaEditForm'class='ipt':placeholder='$t("Public.position")'></el-input>
 								</el-form-item>
-								<el-form-item label='所在房间:'>
-									<el-input v-model='seeForm.devices0_room':disabled='StaEditForm'class='ipt'placeholder="所在房间"></el-input>
+								<el-form-item :label='$t("Public.room")+"："'>
+									<el-input v-model='seeForm.devices0_room':disabled='StaEditForm'class='ipt':placeholder='$t("Public.room")'></el-input>
 								</el-form-item>
-								<el-form-item label='所在Rack:'>
-									<el-input v-model='seeForm.devices0_rack':disabled='StaEditForm'class='ipt'placeholder="所在Rack"></el-input>
+								<el-form-item :label='$t("Public.rack")+"："'>
+									<el-input v-model='seeForm.devices0_rack':disabled='StaEditForm'class='ipt':placeholder='$t("Public.rack")'></el-input>
 								</el-form-item>
-								<el-form-item label='备注:'>
-									<el-input type="textarea" v-model='seeForm.devices0_description'rows='4':disabled='StaEditForm'placeholder="最多输入150字符" maxlength='150'class='ipt' ></el-input>
+								<el-form-item :label='$t("Public.description")+"："'>
+									<el-input type="textarea" v-model='seeForm.devices0_description'rows='4':disabled='StaEditForm':placeholder='$t("Public.place150")' maxlength='150'class='ipt' ></el-input>
 								</el-form-item>
 							</el-col>
 							<el-col :span='12' class='equipment'v-if='equStatusTwo'>
-								<h4>物理设备2:</h4>
-								<el-form-item label='设备名称:' prop='devices1_hostname'>
-									<el-input v-model='seeForm.devices1_hostname':disabled='StaNot' class='ipt'></el-input>
+								<h4>{{$t("Public.phyDeviceTwo")}}</h4>
+								<el-form-item :label='$t("Public.deviceName")+"："' prop='devices1_hostname'>
+									<el-input v-model='seeForm.devices1_hostname':disabled='StaNot' class='ipt'  :placeholder='$t("validateMes.place")+$t("Public.deviceName")'></el-input>
 								</el-form-item>
-								<el-form-item label='管理IP:'prop='devices1_ip'>
-									<el-input v-model='seeForm.devices1_ip':disabled='StaNot' class='ipt'></el-input>
+								<el-form-item :label='$t("Public.manageIP")+"："'prop='devices1_ip'>
+									<el-input v-model='seeForm.devices1_ip':disabled='StaNot' class='ipt':placeholder='$t("validateMes.place")+$t("Public.manageIP")'></el-input>
 								</el-form-item>
-								<el-form-item label='硬件供应商:'prop='devices1_vendor'>
-									<el-input v-model='seeForm.devices1_vendor':disabled='StaNot'class='ipt'></el-input>
+								<el-form-item :label='$t("Public.vendor")+"："'prop='devices1_vendor'>
+									<el-input v-model='seeForm.devices1_vendor':disabled='StaNot'class='ipt' :placeholder='$t("validateMes.place")+$t("Public.vendor")'></el-input>
 								</el-form-item>
-								<el-form-item label='SN号:' prop='devices1_sn'>
-									<el-input v-model='seeForm.devices1_sn':disabled='StaNot'class='ipt'></el-input>
+								<el-form-item :label='$t("Public.snNumber")+"："' prop='devices1_sn'>
+									<el-input v-model='seeForm.devices1_sn':disabled='StaNot'class='ipt':placeholder='$t("validateMes.place")+$t("Public.snNumber")'></el-input>
 								</el-form-item>
-								<el-form-item label='设备型号:'prop='devices1_model'>
-									<el-input v-model='seeForm.devices1_model':disabled='StaNot'class='ipt'></el-input>
+								<el-form-item :label='$t("Public.deviceModel")+"："'prop='devices1_model'>
+									<el-input v-model='seeForm.devices1_model':disabled='StaNot'class='ipt':placeholder='$t("validateMes.place")+$t("Public.deviceModel")'></el-input>
 								</el-form-item>
 								<!--业务端口区间-->
-								<el-form-item label='端口区间:' prop='port_section1'>
+								<el-form-item :label='$t("Public.portSection")+"："' prop='port_section1'>
 									<template>
-										<el-input v-model='seeForm.port_section1':disabled='StaNot'class='ipt' placeholder="请输入设备2端口"></el-input>
+										<el-input v-model='seeForm.port_section1':disabled='StaNot'class='ipt'  :placeholder='$t("Public.place2")'></el-input>
 										<span class="cli_toTip":title='portRules'>*?</span>
 									</template>
 								</el-form-item>
-								<el-form-item label='所在位置:'>
-									<el-input v-model='seeForm.devices1_position':disabled='StaEditForm'class='ipt'placeholder="所在位置"></el-input>
+								<el-form-item :label='$t("Public.position")+"："'>
+									<el-input v-model='seeForm.devices1_position':disabled='StaEditForm'class='ipt':placeholder='$t("Public.position")'></el-input>
 								</el-form-item>
-								<el-form-item label='所在房间:'>
-									<el-input v-model='seeForm.devices1_room':disabled='StaEditForm'class='ipt'placeholder="所在房间"></el-input>
+								<el-form-item :label='$t("Public.room")+"："'>
+									<el-input v-model='seeForm.devices1_room':disabled='StaEditForm'class='ipt':placeholder='$t("Public.room")'></el-input>
 								</el-form-item>
-								<el-form-item label='所在Rack:'>
-									<el-input v-model='seeForm.devices1_rack':disabled='StaEditForm'class='ipt'placeholder="所在Rack"></el-input>
+								<el-form-item :label='$t("Public.rack")+"："'>
+									<el-input v-model='seeForm.devices1_rack':disabled='StaEditForm'class='ipt':placeholder='$t("Public.rack")'></el-input>
 								</el-form-item>
-								<el-form-item label='备注:'>
-									<el-input type="textarea" v-model='seeForm.devices1_description'rows='4':disabled='StaEditForm'placeholder="最多输入150字符" maxlength='150'class='ipt' ></el-input>
+								<el-form-item :label='$t("Public.description")+"："'>
+									<el-input type="textarea" v-model='seeForm.devices1_description'rows='4':disabled='StaEditForm':placeholder='$t("Public.place150")' maxlength='150'class='ipt' ></el-input>
 								</el-form-item>
 							</el-col>
 						</el-col>
 					</el-row>					
 				</el-form>
 				<div slot='footer' class="dialog-footer footer_right">
-					<el-button size='small' @click='goback' v-if='editFormBtn' >返回</el-button>
+					<el-button size='small' @click='goback' v-if='editFormBtn' >{{$t('Public.goback')}}</el-button>
 					
-					<el-button size='small' @click='unknowgoback' v-if='unkownBtn'  >返回</el-button>
+					<el-button size='small' @click='unknowgoback' v-if='unkownBtn'  >{{$t('Public.goback')}}</el-button>
 					<!--节点的编辑保存-->
-					<el-button size='small' v-if='editFormBtn' @click='editForm' type="primary">保存</el-button>
+					<el-button size='small' v-if='editFormBtn' @click='editForm' type="primary">{{$t('tabOperation.save')}}</el-button>
 					<!--未知节点的添加按钮-->
-					<el-button size='small' v-if='creatFormBtn' @click='creatForm'type='primary'>保存 </el-button>
+					<el-button size='small' v-if='creatFormBtn' @click='creatForm'type='primary'>{{$t('tabOperation.save')}} </el-button>
 					<!--未知节点的编辑按钮-->
-					<el-button size='small' v-if='unknownStatusBtn' @click='unknownEditForm' type='primary'>保存</el-button>
+					<el-button size='small' v-if='unknownStatusBtn' @click='unknownEditForm' type='primary'>{{$t('tabOperation.save')}}</el-button>
 				</div>
 		</section>
 	</div>
@@ -133,7 +133,7 @@
 		data(){
 			let validcodeID =(rule,value,callback) => {
 				if(value==''){
-					callback(new Error('请输入ID'))
+					callback(new Error(this.$t('validateMes.place')+this.$t('Public.id')))
 				}else{
 					callback()
 				}
@@ -194,23 +194,23 @@
 					dc_name:'',
 				},
 				rulesForm:{
-					name:[{ required: true, message: '请输入节点名称', trigger: 'blur' }],
-					dc_id:[{ required: true, message: '请选择数据中心', trigger: 'change' }],
-					vtep:[{ required: true, message: '请输入vtep', trigger: 'blur' }],
+					name:[{ required: true, message: this.$t('validateMes.place')+this.$t('Public.nodeName'), trigger: 'blur' }],
+					dc_id:[{ required: true, message: this.$t('validateMes.placeCh')+this.$t('Public.dataCen'), trigger: 'change' }],
+					vtep:[{ required: true, message:this.$t('validateMes.place')+ 'vtep', trigger: 'blur' }],
 					devices0_id:[{ required: true, message: '请输入设备ID', trigger: 'blur' },
 					{validator:validcodeID,trigger:'blur'}],
-					devices0_hostname:[{ required: true, message: '请输入设备名称', trigger: 'blur' }],
-					devices0_vendor:[{ required: true, message: '请输入设备厂商', trigger: 'blur' }],
-					devices0_sn:[{ required: true, message: '请输入sn号', trigger: 'blur' }],
-					devices0_ip:[{ required: true, message: '请输入ip', trigger: 'blur' }],
-					devices0_model:[{ required: true, message: '请输入设备型号', trigger: 'blur' }],
+					devices0_hostname:[{ required: true, message:this.$t('validateMes.place')+this.$t('Public.deviceName'), trigger: 'blur' }],
+					devices0_vendor:[{ required: true, message: this.$t('validateMes.place')+this.$t('Public.vendor'), trigger: 'blur' }],
+					devices0_sn:[{ required: true, message: this.$t('validateMes.place')+this.$t('Public.snNumber'), trigger: 'blur' }],
+					devices0_ip:[{ required: true, message: this.$t('validateMes.place')+'ip', trigger: 'blur' }],
+					devices0_model:[{ required: true, message: this.$t('validateMes.place')+this.$t('Public.deviceModel'), trigger: 'blur' }],
 					devices1_id:[{ required: true, message: '请输入设备ID', trigger: 'blur' },
 					{validator:validcodeID,trigger:'blur'}],
-					devices1_hostname:[{ required: true, message: '请输入设备名称', trigger: 'blur' }],
-					devices1_vendor:[{ required: true, message: '请输入设备厂商', trigger: 'blur' }],
-					devices1_sn:[{ required: true, message: '请输入sn号', trigger: 'blur' }],
-					devices1_ip:[{ required: true, message: '请输入ip', trigger: 'blur' }],
-					devices1_model:[{ required: true, message: '请输入设备型号', trigger: 'blur' }],
+					devices1_hostname:[{ required: true, message:this.$t('validateMes.place')+this.$t('Public.deviceName'), trigger: 'blur' }],
+					devices1_vendor:[{ required: true, message:this.$t('validateMes.place')+this.$t('Public.vendor'), trigger: 'blur' }],
+					devices1_sn:[{ required: true, message:this.$t('validateMes.place')+this.$t('Public.snNumber'), trigger: 'blur' }],
+					devices1_ip:[{ required: true, message: this.$t('validateMes.place')+'ip', trigger: 'blur' }],
+					devices1_model:[{ required: true, message: this.$t('validateMes.place')+this.$t('Public.deviceModel'), trigger: 'blur' }],
 					
 					
 					port_section0:[{ required: true, trigger: 'blur', validator: validNumber }],
