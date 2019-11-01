@@ -385,11 +385,9 @@ export default {
       for (let item of this.sels) {
         ids += item.id + ",";
       }
-      console.log(ids);
       var id = ids.substring(0, ids.lastIndexOf(","));
       this.isid = id.split(",");
       const paras = { ids: this.isid };
-      console.log(paras);
       if (!ids) {
         this.$message({
           message: "请选择你要删除的选项",
