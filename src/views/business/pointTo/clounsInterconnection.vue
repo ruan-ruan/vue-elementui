@@ -99,7 +99,7 @@
 					charge_time:null,
 					expiration_time:null
 				},
-
+				
 				selectFormA:{},//A云对接获取后转换后的form表单
 
 				selectFormZ:{},//Z云对接获取后转换后的form表单
@@ -155,13 +155,13 @@
 			submitBtn(){
 				var obj_a={},obj_z={};
 				obj_z={
-					name:'Z云',
+					name:'Z端',
 					cloud_type:this.editForm.sharedCloun_z,
 					region:this.editForm.target_z,
 					cloud_config_id:this.editForm.clounDoc_z
 				}
 				obj_a={
-					name:'A云',
+					name:'A端',
 					cloud_type:this.editForm.sharedCloun_a,
 					region:this.editForm.target_a,
 					cloud_config_id:this.editForm.clounDoc_a

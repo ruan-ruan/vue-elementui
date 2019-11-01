@@ -87,26 +87,17 @@ const cn = {
     	cancel:'取消',
     	Submit:'提交' ,
     	save:'保存',
-    	
+    	run:'运行',
     },
-    validateMes:{
-    	place:'请输入',
-    	placeCh:'请选择'
-    },
-    confirm:{
-    	tooltip:'提示',
-    	confi:'确定',
-    	title:'确认删除该记录吗?',
-    	titles:'确认删除选中记录吗?',
-    	
-//  	cancel:'取消'
-		
-    },
+
+    
     Form:{
     	creation:'创建时间：',
     	region:'区域'
     },
     tooltipMes:{//提示信息  
+    	addNode:'添加节点',
+    	findNode:'发现节点',
     	name:'名称',
     	area:'区域',
     	city:'城市',
@@ -122,6 +113,9 @@ const cn = {
     	
     },
     Public:{//公共部分
+    	backLink:'骨干链路',
+    	unLink:'未知链路',
+    	apply:'申请时间',
     	SingleRun:'单一运行',
     	run:'运行中',
     	leave:'离线',
@@ -164,26 +158,26 @@ const cn = {
 	    room:'所在房间',
 	    rack:'rack',
 	    place150:'最多输入150字符',
-
+		placeFind:'请输入发现参数',
+		findDevice:'发现设备参数设置',
+		runSuccess:'运行成功，请在骨干节点中查看!',
+		runDevice:'确定要运行该设备吗?',
+		
+		
+		
 	    PortNum:'请输入端口号',
 	    portRulestip:'请输入正确的端口号:详情规则请点击右侧！',
 		portRules:'格式:填写1~54内的正整数;"-"代表端口区间并取两边的数值;","代表单个端口隔离 ,例:1-23,25,26-48代表除去24口的所有端口',
 		ip:'ip',
-//	    placeNode:'请输入节点名称',
-//	    placeChangeData:'请选择数据中心',
-//	    placeVtep:'请输入vtep',
-//	    placeDevice:'请输入设备ID',
-//	    placeVendor:'请输入设备厂商',
-//	    placeDeviceName:'请输入设别名称',
-//	    placeSN:'请输入sn号',
-	    
-	    
-	    
+		fau:"故障",
+	    fault:'故障/维护',
 	    //  拓扑图里面的使用过
 	    creatime:'创建时间',
 	    backboneStatus:'骨干状态',
 	    backboneName:'骨干名称',
 	    dataCen:'数据中心',
+	    backboneNode:'骨干节点',
+	    unNode:'未知节点',
 	    //拓扑图的线的详情里面  使用
 	    
 	    
@@ -212,7 +206,37 @@ const cn = {
     	interface_driver:'接口驱动',
     	open:'开启',  //拓扑里面的点的详情
     	close:'关闭',
+    	
+    	linkID:'链路id',
+    	checkType:'检测类型',
+    	checkParams:'检测参数',
+    	get_flow:'获取流量键入值',
+    	notEmity:'不能为空',
+    	placeRight:'请输入正确的值',
+    	openMain:'开启维护',
+    	closeMain:'关闭维护',
+    	maintain:'维护',
+    	
     },
+    
+    confirm:{
+    	tooltip:'提示',
+    	confi:'确定',
+    	title:'确认删除该记录吗?',
+    	titles:'确认删除选中记录吗?',
+    	linkOpen:'确认将此链路开启，开启维护状态!',
+    	linkClose:'确认将此链路关闭，关闭维护状态!'
+//  	cancel:'取消'
+		
+    },
+    validateMes:{
+    	place:'请输入',
+    	placeCh:'请选择'
+    },
+    
+    
+    
+    
     mesModule:{//消息模块
     	newDetails:{
     		title:'消息详情',
@@ -302,7 +326,8 @@ const cn = {
     	details:{
     		wat:'监控记录',
     		notDatatip:'更多数据请到信息列表中查看',
-    		deviceDetails:"查看设备详情" 
+    		deviceDetails:"查看设备详情" ,
+    		noData:'暂无报警记录',
     	},
     	
     },

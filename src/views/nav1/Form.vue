@@ -1,10 +1,10 @@
 <template>
 	<div>
 		<el-tabs v-model='activeName'  @tab-click="handleClick">
-			<el-tab-pane label='骨干节点' name='first'>		
+			<el-tab-pane :label='$t("Public.backboneNode")' name='first'>		
 				<backBone v-if="isChildUpdate1"></backBone>
 			</el-tab-pane>
-			<el-tab-pane label='未知节点' name='second'>
+			<el-tab-pane :label='$t("Public.unNode")' name='second'>
 				<Unknown v-if="isChildUpdate2"></Unknown>
 			</el-tab-pane>	
 		</el-tabs>	

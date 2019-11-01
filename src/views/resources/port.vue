@@ -217,7 +217,9 @@
 							console.log(res)
 							descriptionValue(res.data.data.items)
 							this.total=res.data.data.page.total;
+
 							res.data.data.items.forEach(ele => {
+								
 								if( (!ele.start_time && typeof(ele.start_time) !='undefined' && ele.start_time !='') || ele.start_time == ''){
 									ele.start_time=''
 								}else{
@@ -229,7 +231,6 @@
 									ele.end_time=datedialogFormat(ele.end_time)
 								}
 								ele.creation_time=datedialogFormat(ele.creation_time)
-								
 								
 								
 								ele.physical_ports_len=ele.physical_ports.length;

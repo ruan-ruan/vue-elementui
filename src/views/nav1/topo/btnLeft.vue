@@ -301,7 +301,7 @@
 		 				text-align: center;
 		 				width: 60px;
 		 				height: 8px;
-		 				background: #7FFF00;
+		 				background: #74CE9B;
 		 				border:1px solid azure;
 		 				border-radius: 4px;
 		 				margin-bottom: 20px;

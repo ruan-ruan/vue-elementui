@@ -407,9 +407,9 @@
 									}else if(ele.vlan > 0){
 										ele.vlanName=ele.vlan
 									}
-									if(ele.usable){
-										ele.changeBtn='禁用';
-										if(getPortStatus(ele.ports) =='UP'){
+									
+									
+									if(getPortStatus(ele.ports) =='UP'){
 											ele.logicStatus='UP'
 											ele.LogicColor='colorGreen'
 										}
@@ -421,10 +421,7 @@
 											ele.logicStatus='DOWN'
 											ele.LogicColor='colorWarning'
 										}
-									}else if(!ele.usable){
-										ele.logicStatus='禁用'
-										ele.changeBtn='启用'
-									}
+									
 									
 //									getPortStatus
 									
@@ -442,8 +439,17 @@
 										ele.expiration=datedialogFormat(ele.expiration_time)
 									}
 									if(ele.status == 'success'){
-										ele.statusName='创建成功'
-										ele.statusColor='suc'
+
+										if(ele.usable){
+											ele.statusName='创建成功'
+											ele.changeBtn='禁用';
+											ele.statusColor='suc';
+										}else if(!ele.usable){
+											ele.statusName='禁用';
+											ele.changeBtn='启用';
+											ele.statusColor='dan'	
+										}
+										
 									}else if(ele.status == 'creating'){
 										ele.statusName='创建中'
 										ele.statusColor='pri'

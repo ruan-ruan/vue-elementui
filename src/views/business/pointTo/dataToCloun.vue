@@ -83,18 +83,12 @@
 				basic:{},//基本信息的配置
 				clounList:{},//不同云的列表
 				editForm:{
-					sharedCloun:'',//公有云
 					validate:'',//验证
-					clounDoc:'',//云对接
-					target:'',//对接
-					nodeName:'',//节点的名称
-					logic_z:'',
-					endpoints_vlan:'trunk',
-					vlan:'',
 					charge_time:null,
 					expiration_time:null
 				},
-
+				dcForm:{},
+				clounForm:{},
 				creatFormDetails:{
 					//配置详情
 					tenant_name:'',
@@ -111,7 +105,8 @@
 		methods:{
 			getDcPort(msg){
 				console.log(msg)
-				this.editForm={
+				
+				this.dcForm={
 					name:'Z端',
 					nodeName:msg.nodeName,
 					logic_z:msg.logic,
@@ -124,11 +119,13 @@
 			},
 			getSharedCloun(msg){
 				console.log(msg);
-				this.editForm={
+
+				this.clounForm={
 					sharedCloun:msg.cloun,
 					target:msg.targetRegion,
 					clounDoc:msg.clounDock
 				}
+
 			},
 			reset(){
 				this.$refs['basicForm'].$refs['editForm'].resetFields();
@@ -139,16 +136,17 @@
 			},
 			submitBtn(){
 				var a_cloun_top={
-					cloud_type:this.editForm.sharedCloun,
-					region:this.editForm.target,
-					cloud_config_id:this.editForm.clounDoc,
+					name:'A端',
+					cloud_type:this.clounForm.sharedCloun,
+					region:this.clounForm.target,
+					cloud_config_id:this.clounForm.clounDoc,
 				}
 				var a_cloun=Object.assign({},a_cloun_top,this.clounList);//clounList
 				var endpoint={
-					name:'z端',
-					node_id:this.editForm.nodeName,
-					logic_port_id:this.editForm.logic_z,
-					vlan:this.editForm.vlan
+					name:'Z端',
+					node_id:this.dcForm.nodeName,
+					logic_port_id:this.dcForm.logic_z,
+					vlan:this.dcForm.vlan
 				}
 				var para={
 					name:this.basic.name,
@@ -230,17 +228,7 @@
 				}else{
 					this.creatFormDetails.details_expiration_time=val.overdue_time ===''?'':datedialogFormat(val.overdue_time/1000)
 				}
-				
-//				creatFormDetails:{
-//					//配置详情
-//					tenant_name:'',
-//					details_charge_time:'',
-//					details_expiration_time:'',
-//					bandwidth:'',
-//					sharedCloun:''
-//				},
-				
-				
+
 			},
 		}
 	}

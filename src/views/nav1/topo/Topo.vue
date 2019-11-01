@@ -288,6 +288,8 @@
 				}).catch(e => {console.log(e)})
 			},
 			setTopo:function(nodesData,linksData){//设置拓扑图的展示
+				console.log(nodesData);
+				console.log(linksData)
 				d3.select('svg').select('g').remove()
 				var width = 890,
 				  height = 470;
@@ -358,6 +360,7 @@
 			    .style('stroke-width', linkWidth)
 			    .style('stroke', linkColour)
 			    .attr('class',function(d){//对数据进行处理
+			    	console.log(d);
 			    	if(typeof d.speedColor =='undefined'){   //流量的显示不存在的时候   这个时候关闭   返回默认的颜色
 			    		return linkColour;
 			    	}else {  //当存在  流量的时候    显示流量
@@ -390,28 +393,24 @@
 	            function linkWidth(d){
 	            	return 2;
 	            }
-	            function linkColour(d){
-					if(d.status=='UP'){
-						return '#6BC7E2'
-					}else if(d.status=='DOWN'){
-						return '#444242'
-					}else if(d.status=='running'){
-						return '#9254DE';
-					}
+	            function linkColour(d){//链路     链路和云对接链路
+	            	
+	            	if(d.maintain_type){//开启维护
+	            		console.log(d)
+	            		return '#9254DE';
+	            	}else{
+	            		if(d.status=='UP'){
+							return '#6BC7E2'
+						}else if(d.status=='DOWN'){
+							return '#444242'
+						}else if(d.status=='running'){
+							return '#1296DB';
+						}
+	            	}
+					
 				}
 				
-//				function baseColor(d){
-//					if(d.status=='UP'){
-//			    		d.color='linkUP'
-//			    	}else if(d.status=='DOWN'){
-//			    		d.color='linkDOWN'
-//			    		
-//			    	}else if(d.status=='running'){
-//			    		d.color='linkRun'
-//			    	}
-//			    	return d.color
-//				}
-				
+
 				let node = g.append('g')
 			    	.attr('class', 'nodes')
 			      	.selectAll('circle')

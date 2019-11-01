@@ -20,18 +20,27 @@ export function datedialogFormat(value){
     let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
     return Y + M + D + h + m + s;
 }
-//export function dealNull(property){
+export function dealNull(str,property){
+	console.log(str);
+	str.map( item => {
+		console.log(item[property])
+		if( !item[property] && typeof(item[property]) && item[property] !=0){
+			item[property]=''
+		}else if(typeof item[property] == 'undefined'){
+			item[property]=''
+		}
+	})
+	console.log(str)
 //	if( !property && typeof(property) !='undefined' && property !=0 ){
-//		property=''
+//		return property=''
 //	}else if(property =='undefined'){
-//		property=''
+//		return property=''
 //	}else if(property=''){
-//		property=''
+//		return  property=''
 //	}else{
-//		property=datedialogFormat(property)
+//		return property
 //	}
-//	console.log(property)
-//}
+}
 export function getTime(value) {
     if (value == "") {
       return "";

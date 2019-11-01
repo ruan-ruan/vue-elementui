@@ -5,11 +5,11 @@
 			<!--工具条-->
 			<el-col :span='24' class='toolbar' style='width: 100%;'>
 				<el-form :inline='true' :model='filters' ref='filters'>
-					<el-form-item label='名称' prop='search_name'>
+					<el-form-item :label='$t("Public.name")' prop='search_name'>
 						<el-input v-model='filters.search_name' class='sel'></el-input>
 					</el-form-item>
-					<el-form-item label='状态' prop='search_status'>
-						<el-select v-model='filters.search_status' plachodle='全部' class='sel'>
+					<el-form-item :label='$t("Public.status")' prop='search_status'>
+						<el-select v-model='filters.search_status' :plachodle='$t("topFilters.placeholder")' class='sel'>
 							<el-option
 								v-for='(item,index) in status'
 								:label='item.label'
@@ -17,32 +17,33 @@
 								:value='item.value'></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label='创建时间'  prop='timeVal'>	
+					<el-form-item :label='$t("Public.creation")'  prop='timeVal'>	
 						<el-date-picker
 					      v-model="filters.timeVal"
 					      type="daterange"
-					      range-separator="至"
+					      :range-separator="$t('Public.to')"
 						  @change="timeValSearchBtn"
-					      start-placeholder="开始日期"
-					      end-placeholder="结束日期" class='ipt'>
+					      :start-placeholder="$t('Public.start')"
+					      :end-placeholder="$t('Public.end')" class='ipt'>
 					    </el-date-picker>
 					</el-form-item>
 					<el-form-item>
-						<el-button type='primary'v-on:click='getUsers()'>搜索</el-button>
-						<el-button type='info' @click='reset'>重置</el-button>
+						<el-button type='primary'v-on:click='getUsers()'>{{$t('topFilters.search')}}</el-button>
+						<el-button type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
 					</el-form-item>
 				</el-form>				
 			</el-col>
 			
 			<!--列表数据部分-->
 			<div class="table-top">
-				<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">批量删除</el-button>
+				<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">
+					{{$t('tabOperation.batchDel')}}</el-button>
 				
 				<el-dropdown split-button type='success'@command="handleExport">
-					导出数据
+					<!--导出数据-->{{$t('tabOperation.derived.tit')}}
 					<el-dropdown-menu slot='dropdown'>
-						<el-dropdown-item command="current">当前页 </el-dropdown-item>									
-						<el-dropdown-item command="all">所有页</el-dropdown-item>																				
+						<el-dropdown-item command="current">{{$t('tabOperation.derived.currentPage')}} </el-dropdown-item>									
+						<el-dropdown-item command="all">{{$t('tabOperation.derived.allPage')}}</el-dropdown-item>																				
 					</el-dropdown-menu>
 				</el-dropdown>
 			</div>
@@ -51,63 +52,69 @@
 			<el-table :data='users'highlight-current-row @selection-change="selsChange" style='width: 100%;'
 				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
 				<el-table-column type='selection' min-width='30'></el-table-column>				
-				<el-table-column type='index' min-width='40' align='center' label='序号'>
+				<el-table-column type='index' min-width='40' align='center' :label='$t("Public.index")'>
 					<template slot-scope='scope'>
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='creation_time'width='101' sortable label='创建时间'align='center' :formatter='dateFormat'></el-table-column>
-				<el-table-column  label='A端' align='center' min-width='60' >
+				<el-table-column prop='creation_time'width='101' sortable :label='$t("Public.creation")'align='center' ></el-table-column>
+				<el-table-column  :label='$t("Public.aPort")' align='center' min-width='60' >
 					<template slot-scope='scope'>
 						<el-tag size='small' type='primary'style='cursor: pointer;' @click='handleNode_a(scope.$index, scope.row)'>{{scope.row.a_node.name}}</el-tag>
 						{{scope.row.a_ip}}-{{scope.row.a_vlan}}
 					</template>
 				</el-table-column>
-				<el-table-column  label='Z端' align='center' min-width='60'>
+				<el-table-column  :label='$t("Public.zPort")' align='center' min-width='60'>
 					<template slot-scope='scope'>
 						<el-tag size='small' type='primary'style='cursor: pointer;' @click='handleNode_z(scope.$index, scope.row)'>{{scope.row.z_node.name}}</el-tag>
 						{{scope.row.z_ip}}-{{scope.row.z_vlan}}
 					</template>
 				</el-table-column>
-				<el-table-column prop='status' label='链路状态' align='center' min-width='50'>
+				<el-table-column prop='status' :label='$t("Public.linkState")' align='center' min-width='50'>
 					<template slot-scope='scope'>
 						<span v-text="scope.row.status" :class='scope.row.color'></span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='maintenance_value' label='故障/维护' align='center' min-width='60'>
+				<el-table-column prop='maintenance_value' :label='$t("Public.fault")' align='center' min-width='60'>
 					<!--这里的数据是在下面的进行判断的是-->
 				</el-table-column>
-				<el-table-column prop='bandwidth' label='总带宽(Mbps)' align='center' min-width='60'>
+				<el-table-column prop='bandwidth' :label='$t("Public.sysBandwidth")' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='physical_bandwidth' label='物理带宽(Mbps)' align='center' min-width='60'>
+				<el-table-column prop='physical_bandwidth' :label='$t("Public.phyBandwidth")' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='idle_bandwidth' label='剩余带宽(Mbps)' align='center' min-width='60'>
+				<el-table-column prop='idle_bandwidth' :label='$t("Public.surBandwidth")' align='center' min-width='60'>
 					<template slot-scope='scope'>
 						{{scope.row.bandwidth-scope.row.physical_bandwidth}}						
 					</template>
 				</el-table-column>
-				<el-table-column prop='link_cost' label='链路开销' align='center' min-width='60'>
+				<el-table-column prop='link_cost' :label='$t("Public.linkExpen")' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='monitorHTML' label='链路检测' align='center' min-width='60'>
+				<el-table-column prop='monitorHTML' :label='$t("Public.linkCheck")' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='a_desc' label='A端描述' align='center' min-width='60'>
+				<el-table-column prop='a_desc' :label='$t("Public.aportDescribe")' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='z_desc' label='Z端描述' align='center' min-width='60'>
+				<el-table-column prop='z_desc' :label='$t("Public.zportDescribe")' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='descriptionVal' label='备注' align='center' min-width='60'>
+				<el-table-column prop='descriptionVal' :label='$t("Public.description")' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column  label='操作' align='right'  width='175'>
+				<el-table-column  :label='$t("Public.operation")' align='right'  width='175'>
 					<template slot-scope='scope'>
 						<div>
-							<el-button size='small' type='primary' @click='handleStatus(scope.$index, scope.row)'
-								v-if='scope.row.maintenance_value==="故障" ? false : true ' class='maintenance'> <!--当状态为故障的时候   这个时候的该按钮银行 -->
+							<el-button size='mini' type='primary' @click='handleStatus(scope.$index, scope.row)'
+								v-if='scope.row.maintenance_value=== $t("Public.fau") ? false : true ' class='maintenance'> <!--当状态为故障的时候   这个时候的该按钮银行 -->
 								{{scope.row.maintenanceBtn}}
 							</el-button>
-							<el-button size='small' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>	
+							<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>
+								<!--详情-->{{$t('tabOperation.info')}}
+							</el-button>	
 						</div>
 						<div style="margin-top: 5px;">
-							<el-button size='small' v-if='scope.row.status==="DOWN"?true:false' type='danger' @click='handleDel(scope.$index, scope.row)'>删除</el-button>
-							<el-button size='small' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
+							<el-button size='mini' v-if='scope.row.status==="DOWN"?true:false' type='danger' @click='handleDel(scope.$index, scope.row)'>
+								<!--删除-->{{$t('tabOperation.delete')}}
+							</el-button>
+							<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'>
+								<!--编辑-->{{$t('tabOperation.edit')}}
+							</el-button>				
 							
 						</div>
 							
@@ -127,8 +134,7 @@
 				     	:current-page.sync="currentPage"  
 				     	:page-count='pageNum'
 				     	:pager-count="pagecount"
-				     	:prev-text='prev'
-				     	:next-text='next'></el-pagination>
+				     	></el-pagination>
 				</el-col>
 
 			
@@ -136,69 +142,69 @@
 			<el-dialog :title='textMap[dialogStatus]':visible.sync='dialogFormVisible':close-on-click-modal="false" v-loading='editLoading'>
 				<el-form :model="editForm" label-width='80px'ref='editForm':rules='ruleEditform' label-position='left' >
 					<!--:rules='editFormRules'-->
-					<el-form-item label='链路ID'>
+					<el-form-item :label='$t("Public.linkID")'>
 						<template>
 							<span v-text="editForm.id"></span>
 						</template>
 					</el-form-item>
-					<el-form-item label='创建时间'>
+					<el-form-item :label='$t("Public.creation")'>
 						<template>
 							<span v-text="editForm.creation_time"></span>
 						</template>
 					</el-form-item>
-					<el-form-item label='链路状态'>
+					<el-form-item :label='$t("Public.linkState")'>
 						<template >
 								<span>{{editForm.status}}</span>-
 								<span>{{editForm.maintenance_value}}</span>
 							</template>
 					</el-form-item>
-					<el-form-item label='A端'>
+					<el-form-item :label='$t("Public.aPort")'>
 							<template >
 								<span>{{editForm.a_node.name}}</span>-
 								<span>{{editForm.a_ip}}</span>-
 								<span>{{editForm.a_vlan}}</span>
 							</template>
 					</el-form-item>
-					<el-form-item label='A端描述'>
+					<el-form-item :label='$t("Public.aportDescribe")'>
 						<template>
 							<span v-text="editForm.a_desc"></span>
 						</template>
 					</el-form-item>
-					<el-form-item label='Z端'>
+					<el-form-item :label='$t("Public.zPort")'>
 						<template slot-scope='scope'>
 							<span v-text="editForm.z_node.name"></span>-
 							<span v-text="editForm.z_ip"></span>-
 							<span v-text="editForm.z_vlan"></span>
 						</template>
 					</el-form-item>
-					<el-form-item label='Z端描述'>
+					<el-form-item :label='$t("Public.zportDescribe")'>
 						<template>
 							<span v-text="editForm.z_desc"></span>
 						</template>
 					</el-form-item>
 					
-					<el-form-item label='总带宽' prop='bandwidth'>
+					<el-form-item :label='$t("Public.sysBandwidth")' prop='bandwidth'>
 						<el-input v-model='editForm.bandwidth' :disabled='editFormStatue'  class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='物理带宽' prop='physical_bandwidth'>
+					<el-form-item :label='$t("Public.phyBandwidth")' prop='physical_bandwidth'>
 						<el-input v-model='editForm.physical_bandwidth' :disabled='editFormStatue' class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='剩余带宽'>
+					<el-form-item :label='$t("Public.surBandwidth")'>
 						<template>
 							<span v-text="editForm.bandwidth-editForm.physical_bandwidth"></span>
 						</template>
 					</el-form-item>
-					<el-form-item label='链路开销' prop='link_cost'>
+					<el-form-item :label='$t("Public.linkExpen")' prop='link_cost'>
 						<el-input v-model='editForm.link_cost':disabled='editFormStatue'  class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='链路检测' prop='monitoring'>
+					<el-form-item :label='$t("Public.linkCheck")' prop='monitoring'>
 						<el-radio-group v-model='editForm.monitoring' :disabled='editFormStatue' @change="mointradio">
 							<template v-for='item in needDown'>
 								<el-radio :value='item.label' :label='item.val'>{{item.name}}</el-radio>
 							</template>
 						</el-radio-group>
 					</el-form-item>
-					<el-form-item v-if='detectionStatus' label='检测类型' prop='monitoring_type'>
+					<el-form-item v-if='detectionStatus' :label='$t("Public.checkType")' prop='monitoring_type'>
 						<el-select v-model='editForm.monitoring_type' :disabled='editFormStatue' class='ipt'>
 							<el-option v-for='(item,index) in detectionType'
 								:value='item.value'
@@ -207,20 +213,20 @@
 							</el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item v-show='detectionStatus' label='检测参数'>
+					<el-form-item v-show='detectionStatus' :label='$t("Public.checkParams")'>
 						<el-input v-model='editForm.monitoring_param' :disabled='editFormStatue' class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item  label='流量获取键入值' prop='get_speed_key'>
+					<el-form-item  :label='$t("Public.get_flow")' prop='get_speed_key'>
 						<el-input v-model='editForm.get_speed_key' :disabled="editFormStatue" class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='备注'>
+					<el-form-item :label='$t("Public.description")'>
 						<!--<textarea name="" rows="" cols="7"></textarea>-->
 						<el-input type='textarea'cols="7" v-model='editForm.description' :disabled='editFormStatue' class='ipt'></el-input>
 					</el-form-item>
 				</el-form>
 				<div slot='footer' class='dailog-footer'>
-					<el-button @click.native='dialogFormVisible=false'>取消</el-button>
-					<el-button  v-if="dialogStatus=='update'"type="primary" @click="updateData">保存</el-button>
+					<el-button @click.native='dialogFormVisible=false'>{{$t('tabOperation.cancel')}}</el-button>
+					<el-button  v-if="dialogStatus=='update'"type="primary" @click="updateData">{{$t('tabOperation.save')}}</el-button>
 				</div>
 			</el-dialog>
 		</section>
@@ -237,9 +243,9 @@
 		data(){
 			var isNumber= (rule,value,callback) => {
 				if(!value){
-					callback(new Error('不能为空'))
+					callback(new Error(this.$t('Public.notEmity')))
 				}else if(! isValidNumber(value)){
-					 callback(new Error('请输入正确的值'))
+					 callback(new Error(this.$t('Public.placeRight')))
 				}else{
 					callback()
 				}
@@ -280,8 +286,7 @@
 				currentPage:1,
 				pageNum:1,
 				pagecount:5,
-				next:'下一页',
-				prev:'上一页',
+				
 				//设置维护
 //				maintenanceStatus:true,
 				//当链路的状态的为down的时候，显示删除按钮
@@ -320,22 +325,22 @@
 //					token:''
 				},
 				ruleEditform:{
-					monitoring_type:[  { required: true, message: '请选择检测类型', trigger: 'change' }],
+					monitoring_type:[  { required: true, message: this.$t('validateMes.placeCh')+this.$t('Public.checkType'), trigger: 'change' }],
 					bandwidth:[  { required: true,  validator:isNumber, trigger: 'blur' }],
 					physical_bandwidth:[  { required: true,  validator:isNumber, trigger: 'blur' }],
 					link_cost:[  { required: true,  validator:isNumber, trigger: 'blur' }],
-					monitoring:[  { required: true, message: '请输入检测类型', trigger: 'change' }],
+					monitoring:[  { required: true, message: this.$t('validateMes.place')+this.$t('Public.checkType'), trigger: 'change' }],
 				},
 				//链路是否开启部分
 				needDown:[
 					{
 						val:true,
 						label:true,
-						name:'开启'
+						name:this.$t('Public.open')
 					},{
 						val:false,
 						label:false,
-						name:'关闭'
+						name:this.$t('Public.close')
 					}
 				],
 				//当链路 检测是开启的时候u，会显示对应的数据
@@ -392,7 +397,7 @@
 			},
 			getUsers(){
 				var _this=this;
-				// var maintenance=document.getElementsByClassName('maintenance');
+				
 				this.loading=true
 				this.filters.start_time = this.filters.timeVal[0]
 					? this.filters.timeVal[0]
@@ -422,22 +427,24 @@
 						//控制删除按钮的显示与隐藏
 						
 						if(res.data.data.items){
-							res.data.data.items.forEach(ele => {
+							res.data.data.items.map(ele => {
+								//datedialogFormat
+								ele.creation_time=datedialogFormat(ele.creation_time)
 								//添加新的属性，作为是否维护和故障的字段
 								if(!ele.monitoring){
 									ele.monitorHTML='关闭'
 								}else if(ele.monitoring){
-									ele.monitorHTML='开启'
+									ele.monitorHTML='开启';
 								}
 								if(ele.status=='UP'){
-									ele.color='colorGreen'
+									ele.color='colorGreen';
 									if(ele.maintain_type){
-										console.log(33333)
-										ele.maintenance_value==''
-										ele.maintenanceBtn='开启维护'
+//										console.log(33333)
+										ele.maintenance_value=='';
+										ele.maintenanceBtn='开启维护';
 									}else{
-										ele.maintenance_value==''
-										ele.maintenanceBtn='开启维护'
+										ele.maintenance_value=='';
+										ele.maintenanceBtn='开启维护';
 									}
 								}else if(ele.status=='DOWN'){
 									ele.color='colorRed'
@@ -763,17 +770,17 @@
 				return jsonData.map(v => filterVal.map(j => v[j]))
 			},
 			//表格数据时间转换
-			dateFormat(row,column){
-	    		//将时间戳转换为前端的时间
-	    		let date=new Date(parseInt(row.creation_time)*1000);
-	    		let Y=date.getFullYear()+'-';
-	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +'  ':date.getDate()+'  ';
-	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
-	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
-	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
-	    		return Y + M + D + h + m + s	    		
-	    	}
+//			dateFormat(row,column){
+//	    		//将时间戳转换为前端的时间
+//	    		let date=new Date(parseInt(row.creation_time)*1000);
+//	    		let Y=date.getFullYear()+'-';
+//	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
+//	    		let D=date.getDate() <10? '0' +date.getDate() +'  ':date.getDate()+'  ';
+//	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
+//	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
+//	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
+//	    		return Y + M + D + h + m + s	    		
+//	    	}
 		},
 		mounted(){
 			this.getUsers()
