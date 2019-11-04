@@ -88,6 +88,7 @@ const cn = {
     	Submit:'提交' ,
     	save:'保存',
     	run:'运行',
+    	
     },
 
     
@@ -95,23 +96,7 @@ const cn = {
     	creation:'创建时间：',
     	region:'区域'
     },
-    tooltipMes:{//提示信息  
-    	addNode:'添加节点',
-    	findNode:'发现节点',
-    	name:'名称',
-    	area:'区域',
-    	city:'城市',
-    	editSuccess:'修改成功!',
-    	addSuccess:'添加成功!',
-    	delSucess:'删除成功!',
-    	dataNull:'数据为空，不能执行导出操作!',
-    	exportDataAll:'确定要导出所有的数据吗?',
-    	exportDataCurr:'确定要导出当前页的数据吗?',
-    	download :'下载数据',
-    	exportSucess:'导出成功!',
-//  	downloading:'正在'
-    	
-    },
+
     Public:{//公共部分
     	backLink:'骨干链路',
     	unLink:'未知链路',
@@ -216,6 +201,35 @@ const cn = {
     	openMain:'开启维护',
     	closeMain:'关闭维护',
     	maintain:'维护',
+    	deviceID:'设备id',
+    	addUnknownLink:"添加未知链路",
+    	findLink:"发现链路",
+    	aPortNode:'A端节点',
+    	a_ip:'A端接口IP',
+    	a_vlan:'A端接口VLAN',
+    	a_des:'A端描述',
+    	z_PortNode:'Z端节点',
+    	z_ip:'Z端接口IP',
+    	z_vlan:'Z端接口VLAN',
+    	z_des:'Z端描述',
+    	placeFind:'请输入发现链路参数',
+    	placeaNode:'请选择A端节点',
+    	placeaIp:'请输入A端端口IP',
+    	placeaDes:'请输入A端端口描述',
+    	placezNode:'请选择Z端节点',
+    	placezIp:'请输入Z端端口IP',
+    	placezDes:'请输入Z端端口描述',
+    	placeLink:'请选择链路检测是否开启',
+    	placeLinkType:'请选择链路检测类型',
+    	findParams:'发现链路参数配置',
+    	placeNumber:'请输入正整数',
+    	openLinkSure:'确认将次链路开通运行吗?',
+    	linkRunSuc:'运行成功，请到骨干链路中查看!',
+    	paramsNotEmity:'参数不能为空！',
+    	cloudTit:'通过此页面可创建对应的逻辑口',
+    	addCloud:'添加云链路',
+    	
+    	
     	
     },
     
@@ -233,7 +247,26 @@ const cn = {
     	place:'请输入',
     	placeCh:'请选择'
     },
-    
+    tooltipMes:{//提示信息  
+    	addNode:'添加节点',
+    	findNode:'发现节点',
+    	name:'名称',
+    	area:'区域',
+    	city:'城市',
+    	editSuccess:'修改成功!',
+    	addSuccess:'添加成功!',
+    	delSucess:'删除成功!',
+    	dataNull:'数据为空，不能执行导出操作!',
+    	exportDataAll:'确定要导出所有的数据吗?',
+    	exportDataCurr:'确定要导出当前页的数据吗?',
+    	download :'下载数据',
+    	exportSucess:'导出成功!',
+    	openSuc:'开启成功！',
+    	closeSuc:'关闭成功！',
+    	
+//  	downloading:'正在'
+    	
+    },
     
     
     

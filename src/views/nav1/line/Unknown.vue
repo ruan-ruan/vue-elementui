@@ -4,11 +4,11 @@
 			<!--顶部工具栏-->
 			<el-col :span='24' class='toolbar ' style='width:100%;'>
 				<el-form :inline='true' :model='filters' ref='filters'>
-					<el-form-item label='名字' prop='search_name'>
+					<el-form-item :label='$t("Public.name")' prop='search_name'>
 						<el-input v-model='filters.search_name'></el-input>
 					</el-form-item>
-					<el-form-item label='状态' prop='search_status'>
-						<el-select v-model='filters.search_status'plachodle='全部' class='sel'>
+					<el-form-item :label='$t("Public.status")' prop='search_status'>
+						<el-select v-model='filters.search_status' :plachodle='$t("topFilters.placeholder")' class='sel'>
 							<el-option v-for='(item,index) in status'
 								:label='item.label'
 								:key='index'
@@ -18,21 +18,21 @@
 						</el-select>
 					</el-form-item>
 					  <!--type="daterange"-->
-					<el-form-item label='创建时间'>
+					<el-form-item :label='$t("Public.creation")' prop='timeVal'>
 						<el-date-picker
 					      v-model="filters.timeVal"					    
 					      type="daterange"
-					      range-separator="至"
-					      start-placeholder="开始日期"
+					      :range-separator="$t('Public.to')"
+					      :start-placeholder="$t('Public.start')"
 						  @change="timeValSearchBtn"
-					      end-placeholder="结束日期">
+					      :end-placeholder="$t('Public.end')">
 					    </el-date-picker>
 					</el-form-item>
 					<el-form-item>
-						<el-button type='primary' v-on:click='getUsers()'>搜索</el-button>
+						<el-button type='primary' v-on:click='getUsers()'>{{$t("topFilters.search")}}</el-button>
 					</el-form-item>
 					<el-form-item>
-						<el-button type='info' @click='reset(filters)'>重置</el-button>
+						<el-button type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
 					</el-form-item>
 				</el-form>
 			</el-col>
@@ -42,12 +42,12 @@
 				<el-col :span='24'>
 					<el-col :span='8'>
 						<template>
-							<el-button type='success'@click='handleAdd'>+添加未知链路</el-button>
-							<el-button type='primary' @click='handleFound'>发现链路</el-button>
+							<el-button type='success'@click='handleAdd'>+{{$t('Public.addUnknownLink')}}</el-button>
+							<el-button type='primary' @click='handleFound'>{{$t('Public.findLink')}}</el-button>
 						</template>	
 					</el-col>
 					<el-col :span='16' class='table-top'>
-						<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">批量删除</el-button>						
+						<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">{{$t('tabOperation.batchDel')}}</el-button>						
 					</el-col>
 
 				</el-col>
@@ -55,47 +55,43 @@
 			<el-table :data='users' highlight-current-row @selection-change="selsChange" style='width: 100%;' 
 				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
 				<el-table-column type='selection' min-width='40'></el-table-column>
-				<el-table-column type='index' min-width='50' label='序号' align='center'>
+				<el-table-column type='index' min-width='50' :label='$t("Public.index")' align='center'>
 					<template slot-scope='scope'>
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='creation_time' width='101' sortable label='申请时间' :formatter='dateFormat' align='center'></el-table-column>				
-				<el-table-column label='A端' min-width='80' align='center'>
+				<el-table-column prop='creation_time' width='101' sortable :label='$t("Public.apply")'  align='center'></el-table-column>				
+				<el-table-column :label='$t("Public.aPort")' min-width='80' align='center'>
 					<template slot-scope='scope'>
 						<el-tag size='small' type='primary'style='cursor: pointer;'@click='handelSee_aNode(scope.$index,scope.row)'>{{scope.row.a_node.name}}</el-tag>
 						-{{scope.row.a_ip}}-{{scope.row.a_vlan}}
 					</template>
 				</el-table-column>
-				<el-table-column  label='Z端' align='center' min-width='80'>
+				<el-table-column  :label='$t("Public.zPort")' align='center' min-width='80'>
 					<template slot-scope='scope'>
 						<el-tag size='small' type='primary'style='cursor: pointer;' @click='handelSee_zNode(scope.$index, scope.row)'>{{scope.row.z_node.name}}</el-tag>
 						-{{scope.row.z_ip}}-{{scope.row.z_vlan}}
 					</template>
 				</el-table-column>
-				<el-table-column prop='bandwidth' label='总带宽(Mbps)' align='center' min-width='70'>
+				<el-table-column prop='bandwidth' :label='$t("Public.sysBandwidth")' align='center' min-width='70'>
 				</el-table-column>
-				<el-table-column prop='physical_bandwidth' label='物理带宽(Mbps)' align='center' min-width='80'>
+				<el-table-column prop='physical_bandwidth' :label='$t("Public.phyBandwidth")' align='center' min-width='80'>
 				</el-table-column>
-				<el-table-column  label='剩余带宽(Mbps)' align='center' width='80'>
+				<el-table-column  :label='$t("Public.surBandwidth")' align='center' width='80'>
 					<template slot-scope='scope'>{{scope.row.bandwidth-scope.row.physical_bandwidth}}</template>
 				</el-table-column>
-				<el-table-column prop='link_cost' label='链路开销' align='center' min-width='60'>
+				<el-table-column prop='link_cost' :label='$t("Public.linkExpen")' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='monitoringText' label='链路检测' align='center' min-width='60'>
+				<el-table-column prop='monitoringText' :label='$t("Public.linkCheck")' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='descriptionVal' label='备注' align='center' min-width='80'>
+				<el-table-column prop='descriptionVal' :label='$t("Public.description")' align='center' min-width='80'>
 				</el-table-column>
-				<el-table-column  label='操作' align='center' width='160'>
+				<el-table-column  label='操作' align='center' width='180'>
 					<template slot-scope='scope'>
-						<div>
-							<el-button size='mini' type='primary' @click='handleStart(scope.$index, scope.row)'>运行</el-button>
-							<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
-						</div>
-						<div style="margin-top: 5px;">
-							<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
-							<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)"  >删除</el-button>
-						</div>
+						<el-button size='mini' type='primary' @click='handleStart(scope.$index, scope.row)'>{{$t('tabOperation.run')}}</el-button>
+						<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>{{$t('tabOperation.info')}}</el-button>
+						<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'>{{$t('tabOperation.edit')}}</el-button>				
+						<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)"  >{{$t("tabOperation.delete")}}</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -112,19 +108,18 @@
 				     	:current-page.sync="currentPage"  
 				     	:page-count='pageNum'
 				     	:pager-count="pagecount"
-				     	:prev-text='prev'
-				     	:next-text='next'></el-pagination>
+				     	></el-pagination>
 				</el-col>
 
 			<!--添加部分/编辑部分/发现链路-->
 			<el-dialog :title='textMap[dialogStatus]':visible.sync='dialogFormVisible':close-on-click-modal="false" v-loading='editLoading'>
-				<el-form  label-position='left' :model="editForm" label-width='130px' ref='editForm' :rules="editFormRules">
+				<el-form   :model="editForm" label-width='210px' ref='editForm' :rules="editFormRules">
 					<!--编辑和详情的时候才会显示的时间列表-->
-					<el-form-item label='申请时间' v-show='editFormStatus'>
+					<el-form-item :label='$t("Public.apply")+"：" ' v-show='editFormStatus'>
 						<el-input v-model='editForm.creation_time' :disabled='seeStatusCreatime'  class='ipt'></el-input>
 						<!--<template>{{editForm.creation_time}}</template>-->
 					</el-form-item>
-					<el-form-item label='A端节点' prop='a_node_id'>
+					<el-form-item :label='$t("Public.aPortNode")+"："' prop='a_node_id'>
 						
 						<el-select v-model='editForm.a_node_id' filterable :disabled='seeStatus'  class='ipt'>
 							<el-option
@@ -135,16 +130,16 @@
 							</el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label='A端接口IP(cidr)'prop='a_ip'>
+					<el-form-item :label='$t("Public.a_ip")+"(cidr):"'prop='a_ip'>
 						<el-input v-model='editForm.a_ip' :disabled='seeStatus' class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='A端接口VLAN:' prop='a_vlan'>
+					<el-form-item :label='$t("Public.a_vlan")+"："' prop='a_vlan'>
 						<el-input v-model='editForm.a_vlan' :disabled='seeStatus' class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='A端描述' prop='a_desc'>
+					<el-form-item :label='$t("Public.a_des")+"："' prop='a_desc'>
 						<el-input v-model='editForm.a_desc' :disabled='seeStatus' class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='Z端节点' prop='z_node_id'>
+					<el-form-item :label='$t("Public.zPortNode")+"："' prop='z_node_id'>
 						<el-select v-model='editForm.z_node_id'filterable :disabled='seeStatus'  class='ipt'>
 							<el-option
 								v-for='(item,index) in nodeData'
@@ -154,25 +149,25 @@
 							</el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label='Z端接口IP(cidr)'prop='z_ip'>
+					<el-form-item :label='$t("Public.z_ip")+"(cidr)："'prop='z_ip'>
 						<el-input v-model='editForm.z_ip':disabled='seeStatus' class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='Z端接口VLAN'prop='z_vlan'>
+					<el-form-item :label='$t("Public.z_vlan")+"："'prop='z_vlan'>
 						<el-input v-model='editForm.z_vlan':disabled='seeStatus'   class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='Z端描述:'prop='z_desc'>
+					<el-form-item :label='$t("Public.z_des")+"："'prop='z_desc'>
 						<el-input v-model='editForm.z_desc':disabled='seeStatus' class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='总带宽(Mbps)' prop='bandwidth'>
-						<el-input v-model.number='editForm.bandwidth' :disabled='seeStatus' placeholder="请输入正整数"  class='ipt'></el-input>
+					<el-form-item :label='$t("Public.sysBandwidth")+"："' prop='bandwidth'>
+						<el-input v-model.number='editForm.bandwidth' :disabled='seeStatus' :placeholder="$t('Public.placeNumber')"  class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='物理带宽(Mbps)' prop='physical_bandwidth'>
-						<el-input v-model.number='editForm.physical_bandwidth'placeholder="请输入正整数"   :disabled='seeStatus' class='ipt'></el-input>
+					<el-form-item :label='$t("Public.phyBandwidth")+"："' prop='physical_bandwidth'>
+						<el-input v-model.number='editForm.physical_bandwidth':placeholder="$t('Public.placeNumber')"   :disabled='seeStatus' class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='链路开销' prop='link_cost'>
-						<el-input v-model.number='editForm.link_cost'  :disabled='seeStatus' placeholder="请输入正整数"  class='ipt'></el-input>
+					<el-form-item :label='$t("Public.linkExpen")+"："' prop='link_cost'>
+						<el-input v-model.number='editForm.link_cost'  :disabled='seeStatus' :placeholder="$t('Public.placeNumber')"  class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='链路检测' prop='monitoring'>
+					<el-form-item :label='$t("Public.linkCheck")+"："' prop='monitoring'>
 						
 						<el-radio-group v-model='editForm.monitoring' :disabled='seeStatus'>
 								<el-radio 
@@ -183,41 +178,44 @@
 								</el-radio>				
 						</el-radio-group>
 					</el-form-item>
-					<el-form-item v-if='detectionStatus' label='检测类型' prop='monitoring_type'>
-						<el-select v-model='editForm.monitoring_type' :disabled='seeStatus' placehold='请选择' class='ipt' >
+					<el-form-item v-if='detectionStatus' :label='$t("Public.checkType")+"："' prop='monitoring_type'>
+						<el-select v-model='editForm.monitoring_type' :disabled='seeStatus' :placehold='$t("validateMes.placeCh")' class='ipt' >
 							<el-option v-for='(item,index) in detectionType'
 								:value='item.value'
 								:label='item.label'
 								:key='index'></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item v-if='detectionStatus' label='检测参数' prop='monitoring_param'>
+					<el-form-item v-if='detectionStatus' :label='$t("Public.checkParams")+"："' prop='monitoring_param'>
 						<el-input v-model='editForm.monitoring_param':disabled='seeStatus' class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item  label='流量获取键入值' prop='get_speed_key'>
+					<el-form-item  :label='$t("Public.get_flow")+"："' prop='get_speed_key'>
 						<el-input v-model='editForm.get_speed_key' class='ipt' :disabled='seeStatus'></el-input>
 					</el-form-item>
-					<el-form-item label='备注' >
+					<el-form-item :label='$t("Public.description")+"："' >
 						<el-input type='textarea'cols="7" v-model='editForm.description' :disabled='seeStatus' class='ipt' ></el-input>
 					</el-form-item>
 				</el-form>
 				<div slot='footer' class='dailog-footer'>
-					<el-button @click.native='dialogFormVisible=false'>取消</el-button>
-					<el-button  v-if="dialogStatus=='update'"type="primary" @click="updateData">保存</el-button>
-					<el-button  v-else-if="dialogStatus=='creat'"type="primary" @click="creatData">保存</el-button>		
+					<el-button @click.native='dialogFormVisible=false'>{{$t("tabOperation.cancel")}}</el-button>
+					<el-button  v-if="dialogStatus=='update'"type="primary" @click="updateData">
+						{{$t('tabOperation.save')}}
+					</el-button>
+					<el-button  v-else-if="dialogStatus=='creat'"type="primary" @click="creatData">
+						{{$t('tabOperation.save')}}</el-button>		
 				</div>
 			</el-dialog>
 			
 			<!--发现链路-->
 			<el-dialog :title='TitleMap[dialogFormValue]' :visible.sync='foundFormVisible':close-on-click-modal="false">
-				<el-form :model="foundForm" label-width='0px' ref='foundForm'>
+				<el-form :model="foundForm"  ref='foundForm'>
 					<el-form-item>
-						<el-input v-model='foundForm.parameter'placeholder="请输入发现链路参数"></el-input>
+						<el-input v-model='foundForm.parameter':placeholder="$t('Public.placeFind')"></el-input>
 					</el-form-item>
 				</el-form>
 				<div slot='footer' class='dailog-footer'>
-					<el-button @click.native='foundFormVisible=false'>取消</el-button>
-					<el-button type='primary'v-if='dialogFormValue=="found"' @click='foundData'>提交</el-button>
+					<el-button @click.native='foundFormVisible=false'>{{$t("tabOperation.cancel")}}</el-button>
+					<el-button type='primary'v-if='dialogFormValue=="found"' @click='foundData'>{{$t("tabOperation.Submit")}}</el-button>
 				</div>
 			</el-dialog>
 		</section>
@@ -238,15 +236,15 @@
 		data(){
 			var isNumber= (rule,value,callback) => {
 				if(!value){
-					callback(new Error('不能为空'))
+					callback(new Error(this.$t('Public.notEmity')))
 				}else if(! isValidNumber(value)){
-					 callback(new Error('请输入正确的值'))
+					 callback(new Error(this.$t('Public.placeRight')))
 				}else{
 					callback()
 				}
 			};
 			return{
-				radio: '1',
+
 				//获取用户的权限token
 				token:'',
 				//顶部分工具栏的搜索部分
@@ -280,8 +278,7 @@
 				currentPage:1,
 				pageNum:1,
 				pagecount:5,
-				next:'下一页',
-				prev:'上一页',
+
 				//编辑的时候界面的显示
 				editForm:{
 					id:'',
@@ -309,32 +306,32 @@
 				},
 				//添加的时候校验规则
 				editFormRules:{
-					a_node_id:[{ required: true, message: '请选择A端节点', trigger: 'change' }],
-					a_ip:[{ required: true, message: '请输入A端端口ip', trigger: 'blur' }],
+					a_node_id:[{ required: true, message: this.$t('Public.placeaNode'), trigger: 'change' }],
+					a_ip:[{ required: true, message: this.$t('Public.placeaIp'), trigger: 'blur' }],
 					a_vlan:[{ required: true, validator:isNumber, trigger: 'blur' }],
-					a_desc:[{required:true, message:'请输入A端端口描述',trigger:'blur'}],
-					z_node_id:[{ required:true, message:'请选择Z端节点',trigger:'change'}],
-					z_ip:[{required:true , message:'请输入Z端端口IP', trigger:'blur'}],
+					a_desc:[{required:true, message:this.$t('Public.placeaDes'),trigger:'blur'}],
+					z_node_id:[{ required:true, message:this.$t('Public.placezNode'),trigger:'change'}],
+					z_ip:[{required:true , message:this.$t('Public.placezIp'), trigger:'blur'}],
 					z_vlan:[{ required:true , validator:isNumber,trigger:'blur'}],
-					z_desc:[{ required:true , message:'请输入Z端端口描述',trigger:'blur'}],
+					z_desc:[{ required:true , message:this.$t('Public.placezDes'),trigger:'blur'}],
 					physical_bandwidth:[{ required:true ,validator:isNumber,trigger:'blur'}],
 					bandwidth:[{ required:true , validator:isNumber,trigger:'blur'}],
 					
-					monitoring:[{required:true ,message:'请选择链路检测是否开启', trigger:'change'}],
+					monitoring:[{required:true ,message:this.$t('Public.placeLink'), trigger:'change'}],
 					
 					link_cost:[{ required:true ,validator:isNumber,trigger:'blur'}]	,
-					monitoring_type:[{required:true ,message:'请选择链路检测类型', trigger:'change'}],
+					monitoring_type:[{required:true ,message:this.$t('Public.placeLinkType'), trigger:'change'}],
 				},
 				//链路检测是否开启部分
 				detectionStatue:[
 					{
 
 						label:true,
-						name:'开启'
+						name:this.$t('Public.open')
 					},{
 
 						label:false,
-						name:'关闭'
+						name:this.$t('Public.close')
 					}
 				],
 				detectionType:[
@@ -344,9 +341,9 @@
 					}
 				],
 				textMap:{
-					creat:'添加',
-					update:'编辑',
-					see:'详情',
+					creat:this.$t('tabOperation.add'),
+					update:this.$t('tabOperation.edit'),
+					see:this.$t('tabOperation.info'),
 					
 				},
 				//发现未知节点的数据
@@ -354,7 +351,7 @@
 					parameter:''
 				},
 				TitleMap:{
-					found:'发现链路参数配置'	
+					found:this.$t('Public.findParams')	
 				},
 				dialogFormValue:'',
 				foundFormVisible:false,
@@ -388,10 +385,10 @@
 				console.log(typeof oldVal);
 				console.log(newVal)
 				if(newVal){
-					console.log('开启')
+
 					this.detectionStatus=true;
 				}else if(!newVal){
-					console.log('关闭');
+
 					this.detectionStatus=false;
 				}
 			},
@@ -416,11 +413,8 @@
 				this.currentPage=val;
 				this.getUsers()
 			},
-			reset(sels){
-//				console.log(sels)
-				for(let key in sels){
-					sels[key]='';
-				}
+			reset(){
+				this.$refs['filters'].resetFields()
 			},
 			getUsers(){
 //				var this=this;
@@ -452,12 +446,15 @@
 							descriptionValue(res.data.data.items)
 							
 							this.total=res.data.data.page.total;
-							res.data.data.items.forEach(ele => {
-
+							res.data.data.items.map(ele => {
+								//datedialogFormat
+								ele.creation_time=datedialogFormat(ele.creation_time)
 								if(ele.monitoring){
-									ele.monitoringText='开启'
+									ele.monitoringText=this.$t("Public.open");									
+//									ele.monitoringText='开启'
 								}else if(!ele.monitoring){
-									ele.monitoringText='关闭'
+									ele.monitoringText=this.$t('Public.close');									
+//									ele.monitoringText='关闭'
 								}
 							})
 							this.total=res.data.data.page.total;
@@ -550,16 +547,16 @@
 								if(res.status==200){
 									if(res.data.status==0){
 										this.$message({
-											message:'添加成功',
+											message:this.$t('tooltipMes.addSuccess'),
 											type:'success'
 										})
-//										this.$refs['editForm'].resetFields();
+
 										this.$refs['editForm'].resetFields();
 										
 										this.dialogFormVisible=false;
 										this.getUsers()
 									}else if(res.data.status){
-//										this.$refs.editForm.resetFields();
+										this.$refs.editForm.resetFields();
 										this.$message({
 											message:res.data.message,
 											type:'warning'
@@ -659,7 +656,7 @@
 								if(res.status==200){
 									if(res.data.status==0){
 										this.$message({
-											message:'修改成功',
+											message:this.$t('tooltipMes.editSuccess'),
 											type:'success'
 										})
 										this.dialogFormVisible=false;
@@ -682,7 +679,7 @@
 			handleStart(index,row){
 				
 				//运行
-				this.$confirm('确认将次链路开通运行吗?','提示',{
+				this.$confirm(this.$t('Public.openLinkSure'),this.$t('confirm.tooltip'),{
 					type:'primary'
 				})
 				.then (() => {
@@ -691,7 +688,7 @@
 						if(res.status==200){
 							if(res.data.status==0){
 								this.$message({
-									message:'运行成功，请到数据中心查看!',
+									message:this.$t('Public.linkRunSuc'),
 									type:'success'
 								})
 								row.maintain_type=true
@@ -723,7 +720,7 @@
 			handleDel(index,row){
 				//删除
 //				var this=this;
-				this.$confirm('确认删除吗?','提示',{
+				this.$confirm(this.$t('confirm.title'),this.$t('confirm.tooltip'),{
 					type:'danger'
 				})
 				.then( () => {
@@ -732,7 +729,7 @@
 						if(res.status==200){
 							if(res.data.status==0){
 								this.$message({
-									message:'删除成功',
+									message:this.$t('tooltipMes.delSuccess'),
 									type:'success'
 								})
 								this.getUsers()
@@ -768,7 +765,7 @@
 					}else{
 						this.foundFormVisible=false;
 						this.$message({
-							message:'参数不能为空!',
+							message:this.$t("Public.paramsNotEmity"),
 							type:'warning'
 						})
 					}
@@ -785,7 +782,7 @@
 				rows.forEach(ele => {
 					ids.push(ele.id)
 				})
-				this.$confirm('确认删除选中的记录吗?','提示',{
+				this.$confirm(this.$t('confirm.titles'),this.$t('confirm.tooltip'),{
 					type:'danger'
 				})
 				.then( () => {
@@ -798,7 +795,7 @@
 						if(res.status==200){
 							if(res.data.status==0){
 								this.$message({
-									message:'删除成功',
+									message:this.$t('tooltipMes.delSuccess'),
 									type:'success'
 								})
 								this.getUsers()							
@@ -823,18 +820,7 @@
 			downloadExcel(){
 //				导出当前页
 			},
-			//表格里面的 数据导出
-			dateFormat(row,column){
-	    		//将时间戳转换为前端的时间
-	    		let date=new Date(parseInt(row.creation_time)*1000);
-	    		let Y=date.getFullYear()+'-';
-	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +'  ':date.getDate()+'  ';
-	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
-	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
-	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
-	    		return Y + M + D + h + m + s	    		
-	    }
+
 		},
 	}
 </script>

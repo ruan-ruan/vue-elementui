@@ -595,23 +595,25 @@ export default {
             	
             	this.getLoading=false;
               // this.users=res.data.data.items;
-                 this.total=res.data.data.page.total;
+              this.total=res.data.data.page.total;
 							descriptionValue(res.data.data.items);
 							
 							dealNull(res.data.data.items,'charge_time')
 							
               res.data.data.items.map(ele => {
+//            	console.log(ele)
               	//设置   a端  z端数据  datedialogFormat
-								if((!ele.charge_time&& typeof(ele.charge_time) !='undefined' && ele.charge_time !=0) || ele.charge_time==''){
+								if((!ele.charge_time && typeof(ele.charge_time) !='undefined' && ele.charge_time !=0) || ele.charge_time==''|| typeof ele.charge_time =='undefined'){
 	            		ele.charge_time=''
 	            	}else {
 	            		ele.charge_time=datedialogFormat(ele.charge_time)
 	            	}
-	            	if((!ele.expiration_time&& typeof(ele.expiration_time) !='undefined' && ele.expiration_time !=0) || ele.expiration_time==''){
+	            	if((!ele.expiration_time&& typeof(ele.expiration_time) !='undefined' && ele.expiration_time !=0) || ele.expiration_time=='' || typeof ele.charge_time =='undefined'){
 	            		ele.expiration_time=''
 	            	}else {
 	            		ele.expiration_time=datedialogFormat(ele.expiration_time)
 	            	}
+	            	
 	            	ele.creation_time=datedialogFormat(ele.creation_time)
                 if (ele.type == "d2d") {
                   ele.typeName = "DCI";
@@ -621,7 +623,7 @@ export default {
                   ele.typeName = "云直连";
                 }
                 
-                 var str = ele.endpoints;
+                var str = ele.endpoints;
                 if (ele.status == "failure") {
                   ele.statusHTML = "创建失败";
                   ele.statusColor = "creatFie";
@@ -641,27 +643,43 @@ export default {
                   ele.statusColor = "stopVal";
                   ele.creat = true;
                   ele.btn=false;
-                } else if (ele.status == "servicing") {
+                } else if (ele.status == "servicing"){
+									
+									if(str.length == 2 ){//点到点的数据
 
-									if(getPortStatus(str[0].ports) ==='UP' || getPortStatus(str[0].ports) ==='异常' ){
-                  	if(getPortStatus(str[1].ports) ==='UP' || getPortStatus(str[1].ports) ==='异常'){
-                  		ele.statusHTML = "运行中";
-                  		 ele.statusColor = "ServerVal";
-                  	}else if(getPortStatus(str[1].ports)==='DOWN'){
-                  			ele.statusHTML = "故障";
-                  			ele.statusColor = "creatFie";
-                  	}
-                  }else if(getPortStatus(str[0].ports)==='DOWN'){
-                  	if(getPortStatus(str[1].ports) ==='UP' || getPortStatus(str[1].ports) ==='异常'){
-                  		ele.statusHTML = "故障";
-                  		ele.statusColor = "creatFie";
-                  		
-                  	}else if(getPortStatus(str[1].ports)==='DOWN'){
-                  			ele.statusHTML = "故障";
-                  			ele.statusColor = "creatFie";
-                  			
-                  	}
-                  }
+										if(getPortStatus(str[0].ports) =='UP' || getPortStatus(str[0].ports) =='异常' ){
+
+	                  	if(getPortStatus(str[1].ports) =='UP' || getPortStatus(str[1].ports) =='异常'){
+	                  		ele.statusHTML = "运行中";
+	                  		ele.statusColor = "ServerVal";
+	                  	}else if(getPortStatus(str[1].ports)=='DOWN'){
+	                  			ele.statusHTML = "故障";
+	                  			ele.statusColor = "creatFie";
+	                  	}
+	                  	
+	                  }else if(getPortStatus(str[0].ports)=='DOWN'){
+	                  	if(getPortStatus(str[1].ports) =='UP' || getPortStatus(str[1].ports) =='异常'){
+	                  		ele.statusHTML = "故障";
+	                  		ele.statusColor = "creatFie";
+	                  		
+	                  	}else if(getPortStatus(str[1].ports)=='DOWN'){
+	                  			ele.statusHTML = "故障";
+	                  			ele.statusColor = "creatFie";
+	                  			
+	                  	}
+	                  }
+									}else if(str.length == 1){//云互联
+										if(getPortStatus(str[0].ports) =='UP' || getPortStatus(str[0].ports) =='异常' ){
+											ele.statusHTML = "运行中";
+	                  	ele.statusColor = "ServerVal";
+										}else if(getPortStatus(str[0].ports)=='DOWN'){
+											ele.statusHTML = "故障";
+	                  	ele.statusColor = "creatFie";
+										}
+									}else if(str.length ==0) { //云互联
+										ele.statusHTML = "运行中";
+	                  ele.statusColor = "ServerVal";
+									}
 //                ele.colorZ='colorWarning'
                   ele.specialName = "停止";
 //                ele.statusColor = "ServerVal";
@@ -787,19 +805,19 @@ export default {
       //编辑
       this.dialogStatus = "update";
       this.dialogFormVisible = true;
-      if( (!row.expiration_time && typeof(row.expiration_time)!='undefined' && row.expiration_time!=0) && (typeof (row.expiration_time) ==='undefined')){
+      if( (!row.expiration_time && typeof(row.expiration_time)!='undefined' && row.expiration_time!=0) || (typeof (row.expiration_time) ==='undefined') || row.expiration_time ==''){
       	row.expiration_time=''
       }
-      if( (!row.charge_time && typeof(row.charge_time)!='undefined' && row.charge_time!=0) && (typeof (row.charge_time) ==='undefined')){
+      if( (!row.charge_time && typeof(row.charge_time)!='undefined' && row.charge_time!=0) || (typeof (row.charge_time) ==='undefined') || row.charge_time==''){
       	row.charge_time=''
       }
       this.editForm = {
         id: row.id,
         name: row.name,
         bandwidth: row.bandwidth,
-        time:datedialogFormat(row.creation_time),
-        charge_time:row.charge_time==''?"": new Date(datedialogFormat(row.charge_time)),
-        expiration_time:row.expiration_time==''?"": new Date(datedialogFormat(row.expiration_time)),
+        time:row.creation_time,
+        charge_time:row.charge_time==''?"": new Date(row.charge_time),
+        expiration_time:row.expiration_time==''?"": new Date(row.expiration_time) ,
         description: row.description,
         statusHTML:row.statusHTML,
         charge_mode:row.charge_mode
@@ -822,7 +840,8 @@ export default {
 								expiration_time:this.editForm.expiration_time=='Invalid Date'?null: Number(this.editForm.expiration_time)/1000,
 								description:this.editForm.description
 							}
-							console.log(para)
+							console.log(para);
+//							debug
               this.$ajax.put(
                   "/vll/edit_p2p_vll/" + this.editForm.id + "?token=" +  this.token,  para  )
                 .then(res => {

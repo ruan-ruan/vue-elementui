@@ -223,7 +223,7 @@
 					.then(res => {
 						if(res.status==200){
 							if(res.data.status==0){
-//								console.log(res);
+								console.log(res);
 								var endObj={};
 								var endData=[];
 								if(res.data.data.endpoints){
@@ -317,19 +317,22 @@
 								this.selData=flowType;   //筛选后的数据
 								
 								let sliData=[],setObj={}; //根据选择的开始和结束时间，对该新拼接的数组进行筛选
-								
+								console.log(flowType)
 								flowType.forEach(item => {
+									
 									var endTime=this.trafficData[ this.trafficData.length-1];
 									var startTime=this.trafficData[0];
-									
+									console.log(item);
 									if(item.flow.length !=0){//如果flow里面的存在数据的时候
 
-										staIndex=arrayPro.findIndex(item.flow,this.trafficData[0]);//获取将要截取起点
-										endIndex=arrayPro.findIndex(item.flow,this.trafficData[this.trafficData.length-1]);//获取截取的终点
-	
+										var staIndex=arrayPro.findIndex(item.flow,this.trafficData[0]);//获取将要截取起点
+										var endIndex=arrayPro.findIndex(item.flow,this.trafficData[this.trafficData.length-1]);//获取截取的终点
+										
 										var end=item.flow[0].time;
 	
-	
+										console.log(staIndex);
+										console.log(endIndex);
+										
 										//根据开始时间 截取对应的值  查到的时候返回对应的下标   否则返回-1    结束时间也是  对应的额flow的值
 										if(staIndex < 0){//没有找到开始时间对应的流量的值   说明  流量的数据不够   这个时候可以用空的来拼接
 											//当开头的数据没有找到的时候  这个时候  开头的数据  需要进行补数据
@@ -339,22 +342,29 @@
 											if(endIndex <0){//没有查到结束的时候对应的额flow的值，这个时候 直接拼接既可，
 												item.sliceData=arrayPro.dataIsNot(startTime,end,'startIndex').concat(  arrayPro.dataIsNot( item.flow[item.flow.length-1].time , endTime,'endIndex' )  )	;
 												item.sliceVal=item.sliceData;
-											}else {//查找到对应下边的flow的值
+											}else if(endIndex >=0) {//查找到对应下边的flow的值
 												item.sliceVal=arrayPro.dataIsNot(startTime,end,'startIndex').concat( item.flow.slice(0, endIndex) )
 											}
-										}else{//返回对应的下边的既可
+										}else if(staIndex >= 0){//返回对应的下边的既可
 	
 											if(endIndex <0){//没有查到结束的时候对应的额flow的值，这个时候 直接拼接既可，
 												item.sliceData=item.flow.concat( arrayPro.dataIsNot(item.flow[item.flow.length-1].time,endTime,'endIndex') )
 												item.sliceVal=item.sliceData.slice(staIndex);
-											}else {//查找到对应下边的flow的值
-												item.sliceVal=item.sliceData.slice(staIndex,endIndex);
+											}else if(endIndex >0) {//查找到对应下边的flow的值
+												console.log('进来');
+												if(item.sliceData.length>= endIndex){
+													item.sliceVal=item.sliceData.slice(staIndex,endIndex);
+												}else {
+													item.sliceVal=item.sliceData.slice(staIndex);
+												}
+												
 											}
 											
 										}
 									}else {//flow里面的数据是空的时候
 										item.sliceVal=arrayPro.dataIsNot(startTime,endTime,'endIndex');
 									}
+									console.log(item)
 									setObj={
 										id:item.id,
 										name:item.name,
@@ -368,7 +378,7 @@
 									
 									
 								})
-//								console.log(sliData)
+								console.log(sliData)
 								this.sliData=sliData;
 								//获取处理后的数据
 								this.chartLoading=false;
@@ -378,12 +388,9 @@
 									//A端
 									this.users=this.getPartialData(sliData,'A端').usersNet;
 									this.baseObjA=this.getPartialData(sliData,'A端').baseObjNet
-//									console.log( this.getPartialData(sliData,'Z端') )
 									//Z端
 									this.baseObjZ=this.getPartialData(sliData,'Z端').baseObjNet;
 									this.usersZ=this.getPartialData(sliData,'Z端').usersNet;
-//									console.log(this.baseObjA);
-//									console.log(this.baseObjZ);
 								}else {//显示组网的数据  this.filters.logic_name   为筛选条件
 									this.usersNet=this.getPartialData(sliData,this.filters.logic_name).usersNet;
 									this.baseObjNet=this.getPartialData(sliData,this.filters.logic_name).baseObjNet;
@@ -397,16 +404,19 @@
 			//对截取完以后的A端，Z端  组网的数据的进行处理
 			
 			getPartialData(sliData,type){//对   A端  ，Z端   组网的单个数据对象的处理整合   type  代表的是需要获取的是A端   Z端  组网的数据   如果找到则返回 ，没有的时候则返回空
+				console.log(sliData)
 				var ZData=[],logicZ={};//data一部分的数据table，一部分是对里面的包含的额详细数据数据charts
-				sliData.forEach(item => {
+				sliData.map(item => {
 					var val=[];
 					if( type != 'A端' && type != 'Z端' ){//为组网的获取的数据    type为传值的类型
 						if( (!item.name && typeof(item.name) != 'undefined' && item.name !=0) || typeof(item.name) =='undefined' || item.name == '' ){
 							//此时  是虚拟组网的数据
 							//在这一步进行数据的查找
 							if(item.logic.id == type){//查找到对应的逻辑口this.filters.logic_name   筛选组网的逻辑口数据
+								
 								logicZ=item;
 								val.push(item);//获取对应的逻辑口的数据
+								console.log(val)
 								ZData=this.selectVal(val,this.timeInterval)[0].data
 							}
 							console.log(this.logicData);
@@ -414,7 +424,7 @@
 							var str=this.logicData.find(ele => {
 								return ele
 							});
-							//
+
 							if(JSON.stringify(str) != '{}'){
 								type =str.name
 							}
@@ -422,7 +432,8 @@
 					}else {
 						if(item.name == type){
 							logicZ=item;
-							val.push(item)
+							val.push(item);
+							console.log(val)
 							ZData=this.selectVal(val,this.timeInterval)[0].data
 				
 						}
@@ -434,33 +445,20 @@
 					input_packages_d1:this.dealData('input_packages',arrayPro.testCharts(ZData,'input_packages',this.valType).d1),
 					output_bytes_d1:this.dealData('output_bytes',arrayPro.testCharts(ZData,'output_bytes',this.valType).d1),
 					output_packages_d1:this.dealData('output_packages',arrayPro.testCharts(ZData,'output_packages',this.valType).d1),
-					//d1总的入
-					total_input_bytes_d1:this.dealData('total_input_bytes',arrayPro.testCharts(ZData,'total_input_bytes',this.valType).d1),
-					total_input_packages_d1:this.dealData('total_input_packages',arrayPro.testCharts(ZData,'total_input_bytes',this.valType).d1),
-					//d1总的出
-					total_output_bytes_d1:this.dealData('total_output_bytes',arrayPro.testCharts(ZData,'total_output_bytes',this.valType).d1),
-					total_output_packages_d1:this.dealData('total_output_packages',arrayPro.testCharts(ZData,'total_output_packages',this.valType).d1),
 
 					input_bytes_d2:this.dealData('input_bytes',arrayPro.testCharts(ZData,'input_bytes',this.valType).d2),
 					input_packages_d2:this.dealData('input_packages',arrayPro.testCharts(ZData,'input_packages',this.valType).d2),
 					output_bytes_d2:this.dealData('output_bytes',arrayPro.testCharts(ZData,'output_bytes',this.valType).d2),
 					output_packages_d2:this.dealData('output_packages',arrayPro.testCharts(ZData,'output_packages',this.valType).d2),
-					//d2总的入
-					total_input_bytes_d2:this.dealData('total_input_bytes',arrayPro.testCharts(ZData,'total_input_bytes',this.valType).d2),
-					total_input_packages_d2:this.dealData('total_input_packages',arrayPro.testCharts(ZData,'total_input_bytes',this.valType).d2),
-					//d2总的出
-					total_output_bytes_d2:this.dealData('total_output_bytes',arrayPro.testCharts(ZData,'total_output_bytes',this.valType).d2),
-					total_output_packages_d2:this.dealData('total_output_packages',arrayPro.testCharts(ZData,'total_output_packages',this.valType).d2),
-
 
 				}
-
+				//流量的总和   是d1与d2的数据   总和
 				let objZ_total={
-					input_bytes_total:arrayPro.totalData( objZ.total_output_bytes_d1 , objZ.total_input_bytes_d2 ),
-					input_packages_total:arrayPro.totalData( objZ.total_output_packages_d1 , objZ.total_input_packages_d2 ),
+					input_bytes_total:arrayPro.totalData( objZ.input_bytes_d1 , objZ.input_bytes_d2 ),
+					input_packages_total:arrayPro.totalData( objZ.input_packages_d1 , objZ.input_packages_d2 ),
 
-					output_bytes_total:arrayPro.totalData( objZ.total_output_bytes_d1, objZ.total_output_bytes_d2 ),
-					output_packages_total:arrayPro.totalData( objZ.total_output_packages_d1 , objZ.total_output_packages_d2 ),
+					output_bytes_total:arrayPro.totalData( objZ.output_bytes_d1, objZ.output_bytes_d2 ),
+					output_packages_total:arrayPro.totalData( objZ.output_packages_d1 , objZ.output_packages_d2 ),
 					
 				}
 				//组网的数据处理    点到点的数据处理
@@ -493,7 +491,7 @@
 							dev_name2:'',
 						}
 					}
-//									console.log(objZ)
+				console.log(objZ)
 					baseObjZ={//Z端的基本信息    将数据处理后   页添加进去
 						logo_title:type,
 						logic_port:logicZ.logic_port.name,
@@ -511,9 +509,9 @@
 					}
 
 
-//									if(this.baseObjZ.output_data_total.length===0 || this.baseObjZ.input_data_total.length===0){
-//										usersZ=[]
-//									}else{
+//					if(this.baseObjZ.output_data_total.length===0 || this.baseObjZ.input_data_total.length===0){
+//						usersZ=[]
+//					}else{
 						let input_nameZ={
 							name:baseObjZ.logic_port+'-'+baseObjZ.vlan,
 						}
@@ -528,9 +526,11 @@
 						let output_tableZ=Object.assign({},output_nameZ,output_tabZ);
 						usersZ.push(input_tableZ)
 						usersZ.push(output_tableZ)
-//									}
-//					this.usersZ=usersZ;
+//					}
+////					this.usersZ=usersZ;
 				}
+				console.log(baseObjZ);
+				console.log(usersZ);
 				return {
 					baseObjNet:baseObjZ,
 					usersNet:usersZ
@@ -542,11 +542,12 @@
 				let newData=[]
 				data.forEach(ele => {
 					if(type === 'input_bytes' || type==='output_bytes'|| type =='total_input_bytes' || type == 'total_output_bytes'){
-						newData.push( parseInt(ele/(60*8*1024))   )
-					}else if(type === 'input_packages' || type==='output_packages'|| type == 'total_input_packages' || type=='total_output_packages'){
-						newData.push( parseInt(ele/60*1024) )
+						newData.push( parseInt(ele/60*8)   )
+					}else if(type === 'input_packages' || type ==='output_packages'|| type == 'total_input_packages' || type=='total_output_packages'){
+						newData.push( parseInt(ele/60) )
 					}
 				})
+
 				return newData;//不同的属性   换算是不一样的
 			},
 			seaVal:function(valType='平均值'){//根据值的不同的  获取   不同的类型的值的类型
@@ -562,18 +563,26 @@
 				return val;
 			},
 			selectVal(data , timeFew=5){//data  是数组     timeFew根据时间 的类型获取的时间间隔   也就是值的间隔      valType是值的类型
-				//console.log(data);//可根据传值的类型  具体情况而定   A端   Z端    组网
+				console.log(data);//可根据传值的类型  具体情况而定   A端   Z端    组网
 				//需要获取  逻辑口       以及设备d1    d2的数据      分别是入 和出       所以   一个逻辑口 共有  六条数据
 				let strObj={},strData=[];
 				for(var i=0;i<data.length;i++){
 					  //里面包含a端和z端
 					var dataVal=[];  
 					var setData=data[i].flow;
+					console.log(setData);
+					setData.map(item => {
+						for(var val in item.d1 ){
+							if(item.d1.val <0){
+								console.log(item.d1)
+							}
+						}
+					})
 					 //将数组进行切割  并求出里面的各个值的类型
-					for(var index=0;index<data[i].flow.length;index+=timeFew){
+					for( var index=0; index<data[i].flow.length; index+=timeFew ){
 						dataVal.push(data[i].flow.slice(index,index+timeFew))
 					}
-//					console.log(dataVal)
+					console.log(dataVal)
 					strObj={
 						name:data[i].name,
 						vlan:data[i].vlan,
@@ -581,14 +590,17 @@
 					}
 					strData.push(strObj)
 				}
-				let chartsData=[]
+				let chartsData=[];
+				console.log(strData)
 				strData.forEach(ele => {
 					let str=[];	
-					ele.flow.forEach((item,index) => {
+					ele.flow.map((item,index) => {
+						
+//						if(index == 279){
+//							console.log(item)
 						
 						let obj={}
-
-						obj={
+							obj={
 						 	d1:{
 //						 		ifname:item[0].d1.ifname,
 						 		//里面包含 最大 	最小	  平均值	总和
@@ -600,11 +612,7 @@
 						 		output_bytes:arrayPro.flowObj(item,'output_bytes').d1,
 						 		//pps      出
 						 		output_packages:arrayPro.flowObj(item,'output_packages').d1,
-						 		
-						 		total_input_bytes:arrayPro.flowObj(item,'total_input_bytes').d1,
-						 		total_input_packages:arrayPro.flowObj(item,'total_input_packages').d1,
-						 		total_output_bytes:arrayPro.flowObj(item,'total_output_bytes').d1,
-						 		total_output_packages:arrayPro.flowObj(item,'total_output_packages').d1
+
 						 	},
 						 	d2:{
 //						 		ifname:item[0].d2.ifname,
@@ -617,14 +625,11 @@
 						 		output_bytes:arrayPro.flowObj(item,'output_bytes').d2,
 						 		//pps      出
 						 		output_packages:arrayPro.flowObj(item,'output_packages').d2,
-						 		
-						 		total_input_bytes:arrayPro.flowObj(item,'total_input_bytes').d2,
-						 		total_input_packages:arrayPro.flowObj(item,'total_input_packages').d2,
-						 		total_output_bytes:arrayPro.flowObj(item,'total_output_bytes').d2,
-						 		total_output_packages:arrayPro.flowObj(item,'total_output_packages').d2
+
 						 	}
 						 }
-					str.push(obj)
+							str.push(obj)
+//						}
 					})
 					let chartObj={
 						name:ele.name,
@@ -635,6 +640,7 @@
 					chartsData.push(chartObj)
 				})
 
+				console.log(chartsData)
 				return chartsData;//   返回的是  处理完成以后的数组里面的对象    a端和z端所有的数据       下一步是对每一个属性进行  最大值  和最小值进行遍历
 			},
 

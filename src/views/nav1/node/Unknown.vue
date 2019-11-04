@@ -85,7 +85,7 @@
 				<el-table-column prop='vtep' min-width='80' max-width='100' label='Vtep' align='center'></el-table-column>		
 				<el-table-column prop='dc.name' min-width='80'max-width='100' :label='$t("Public.dataCen")' align='center'></el-table-column>
 				<el-table-column prop='description' min-width='60'max-width='80' :label='$t("Public.description")' align='center'></el-table-column>
-				<el-table-column width='300' align='center':label='$t("Public.operation")'>
+				<el-table-column width='180' align='center':label='$t("Public.operation")'>
 					<template slot-scope='scope'>
 						<el-button type='primary':diasbled='RunStatus' size='mini' @click='run(scope.$index, scope.row)' class='run'>
 							<!--运行-->{{$t('tabOperation.run')}}

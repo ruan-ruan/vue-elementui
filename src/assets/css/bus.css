@@ -155,3 +155,9 @@
 .colorWarning{
 	color:#E6A23C;
 }
+.el-button--mini, .el-button--mini.is-round {
+	padding: 7px 2px ;
+}
+.el-button+.el-button{
+	margin-left: 1px;
+}

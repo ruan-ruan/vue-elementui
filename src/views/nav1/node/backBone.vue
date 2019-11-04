@@ -158,7 +158,7 @@
               align='center'
             ></el-table-column>
             <el-table-column
-            	width='220'
+            	width='140'
               :label='$t("Public.operation")' 
               align='center'
             >
@@ -615,4 +615,7 @@ export default {
 </script>
 
 <style >
+	
+	
+
 </style>

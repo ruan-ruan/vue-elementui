@@ -36,12 +36,25 @@
 				},
 				deep:true,
 				
+			},
+			user:{
+				handler(newVal,oldVal){
+					console.log(newVal);
+					newVal.map(item => {
+						item.avg=parseInt(item.avg);
+
+						
+					})
+				},
+				deep:true
 			}
 		},
 		mounted(){
 			this.getCharts(this.data);
-//			console.log(this.unit);
-//			console.log(this.user);
+			this.user.map(item => {
+//				console.log(item)
+				item.avg=parseInt(item.avg)
+			})
 //			console.log(this.trafficData)
 		},
 		methods:{
@@ -93,7 +106,22 @@
 					        data: that.trafficData
 					    },
 					    yAxis: {
-					        type: 'value'
+					        type: 'value',
+					        axisTick:true,
+					        scale:true,
+					        axisLabel: {
+					            margin: 2,
+					            formatter: function (value, index) {
+					                if (value >= 10000 && value < 10000000) {
+					                    value = value / 10000 + "万";
+					                } else if (value >= 10000000 && value <100000000) {
+					                    value = value / 10000000 + "千万";
+					                }else if(value>= 100000000) {
+					                	value=value/100000000+'亿'
+					                }
+					                return value;
+					            }
+					        },
 					    },
 					    series: [
 					    {

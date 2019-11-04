@@ -1,14 +1,14 @@
 <template>
 	<div>
 		<section>
-			<span >通过此页面可创建对应的逻辑口</span>
+			<span >{{$t('Public.cloudTit')}}</span>
 			<el-row class="toolbar" style="padding-bottom: 0px;">
 				<el-col :span='24'>
 					<el-form :inline='true' :model='filters' ref='filters' @submit.native.prevent>
-						<el-form-item label='云链路名称' prop='name'>
+						<el-form-item :label='$t("Public.cloudName")' prop='name'>
 							<el-input v-model='filters.name' class='sel_chart'></el-input>
 						</el-form-item>
-						<el-form-item label='公有云' prop='cloun'>
+						<el-form-item :label='$t("Public.shardCloud")' prop='cloun'>
 							<el-select v-model='filters.cloun' class='sel'>
 								<el-option v-for='(item,index) in clounData'
 									:label='item.label'
@@ -16,7 +16,7 @@
 									:key='index'></el-option>
 							</el-select>
 						</el-form-item>
-						<el-form-item label='链路状态' prop='status'>
+						<el-form-item :label='$t("Public.linkState")' prop='status'>
 							<el-select v-model='filters.status' class='sel'>
 								<el-option v-for='(item,index) in statusData'
 									:label='item.label'
@@ -25,8 +25,8 @@
 							</el-select>
 						</el-form-item>
 						<el-form-item>
-							<el-button type='primary' @click='getUser'>搜索</el-button>
-							<el-button type='info' @click='reset'>重置</el-button>
+							<el-button type='primary' @click='getUser'>{{$t('topFilters.search')}}</el-button>
+							<el-button type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
 						</el-form-item>
 					</el-form>
 				</el-col>
@@ -35,16 +35,16 @@
 			<el-row>
 				<el-col :span='24'>
 					<el-col :span='4'>
-						<el-button type='primary' @click='addClounLink'>+添加云链路</el-button>
+						<el-button type='primary' @click='addClounLink'>+{{$t('Public.addCloud')}}</el-button>
 					</el-col>
 					<el-col :span='20' class='table-top'>
 						<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">
-							批量删除</el-button>
+							{{$t("tabOperation.batchDel")}}</el-button>
 						<el-dropdown split-button type='success'@command="handleExport">
-							导出数据
+							{{$t('tabOperation.derived.tit')}}
 							<el-dropdown-menu slot='dropdown'>
-								<el-dropdown-item command="current">当前页 </el-dropdown-item>									
-								<el-dropdown-item command="all">所有页</el-dropdown-item>																				
+								<el-dropdown-item command="current">{{$t('tabOperation.derived.currentPage')}} </el-dropdown-item>									
+								<el-dropdown-item command="all">{{$t('tabOperation.derived.allPage')}}</el-dropdown-item>																				
 							</el-dropdown-menu>
 						</el-dropdown>
 					</el-col>
@@ -56,14 +56,14 @@
 			<el-table :data='users' highlight-current-row @selection-change="selsChange" style='width: 100%;'
 				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
 				<el-table-column type='selection'min-width='40'></el-table-column>
-				<el-table-column type='index' label='序号' min-width='50'align='center'>
+				<el-table-column type='index' :label='$t("Public.index")' min-width='80'align='center'>
 					<template slot-scope='scope'>
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='creation_time' sortable label='创建时间' width='101' align='center' :formatter='dateFormat'>					
+				<el-table-column prop='creation_time' sortable :label='$t("Public.creation")' width='101' align='center' >					
 				</el-table-column>
-				<el-table-column  label='云链路名称' min-width='120' align='center'>
+				<el-table-column  label='云链路名称' min-width='80' align='center'>
 					<template slot-scope='scope'>
 						<a href="#" @click='handleSeeLink(scope.$index,scope.row)'>{{scope.row.name}}</a>
 					</template>
@@ -72,11 +72,11 @@
 				</el-table-column>
 				<el-table-column prop='type'  label='公有云' min-width='80' align='center'>
 				</el-table-column>
-				<el-table-column prop='region'  label='区域 ' min-width='60' align='center'>
+				<el-table-column prop='region'  label='区域 ' min-width='80' align='center'>
 				</el-table-column>
-				<el-table-column prop='access_point'  label='接入点' min-width='70' align='center'>
+				<el-table-column prop='access_point'  label='接入点' min-width='80' align='center'>
 				</el-table-column>
-				<el-table-column prop='bandwidth'  label='带宽(Gbps)' min-width='70' align='center'>
+				<el-table-column prop='bandwidth'  label='带宽(Gbps)' min-width='80' align='center'>
 				</el-table-column>
 				<el-table-column prop='logic_port.name'  label='逻辑口' min-width='80' align='center'>
 					<template slot-scope='scope'>
@@ -90,11 +90,10 @@
 				</el-table-column>
 				<el-table-column prop='descriptionVal'  label='备注' min-width='80' align='center'>
 				</el-table-column>
-				<el-table-column   label='操作' width='160' align='center'>
+				<el-table-column   label='操作' width='120' align='center'>
 					<template slot-scope='scope'>
-						<el-button size='small' type='primary' @click='handleEdit(scope.$index,scope.row)'>编辑</el-button>
-						<el-button size='small' type='danger' @click='handleDel(scope.$index,scope.row)'>删除</el-button>
-						
+						<el-button size='mini' type='primary' @click='handleEdit(scope.$index,scope.row)'>编辑</el-button>
+						<el-button size='mini' type='danger' @click='handleDel(scope.$index,scope.row)'>删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -121,7 +120,7 @@
 </template>
 
 <script>
-	import {descriptionValue,getPortStatus} from '@/assets/js/index.js'
+	import {descriptionValue,getPortStatus ,datedialogFormat} from '@/assets/js/index.js'
 	
 	export default{
 		name:'cloun',
@@ -207,9 +206,10 @@
 						if(res.data.status==0){
 							this.loading=false;
 							console.log(res)
-							
+							//datedialogFormat
 							descriptionValue(res.data.data.items)
-							res.data.data.items.forEach(ele => {
+							res.data.data.items.map(ele => {
+								ele.creation_time=datedialogFormat(ele.creation_time)
 //								if(ele.type == 'ali'){
 //									ele.typeName='阿里云'
 //								}else if(ele.type == 'tencent'){
@@ -366,17 +366,17 @@
 				return jsonData.map(v => filterVal.map(j => v[j]))
 			},
 			//表格数据时间转换
-			dateFormat(row,column){
-	    		//将时间戳转换为前端的时间
-	    		let date=new Date(parseInt(row.creation_time)*1000);
-	    		let Y=date.getFullYear()+'-';
-	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +'  ':date.getDate()+'  ';
-	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
-	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
-	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
-	    		return Y + M + D + h + m + s	    		
-	    	}
+//			dateFormat(row,column){
+//	    		//将时间戳转换为前端的时间
+//	    		let date=new Date(parseInt(row.creation_time)*1000);
+//	    		let Y=date.getFullYear()+'-';
+//	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
+//	    		let D=date.getDate() <10? '0' +date.getDate() +'  ':date.getDate()+'  ';
+//	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
+//	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
+//	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
+//	    		return Y + M + D + h + m + s	    		
+//	    	}
 		}
 	}
 </script>

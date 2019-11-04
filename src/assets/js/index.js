@@ -23,7 +23,7 @@ export function datedialogFormat(value){
 export function dealNull(str,property){
 	console.log(str);
 	str.map( item => {
-		console.log(item[property])
+
 		if( !item[property] && typeof(item[property]) && item[property] !=0){
 			item[property]=''
 		}else if(typeof item[property] == 'undefined'){
@@ -219,59 +219,64 @@ export var arrayPro={
 //		console.log(data);
 //		console.log(property)
 		let d1=[],d2=[];
-		for(var item =0 ;item <data.length;item++){
-			d1.push(data[item].d1)
-			d2.push(data[item].d2)
+		if(data.length !=0){
+			for(var item =0 ;item <data.length;item++){
+				d1.push(data[item].d1)
+				d2.push(data[item].d2)
+			}
 		}
+//		console.log(d1);
+//		console.log(d2)
 		//首先判断   d1和d2 内的对象是否为空
 		
 		let avg=0,num=0,obj1={};
-		if(JSON.stringify(d1[index]) == '{}'){
-			return ;
-		}else{
-			for(var index=0;index<d1.length;index++){
-//			console.log(d1[index])
-				num+= eval(d1[index][property])
-				avg=num/d1.length
+		d1.map(item => {
+			if(JSON.stringify(item )  == '{}'){
+				return ;
+			}else if(JSON.stringify(item ) !='{}'){
+				num+= parseInt(item[property]);
 			}
-			obj1={
-				min:Math.min.apply(Math, d1.map(function(o) {return o[property]})),
-				max:Math.max.apply(Math, d1.map(function(o) {return o[property]})),
-				avg:avg
-			}
+		})
+		avg=num/d1.length;
+		obj1={
+			min:Math.min.apply(Math, d1.map(function(o) {return o[property]})),
+			max:Math.max.apply(Math, d1.map(function(o) {return o[property]})),
+			avg:avg
 		}
-		
+
 		let avg2=0,num2=0,obj2={};
-		if(JSON.stringify(d2[0][index]) =='{}'){
-			return ;
-		}else{
-			for(var index=0;index<d2.length;index++){
-				num2+= eval(d2[index][property])
-				avg2=num2/d2.length
+		d2.map(item => {
+			if(JSON.stringify(item ) =='{}'){
+				num2=0;
+			}else if(JSON.stringify(item ) !='{}'){
+				num2+=parseInt(item[property])
 			}
-			obj2={
-				min:Math.min.apply(Math, d2.map(function(o) {return o[property]})),
-				max:Math.max.apply(Math, d2.map(function(o) {return o[property]})),
-				avg:avg2
-			}
+		})
+		avg2=num2/d2.length;
+		obj2={
+			min:Math.min.apply(Math, d2.map(function(o) {return o[property]})),
+			max:Math.max.apply(Math, d2.map(function(o) {return o[property]})),
+			avg:avg2
 		}
-		
+
 		let obj={};
 		obj={
 			d1:obj1,
 			d2:obj2
 		}
+
 //		console.log(obj);
 		return obj;//获取flow里面的属性的各个的值的集合
 	},
 	tim(data){//获取数组里面的数据的最大，最小，平均值，实时流量等
+//		console.log(data)
 		let num=0,avg=0;
 		let obj={};
 		if(data){
 			for(var index=0;index<data.length;index++){
-				num+= eval(data[index])
-				avg=num/data.length
+				num+= parseInt(data[index])	
 			}
+			avg=num/data.length
 			obj={
 				min:Math.min.apply(Math, data.map(function(o) {return o})),
 				max:Math.max.apply(Math, data.map(function(o) {return o})),
@@ -282,7 +287,6 @@ export var arrayPro={
 		}else{
 			return false;
 		}
-		
 	},
 	sortTime(property){//根据时间进行排序  升序
 		return function (a,b){
@@ -351,6 +355,7 @@ export var arrayPro={
 			return data1;
 		}else if(! isNaN(data1[0]) && !isNaN(  data2[0])){
 			return data1.map(function(item,index){
+
 				return item + data2[index]
 			})
 		}else{

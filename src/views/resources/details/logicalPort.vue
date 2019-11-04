@@ -404,7 +404,6 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.tenantLogo=res.data.data.items;
-							console.log(res)
 						}
 					}
 				}).catch(e => {

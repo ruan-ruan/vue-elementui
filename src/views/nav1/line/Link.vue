@@ -355,8 +355,8 @@
 					
 				},
 				textMap:{
-					update:'编辑',
-					details:'详情'
+					update:this.$t('tabOperation.edit'),
+					details:this.$t('tabOperation.info')
 				},
 				dialogStatus: "",
 				dialogFormVisible:false,
@@ -432,27 +432,35 @@
 								ele.creation_time=datedialogFormat(ele.creation_time)
 								//添加新的属性，作为是否维护和故障的字段
 								if(!ele.monitoring){
-									ele.monitorHTML='关闭'
+									ele.monitorHTML=this.$t('Public.close');									
+//									ele.monitorHTML='关闭'
 								}else if(ele.monitoring){
-									ele.monitorHTML='开启';
+									ele.monitorHTML=this.$t('Public.open')
+//									ele.monitorHTML='开启';
 								}
 								if(ele.status=='UP'){
 									ele.color='colorGreen';
 									if(ele.maintain_type){
-//										console.log(33333)
 										ele.maintenance_value=='';
-										ele.maintenanceBtn='开启维护';
+										ele.maintenanceBtn=this.$t('Public.openMain');										
+//										ele.maintenanceBtn='开启维护';
 									}else{
 										ele.maintenance_value=='';
-										ele.maintenanceBtn='开启维护';
+										ele.maintenanceBtn=this.$t('Public.openMain');										
+										
+//										ele.maintenanceBtn='开启维护';
 									}
 								}else if(ele.status=='DOWN'){
 									ele.color='colorRed'
 									if(!ele.maintain_type){
-										ele.maintenance_value='维护'
-										ele.maintenanceBtn='关闭维护'
+										ele.maintenanceBtn=this.$t('Public.maintain');										
+										ele.maintenanceBtn=this.$t('Public.closeMain');	
+//										ele.maintenance_value='维护'
+//										ele.maintenanceBtn='关闭维护'
 									}else{
-										ele.maintenance_value='故障'
+										ele.maintenanceBtn=this.$t('Public.fau');	
+										
+//										ele.maintenance_value='故障'
 									}
 								}	
 							})
@@ -479,7 +487,7 @@
 				ids.push(ele.id)
 			})
 
-		    this.$confirm("确认删除选中记录吗？", "提示", {
+		    this.$confirm(this.$t('confirm.titles'), this.$t('confirm.tooltip'), {
 		        type: "warning"
 		    })
 		    .then(() => {
@@ -495,7 +503,7 @@
 						if(res.data.status==0){
 							this.listLoading = false;
 							this.$message({
-								message:'删除成功!',
+								message:this.$t('tooltipMes.delSucess'),
 								type:'success'
 							})
 							this.getUsers();
@@ -520,11 +528,9 @@
 			handleStatus(index,row){
 				var _this=this;
 				console.log(row)
-				if(row.maintenanceBtn==="开启维护"){
-					console.log('进入开发')
-					this.$confirm('确认将此链路开启，开启维护状态!','提示',{
-						confirmButtonText:'确定',
-						cancelButtonText:'取消',
+				if(row.maintenanceBtn ===  this.$t('Public.openMain') ){
+//					console.log('进入开发')
+					this.$confirm(this.$t('confirm.linkOpen'),this.$t('confirm.tooltip'),{
 						type:'success'
 					})
 					.then(() => {
@@ -535,12 +541,12 @@
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
-										message:'开启成功!',
+										message:this.$t('tooltipMes.openSuc'),
 										type:'success'
 									})
 //									this.editForm.maintenance_type=true;
 //									mainVal[index].textContent='关闭维护';
-									row.maintenanceBtn="关闭维护"
+									row.maintenanceBtn=this.$t('Public.closeMain')
 									this.getUsers();
 								}else{
 									this.$message({
@@ -550,11 +556,9 @@
 								}
 							}
 						})
-					})
-				}else if(row.maintenanceBtn==="关闭维护"){
-					this.$confirm('确认将此链路关闭，关闭维护状态!','提示',{
-						confirmButtonText:'确定',
-						cancelButtonText:'取消',
+					}).catch(() => {})
+				}else if(row.maintenanceBtn=== this.$t('Public.closeMain')){
+					this.$confirm(this.$t('confirm.linkClose'),this.$t('confirm.tooltip'),{
 						type:'success'
 					})
 					.then( () => {
@@ -564,10 +568,10 @@
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
-										message:'关闭成功!',
+										message:this.$tc('tooltipMes.closeSuc'),
 										type:'success'
 									})
-									row.maintenanceBtn="开启维护"
+									row.maintenanceBtn= this.$t('Public.openMain')
 //									this.editForm.maintenance_type=false;
 //									mainVal[index].textContent='开启维护';
 									this.getUsers();
@@ -664,7 +668,7 @@
 									this.editLoading=false;
 									if(res.data.status==0){
 										this.$message({
-											message:'修改成功！',
+											message: this.$t('tooltipMes.editSuccess'),
 											type:'success'
 										})
 									}
@@ -686,7 +690,7 @@
 			},
 			//删除
 			handleDel(index,row){
-				this.$confirm('确认要删除该数据吗？','提示',{
+				this.$confirm(this.$t('confirm.title'),this.$t('confirm.tooltip'),{
 					type:'warning'
 				})
 				.then( ( ) => {
@@ -695,7 +699,7 @@
 						if(res.status==200){
 							if(res.data.status==0){
 								this.$message({
-									message:'删除成功',
+									message:this.$t('tooltipMes.delSucess'),
 									type:'success'
 								})
 								this.getUsers()
@@ -719,9 +723,9 @@
 			 handleExport(command){
 		    	if(command=='all'){
 		    		//导出所有的数据
-		    		this.$confirm('确定要导出所有的数据吗?','提示',{
-		    			confirmButtonText:'确定',
-		    			cancelButtonText:'取消',
+		    		this.$confirm(this.$t('tooltipMes.exportDataAll'),this.$t('confirm.tooltip'),{
+//		    			confirmButtonText:'确定',
+//		    			cancelButtonText:'取消',
 		    			type:'warning'
 		    		}).then(() => {
 		    			var para={
@@ -734,9 +738,9 @@
 		    		})
 		    	}else if(command=='current'){
 		    		//导出当前
-		    		this.$confirm('确定要导出当前页数据吗?','提示',{
-		    			confirmButtonText:'确定',
-		    			cancelButtonText:'取消',
+		    		this.$confirm(this.$t('tooltipMes.exportDataCurr'),this.$t('confirm.tooltip'),{
+//		    			confirmButtonText:'确定',
+//		    			cancelButtonText:'取消',
 		    			type:'warning'
 		    		}).then(() => {
 		    			this.exportData()
@@ -759,28 +763,16 @@
 				let that=this;
 				require.ensure([] ,() => {
 					const {export_json_to_excel} = require('@/excel/export2Excel')
-					const tHeader=['创建时间','数据中心','设备ID','管理Ip','备注'];
+					const tHeader=[ this.$t('Public.creation'),this.$t('Public.dataCen'),this.$t('Public.deviceID'),this.$t('Public.manageIP'),this.$t('Public.description')];
 					const filterVal=['creation_time','dc_name','id','ip','description'];
 					const list=that.excelData;
 					const data=that.formatJson(filterVal,list);
-					export_json_to_excel(tHeader,data,'下载数据excel')
+					export_json_to_excel(tHeader,data,this.$t('tooltipMes.download')+'excel')
 				})
 			},
 			formatJson(filterVal,jsonData){
 				return jsonData.map(v => filterVal.map(j => v[j]))
 			},
-			//表格数据时间转换
-//			dateFormat(row,column){
-//	    		//将时间戳转换为前端的时间
-//	    		let date=new Date(parseInt(row.creation_time)*1000);
-//	    		let Y=date.getFullYear()+'-';
-//	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-//	    		let D=date.getDate() <10? '0' +date.getDate() +'  ':date.getDate()+'  ';
-//	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
-//	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
-//	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
-//	    		return Y + M + D + h + m + s	    		
-//	    	}
 		},
 		mounted(){
 			this.getUsers()
