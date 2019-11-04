@@ -1,10 +1,10 @@
 <template>	
 	<div>
 		<el-tabs v-model='activeName'>
-			<el-tab-pane label='骨干链路' name='first'>
+			<el-tab-pane :label='$t("Public.backLink")' name='first'>
 				<Link v-if='activeName=="first"'></Link>
 			</el-tab-pane>
-			<el-tab-pane label='未知链路' name='second'>
+			<el-tab-pane :label='$t("Public.unLink")' name='second'>
 				<Unknown v-if='activeName=="second"'/>
 			</el-tab-pane>
 		</el-tabs>

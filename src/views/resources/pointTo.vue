@@ -393,7 +393,7 @@ import {
   datedialogFormat,
   isValidinteger,
   getPortStatus,
-  descriptionValue,
+  descriptionValue,dealNull
   
 } from "@/assets/js/index";
 export default {
@@ -597,7 +597,10 @@ export default {
               // this.users=res.data.data.items;
                  this.total=res.data.data.page.total;
 							descriptionValue(res.data.data.items);
-              res.data.data.items.forEach(ele => {
+							
+							dealNull(res.data.data.items,'charge_time')
+							
+              res.data.data.items.map(ele => {
               	//设置   a端  z端数据  datedialogFormat
 								if((!ele.charge_time&& typeof(ele.charge_time) !='undefined' && ele.charge_time !=0) || ele.charge_time==''){
 	            		ele.charge_time=''

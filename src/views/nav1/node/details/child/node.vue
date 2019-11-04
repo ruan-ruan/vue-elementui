@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-button size='small' @click='unknowgoback' v-if='!unkownBtn'  >{{$t('Public.goback')}}</el-button>
+		<el-button size='small' @click='unknowgoback' v-if='typeof title != "undefined"? false : typeof editId!="undefined"?false: !unkownBtn'  >{{$t('Public.goback')}}</el-button>
 		
 		<section>
 			<!--<h4 v-show='unknown_editForm_status'>骨干ID:{{seeForm.id}}</h4>-->
@@ -111,7 +111,8 @@
 				<div slot='footer' class="dialog-footer footer_right">
 					<el-button size='small' @click='goback' v-if='editFormBtn' >{{$t('Public.goback')}}</el-button>
 					
-					<el-button size='small' @click='unknowgoback' v-if='unkownBtn'  >{{$t('Public.goback')}}</el-button>
+					<el-button size='small' @click='unknowgoback' v-if='typeof title != "undefined"? false : unkownBtn'  >{{$t('Public.goback')}}</el-button>
+
 					<!--节点的编辑保存-->
 					<el-button size='small' v-if='editFormBtn' @click='editForm' type="primary">{{$t('tabOperation.save')}}</el-button>
 					<!--未知节点的添加按钮-->
@@ -280,6 +281,7 @@
 				this.devices_id_status=true;
 				this.addEquipStatus=false;
 				this.StaNot=true;
+				
 			}
 			//下面的是未知节点的编辑，添加，详情的界面的控制
 			if(typeof this.unknown_id != 'undefined'){

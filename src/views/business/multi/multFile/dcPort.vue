@@ -41,7 +41,7 @@
 					<el-switch v-model='editForm.chooseVlan'
 						active-text="UNTAG"
 						title='默认逻辑口为trunk,vlan为UNTAG'></el-switch>	
-						<el-button v-text=' editForm.logic==""?"选择vlan":editForm.endpoints_vlan==="trunk"?"选择vlan": (editForm.selVlan ? editForm.selVlan:"选择vlan")'
+						<el-button v-text=' editForm.logic==""?"选择vlan":editForm.endpoints_vlan !=="trunk"?" 选择vlan": editForm.selVlan ? editForm.selVlan:"选择vlan"'
 							size='small' 
 							@click='addVlan' 
 							title='请先选择节点和逻辑口'

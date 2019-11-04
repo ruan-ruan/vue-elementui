@@ -99,19 +99,13 @@ const en = {
     	cancel:'Cancel',
     	Submit:'Submit' ,
     	save:'Save',
+    	run:'Run',
     },
     validateMes:{
     	place:'Please input ',
     	placeCh:'Please change '
     },
-     confirm:{
-    	tooltip:'Tooltip',
-    	confi:'Confirm',
-    	title:'Are you sure to delete this record ?',
-    	titles:'Are you sure to delete the selected record ?',
-//  	cancel:'取消'
-		
-    },
+
     Form:{
     	creation:'Creation time：',
     	region:'region'
@@ -131,6 +125,12 @@ const en = {
     },
     Public:{//公共部分
     	//table
+    	backLink:'Backbone link ',
+    	unLink:'Unknown link ',
+    	apply:'Apply time',
+    	
+    	addNode:'Add node',
+    	findNode:'Find node',
     	SingleRun:'Single operation ',
     	run:'Running',
     	leave:'Leave',
@@ -182,6 +182,8 @@ const en = {
 	    backboneStatus:'Backbone status',
 	    backboneName:'Backbone name ',
 	    dataCen:'Data center ',
+	    backboneNode:'Backbone node ',
+	    unNode:'Unknown node ',
 	    //拓扑图的线的详情里面  使用
     	chart:'Chart',
     	linkState:'Link status',
@@ -206,8 +208,32 @@ const en = {
     	interface_driver:'Interface driver ',
     	open:'Open',//拓扑里面的点的详情
     	close:'Close',
+		placeFind:'Please enter discovery parameters ',
+		findDevice:'Discover device parameter settings ',
+		runSuccess:'Run successfully, please check in the backbone node !',
+		runDevice:'Are you sure you want to run this device ?',
+    	fault:'Fault/Maintain',
+    	fau:"Fault",
+    	linkID:'Link ID',
+    	checkType:'Detection type ',
+    	checkParams:'Detection parameters ',
+    	get_flow:'Get traffic type in value ',
+    	notEmity:'Can not be empty ',
+    	placeRight:'Please enter the correct value ',
+    	openMain:'Open',
+    	closeMain:'Close',
+    	maintain:'Maintain',
     },
-    
+    confirm:{
+    	tooltip:'Tooltip',
+    	confi:'Confirm',
+    	title:'Are you sure to delete this record ?',
+    	titles:'Are you sure to delete the selected record ?',
+    	linkOpen:'确认将此链路开启，开启维护状态!',
+    	linkClose:'确认将此链路关闭，关闭维护状态!'
+//  	cancel:'取消'
+		
+    },
     
     //消息部分
     mesModule:{//消息模块
@@ -298,7 +324,8 @@ const en = {
     	details:{
     		wat:'Monitoring record ',
     		notDatatip:'More data can be found in the information list ',
-    		deviceDetails:"View device details " 
+    		deviceDetails:"View device details " ,
+    		noData:'No alarm record ',
     	}
     },
     //物理位置部分

@@ -5,11 +5,11 @@
 			<el-row>									
 				<el-col :span='24' class='toolbar' style='padding-bottom: 0px;'>
 					<el-form :inline='true' :model='filters' ref='filters'>
-						<el-form-item label='名称' prop='name'>
+						<el-form-item :label="$t('Public.name')" prop='name'>
 							<el-input v-model='filters.name' class='sel'></el-input>
 						</el-form-item>
-						<el-form-item label='数据中心'prop='search_dc'>
-							<el-select v-model='filters.search_dc' filterable placeholder='全部' class='sel'>
+						<el-form-item :label="$t('Public.dataCen')"prop='search_dc'>
+							<el-select v-model='filters.search_dc' filterable :placeholder='$t("topFilters.placeholder")' class='sel'>
 								<el-option
 									v-for='(item,index) in datac'
 									:key='index'
@@ -18,21 +18,21 @@
 								</el-option>
 							</el-select>
 						</el-form-item>
-						<el-form-item label='创建日期' prop='timeVal'>
+						<el-form-item :label="$t('Public.creation')" prop='timeVal'>
 							<el-date-picker
 								v-model='filters.timeVal'
 								type='daterange'
 								@change="timeValSearchBtn"
-								range-separator='至'
-								start-placeholder='开始日期'
-								end-placeholder='结束日期'>
+								:range-separator='$t("Public.to")'
+								:start-placeholder='$t("Public.start")'
+								:end-placeholder='$t("Public.end")'>
 							</el-date-picker>
 						</el-form-item>
 						<el-form-item>
-							<el-button type='primary'@click='getUsers'>查询</el-button>
+							<el-button type='primary'@click='getUsers'>{{$t('topFilters.search')}}</el-button>
 						</el-form-item>
 						<el-form-item>
-							<el-button type='info' @click='reset'>重置</el-button>
+							<el-button type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
 						</el-form-item>
 					</el-form>
 				</el-col>
@@ -41,12 +41,12 @@
 			<el-row>
 				<el-col :span='8'>
 					<template >
-						<el-button type="primary" @click="handleAdd">+添加节点</el-button>
-						<el-button type='success' @click='foundNode'>发现节点</el-button>
+						<el-button type="primary" @click="handleAdd">+{{$t('Public.addNode')}}</el-button>
+						<el-button type='success' @click='foundNode'>{{$t('Public.find')}}</el-button>
 					</template>
 				</el-col>
 				<el-col :span='16'	class="table-top">
-					<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">批量删除</el-button>
+					<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">{{$t('tabOperation.batchDel')}}</el-button>
 					
 				</el-col>
 			</el-row>
@@ -55,27 +55,27 @@
 			<el-table :data='users'  highlight-current-row style='width: 100%;'@selection-change="selsChange"
 				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
 				<el-table-column type="selection" width="50" align='center'></el-table-column>
-				<el-table-column type='index' min-width='50'max-width='70' label='序号' align='center'>
+				<el-table-column type='index' min-width='50'max-width='70' :label='$t("Public.index")' align='center'>
 					<template slot-scope='scope'>
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='creation_time'width='101'label='申请时间'sortable align='center' :formatter='dateFormat'></el-table-column>
-				<el-table-column prop='name' min-width='100'max-width='120' label='节点名称' align='center'></el-table-column>
-				<el-table-column  min-width='120'max-width='140' label='设备名称' align='center'>
+				<el-table-column prop='creation_time'width='101' :label='$t("Public.apply")'sortable align='center' ></el-table-column>
+				<el-table-column prop='name' min-width='100'max-width='120' :label='$t("Public.nodeName")' align='center'></el-table-column>
+				<el-table-column  min-width='120'max-width='140' :label='$t("Public.deviceName")' align='center'>
 					<template slot-scope='scope'>
 						<span>{{scope.row.devices_name1}}</span> <br />
 						<span>{{scope.row.devices_name2}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column  min-width='70'max-width='90' label='SN号' align='center'> 
+				<el-table-column  min-width='70'max-width='90' :label='$t("Public.snNumber")' align='center'> 
 					<template slot-scope="scope">
 						<span>{{scope.row.devices_sn1}}</span> <br />
 						<span>{{scope.row.devices_sn2}}</span>
 						
 					</template>
 				</el-table-column>			
-				<el-table-column min-width='70'max-width='90' label='管理IP' align='center'>
+				<el-table-column min-width='70'max-width='90' :label='$t("Public.manageIP")' align='center'>
 					<template slot-scope="scope">
 						<span>{{scope.row.devices_ip1}}</span>   <br />
 						<span>{{scope.row.devices_ip2}}</span>
@@ -83,14 +83,22 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop='vtep' min-width='80' max-width='100' label='Vtep' align='center'></el-table-column>		
-				<el-table-column prop='dc.name' min-width='80'max-width='100' label='数据中心' align='center'></el-table-column>
-				<el-table-column prop='description' min-width='60'max-width='80' label='备注' align='center'></el-table-column>
-				<el-table-column width='300' align='center'label='操作'>
+				<el-table-column prop='dc.name' min-width='80'max-width='100' :label='$t("Public.dataCen")' align='center'></el-table-column>
+				<el-table-column prop='description' min-width='60'max-width='80' :label='$t("Public.description")' align='center'></el-table-column>
+				<el-table-column width='300' align='center':label='$t("Public.operation")'>
 					<template slot-scope='scope'>
-						<el-button type='primary':diasbled='RunStatus' size='small' @click='run(scope.$index, scope.row)' class='run'>运行</el-button>
-						<el-button type='info' size='small' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
-						<el-button type='success' size='small' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>
-						<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+						<el-button type='primary':diasbled='RunStatus' size='mini' @click='run(scope.$index, scope.row)' class='run'>
+							<!--运行-->{{$t('tabOperation.run')}}
+						</el-button>
+						<el-button type='info' size='mini' @click='handleSee(scope.$index, scope.row)'>
+							<!--详情-->{{$t('tabOperation.info')}}
+						</el-button>
+						<el-button type='success' size='mini' @click='handleEdit(scope.$index, scope.row)'>
+							<!--编辑-->{{$t('tabOperation.edit')}}
+						</el-button>
+						<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)">
+							<!--删除-->{{$t('tabOperation.delete')}}
+						</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -107,8 +115,7 @@
 				     	:current-page.sync="currentPage"  
 				     	:page-count='pageNum'
 				     	:pager-count="pagecount"
-				     	:prev-text='prev'
-				     	:next-text='next'>
+				     	>
 				</el-pagination>
 			</el-col>
 		</el-row>
@@ -117,13 +124,13 @@
 			<el-form :model='foundForm' ref='foundForm'>
 				<el-form-item >
 					<!--<input type="" placeholder="" name="" id="" value="" />-->
-					<el-input v-model='foundForm.parameter' placeholder='请输入发现参数'></el-input>
+					<el-input v-model='foundForm.parameter' :placeholder='$t("Public.placeFind")'></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				 <el-button @click.native="dialogFormVisible=false">取消</el-button>
+				 <el-button @click.native="dialogFormVisible=false">{{$t('tabOperation.cancel')}}</el-button>
 				<!--添加-->
-				<el-button v-if="dialogStatus=='found'" type="primary" @click="foundData">保存</el-button>
+				<el-button v-if="dialogStatus=='found'" type="primary" @click="foundData">{{$t('tabOperation.Submit')}}</el-button>
 			</div>
 		</el-dialog>
 		</section>
@@ -131,7 +138,7 @@
 </template>
 
 <script>
-	import { getTime } from "@/assets/js/index.js";
+	import { getTime ,datedialogFormat} from "@/assets/js/index.js";
 	export default{
 		name:'Unknown',
 //		props:['data'],
@@ -162,8 +169,7 @@
 	 			currentPage:1,
 	 			pageNum:1,
 	 			pagecount:5,
-	 			next:'下一页',
-				prev:'上一页',
+
 
 				//在详情的界面的时间转换
 				Time:0,
@@ -174,7 +180,7 @@
 				excelData:[],
 				//发现节点日志
 				textMap:{
-					found:'发现设备参数设置'
+					found:this.$t('Public.findDevice')
 				},
 				dialogStatus:'',
 				dialogFormVisible:false,
@@ -222,9 +228,11 @@
 	    			if(res.status==200){
 	    				if(res.data.status==0){
 	    					this.loading=false;
-//			    			console.log(res);
-			    			res.data.data.items.forEach(ele => {
-//			    				console.log(ele)
+	    					console.log(res)
+//			    			console.log(res); creation_time datedialogFormat
+			    			res.data.data.items.map(ele => {
+
+								ele.creation_time =	datedialogFormat(ele.creation_time)
 			    				if(ele.devices.length ==1){
 			    					var str1=ele.devices.find(item => {
 				    					return item['sign'] == 'd1' 
@@ -270,18 +278,7 @@
 	    	reset(){
 				this.$refs['filters'].resetFields()
 			},
-	    	dateFormat(row,column){
-	    		//将时间戳转换为前端的时间
-	    		let date=new Date(parseInt(row.creation_time)*1000);
-	    		let Y=date.getFullYear()+'-';
-	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=   date.getDate() <10	?  '0' + date.getDate() +'   ':date.getDate()+'   ';
-	    		
-	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
-	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
-	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
-	    		return Y + M + D + h + m + s	    		
-	    	},
+
 	    	handleAdd(){
 //				this.$trouter.push('/location/index/unknown')
 				this.$router.push({
@@ -305,8 +302,6 @@
 	    		//发现节点保存按钮
 	    		this.$refs.foundForm.validate(valid => {
 	    			if(valid){
-	    				// this.$confirm('提交后稍等获取输入参数后的数据','提示',{})
-	    				// .then(() => {
 	    					this.$ajax.post('/node/find_node'+'?token='+this.token)
 	    					.then(res => {
 	    						console.log(res);
@@ -326,8 +321,7 @@
 	    							}
 	    						}
 	    					}).catch((e ) => {console.log(e)})
-	    				// }).catch( () => {
-	    				// })
+
 	    			}
 	    		})
 	    	},
@@ -347,20 +341,17 @@
 	    	},
 	    	//运行
 	    	run(index,row){
+	    		console.log(row)
 	    		//设备运行
-//	    		var _this=this;
-	    		var runText=document.getElementsByClassName('run');
-	    		if(runText[index].textContent=='运行'){
-	    			this.$confirm('确定要运行该设备吗?','提示',{})
+	    			this.$confirm(this.$t('Public.runDevice'),this.$t('confirm.tooltip'),{})
 	    			.then(() => {
-	    				
 	    				this.$ajax.put('/node/run_node/'+row.id+'?token='+this.token)
 	    				.then(res => {
 	    					console.log(res);
 	    					if(res.status==200){
 	    						if(res.data.status==0){
 	    							this.$message({
-	    								message:'运行成功，请在骨干节点中查看',
+	    								message:this.$t('Publice.runSuccess'),
 	    								type:'success'
 	    							})
 	    							this.getUsers()
@@ -378,12 +369,12 @@
 	    			}).catch(() => {
 	    				
 	    			})
-	    		}
+
 	    	},
 	    	//删除
 		    handleDel(index, row) {
 		    	console.log(row)
-		      	this.$confirm("确认删除该记录吗?", "提示", {
+		      	this.$confirm(this.$t('confirm.title'), this.$t('confirm.tooltip'), {
 		       		type: "warning"
 		      	})
 		        .then(() => {
@@ -392,7 +383,7 @@
 		          		if(res.status==200){
 		          			if(res.data.status==0){
 					            this.$message({
-					              message: "删除成功",
+					              message: this.$t('tooltipMes.delSuccess'),
 					              type: "success"
 					            });
 					            this.getUsers();
@@ -420,7 +411,7 @@
 				rows.forEach(element =>{
 					ids.push(element.id);
 				})
-		      this.$confirm("确认删除选中记录吗？", "提示", {
+		      this.$confirm(this.$t('confirm.titles'), this.$t('confirm.tooltip'), {
 		        type: "warning"
 		      })
 		        .then(() => {
@@ -433,7 +424,7 @@
 		          	if(res.status=='200'){
 		          		if(res.data.status=='0'){
 				            this.$message({
-				              message: "删除成功",
+				              message: this.$t('tooltipMes.delSuccess'),
 				              type: "success"
 				            });
 				            this.getUsers();
