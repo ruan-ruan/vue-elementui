@@ -365,6 +365,55 @@ export default {
     if (user) {
       this.sysUserName = user || "";
     }
+      var para = {
+      page: "",
+      page: "",
+      per_page: "",
+      search_title: "",
+      search_type: "",
+      search_level: "",
+      search_start_time: "",
+      search_end_time: "",
+      search_read: "false"
+    };
+    this.$ajax
+      .get("/public/get_news" + "?token=" + this.tokenkey, para)
+      .then(res => {
+//      console.log(res);
+        if (res.status == 200) {
+          if (res.data.status == 0) {
+
+            this.$store.state.message = res.data.data.items.length;;
+
+          }
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
+    var para = {
+      page: "",
+      per_page: "",
+      search_title: "",
+      search_type: "",
+      search_level: "",
+      search_start_time: "",
+      search_end_time: ""
+    };
+    this.$ajax
+      .get("/public/get_news" + "?token=" + this.tokenkey, para)
+      .then(res => {
+        if (res.status == 200) {
+          if (res.data.status == 0) {
+            this.tableData = res.data.data.items
+              ? res.data.data.items.slice(0, 5)
+              : [];
+          }
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
 
     const timers = setInterval(() => {
       var para = {
