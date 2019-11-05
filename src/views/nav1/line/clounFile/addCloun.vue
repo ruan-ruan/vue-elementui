@@ -25,11 +25,11 @@
 							<el-form-item label='云链路名称'prop='name'>
 								<el-input v-model='editForm.name'class='ipt' :disabled='!clounStatus'></el-input>
 							</el-form-item>
-							<el-form-item label='区域' prop='region_id'>
-								<el-input v-model='editForm.region_id'class='ipt':disabled='!clounStatus'></el-input>
+							<el-form-item label='区域' prop='region'>
+								<el-input v-model='editForm.region'class='ipt':disabled='!clounStatus'></el-input>
 							</el-form-item>
-							<el-form-item label='接入点' prop='access_point_id'>
-								<el-input v-model='editForm.access_point_id'class='ipt':disabled='!clounStatus'></el-input>
+							<el-form-item label='接入点' prop='access_point'>
+								<el-input v-model='editForm.access_point'class='ipt':disabled='!clounStatus'></el-input>
 							</el-form-item>
 							<el-form-item label='带宽' prop='bandwidth'>
 								<el-input v-model='editForm.bandwidth'class='ipt':disabled='!clounStatus'></el-input> Gbps
@@ -125,8 +125,8 @@
 				editForm:{
 					type:'',
 					name:'',
-					region_id:'',
-					access_point_id:'',
+					region:'',
+					access_point:'',
 					bandwidth:'',
 					description:'',
 					node_id:'',
@@ -150,8 +150,8 @@
 					bandwidth:[{  required: true, validator: isvalidNumber, trigger: 'blur' }],
 					type:[ { required: true, message: '请选择公有云类型', trigger: 'change' }],
 					name:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
-					region_id:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
-					access_point_id:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
+					region:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
+					access_point:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
 					node_id:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
 					logic_port_id:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
 					interface_driver:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
@@ -297,7 +297,7 @@
 								id:str.id,
 								type:str.type,
 								name:str.name,
-								region_id:str.region,
+								region:str.region,
 								access_point:str.access_point,
 								bandwidth:str.bandwidth,
 								description:str.description,
@@ -328,8 +328,8 @@
 							let para={
 								type:this.editForm.type,
 								name:this.editForm.name,
-								region:this.editForm.region_id,
-								access_point:this.editForm.access_point_id,
+								region:this.editForm.region,
+								access_point:this.editForm.access_point,
 								bandwidth:this.editForm.bandwidth,
 								description:this.editForm.description,
 								node_id:this.editForm.node_id,
@@ -390,8 +390,8 @@
 							let para={
 								type:this.editForm.type,
 								name:this.editForm.name,
-								region:this.editForm.region_id,
-								access_point:this.editForm.access_point_id,
+								region:this.editForm.region,
+								access_point:this.editForm.access_point,
 								bandwidth:this.editForm.bandwidth,
 								description:this.editForm.description,
 								node_id:obj.node_id,
