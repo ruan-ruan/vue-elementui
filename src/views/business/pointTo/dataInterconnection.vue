@@ -1,58 +1,58 @@
 <template>
 	<div>
 		<!--数据中心互联-->
-		<span class="title_h3"style="font-size: 12px;">通过此配置的界面，可以用专线连接两个不同的数据中心，并可以自定义专线的计费时间，结束时间和带宽！</span>
+		<span class="title_h3"style="font-size: 12px;">{{$t('business.dataIntertitle')}}</span>
 		<el-row>
 			<el-col :span='24'>
 				<el-col :span='18'>					
-					<h3 class="title_h3">第一步:创建数据中心互联的虚拟专线 <span class="cli_toTip" title='创建任意两个数据中心之间的二层虚拟专线'>?</span></h3>
+					<h3 class="title_h3">{{$t('business.step1')}} <span class="cli_toTip" :title='$t("business.tooltip3")'>?</span></h3>
 					<topForm @formVal='getVal'  ref='newForm'></topForm>
-					<h3 class="title_h3">第二步:业务两端基础信息配置</h3>
+					<h3 class="title_h3">{{$t('business.step2')}}</h3>
 					
 					<el-row>
 						<el-col :span='24'>
 							<el-col :span='12'>
-								<h4 class="title_h4"title="虚拟专线受控的起始端">A端配置<span class="cli_toTip" >?</span></h4>
+								<h4 class="title_h4" :title="$t('business.atooltip')">{{$t('business.aConfigure')}}<span class="cli_toTip" >?</span></h4>
 								<dc-port @sendFormData_a='getFormData_a':tit='vlanSel.label1'  ref='dc_a'></dc-port>
 							</el-col>
 							<el-col :span='12'>
-								<h4 class="title_h4"title='虚拟专线受控的终止端'>Z端配置<span class="cli_toTip">?</span></h4>
+								<h4 class="title_h4" :title='$t("business.ztooltip")'>{{$t('business.zConfigure')}}<span class="cli_toTip">?</span></h4>
 								<!--<dcPortz @sendFormData_z='getFormData_z' :tit='vlanSel.label2'  ref='dc_z' ></dcPortz>-->
 								<dc-port @sendFormData_z='getFormData_z':tit='vlanSel.label2' ref='dc_z'></dc-port>	
 							</el-col>
 							
 						</el-col>
 					</el-row>
-					<h3 class="title_h3">第三步:其他配置</h3>
+					<h3 class="title_h3">{{$t('business.step3')}}</h3>
 					<billing @sendTime='getTimeVal' ref='billingForm'></billing>
 				</el-col>
 				<el-col :span='5' class='pos_row'>
-					<h3 class="tit_h3" >配置详情概览</h3>
-					<el-form :model='creatFormDetails' ref='creatFormDetails' style='width: 100%;'label-width='120px'>
-						<el-form-item label='租户标识:' class='label_tit' prop='tenant_name'>
+					<h3 class="tit_h3" >{{$t('business.conDetails')}}</h3>
+					<el-form :model='creatFormDetails' ref='creatFormDetails' style='width: 100%;'label-width='125px'>
+						<el-form-item :label='$t("Public.tenant")+"： "' class='label_tit' prop='tenant_name'>
 							<template >
 								<span>{{creatFormDetails.tenant_name}}</span>
 							</template>
 						</el-form-item>
-						<el-form-item label='计费时间:'  class='label_tit' prop='details_charge_time'>
+						<el-form-item :label='$t("Public.billTime")+"： "'  class='label_tit' prop='details_charge_time'>
 							<template >
 								<span>{{creatFormDetails.details_charge_time}}</span>
 							</template>
 						</el-form-item>
-						<el-form-item label='过期时间:'  class='label_tit' prop='details_expiration_time'>
+						<el-form-item :label='$t("Public.expTime")+"： "'  class='label_tit' prop='details_expiration_time'>
 							<template >
 								<span>{{creatFormDetails.details_expiration_time}}</span>
 							</template>
 						</el-form-item>
-						<el-form-item label='带宽:'  class='label_tit' prop='bandwidth'>
+						<el-form-item :label='$t("Public.bandW")+"： "'  class='label_tit' prop='bandwidth'>
 							<template>
 								<span>{{creatFormDetails.bandwidth}}</span>
 								<span>Mbps</span>
 							</template>
 						</el-form-item>
 						<el-form-item>
-							<el-button size='small' @click.native="reset">重置</el-button>
-			 				<el-button size='small' type='primary' @click='submitBtn'>提交</el-button>
+							<el-button size='small' @click.native="reset">{{$t('topFilters.reset')}}</el-button>
+			 				<el-button size='small' type='primary' @click='submitBtn'>{{$t('tabOperation.Submit')}}</el-button>
 						</el-form-item>
 					</el-form>
 				</el-col>
@@ -182,8 +182,8 @@
 				str.forEach(ele => {
 					ele.validate(valid => {
 						if(valid){
-							this.$confirm('确定要提交吗?','提示',{})
-							.then(() => {
+//							this.$confirm('确定要提交吗?','提示',{})
+//							.then(() => {
 								console.log(this.editForm);
 								console.log(this.basic)
 								if(this.editForm.endpoints_logic_port_id_a == this.editForm.endpoints_logic_port_id_z){
@@ -226,7 +226,7 @@
 												type:'success'
 											})
 											this.reset();
-											this.$confirm('业务提价成功，正在处理请在消息列表中查看具体进度!',{
+											this.$confirm('业务提交成功，正在处理请在消息列表中查看具体进度!',{
 								    			cancelButtonText:'继续开通',
 								    			confirmButtonText:'前往查看',
 											}).then(() => {
@@ -244,7 +244,7 @@
 									console.log(e)
 								})
 								}
-							}).catch(() => {})
+//							}).catch(() => {})
 						}
 					})
 				})	

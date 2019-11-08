@@ -11,6 +11,9 @@
 						<el-form-item label='组网名称' prop='name'>
 							<el-input v-model='editForm.name' class='ipt' :disabled=" !(typeof id !=='undefined')"></el-input>
 						</el-form-item>
+						<el-form-item label='组网状态' prop='status'>
+							<el-input v-model='editForm.status' class='ipt' disabled></el-input>
+						</el-form-item>
 						<el-form-item label='租户标识' prop='tenant'>
 							<el-input disabled v-model='editForm.tenant_name' class='ipt'></el-input>
 						</el-form-item>
@@ -140,7 +143,8 @@
 					tenant_name:'',
 					tenant_id:'',
 					dec:'',
-					creation_time:''
+					creation_time:'',
+					status:'',
 				},
 				tenantData:[],//租户标识数据
 				editFormRules:{
@@ -184,9 +188,9 @@
 		methods:{
 			editDataType(){//虚拟机点修改保存
 				var str='';//虚拟机点的类型
-				console.log(this.childForm)
-				console.log(this.basicObj);
-				console.log(this.editForm);
+//				console.log(this.childForm)
+//				console.log(this.basicObj);
+//				console.log(this.editForm);
 				if(this.childForm.dataType == "endpoints"){
 					str='node';
 				}else if(this.childForm.dataType == "cloud_endpoints"){
@@ -388,11 +392,23 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							var str=res.data.data;
+							let sta='';
+							if(str.status == "servicing"){
+								sta='运行中';
+							}else if(str.status ==' stopping'){
+								sta='停止中';
+							}else if(str.status == 'creating'){
+								sta='创建中';
+							}else if(str.status == 'failure'){
+								sta='创建失败';
+							}
+							
 							this.editForm={
 								id:str.id,
 								name:str.name,
 								tenant_name:str.tenant.name,
 								tenant_id:str.tenant.id,
+								status:sta,
 								dec:str.description,
 								creation_time:datedialogFormat(str.creation_time)
 							}

@@ -1,17 +1,17 @@
 <template>
 	<div>
 		虚拟组网
-		<virNetwork :tenantID='clounID'></virNetwork>
+		<multipoint :tenantID='clounID'></multipoint>
 	</div>
 </template>
 
 <script>
-	import virNetwork  from '@/views/business/multi/multipoint'
+	import multipoint  from '@/views/business/multi/multipoint'
 	export default{
 		name:'virtualNetwork',
 		props:['customerID'],
 		components:{
-			virNetwork
+			multipoint
 		},
 		data(){
 			return{

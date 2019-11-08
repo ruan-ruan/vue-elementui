@@ -58,7 +58,7 @@
         @selection-change="selsChange"
         style="width: 100%;"
         v-loading='loading'
-        :default-sort = "{prop: 'creation_time', order: 'descending'}"
+        
       >
         <el-table-column
           type='selection'
@@ -76,7 +76,7 @@
 					</template>
         </el-table-column>
           <!--:formatter='dateTableFormat'-->
-        <el-table-column prop='creation_time'sortable :formatter='dateTableFormat' width='101' label='创建时间' align='center'>	
+        <el-table-column prop='creation_time' :formatter='dateTableFormat' width='80' label='创建时间' align='center'>	
         </el-table-column>
         <el-table-column  min-width='120'align='center'label='租户标识(公司名称)' >
           <template slot-scope='scope'>
@@ -110,30 +110,30 @@
         ></el-table-column>
         <el-table-column
           prop='descriptionVal'
-          min-width='80'
+          min-width='100'
           align='center'
           label='备注'
         ></el-table-column>
         <el-table-column
-          width='220'
+          width='140'
           label='操作'
           align='center'
         >
           <template slot-scope='scope'>
             <el-button
               type='info'
-              size='small'
+              size='mini'
               @click='handleSta(scope.$index, scope.row)'
               class='cusSta'
             >{{scope.row.usableBtnText}}</el-button>
             <el-button
               type='success'
-              size='small'
+              size='mini'
               @click='handleEdit(scope.$index, scope.row)'
             >编辑</el-button>
             <el-button
               type='danger'
-              size='small'
+              size='mini'
               @click='handleDel(scope.$index, scope.row)'
             >删除</el-button>
           </template>
@@ -330,10 +330,9 @@ export default {
       console.log("添加租户");
       //添加
       this.$router.push({
-        name: "租户添加",
         path: "/customer/addCus",
         query: {
-          name: "添加"
+          name: "add"
         }
       });
     },

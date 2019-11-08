@@ -25,8 +25,8 @@
 							</el-select>
 						</el-form-item>
 						<el-form-item>
-							<el-button type='primary' @click='getUser'>{{$t('topFilters.search')}}</el-button>
-							<el-button type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
+							<el-button size='small' type='primary' @click='getUser'>{{$t('topFilters.search')}}</el-button>
+							<el-button size='small' type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
 						</el-form-item>
 					</el-form>
 				</el-col>
@@ -35,12 +35,12 @@
 			<el-row>
 				<el-col :span='24'>
 					<el-col :span='4'>
-						<el-button type='primary' @click='addClounLink'>+{{$t('Public.addCloud')}}</el-button>
+						<el-button size='small' type='primary' @click='addClounLink'>+{{$t('Public.addCloud')}}</el-button>
 					</el-col>
 					<el-col :span='20' class='table-top'>
-						<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">
+						<el-button size='small' type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">
 							{{$t("tabOperation.batchDel")}}</el-button>
-						<el-dropdown split-button type='success'@command="handleExport">
+						<el-dropdown size='small' split-button type='success'@command="handleExport">
 							{{$t('tabOperation.derived.tit')}}
 							<el-dropdown-menu slot='dropdown'>
 								<el-dropdown-item command="current">{{$t('tabOperation.derived.currentPage')}} </el-dropdown-item>									
@@ -54,46 +54,46 @@
 			
 			
 			<el-table :data='users' highlight-current-row @selection-change="selsChange" style='width: 100%;'
-				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
+				 v-loading='loading'>
 				<el-table-column type='selection'min-width='40'></el-table-column>
 				<el-table-column type='index' :label='$t("Public.index")' min-width='80'align='center'>
 					<template slot-scope='scope'>
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='creation_time' sortable :label='$t("Public.creation")' width='101' align='center' >					
+				<el-table-column prop='creation_time' :formatter='dateFormat' :label='$t("Public.creation")' width='80' align='center' >					
 				</el-table-column>
-				<el-table-column  label='云链路名称' min-width='80' align='center'>
+				<el-table-column  :label='$t("Public.cloudName")' min-width='100' align='center'>
 					<template slot-scope='scope'>
 						<a href="#" @click='handleSeeLink(scope.$index,scope.row)'>{{scope.row.name}}</a>
 					</template>
 				</el-table-column>
-				<el-table-column prop='status'  label='链路状态' min-width='80' align='center'>
+				<el-table-column prop='status'  :label='$t("Public.linkState")' min-width='80' align='center'>
 				</el-table-column>
-				<el-table-column prop='type'  label='公有云' min-width='80' align='center'>
+				<el-table-column prop='type'  :label='$t("Public.shardCloud")' min-width='80' align='center'>
 				</el-table-column>
-				<el-table-column prop='region'  label='区域 ' min-width='80' align='center'>
+				<el-table-column prop='region'  :label='$t("Public.region") ' min-width='80' align='center'>
 				</el-table-column>
-				<el-table-column prop='access_point'  label='接入点' min-width='80' align='center'>
+				<el-table-column prop='access_point'  :label='$t("Public.accessPoint")' min-width='80' align='center'>
 				</el-table-column>
-				<el-table-column prop='bandwidth'  label='带宽(Gbps)' min-width='80' align='center'>
+				<el-table-column prop='bandwidth'  :label='$t("Public.bandwidthG")' min-width='80' align='center'>
 				</el-table-column>
-				<el-table-column prop='logic_port.name'  label='逻辑口' min-width='80' align='center'>
+				<el-table-column prop='logic_port.name'  :label='$t("Public.logic")' min-width='80' align='center'>
 					<template slot-scope='scope'>
 						<a href="#" @click="handleSeeLogic(scope.$index,scope.row)">{{scope.row.logic_port.name}}</a>
 					</template>
 				</el-table-column>
-				<el-table-column   label='逻辑口状态' min-width='80' align='center'>
+				<el-table-column   :label='$t("Public.logicStatus")' min-width='80' align='center'>
 					<template slot-scope='scope'>
 						<span :class='scope.row.color' v-text="scope.row.portStatus"></span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='descriptionVal'  label='备注' min-width='80' align='center'>
+				<el-table-column prop='descriptionVal'  :label='$t("Public.description")' min-width='80' align='center'>
 				</el-table-column>
-				<el-table-column   label='操作' width='120' align='center'>
+				<el-table-column   :label='$t("Public.operation")' width='100' align='center'>
 					<template slot-scope='scope'>
-						<el-button size='mini' type='primary' @click='handleEdit(scope.$index,scope.row)'>编辑</el-button>
-						<el-button size='mini' type='danger' @click='handleDel(scope.$index,scope.row)'>删除</el-button>
+						<el-button size='mini' type='primary' @click='handleEdit(scope.$index,scope.row)'>{{$t('tabOperation.edit')}}</el-button>
+						<el-button size='mini' type='danger' @click='handleDel(scope.$index,scope.row)'>{{$t("tabOperation.delete")}}</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -109,8 +109,7 @@
 				     	:current-page.sync="currentPage"  
 				     	:page-count='pageNum'
 				     	:pager-count="pagecount"
-				     	:prev-text='prev'
-				     	:next-text='next'></el-pagination>
+				     	></el-pagination>
 					</el-col>
 			</el-row>
 			
@@ -135,10 +134,10 @@
 				},
 				clounData:[
 					{
-						label:'阿里云',
+						label:this.$t('Public.aliCloud'),
 						value:'ali'
 					},{
-						label:'腾讯云',
+						label:this.$t('Public.tcCloud'),
 						value:'tencent'
 					}
 				],
@@ -160,8 +159,7 @@
 				currentPage:1,
 				pageNum:1,
 				pagecount:5,
-				next:'下一页',
-				prev:'上一页',
+
 				excelData:[]
 			}
 		},
@@ -209,13 +207,7 @@
 							//datedialogFormat
 							descriptionValue(res.data.data.items)
 							res.data.data.items.map(ele => {
-								ele.creation_time=datedialogFormat(ele.creation_time)
-//								if(ele.type == 'ali'){
-//									ele.typeName='阿里云'
-//								}else if(ele.type == 'tencent'){
-//									ele.typeName='腾讯云'
-//								}
-//								console.log(ele.logic_port.physical_port)
+
 								ele.portStatus=getPortStatus(ele.logic_port.physical_port)
 								if(getPortStatus(ele.logic_port.physical_port) === 'UP'){
 									ele.color='colorGreen'
@@ -266,14 +258,14 @@
 			},
 			handleDel(index,row){
 				//删除
-				this.$confirm(`云链路名称${row.name}`,'确定要删除该数据吗?','提示',{})
+				this.$confirm(this.$t('Public.cloudName')+`${row.name}`,this.$t('confirm.title'),this.$t('confirm.tooltip'),{})
 				.then(() => {
 					this.$ajax.del('/link/del_cloud_link/'+row.id+'?token='+this.token)
 					.then(res => {
 						if(res.status==200){
 							if(res.data.status==0){
 								this.$message({
-									message:'删除成功!',
+									message:this.$t('tooltipMes.delSuccess'),
 									type:'success'
 								})
 								this.getUser()
@@ -297,14 +289,14 @@
 					ids.push(ele.id)
 				})
 				let para = {ids: ids}
-				this.$confirm('确定要删除所选中的数据吗?','提示',{})
+				this.$confirm(this.$t('confirm.titles'),this.$t('confirm.tooltip'),{})
 				.then(() => {
 					this.$ajax.del('/link/del_cloud_links'+'?token='+this.token,para)
 					.then(res => {
 						if(res.status==200){
 							if(res.data.status==0){
 								this.$message({
-									message:'删除成功!',
+									message:this.$t('tooltipMes.delSuccess'),
 									type:'success'
 								})
 								this.getUser()
@@ -322,12 +314,12 @@
 			handleExport(command){
 				if(command=='all'){
 					//导出所有的数据
-					this.$confirm('确定要导出所有的数据吗?','提示',{})
+					this.$confirm(this.$t('tooltipMes.exportDataAll'),this.$t('confirm.tooltip'),{})
 					.then(() => {
 						this.exportData()
 					}).catch(() => {})
 				}else if(command=='current'){
-					this.$confirm('确定要导出当前页的数据吗?','提示',{})
+					this.$confirm(this.$t('tooltipMes.exportDataCurr'),this.$t('confirm.tooltip'),{})
 					.then(() => {
 						var para={
 		    				page:this.currentPage,
@@ -355,28 +347,28 @@
 				let that=this;
 				require.ensure([] ,() => {
 					const {export_json_to_excel} = require('@/excel/export2Excel')
-					const tHeader=['创建时间','数据中心','设备ID','管理Ip','备注'];
+					const tHeader=[this.$t('Public.creation'),this.$t('Public.dataCen'),this.$t('Public.deviceID'),this.$t('Public.manageIP'),this.$t('Public.description')];
 					const filterVal=['creation_time','dc_name','id','ip','description'];
 					const list=that.excelData;
 					const data=that.formatJson(filterVal,list);
-					export_json_to_excel(tHeader,data,'下载数据excel')
+					export_json_to_excel(tHeader,data,this.$t('tooltipMes.download')+'excel')
 				})
 			},
 			formatJson(filterVal,jsonData){
 				return jsonData.map(v => filterVal.map(j => v[j]))
 			},
 			//表格数据时间转换
-//			dateFormat(row,column){
-//	    		//将时间戳转换为前端的时间
-//	    		let date=new Date(parseInt(row.creation_time)*1000);
-//	    		let Y=date.getFullYear()+'-';
-//	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-//	    		let D=date.getDate() <10? '0' +date.getDate() +'  ':date.getDate()+'  ';
-//	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
-//	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
-//	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
-//	    		return Y + M + D + h + m + s	    		
-//	    	}
+			dateFormat(row,column){
+	    		//将时间戳转换为前端的时间
+	    		let date=new Date(parseInt(row.creation_time)*1000);
+	    		let Y=date.getFullYear()+'-';
+	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
+	    		let D=date.getDate() <10? '0' +date.getDate() +'  ':date.getDate()+'  ';
+	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
+	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
+	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
+	    		return Y + M + D + h + m + s	    		
+	    	}
 		}
 	}
 </script>

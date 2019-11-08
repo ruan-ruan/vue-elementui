@@ -75,15 +75,15 @@
       <!--列表-->
         <el-col :span="24">
           <el-table :data='users'   highlight-current-row   @selection-change='selsChange'   style='width: 100%;'   
-          	v-loading='loading' :default-sort = "{prop: 'creation_time', order: 'descending'}">
-            <el-table-column  type='selection'  min-width='40'  ></el-table-column>
-            <el-table-column   type='index'  min-width='50'   :label='$t("Public.index")'   align='center' >
+          	v-loading='loading' >
+            <el-table-column  type='selection'  min-width='50'  ></el-table-column>
+            <el-table-column   type='index'  min-width='80'   :label='$t("Public.index")'   align='center' >
             	<template slot-scope='scope'>
 								<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 							</template>
             </el-table-column>
             <el-table-column   prop='creation_time'
-              :formatter='dateFormat'   width='101'  :label='$t("Public.creation")' sortable  align='center'  ></el-table-column>
+              :formatter='dateFormat'   width='80'  :label='$t("Public.creation")'   align='center'  ></el-table-column>
             <el-table-column   prop='name'  min-width='80'  :label='$t("Public.nodeName")'   align='center' ></el-table-column>
             <el-table-column   prop='nodeStatus'   min-width='80'  :label='$t("Public.nodeStatus")'  align='center' >
             
@@ -111,7 +111,7 @@
             <el-table-column
               min-width='60'
 
-              :label='$t("Public.snNumver")' 
+              :label='$t("Public.snNumber")' 
               align='center'
             >
               <template slot-scope="scope">

@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<!--数据中心的端口-->
-		<el-form :model='editForm' ref='editForm':rules='editFormRules'label-position='left' v-loading='editLoading' label-width='100px'>
-			<el-form-item label='节点名称' prop='nodeName'>
+		<el-form :model='editForm' ref='editForm':rules='editFormRules'v-loading='editLoading' label-width='125px'>
+			<el-form-item :label='$t("Public.nodeName") +"： "' prop='nodeName'>
 				<el-select v-model='editForm.nodeName' filterable  @change='selectNode(editForm.nodeName)' class='ipt'>
 					<el-option v-for='(item ,index) in nodeData'
 						:label='item.name'
@@ -10,7 +10,7 @@
 						:key='index'></el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label='逻辑口' prop='logic'>
+			<el-form-item :label='$t("Public.logic") +"： "' prop='logic'>
 				<el-select v-model='editForm.logic' filterable @change='selecLogic(editForm.logic)' class='ipt'>
 					<el-option v-for='(item,index) in logicPort'
 						:value='item.id'
@@ -25,9 +25,9 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label='逻辑口类型' prop='endpoints_vlan'>
+			<el-form-item :label='$t("business.logicType")+"： "' prop='endpoints_vlan'>
 				<template>
-					<el-radio-group v-model='editForm.endpoints_vlan'>
+					<el-radio-group v-model='editForm.endpoints_vlan' >
 						<el-radio-button size='small' v-for='item in portType'
 							:label='item.label'
 							:value='item.value'
@@ -35,13 +35,13 @@
 					</el-radio-group>
 				</template>
 			</el-form-item>
-			<el-form-item label='vlan'prop='vlan' v-if='editForm.endpoints_vlan==="trunk"? true :false '>
+			<el-form-item label='vlan ：'prop='vlan' v-if='editForm.endpoints_vlan ==="trunk"? true :false '>
 				<template>
 					<el-input v-model='editForm.vlan' v-show='false'></el-input>
 					<el-switch v-model='editForm.chooseVlan'
 						active-text="UNTAG"
-						title='默认逻辑口为trunk,vlan为UNTAG'></el-switch>	
-						<el-button v-text=' editForm.logic==""?"选择vlan":editForm.endpoints_vlan !=="trunk"?" 选择vlan": editForm.selVlan ? editForm.selVlan:"选择vlan"'
+						:title='$t("business.tooltip2")'></el-switch>	
+						<el-button v-text='editForm.logic==""?$t("business.changeVlan"):editForm.endpoints_vlan === "trunk" ?  editForm.selVlan ? editForm.selVlan:$t("business.changeVlan") : $t("business.changeVlan")         '
 							size='small' 
 							@click='addVlan' 
 							title='请先选择节点和逻辑口'
@@ -242,7 +242,7 @@
 							}
 
 						}else{//为透传模式
-							newVal.selVlan=-1;
+							newVal.selVlan='';
 							newVal.vlan=-1; 
 
 						}

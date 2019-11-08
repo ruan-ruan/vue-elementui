@@ -3,17 +3,17 @@
 		<!--创建的逻辑端口-->
 		<section>
 			<h3 class="title_h3" v-text="seePortDetails?seeTopTitle: editTopTitle" ></h3>
-			<el-form :model='filters' ref='filters' :rules='filtersRules' label-width='140px'>
+			<el-form :model='filters' ref='filters' :rules='filtersRules' label-width='200px'>
 				<el-row>
 					<el-col :span='24'>
 						<el-col :span='12'>
-							<el-form-item label='创建时间' v-if='seePortDetails' prop='creation_time'>
+							<el-form-item :label='$t("Public.creation")+"：" ' v-if='seePortDetails' prop='creation_time'>
 								<el-input v-model='filters.creation_time' class='ipt':disabled='seePortDetails'></el-input>
 							</el-form-item>
-							<el-form-item label='逻辑口名称'prop='name'>
+							<el-form-item :label='$t("Public.logName") +"：" 'prop='name'>
 								<el-input v-model='filters.name'placeholder="请输入逻辑口名称" class='ipt':disabled='addPortStatus'></el-input>
 							</el-form-item>
-							<el-form-item label='租户标识' prop='tenant_id'>
+							<el-form-item :label='$t("Public.tenant") +"：" ' prop='tenant_id'>
 								<el-select v-model='filters.tenant_id' class='ipt' :disabled='addPortStatus' filterable>
 									<el-option v-for='(item,index) in tenantLogo'
 										:value='item.id'
@@ -22,7 +22,7 @@
 										></el-option>
 								</el-select>
 							</el-form-item>
-							<el-form-item label='用户连接方式' prop='access_type'>
+							<el-form-item :label='$t("Public.linkType")+"：" ' prop='access_type'>
 								<el-select v-model='filters.access_type'class='ipt':disabled='seePortDetails'>
 									<el-option v-for='(item,index) in usersType'
 										:value='item.value'
@@ -33,10 +33,10 @@
 							</el-form-item>
 						</el-col>
 						<el-col :span='12'>
-							<el-form-item label='逻辑端口状态'v-if='seePortDetails' prop='status'>
+							<el-form-item :label='$t("Public.plaLogicSt")+"：" 'v-if='seePortDetails' prop='status'>
 								<el-input v-model='filters.status' class='ipt':disabled='addPortStatus'></el-input>
 							</el-form-item>
-							<el-form-item label='合同的开始时间' prop='start_time'>
+							<el-form-item :label='$t("Public.conStart")+"：" ' prop='start_time'>
 								<el-date-picker
 					                v-model="filters.start_time"  
 					                format="yyyy-MM-dd HH:mm:ss"
@@ -47,10 +47,10 @@
 					                type="datetime"					                
 					                :disabled='seePortDetails' 
 					                class='ipt' 
-					                placeholder="请选择合同的开始日期时间">
+					                :placeholder="$t('Public.plaConSta')">
 					            </el-date-picker>
 							</el-form-item>
-							<el-form-item label='合同的结束时间' prop='end_time'>
+							<el-form-item :label='$t("Public.conEnd") +"：" ' prop='end_time'>
 								<el-date-picker
 					                v-model="filters.end_time"  
 					                format="yyyy-MM-dd HH:mm:ss"
@@ -61,12 +61,11 @@
 					                type="datetime"
 					                class='ipt'
 					                :disabled='seePortDetails' 
-					                placeholder="请选择合同的截止日期时间">
+					                :placeholder="$t('Public.plaConEnd')">
 					            </el-date-picker>
 							</el-form-item>
-							<el-form-item label='备注' prop='description'>
-								<!--<input type="" placeholder="" name="" id="" value="" />-->
-								<el-input v-model='filters.description'placeholder="请输入备注信息" type='textarea'class='ipt'cols='4' :disabled='seePortDetails'></el-input>
+							<el-form-item :label='$t("Public.description") +"：" ' prop='description'>
+								<el-input v-model='filters.description' type='textarea'class='ipt'cols='4' :disabled='seePortDetails'></el-input>
 							</el-form-item>
 						</el-col>
 					</el-col>
@@ -75,50 +74,50 @@
 			<h3 class="title_h3"v-text="seePortDetails?seeTitle: editTitle"></h3>
 			<el-row>
 				<el-col :span='24' class='right' v-if='!seePortDetails'>
-					<el-button @click='addPort' type='success'>关联端口</el-button>
+					<el-button size='small' @click='addPort' type='success'>{{$t("Public.accPort")}}</el-button>
 				</el-col>
 			</el-row>
 			<el-table :data='physicalData' style='width: 100%; ' v-loading='loading'>
-				<el-table-column type='index' label='序号' width='60'></el-table-column>
-				<el-table-column prop='node.name'label='节点名称' width='120' align='center'>					
+				<el-table-column type='index' :label='$t("Public.index")'></el-table-column>
+				<el-table-column prop='node.name' :label='$t("Public.nodeName")'  align='center'>					
 				</el-table-column>
-				<el-table-column prop='device.hostname'label='设备名称' width='120' align='center'>					
+				<el-table-column prop='device.hostname':label='$t("Public.deviceName")'  align='center'>					
 				</el-table-column>
-				<el-table-column prop='port.port_no'label='设备端口' width='120' align='center'>					
+				<el-table-column prop='port.port_no' :label='$t("Public.devPort")'  align='center'>					
 				</el-table-column>
-				<el-table-column prop='port.status'label='端口状态' width='120' align='center'>					
+				<el-table-column prop='port.status':label='$t("Public.portStatus")' align='center'>					
 				</el-table-column>
-				<el-table-column prop='dc_name'label='数据中心' width='120' align='center'>					
+				<el-table-column prop='dc_name':label='$t("public.dataCen")'  align='center'>					
 				</el-table-column>
-				<el-table-column prop='rack'label='机柜编号' width='120' align='center' v-if='seePortDetails'>					
+				<el-table-column prop='rack':label='$t("Public.cabNnumber")'  align='center' v-if='seePortDetails'>					
 				</el-table-column>
-				<el-table-column prop='position'label='机房位置' width='120' align='center'v-if='seePortDetails'>					
+				<el-table-column prop='position':label='$t("Public.roomLoacation")' align='center'v-if='seePortDetails'>				
 				</el-table-column>
-				<el-table-column prop='device_type'label='用户设备类型' width='120' align='center'v-if='seePortDetails'>					
+				<el-table-column prop='device_type':label='$t("Public.userDevType")'  align='center'v-if='seePortDetails'>					
 				</el-table-column>
-				<el-table-column prop='port_type'label='端口类型' width='120' align='center'v-if='seePortDetails'>					
+				<el-table-column prop='port_type':label='$t("Public.portType")'  align='center'v-if='seePortDetails'>					
 				</el-table-column>
-				<el-table-column prop='description'label='备注' width='120' align='center'>					
+				<el-table-column prop='description':label='$t("Public.description")'  align='center'>					
 				</el-table-column>
-				<el-table-column label='操作' width='260' align='center'v-if='!seePortDetails'>	
+				<el-table-column :label='$t("Public.operation")'  align='center'v-if='!seePortDetails'>	
 					<template slot-scope='scope'>
-						<el-button size='small'type='info'@click='handleSee(scope.$index,scope.row)'>详情</el-button>
-						<el-button size='small'type='primary'@click='handleEdit(scope.$index,scope.row)' >编辑</el-button>
-						<el-button size='small'type='danger'@click='handleDel(scope.$index,scope.row)' >删除</el-button>
+						<el-button size='mini'type='info'@click='handleSee(scope.$index,scope.row)'>{{$t('tabOperation.info')}}</el-button>
+						<el-button size='mini'type='primary'@click='handleEdit(scope.$index,scope.row)' >{{$t('tabOperation.edit')}}</el-button>
+						<el-button size='mini'type='danger'@click='handleDel(scope.$index,scope.row)' >{{$t('tabOperation.delete')}}</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
 			<div slot='footer' class='dailog-footer right tc_L' v-if='!seePortDetails'>
-				<el-button size='small' @click.native='goback'>返回</el-button>
+				<el-button size='small' @click.native='goback'>{{$t('Public.goback')}}</el-button>
 				<!--添加-->
-				<el-button size='small' type='primary' @click='createData' v-if='createStatus'>保存</el-button>
+				<el-button size='small' type='primary' @click='createData' v-if='createStatus'>{{$t('tabOperation.save')}}</el-button>
 				<!--编辑-->
-				<el-button size='small' type="primary" @click="updateData" v-if='!createStatus'>保存</el-button>
+				<el-button size='small' type="primary" @click="updateData" v-if='!createStatus'>{{$t('tabOperation.save')}}</el-button>
 			</div>
 			<!--关联端口的日志部分-->
 			<el-dialog :title='textMap[dialogStatus]':visible.sync='dialogFormVisible' :close-on-click-modal="false" v-loading='editLoading'>
-				<el-form :model='editForm' label-width='120px' ref='editForm':rules='editFormRules'>
-					<el-form-item label='骨干节点'prop='node_id'>
+				<el-form :model='editForm' label-width='230px' ref='editForm':rules='editFormRules'>
+					<el-form-item :label='$t("Public.backboneNode")'prop='node_id'>
 						<el-select v-model='editForm.node_id' :disabled='disabeldSee'class='ipt' @change='selectNode(editForm.node_id)'>
 							<el-option v-for='(item,index) in backNodes'
 								:value='item.id'
@@ -126,7 +125,7 @@
 								:key='index'></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label='网络设备' prop='device_id'>
+					<el-form-item :label='$t("Public.networkEqu")' prop='device_id'>
 						<el-select v-model='editForm.device_id' :disabled='disabeldSee'class='ipt' @change='selectDevice(editForm.device_id)'>
 							<el-option v-for='(item,index) in equipmentData'
 								:value='item.id'
@@ -134,7 +133,7 @@
 								:key='index'></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label='网络设备端口'prop='port_id'>
+					<el-form-item :label='$t("Public.NnetworkPort")'prop='port_id'>
 						<el-select v-model='editForm.port_id' :disabled='disabeldSee'class='ipt' @change='selectPort(editForm.port_id)'>
 							<el-option v-for='(item,index) in netwotkPortData'
 								:value='item.id'
@@ -147,14 +146,14 @@
 							</el-option>
 						</el-select>
 					</el-form-item>
-					<h3 class="dialog_title">物理端口对接客户信息</h3>
-					<el-form-item label='机柜编号' prop='rack'>
+					<h3 class="dialog_title">{{$t('Public.phyIntformation')}}</h3>
+					<el-form-item :label='$t("Public.cabNnumber")' prop='rack'>
 						<el-input v-model='editForm.rack' :disabled='disabeldSee'class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='机房位置' prop='position'>
+					<el-form-item :label='$t("Public.roomLoacation")' prop='position'>
 						<el-input v-model='editForm.position':disabled='disabeldSee'class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item label='用户设备类型' prop='device_type'>
+					<el-form-item :label='$t("Public.userDevType")' prop='device_type'>
 						<el-select v-model='editForm.device_type':disabled='disabeldSee'class='ipt'>
 							<el-option v-for='(item,index) in deviceType'
 								:key='index'
@@ -162,7 +161,7 @@
 								:label='item.label'></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label='端口类型' prop='port_type'>
+					<el-form-item :label='$t("Public.portType")' prop='port_type'>
 						<el-select v-model='editForm.port_type':disabled='disabeldSee'class='ipt'>
 							<el-option v-for='(item,index) in portType'
 								:key='index'
@@ -171,16 +170,16 @@
 							</el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label='备注' prop='description'>
+					<el-form-item :label='$t("Public.description")' prop='description'>
 						<el-input type='textarea':disabled='disabeldSee' v-model='editForm.description'class='ipt' cols="4" placeholder=""></el-input>
 					</el-form-item>
 				</el-form>
 				<div slot='footer' class='dailog-footer'>
-					<el-button @click.native='dialogFormVisible=false'>取消</el-button>
+					<el-button @click.native='dialogFormVisible=false'>{{$t('tabOperation.cancel')}}</el-button>
 					<!--编辑-->
-					<el-button  v-if="dialogStatus=='update'"type="primary" @click="contantUpdateData">保存</el-button>
+					<el-button  v-if="dialogStatus=='update'"type="primary" @click="contantUpdateData">{{$t('tabOperation.save')}}</el-button>
 					<!--添加-->
-					<el-button  v-else-if="dialogStatus=='create'"type="primary" @click="contantCreatedData">保存</el-button>		
+					<el-button  v-else-if="dialogStatus=='create'"type="primary" @click="contantCreatedData">{{$t('tabOperation.save')}}</el-button>		
 				</div>
 			</el-dialog>
 		</section>
@@ -197,10 +196,10 @@
 			return{
 				//详情的界面的部分表格数据的显示操作和里面的操作按钮
 				seePortDetails:false,
-				seeTitle:'关联物理端口列表',
-				editTitle:'第二步:关联物理端口(至少关联一个物理端口)',
-				seeTopTitle:'逻辑端口信息',
-				editTopTitle:'第一步:配置逻辑端口',
+				seeTitle:this.$t('Public.phyList'),
+				editTitle:this.$t('Public.second'),
+				seeTopTitle:this.$t('Public.logicInformation'),
+				editTopTitle:this.$t('Public.first'),
 				token:'',
 				//添加
 				addLogicalPort:this.$route.query.name,
@@ -217,22 +216,22 @@
 					access_type:'',
 					tenant_id:'',
 					description:'',
-					physical:[],
+//					physical:[],
 					creation_time:'',
 					status:'',
 					description:''
 				},
 				physical_ports:[],
-				physicalData:[],//数据
+				physicalData:[],//表格数据
 				
 				filtersRules:{
 					//校验
-					name:[ { required: true, message: '请输入逻辑端口名称', trigger: 'blur' }],
-					tenant_id:[{ required: true, message: '请选择租户标识', trigger: 'change' }],
-					access_type:[{ required: true, message: '请选择用户接入方式', trigger: 'change' }],
+					name:[ { required: true, message: this.$t('Public.plaLogicName'), trigger: 'blur' }],
+					tenant_id:[{ required: true, message:this.$t('Public.plaChaTenant'), trigger: 'change' }],
+					access_type:[{ required: true, message: this.$t('Public.plaUserDock'), trigger: 'change' }],
 //					time:[{ required: true, message: '请选择合同的起止时间', trigger: 'change' }],
-					start_time:[{ required: true, message: '请选择合同的开始时间', trigger: 'change' }],
-					end_time:[{ required: true, message: '请选择合同的结束时间', trigger: 'change' }],
+					start_time:[{ required: true, message: this.$t('Public.plaConSta'), trigger: 'change' }],
+					end_time:[{ required: true, message: this.$t('Public.plaConEnd'), trigger: 'change' }],
 				},
 				//弹窗里面的数据
 				editForm:{
@@ -252,13 +251,13 @@
 					port_no:'',
 					port_status:'',
 					port_type:'',
-					index:''
+					index:null,
 				},
 				basicForm:{},//编辑的数据的备份
 				editFormRules:{
-					node_id:[{ required: true, message: '请选择骨干节点', trigger: 'change' }],
-					device_id:[{ required: true, message: '请选择设备', trigger: 'change' }],
-					port_id:[{ required: true, message: '请选择端口', trigger: 'change' }],
+					node_id:[{ required: true, message: this.$t('Public.plaChaBacknode'), trigger: 'change' }],
+					device_id:[{ required: true, message: this.$t('Public.plaDev'), trigger: 'change' }],
+					port_id:[{ required: true, message: this.$t('Public.plaPort'), trigger: 'change' }],
 				},    
 				tenantLogo:[],//租户的数据
 				backNodes:[],//骨干节点
@@ -266,10 +265,10 @@
 				netwotkPortData:[],//网络设备端口
 				usersType:[
 					{
-						label:'独享',
+						label:this.$t('Public.exclusive'),
 						value:'独享'
 					},{
-						label:'共享',
+						label:this.$t('Public.share'),
 						value:'共享'
 					}
 				],
@@ -277,47 +276,44 @@
 				//将添加的时候的保存默认是显示，编辑的按钮隐藏
 				createStatus:true,
 				textMap:{
-					create:'关联物理端口',
-					update:'编辑物理端口',
-					details:'关联物理端口详情'
+					create:this.$t('Public.assphy'),
+					update:this.$t('Public.editphy'),
+					details:this.$t('Public.assphyInfo')
 				},
 				dialogStatus:'',
 				dialogFormVisible:false,
 				editLoading:false,
 				deviceType:[
 					{
-						label:'交换机',
+						label:this.$t('Public.swith'),
 						value:'交换机'
 					},{
-						label:'路由器',
+						label:this.$t('Public.router'),
 						value:'路由器'
 					},{
-						label:'防火墙',
+						label:this.$t('Public.firewall'),
 						value:'防火墙'
 					}
 				],
 				portType:[
 					{
-						label:'万兆单模',
+						label:this.$t('Public.mwSing'),
 						value:'万兆单模'
 					},{
-						label:'万兆多模',
+						label:this.$t('Public.megaMult'),
 						value:'万兆多模'
 					},
 					{
-						label:'千兆单模',
+						label:this.$t('Public.gigabit'),
 						value:'千兆单模'
 					},{
-						label:'千兆多模',
+						label:this.$t('Public.gigabitMult'),
 						value:'千兆多模'
 					},{
-						label:'千兆电口',
+						label:this.$t('Public.gigabitJun'),
 						value:'千兆电口'
 					},{
-						label:'万兆单模',
-						value:'万兆单模'
-					},{
-						label:'百G单模',
+						label:this.$t('Public.signModel'),
 						value:'百G单模'
 					}
 				],
@@ -327,16 +323,16 @@
 			}
 		},
 		watch:{
-//			editForm:{
-//				handler(newVal,oldVal){
-//				},
-//				deep:true
-//			},
-			physical_ports:function(newVal,oldVal){
-				this.physicalData=[];
-				this.physicalData=JSON.parse(JSON.stringify(newVal))
-				console.log(this.physicalData)
-			}
+
+			physical_ports:{
+				handler(newVal,oldVal){
+					this.physicalData=[];
+					this.physicalData=JSON.parse(JSON.stringify(newVal))
+				},
+				deep:true,
+			},
+
+
 		},
 		created(){
 			this.token=sessionStorage.getItem('token');
@@ -367,23 +363,21 @@
 			
 			
 		},
-		updated(){
-//			console.log(this.physicalData)
-		},
+
 		methods:{
 			beginDate(){
 	            const self = this
 	            return {
-	            disabledDate(time){
-	                if (self.filters.end_time) {  //如果结束时间不为空，则小于结束时间
-	                    return new Date(self.filters.end_time).getTime() < time.getTime()
-	                } else {
-	                    // return time.getTime() > Date.now()//开始时间不选时，结束时间最大值小于等于当天
-	                }
+		            disabledDate(time){
+		                if (self.filters.end_time) {  //如果结束时间不为空，则小于结束时间
+		                    return new Date(self.filters.end_time).getTime() < time.getTime()
+		                } else {
+		                    // return time.getTime() > Date.now()//开始时间不选时，结束时间最大值小于等于当天
+		                }
 	                }
 	            }
-	            },
-	            processDate() {
+	        },
+	        processDate() {
 	            const  self = this
 	            return {
 	                disabledDate(time) {
@@ -416,7 +410,7 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
+//							console.log(res)
 							this.backNodes=res.data.data.items;
 						}
 					}
@@ -425,13 +419,13 @@
 				//对列表内所有的端口已经使用过的  不能再使用的排除  newtworkBasePortP
 				this.$ajax.get('/port/logic_ports'+'?token='+this.token)
 				.then(res => {
-					console.log(res)
+//					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
 							var str=res.data.data.items;
 							str.forEach(ele => {
-								console.log(ele)
-								ele.physical_ports.forEach(item => {
+
+								ele.physical_ports.map(item => {
 									this.newtworkBasePortP.push(item.port)
 								})
 							})
@@ -445,29 +439,28 @@
 				this.editForm.device_id='';
 				this.editForm.port_id='';
 				let items=ids;
+				console.log(this.backNodes)
 				var findVal=this.backNodes.find(function(obj){
 					return obj.id===items;
 				})
 				//将选择的骨干的id的名字保存下来
+//				this.editForm.node_id=findVal.id;
 				this.editForm.node_name=findVal.name;
-				console.log(findVal)
-				
-				
+
 				if(!findVal.dc && typeof(findVal.dc)!='undefined' && findVal.dc!=0){//此时的数据类型为null
-					console.log('hello')
+					this.editForm.dc_name='';
+					this.editForm.dc_id='';
 				}else{
 					this.editForm.dc_name=findVal.dc.name;
 					this.editForm.dc_id=findVal.dc.id;
 				}
 
-//				console.log(findVal);
 				//根据节点选取对应的设备
 				
 				this.$ajax.get('/node/node_info/'+ids+'?token='+this.token)
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
 							this.equipmentData=res.data.data.devices;
 						}
 					}
@@ -477,12 +470,14 @@
 				this.editForm.port_id=''
 				//筛选  选择对应的id的name
 				let items=ids;
+				console.log(this.equipmentData)
 				var findVal=this.equipmentData.find(function(obj){
 					return obj.id===items;
 				})
 				//将选择的设备的id的名字保存下来
+//				this.editForm.device_id=findVal.id;
 				this.editForm.device_name=findVal.hostname;
-//				console.log(findVal.hostname);
+
 				//获取设备的下的物理端口
 				var para={
 					search_available:true
@@ -501,8 +496,6 @@
 								}
 								
 							})
-							console.log(this.netwotkPortData)
-
 						}
 					}
 				})
@@ -511,32 +504,36 @@
 				//获取设备的端口的下选择的id  并且获取对应的name
 				//筛选  选择对应的id的name
 				let items=ids;
+				console.log(this.netwotkPortData)
 				var findVal=this.netwotkPortData.find(function(obj){
 					return obj.id===items;
 				})
 				//将选择的设备下的端口的id的名字保存下来
+//				this.editForm.port_id=findVal.id;
 				this.editForm.port_name=findVal.port_no;
 				this.editForm.device_status=findVal.status;
-//				console.log(findVal.name);
+				this.editForm.port_no=findVal.port_no;
+
 			},
 			//新建的逻辑端口
 			createData(){
 				let self=this;
 				//添加保存按钮
-				console.log('执行添加');
-				console.log(this.filters);
+//				console.log('执行添加');
+//				console.log(this.filters);
 				if(this.physical_ports.length===0){
 					this.$message({
-						message:'关联物理端口至少一个，不能为空，请关联物理端口',
+						message:this.$t('Public.basicPhy'),
 						type:'warning'
 					})
-					return new Error('请添加关联物理端口')
+					return new Error(this.$t('Public.plaAccPhy'))
 				}else{
-					console.log('关联的物理端口不是空的')	
+
 					
 					this.$refs.filters.validate(valid => {
-						let str=[],obj={}
-						this.physical_ports.forEach(ele => {
+						let str=[];
+						this.physical_ports.map(ele => {
+							var obj={}
 							obj={
 								node_id:ele.node.id,
 								device_id:ele.device.id,
@@ -558,32 +555,28 @@
 							access_type:this.filters.access_type,
 							physical_ports:str
 						}
-
 						console.log(para);
+//						debug
 						if(valid){
-							this.$confirm('确定要创建逻辑端口吗?','提示',{})
-							.then(() => {
-								
-								this.$ajax.post('/port/add_logic_port'+'?token='+this.token,para)
-								.then(res => {
-									console.log(res);
-									if(res.status==200){
-										if(res.data.status==0){
-											this.$message({
-												message:'添加成功!',
-												type:'success'
-											})
-											this.$refs["filters"].resetFields();
-											this.$router.push('/resource/port')
-										}else{
-											this.$message({
-												message:res.data.message,
-												type:'warning'
-											})
-										}
+							this.$ajax.post('/port/add_logic_port'+'?token='+this.token,para)
+							.then(res => {
+								console.log(res);
+								if(res.status==200){
+									if(res.data.status==0){
+										this.$message({
+											message:this.$t('tooltipMes.addSuccess'),
+											type:'success'
+										})
+										this.$refs["filters"].resetFields();
+										this.$router.push('/resource/port')
+									}else{
+										this.$message({
+											message:res.data.message,
+											type:'warning'
+										})
 									}
-								})
-							}).catch(() => {})
+								}
+							}).catch(e => {console.log(e)})
 						}else{
 							return
 						}
@@ -596,67 +589,63 @@
 				console.log('执行编辑');
 				if(this.physical_ports.length===0){
 					this.$message({
-						message:'关联物理端口至少一个，不能为空，请关联物理端口',
+						message:this.$t('Public.basicPhy'),
 						type:'warning'
 					})
 				}else if(this.physical_ports.length>0){
 					this.$refs.filters.validate(valid => {
 						if(valid){
-							this.$confirm('确认要修改吗?','提示',{})
-							.then(() => {
-								console.log(this.filters);
-								console.log(this.physical_ports)
-								let obj={};
-								let str=[]
-								this.physical_ports.forEach(ele => {
-									console.log(ele)
-									ele.para={
-										node_id:ele.node.id,
-										device_id:ele.device.id,
-										description:ele.description,
-										port_id:ele.port.id,
-										position:ele.position,
-										rack:ele.rack,
-										device_type:ele.device_type,
-										port_type:ele.port_type
-									}
+//							console.log(this.filters);
+//							console.log(this.physical_ports)
+							let obj={};
+							let str=[]
+							this.physical_ports.map(ele => {
 
-									str.push(ele.para)
-								})
-
-								console.log(str)
-								let para={
-									name:this.filters.name,
-									tenant_id:this.filters.tenant.id,
-									description:this.filters.description,
-									end_time:this.filters.end_time/1000,
-									start_time:this.filters.start_time/1000,
-									access_type:this.filters.access_type,
-									physical_ports:str
+								ele.para={
+									node_id:ele.node.id,
+									device_id:ele.device.id,
+									description:ele.description,
+									port_id:ele.port.id,
+									position:ele.position,
+									rack:ele.rack,
+									device_type:ele.device_type,
+									port_type:ele.port_type
 								}
-								
+
+								str.push(ele.para)
+							})
+
+//								console.log(str)
+							let para={
+								name:this.filters.name,
+								tenant_id:this.filters.tenant.id,
+								description:this.filters.description,
+								end_time:this.filters.end_time/1000,
+								start_time:this.filters.start_time/1000,
+								access_type:this.filters.access_type,
+								physical_ports:str
+							}
+							
 //								debug
-								this.$ajax.put('/port/edit_logic_port/'+this.filters.id+'?token='+this.token,para)
-								.then(res => {
-									if(res.status==200){
-										if(res.data.status==0){
-											this.$message({
-												message:'修改成功!',
-												type:'success'
-											})
-											this.$refs["filters"].resetFields();
-											this.$router.push('/resource/port')
-										}else{
-											this.$message({
-												message:res.data.message,
-												type:'warning'
-											})
-										}
+							this.$ajax.put('/port/edit_logic_port/'+this.filters.id+'?token='+this.token,para)
+							.then(res => {
+								if(res.status==200){
+									if(res.data.status==0){
+										this.$message({
+											message:this.$t('tooltipMes.editSuccess'),
+											type:'success'
+										})
+										this.$refs["filters"].resetFields();
+										this.$router.push('/resource/port')
+									}else{
+										this.$message({
+											message:res.data.message,
+											type:'warning'
+										})
 									}
-								})
-							}).catch(() => {})
-						}else{
-							return
+								}
+							})
+							.catch(e => {console.log(e)})
 						}
 					})
 				}
@@ -672,9 +661,9 @@
 							console.log(res)
 							this.filters=Object.assign({},res.data.data);
 							if(res.data.data.usable){
-								this.filters.status='启用'
+								this.filters.status=this.$t('Public.enable');//启用
 							}else if(!res.data.data.usable){
-								this.filters.status='禁用'
+								this.filters.status=this.$t('Public.Prohibit');//禁用
 							}
 							this.filters.tenant_id=res.data.data.tenant.name;
 							this.filters.creation_time=datedialogFormat(res.data.data.creation_time);
@@ -695,84 +684,58 @@
 				this.dialogFormVisible=true;
 				//显示可以操作的界面
 				this.disabeldSee=false;
-
 				this.$nextTick(() => {
 					this.$refs["editForm"].resetFields();
 				})
 			},
 			contantCreatedData:function(){
-				console.log('执行添加')
-				console.log(this.editForm)
+//				console.log('新建的时候执行添加')
+//				console.log(this.editForm);
 				//关联-添加保存按钮
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-						let para={}
-//							para={
-//								node_id:this.editForm.node_id,
-//								device_id:this.editForm.device_id,
-//								port_id:this.editForm.port_id,
-//								position:this.editForm.position,
-//								rack:this.editForm.rack,
-//								device_type:this.editForm.device_type,
-//								port_type:this.editForm.port_type,
-//								description:this.editForm.description,
-//								node_name:this.editForm.node_name,
-//								device_name:this.editForm.device_name,
-//								port_name:this.editForm.port_name,
-//								device_status:this.editForm.device_status,
-//								dc_name:this.editForm.dc_name,
-//								dc_id:this.editForm.dc_id
-//							}
-//							this.filters.physical.push(para)
-							//表格的里面的数据
-							let paraData={}
-							paraData={
-								description:this.editForm.description,
-								device_status:this.editForm.device_status,								
-								device:{//设备
-									hostname:this.editForm.device_name,
-									id:this.editForm.device_id,
-									status:this.editForm.device_status,
-								},
-								device_type:this.editForm.device_type,
-								node:{//节点
-									id:this.editForm.node_id,
-									name:this.editForm.node_name,
-								},
-								port:{//端口
-									id:this.editForm.port_id,
-									name:this.editForm.port_name,
-									port_no:this.editForm.port_name,
-									status:this.editForm.device_status,
-								},
-								port_type:this.editForm.port_type,
-								position:this.editForm.position,
-								rack:this.editForm.rack,
-								dc_name:this.editForm.dc_name,
-							}
-							
-							console.log(this.editForm)
-							this.$refs["editForm"].resetFields();
-							this.dialogFormVisible=false;
-
-							var  str=[];
-							str.push(paraData);
-
-							this.physical_ports.push(paraData);
-
-							console.log(this.physical_ports)
+						let paraData={};
+						paraData={
+							description:this.editForm.description,
+							device_status:this.editForm.device_status,								
+							device:{//设备
+								hostname:this.editForm.device_name,
+								id:this.editForm.device_id,
+								status:this.editForm.device_status,
+							},
+							device_type:this.editForm.device_type,
+							node:{//节点
+								id:this.editForm.node_id,
+								name:this.editForm.node_name,
+							},
+							port:{//端口
+								id:this.editForm.port_id,
+								name:this.editForm.port_name,
+								port_no:this.editForm.port_name,
+								status:this.editForm.device_status,
+							},
+							port_type:this.editForm.port_type,
+							position:this.editForm.position,
+							rack:this.editForm.rack,
+							dc_name:this.editForm.dc_name,
+						};
+						console.log(paraData);
+						this.physical_ports.push(paraData);
+						this.$refs["editForm"].resetFields();
+						this.dialogFormVisible=false;
 					}
 				})
 			},
 			handleEdit(index,row){
-				console.log(row)
+				console.log(row);
+				console.log(index)
 				//关联-编辑
 				this.dialogStatus='update';
 				this.dialogFormVisible=true;
 				this.disabeldSee=false;
 				this.basicForm=Object.assign({},row);
 				this.editForm={
-					node_id:row.node.name,
+					node_id:row.node.id,
 					device_id:row.device.hostname,
 					port_id:row.port.port_no,
 					position:row.position,
@@ -793,43 +756,36 @@
 			
 			},
 			contantUpdateData:function(){
-				console.log('执行编辑保存')
+//				console.log('执行编辑保存')
 				//关联-编辑保存按钮
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-							console.log(this.editForm)
-							console.log(this.basicForm)
-							console.log(this.physical_ports)
-							this.filters.physical[this.editForm.index]=Object.assign({},this.editForm);
-							console.log(this.filters)
-							var obj={
-								description:this.editForm.description,
-								device:{
-									id:this.editForm.device_id==this.basicForm.device.hostname?this.basicForm.device.id:this.editForm.device_id,
-									hostname:this.editForm.device_name
-								},
-								device_type:this.editForm.device_type,
-								node:{
-									id:this.editForm.node_id==this.basicForm.node.name?this.basicForm.node.id:this.editForm.node_id,
-									name:this.editForm.node_name
-								},
-								port:{
-									id:this.editForm.port_id==this.basicForm.port.port_no?this.basicForm.port.id:this.editForm.port_id,
-									name:this.editForm.port_name,
-									port_no:this.editForm.port_name,
-									status:this.editForm.port_status
-								},
-								port_type:this.editForm.port_type,
-								position:this.editForm.position,
-								rack:this.editForm.rack,
-								dc_name:this.editForm.dc_name
-							}
-							this.$refs["editForm"].resetFields();
-							this.dialogFormVisible = false;
-//							this.$refs["basicForm"].resetFields();
-							console.log(this.physical_ports)
-//							this.physical_ports[this.editForm.index]=obj;
-							this.physical_ports.splice(this.editForm.index,1,obj)
+						var obj={
+							description:this.editForm.description,
+							device:{
+								id:this.editForm.device_id==this.basicForm.device.hostname?this.basicForm.device.id:this.editForm.device_id,
+								hostname:this.editForm.device_name
+							},
+							device_type:this.editForm.device_type,
+							node:{
+								id:this.editForm.node_id==this.basicForm.node.name?this.basicForm.node.id:this.editForm.node_id,
+								name:this.editForm.node_name
+							},
+							port:{
+								id:this.editForm.port_id==this.basicForm.port.port_no?this.basicForm.port.id:this.editForm.port_id,
+								name:this.editForm.port_no,
+								port_no:this.editForm.port_no,
+								status:this.editForm.port_status
+							},
+							port_type:this.editForm.port_type,
+							position:this.editForm.position,
+							rack:this.editForm.rack,
+							dc_name:this.editForm.dc_name
+						}
+						this.$refs["editForm"].resetFields();
+						this.dialogFormVisible = false;
+
+						this.physical_ports.splice(this.editForm.index,1,obj)
 
 					}
 				})
@@ -859,10 +815,10 @@
 				console.log(row)
 				let _this=this;
 				//删除
-				this.$confirm('确定要删除该物理端口吗?','提示',{type:'warning'})
+				this.$confirm(this.$t('confirm.delPhy'),this.$t('confirm.tooltip'),{type:'warning'})
 				.then(() => {
 					this.physical_ports.splice(index,1);
-					this.filters.physical.splice(index,1)
+
 				}).catch(() => {})
 			},
 			goback(){

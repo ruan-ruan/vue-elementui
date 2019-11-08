@@ -32,14 +32,14 @@
 		watch:{
 			data:{
 				handler(newVal,oldVal){
-					console.log(newVal);
+//					console.log(newVal);
 				},
 				deep:true,
 				
 			},
 			user:{
 				handler(newVal,oldVal){
-					console.log(newVal);
+//					console.log(newVal);
 					newVal.map(item => {
 						item.avg=parseInt(item.avg);
 
@@ -50,12 +50,14 @@
 			}
 		},
 		mounted(){
-			this.getCharts(this.data);
+			if(JSON.stringify( this.data) !='{}'){//只有存在数据的时候  
+				this.getCharts(this.data);
+			}
+
 			this.user.map(item => {
-//				console.log(item)
 				item.avg=parseInt(item.avg)
 			})
-//			console.log(this.trafficData)
+			console.log(this.data)
 		},
 		methods:{
 			getCharts(dataObj){
@@ -103,7 +105,8 @@
 					    xAxis: {
 					        type: 'category',
 					        boundaryGap: false,
-					        data: that.trafficData
+					        
+					        data: that.trafficData,
 					    },
 					    yAxis: {
 					        type: 'value',
@@ -132,8 +135,23 @@
 					        lineStyle:{
 					        	width:1
 					        },
+   					        itemStyle: {
+				                normal: {
+				                    color: '#C23531'
+				                }
+				           	},
 					        symbol: 'none',
-					        areaStyle:{},
+					        areaStyle:{
+					        	normal: {
+				                    color:this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+				                        offset: 0,
+				                        color: '#C23531'
+				                    }, {
+				                        offset: 1,
+				                        color: '#ffe'
+				                    }])
+				                }	
+					        },
 					        data:dataObj.input_data_d1,
 					    },
 					    {
@@ -144,8 +162,23 @@
 					        lineStyle:{
 					        	width:1
 					        },
+					        itemStyle: {
+				                normal: {
+				                    color: '#2F4554'
+				                }
+				           	},
 					        symbol: 'none',
-					        areaStyle:{},
+					        areaStyle:{
+					        	normal: {
+				                    color:this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+				                        offset: 0,
+				                        color: '#2F4554'
+				                    }, {
+				                        offset: 1,
+				                        color: '#ffe'
+				                    }])
+				                }
+					        },
 					        data:dataObj.output_data_d1,
 					    },
 					    {
@@ -156,8 +189,23 @@
 					        lineStyle:{
 					        	width:1
 					        },
+					        itemStyle: {
+				                normal: {
+				                    color: '#61A0A8'
+				                }
+				           	},
 					        symbol: 'none',
-					        areaStyle:{ },
+					        areaStyle:{
+					        	normal: {
+				                    color:this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+				                        offset: 0,
+				                        color: '#61A0A8'
+				                    }, {
+				                        offset: 1,
+				                        color: '#ffe'
+				                    }])
+				                }
+					        },
 					        data:dataObj.input_data_d2,
 					    },
 					    {
@@ -168,8 +216,23 @@
 					        lineStyle:{
 					        	width:1,
 					        },
+					        itemStyle: {
+				                normal: {
+				                    color: '#D48265'
+				                }
+				           	},
 					        symbol: 'none',
-					        areaStyle:{ },
+					        areaStyle:{
+					        	normal: {
+				                    color:this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+				                        offset: 0,
+				                        color: '#D48265'
+				                    }, {
+				                        offset: 1,
+				                        color: '#ffe'
+				                    }])
+				                }
+					        },
 					        data:dataObj.output_data_d2,
 					    },{
 					        name:dataObj.logic_port+'-'+dataObj.vlan+'(总入)',
@@ -179,7 +242,22 @@
 					        lineStyle:{
 					        	width:1
 					        },
-					        areaStyle:{},
+					        itemStyle: {
+				                normal: {
+				                    color: '#91C7AE'
+				                }
+				           	},
+					        areaStyle:{
+					        	normal: {
+				                    color:this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+				                        offset: 0,
+				                        color: '#91C7AE'
+				                    }, {
+				                        offset: 1,
+				                        color: '#ffe'
+				                    }])
+				                }
+					        },
 					        symbol: 'none',
 					        data:dataObj.input_data_total,//总的入
 					    },
@@ -191,7 +269,22 @@
 					        lineStyle:{
 					        	width:1
 					        },
-					        areaStyle:{ },
+					        itemStyle: {
+				                normal: {
+				                    color: '#045851'
+				                }
+				           	},
+					        areaStyle:{
+					        	normal: {
+				                    color:this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+				                        offset: 0,
+				                        color: '#045851'
+				                    }, {
+				                        offset: 1,
+				                        color: '#ffe'
+				                    }])
+				                }
+					        },
 					        symbol: 'none',
 					        data:dataObj.output_data_total,//总的出
 					    }]

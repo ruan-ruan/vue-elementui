@@ -5,18 +5,17 @@
       <el-row class='toolbar'>
         <el-col  :soan='24'  >
           <el-form :model='filters':inline='true' ref='filters'>
-            <el-form-item label='名称' prop='search_name'>
+            <el-form-item :label='$t("Public.name")' prop='search_name'>
               <el-input
                 v-model='filters.search_name'
                 class='sel'
-                placeholder='名称'
+                :placeholder='$t("Public.name")'
               ></el-input>
             </el-form-item>
-            <el-form-item label='租户标识' prop='search_tenant'>
+            <el-form-item :label='$t("Public.tenant")' prop='search_tenant'>
               <el-select
                 v-model='filters.search_tenant' filterable
-                class='sel'
-              >
+                class='sel' >
                 <el-option
                   v-for='(item,index) in tenantData'
                   :value='item.id'
@@ -25,7 +24,7 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label='专线状态' prop='search_status'>
+            <el-form-item :label='$t("Public.specialStatus")' prop='search_status'>
               <el-select
                 v-model='filters.search_status'
                 class='sel'
@@ -38,7 +37,7 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label='专线类型' prop='search_type'>
+            <el-form-item :label='$t("Public.specialType")' prop='search_type'>
               <el-select
                 v-model='filters.search_type'
                 class='sel'
@@ -51,66 +50,67 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label='带宽(Mbps)' prop='search_start_bandwidth'>
+            <el-form-item :label='$t("Public.bandwidth")' prop='search_start_bandwidth'>
               <el-input
                 v-model='filters.search_start_bandwidth'
                 class='ipts'
-                placeholder='起始'
-              ></el-input>至
-              
+                :placeholder='$t("Public.origin")'
+              ></el-input>{{$t('Public.to')}}
             </el-form-item>
             <el-form-item prop='search_end_bandwidth'>
             	<el-input
                 v-model='filters.search_end_bandwidth'
                 class='ipts'
-                placeholder='截止'
+                :placeholder='$t("Public.abort")'
               ></el-input>
             </el-form-item>
-            <el-form-item label='计费时间' prop='billingTime'>
+            <el-form-item :label='$t("Public.billTime")' prop='billingTime'>
               <el-date-picker
                 v-model="filters.billingTime"
                 type="datetimerange"
                 value-format="timestamp"
-                range-separator="至"
-                start-placeholder="开始计费日期时间"
-                end-placeholder="结束计费日期时间"
+                :range-separator="$t('Public.to')"
+                :start-placeholder="$t('Public.staBill')"
+                :end-placeholder="$t('Public.endBill')"
                 class='ipt'
               >
               </el-date-picker>
             </el-form-item>
-            <el-form-item label='过期时间' prop='overdueTime'>
+            <el-form-item :label='$t("Public.expTime")' prop='overdueTime'>
               <el-date-picker
                 v-model="filters.overdueTime"
                 type="datetimerange"
                 value-format="timestamp"
-                range-separator="至"
-                start-placeholder="开始"
-                end-placeholder="截止"
+                :range-separator="$t('Public.to')"
+                :start-placeholder="$t('Public.origin')"
+                :end-placeholder="$t('Public.abort')"
                 class='ipt'
               >
               </el-date-picker>
             </el-form-item>
             <el-form-item>
               <el-button
+              	size='small'
                 @click='getUsers'
                 type='primary'
-              >搜索</el-button>
+              >{{$t('topFilters.search')}}</el-button>
               <el-button
+              	size='small'
                 type='info'
                 @click='reset'
-              >重置</el-button>
+              >{{$t('topFilters.reset')}}</el-button>
             </el-form-item>
           </el-form>
         </el-col>
       </el-row>
 				<div class="table-top">
-          <el-button type="danger"  @click="batchRemove()" :disabled="this.sels.length===0" v-if='parentStatus'  >
-             	批量删除</el-button>   	
-           <el-dropdown split-button type='success' @command="handleExport"  >
-             	 导出数据
+          <el-button size='small' type="danger"  @click="batchRemove()" :disabled="this.sels.length===0" v-if='parentStatus'  >
+             	{{$t('tabOperation.delete')}}</el-button>   	
+           <el-dropdown size='small' split-button type='success' @command="handleExport"  >
+             	 {{$t('tabOperation.derived.tit')}}
               <el-dropdown-menu slot='dropdown'>
-                <el-dropdown-item command="current">当前页 </el-dropdown-item>
-                <el-dropdown-item command="all">所有页</el-dropdown-item>
+                <el-dropdown-item command="current">{{$t('tabOperation.derived.currentPage')}} </el-dropdown-item>
+                <el-dropdown-item command="all">{{$t('tabOperation.derived.allPage')}}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
 				</div>
@@ -130,7 +130,7 @@
             ></el-table-column>
             <el-table-column
               type='index'
-              label='序号'
+              :label='$t("Public.index")'
               min-width='30'
               align='center'
             >
@@ -139,7 +139,7 @@
 							</template>
             </el-table-column>
             <el-table-column
-              label='专线名称'
+              :label='$t("Public.specialName")'
               min-width='60'
               align='center'
             >
@@ -151,7 +151,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              label='专线状态'
+              :label='$t("Public.specialStatus")'
               min-width='50'
               align='center'
             >
@@ -161,14 +161,14 @@
             </el-table-column>
             <el-table-column
               prop='bandwidth'
-              label='带宽(Mbps)'
-              min-width='50'
+              :label='$t("Public.bandwidth")'
+              min-width='60'
               align='center'
             >
             </el-table-column>
             <el-table-column
-              label='专线类型'
-              min-width='50'
+              :label='$t("Public.specialType")'
+              min-width='60'
               align='center'
             >
               <template slot-scope='scope'>
@@ -176,8 +176,8 @@
               </template>
             </el-table-column>
             <el-table-column
-              label='A端'
-              min-width='50'
+              :label='$t("Public.aPort")'
+              min-width='60'
               align='center'
             >
               <template slot-scope='scope'>
@@ -191,14 +191,14 @@
                 <span>{{scope.row.vlanHTMLA}}</span>
               </template>
             </el-table-column>
-            <el-table-column label='A逻辑口状态' min-width='50'  align='center'  >
+            <el-table-column :label='$t("Public.aLogicStatus")' min-width='70'  align='center'  >
               <template slot-scope='scope'>
                 <span  :class="scope.row.colorA" v-text="scope.row.statusValA"> </span>
               </template>
             </el-table-column>
             <el-table-column
-              label='Z端'
-              min-width='50'
+              :label='$t("Public.zPort")'
+              min-width='60'
               align='center'
             >
               <template slot-scope='scope'>
@@ -213,73 +213,73 @@
                 <span>{{scope.row.vlanHTMLZ}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop='endpoints.ports.status' label='Z逻辑口状态'  min-width='50' align='center' >
+            <el-table-column prop='endpoints.ports.status' :label='$t("Public.zLogicStatus")'  min-width='75' align='center' >
             	<template slot-scope='scope'>
             		<span v-text='scope.row.statusValZ' :class="scope.row.colorZ"></span>
             	</template>
             </el-table-column>
             <el-table-column
               prop='creation_time'
-              label='创建时间'
-              width='93'
+              :label='$t("Public.creation")'
+              width='80'
              
               align='center'
             >
             </el-table-column>
             <el-table-column
               prop='charge_time'
-              label='计费时间'
-              width='93'
+              :label='$t("Public.billTime")'
+              width='80'
               
               align='center'
             >
             </el-table-column>
             <el-table-column
               prop='expiration_time'
-              label='过期时间'
-              width='93'
+              :label='$t("Public.expTime")'
+              width='80'
               
               align='center'
             >
             </el-table-column>
             <el-table-column
               prop='tenant.name'
-              label='租户标识'
-              min-width='50'
+              :label='$t("Public.tenant")'
+              min-width='70'
               align='center'
             >
             </el-table-column>
             <el-table-column
               prop='descriptionVal'
-              label='备注'
-              min-width='50'
+              :label='$t("Public.description")'
+              min-width='70'
               align='center'
             >
             </el-table-column>
             <el-table-column
-              label='操作'
-              width='220'
+              :label='$t("Public.operation")'
+              width='140'
               align='center'
               v-if='parentStatus'
             >
               <template slot-scope='scope' v-if='scope.row.creat'>
                 <el-button
-                  size='small'
+                  size='mini'
 									v-if='!scope.row.btn'
                   @click='handleStatus(scope.$index,scope.row)'
                 >{{scope.row.specialName}}</el-button>
                 <el-button
-                  size='small'
+                  size='mini'
                   type='primary'
                   @click='handleEdit(scope.$index,scope.row)'
                   v-if='!scope.row.btn'
-                >编辑</el-button>
+                >{{$t('tabOperation.edit')}}</el-button>
                 <el-button
-                  size='small'
+                  size='mini'
                   type='danger'
                   @click='handleDel(scope.$index,scope.row)'
                   v-if='scope.row.btn'
-                >删除</el-button>
+                >{{$t('tabOperation.delete')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -295,8 +295,6 @@
             :current-page.sync="currentPage"
             :page-count='pageNum'
             :pager-count="pagecount"
-            :prev-text='prev'
-            :next-text='next'
           ></el-pagination>
 
         </el-col>
@@ -311,31 +309,31 @@
         <el-form
           :model='editForm'
           ref='editForm'
-          label-width='120px'
+          label-width='200px'
           :rules='editFormRules'
         >
           <el-form-item
-            label='专线名称'
+            :label='$t("Public.specialName")'
             prop='name'
           >
             <el-input v-model='editForm.name'  class='ipt'></el-input>
           </el-form-item>
           <el-form-item
-            label='带宽'
+            :label='$t("Public.bandW")'
             prop='bandwidth'
           >
             <el-input v-model='editForm.bandwidth'  class='ipt'></el-input>Mbps
           </el-form-item>
-          <el-form-item label='业务状态'>
+          <el-form-item :label='$t("Public.busiStatus")'>
             <el-input
               v-model='editForm.statusHTML' class='ipt'
               disabled
             ></el-input>
           </el-form-item>
-          <el-form-item label='创建时间'>
+          <el-form-item :label='$t("Public.creation")'>
             <el-input v-model='editForm.time' class='ipt' disabled></el-input>
           </el-form-item>
-          <el-form-item label='计费时间'>
+          <el-form-item :label='$t("Public.billTime")'>
             <!--<el-input v-model='editForm.charge_time'></el-input>-->
             <el-date-picker
               v-model="editForm.charge_time"
@@ -346,11 +344,11 @@
               :picker-options="startDatePicker"
               type="datetime"
               class='ipt'
-              placeholder="请选择计费开始日期时间"
+             :placeholder="$t('Public.plaStartBill')"
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label='过期时间'>
+          <el-form-item :label='$t("Public.expTime")'>
             <!--<el-input v-model='editForm.expiration_time'></el-input>-->
             <el-date-picker
               v-model="editForm.expiration_time"
@@ -361,25 +359,26 @@
               :picker-options="endDatePicker"
               type="datetime"
               class='ipt'
-              placeholder="请选择计费截止日期时间"
+              :placeholder="$t('Public.plaEndBill')"
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label='备注'>
-            <el-input v-model='editForm.description'  class='ipt'></el-input>
+          <el-form-item :label='$t("Public.description")'>
+            <el-input type='textarea' v-model='editForm.description'  class='ipt'></el-input>
           </el-form-item>
         </el-form>
         <div
           slot='footer'
           class='dialog-footer'
         >
-          <el-button @click.native='dialogFormVisible=false'>取消</el-button>
+          <el-button size='small' @click.native='dialogFormVisible=false'>{{$t('tabOperation.cancel')}}</el-button>
           <!--编辑-->
           <el-button
             v-if="dialogStatus=='update'"
+            size='small'
             type="primary"
             @click="UpdateData"
-          >保存</el-button>
+          >{{$t('tabOperation.save')}}</el-button>
         </div>
       </el-dialog>
     </section>
@@ -402,11 +401,11 @@ export default {
   data() {
     let isValidNumber = (rule, value, callback) => {
       if (!value) {
-        callback(new Error("请输入带宽"));
+        callback(new Error(this.$t('Public.plaBandwidth')));
       } else if (!isValidinteger(value)) {
-        callback(new Error("请输入正确的带宽"));
+        callback(new Error(this.$t('Public.plarightBand')));
       }if(value>1000000){
-					callback(new Error('带宽最大不超过1000000Mbps'))
+					callback(new Error(this.$t('Public.maxBand')))
 				} else {
         callback();
       }
@@ -436,10 +435,9 @@ export default {
       currentPage: 1,
       pageNum: 1,
       pagecount: 5,
-      next: "下一页",
-      prev: "上一页",
+
       textMap: {
-        update: "编辑虚拟专线"
+        update:this.$t('confirm.editVir')
       },
       dialogStatus: "",
       dialogFormVisible: false,
@@ -455,7 +453,7 @@ export default {
         charge_mode:''
       },
       editFormRules: {
-        name: [{ required: true, message: "请输入名称", trigger: "blur" }],
+        name: [{ required: true, message:this.$t('Public.plaName'), trigger: "blur" }],
         bandwidth: [
           { required: true, validator: isValidNumber, trigger: "blur" }
         ]
@@ -463,20 +461,20 @@ export default {
       excelData: [],
       specialData: [
         {
-          label: "创建中",
+          label: this.$t('Public.creating'),
           value: "creating"
         },
         {
-          label: "停止中",
+          label: this.$t('Public.stopping'),
           value: "stopping"
         },
         {
-          label: "创建失败",
+          label: this.$t('Public.failure'),
           value: "failure"
         },
         {
-          label: "运行中",
-          value: "serving"
+          label: this.$t('Public.servicing'),
+          value: "servicing"
         }
       ], //专线的状态
       specialTypeData: [
@@ -485,21 +483,21 @@ export default {
           value: "d2d"
         },
         {
-          label: "云互联",
+          label: this.$t('Public.cloudInter'),
           value: "d2c"
         },
         {
-          label: "云直连",
+          label: this.$t('Public.cloudsTo'),
           value: "c2c"
         }
       ],
       specialTypeData1: [
         {
-          label: "云互联",
+          label:this.$t('Public.cloudInter'),
           value: "d2c"
         },
         {
-          label: "云直连",
+          label:this.$t('Public.cloudsTo'),
           value: "c2c"
         }
       ],
@@ -525,10 +523,6 @@ export default {
       this.parentStatus = true;
     }
     this.getUsers();
-    // this.timers = setInterval(() => {
-    //    this.getUsers();
-    // }, 10000)
-   
   },
   methods: {
     getFiltersData() {
@@ -618,28 +612,28 @@ export default {
                 if (ele.type == "d2d") {
                   ele.typeName = "DCI";
                 } else if (ele.type == "d2c") {
-                  ele.typeName = "云互联";
+                  ele.typeName = this.$t('Public.cloudInter');//云互联
                 } else if (ele.type == "c2c") {
-                  ele.typeName = "云直连";
+                  ele.typeName = this.$t('Public.cloudsTo');//云直连
                 }
                 
                 var str = ele.endpoints;
                 if (ele.status == "failure") {
-                  ele.statusHTML = "创建失败";
+                  ele.statusHTML = this.$t('Public.failure');
                   ele.statusColor = "creatFie";
                   //creat   控制操作部分   btn控制  删除按钮和其他按钮的互斥
                   ele.creat = true;
                   ele.btn=true;
                 } else if (ele.status == "creating") {
-                  ele.statusHTML = "创建中";
+                  ele.statusHTML = this.$t('Public.creating');
                   ele.statusColor = "creating";
                   ele.creat = false;
                   ele.btn=true;
                 } else if (ele.status == "stopping") {
                 	
-                  ele.statusHTML = "停止中";
+                  ele.statusHTML = this.$t('Public.stopping');
 
-                  ele.specialName = "运行";
+                  ele.specialName = this.$t('tabOperation.run');
                   ele.statusColor = "stopVal";
                   ele.creat = true;
                   ele.btn=false;
@@ -650,38 +644,38 @@ export default {
 										if(getPortStatus(str[0].ports) =='UP' || getPortStatus(str[0].ports) =='异常' ){
 
 	                  	if(getPortStatus(str[1].ports) =='UP' || getPortStatus(str[1].ports) =='异常'){
-	                  		ele.statusHTML = "运行中";
+	                  		ele.statusHTML = this.$t('Public.servicing');
 	                  		ele.statusColor = "ServerVal";
 	                  	}else if(getPortStatus(str[1].ports)=='DOWN'){
-	                  			ele.statusHTML = "故障";
+	                  			ele.statusHTML = this.$t('Public.fau');
 	                  			ele.statusColor = "creatFie";
 	                  	}
 	                  	
 	                  }else if(getPortStatus(str[0].ports)=='DOWN'){
 	                  	if(getPortStatus(str[1].ports) =='UP' || getPortStatus(str[1].ports) =='异常'){
-	                  		ele.statusHTML = "故障";
+	                  		ele.statusHTML = this.$t('Public.fau');
 	                  		ele.statusColor = "creatFie";
 	                  		
 	                  	}else if(getPortStatus(str[1].ports)=='DOWN'){
-	                  			ele.statusHTML = "故障";
+	                  			ele.statusHTML = this.$t('Public.fau');
 	                  			ele.statusColor = "creatFie";
 	                  			
 	                  	}
 	                  }
 									}else if(str.length == 1){//云互联
 										if(getPortStatus(str[0].ports) =='UP' || getPortStatus(str[0].ports) =='异常' ){
-											ele.statusHTML = "运行中";
+											ele.statusHTML = this.$t('Public.servicing');
 	                  	ele.statusColor = "ServerVal";
 										}else if(getPortStatus(str[0].ports)=='DOWN'){
-											ele.statusHTML = "故障";
+											ele.statusHTML = this.$t('Public.fau');
 	                  	ele.statusColor = "creatFie";
 										}
 									}else if(str.length ==0) { //云互联
-										ele.statusHTML = "运行中";
+										ele.statusHTML = this.$t('Public.servicing');
 	                  ele.statusColor = "ServerVal";
 									}
 //                ele.colorZ='colorWarning'
-                  ele.specialName = "停止";
+                  ele.specialName = this.$t('tabOperation.stop');
 //                ele.statusColor = "ServerVal";
                   ele.creat = true;
                   ele.btn=false;
@@ -696,7 +690,7 @@ export default {
                       ele.logicPortA = str[0].logic_port.name;
                       if (str[0].vlan) {
                         if (str[0].vlan == "-1") {
-                          ele.vlanHTMLA = "透传";
+                          ele.vlanHTMLA = this.$t('Public.passthrough');
                         } else if (str[0].vlan == "0") {
                           ele.vlanHTMLA = "UNTAG";
                         } else {
@@ -728,7 +722,7 @@ export default {
                       ele.logicPortZ = ele.endpoints[1].logic_port.name;
 //                    if (str[0].vlan) {
                         if (str[0].vlan == "-1") {
-                          ele.vlanHTMLA = "透传";
+                          ele.vlanHTMLA = this.$t('Public.passthrough');//透传
                         } else if (str[0].vlan == "0") {
                           ele.vlanHTMLA = "UNTAG";
                         } else {
@@ -736,7 +730,7 @@ export default {
                         }
 //                    } else if (str[1].vlan) {
                         if (str[1].vlan == "-1") {
-                          ele.vlanHTMLZ = "透传";
+                          ele.vlanHTMLZ = this.$t('Public.passthrough');
                         } else if (str[1].vlan == "0") {
                           ele.vlanHTMLZ = "UNTAG";
                         } else {
@@ -788,9 +782,9 @@ export default {
       this.$emit('send',row.endpoints[0].logic_port.id)//改组件被引用的时候  向父组件传值更新
     },
     handleSeeZ(index, row) {
-    	console.log(row)
+//  	console.log(row)
       //查看Z端的详情
-      console.log("进入Z端的详情");
+//    console.log("进入Z端的详情");
       this.$router.push({
         path: "/resource/see/logicalPort",
         query: {
@@ -848,7 +842,7 @@ export default {
                   if (res.status == 200) {
                     if (res.data.status == 0) {
                       this.$message({
-                        message: "修改成功!",
+                        message: this.$t('tooltipMes.editSuccess'),
                         type: "success"
                       });
                       this.$refs["editForm"].resetFields();
@@ -866,16 +860,12 @@ export default {
                 .catch(e => {
                   console.log(e);
                 });
-            // })
-            // .catch(() => {});
-        } else {
-          return;
-        }
+        } 
       });
     },
     handleDel(index, row) {
       //删除
-      this.$confirm("确定要删除吗?", "提示", {})
+      this.$confirm(this.$t('confirm.title'), this.$t('confirm.tooltip'), {type:'warning'})
         .then(() => {
           this.$ajax
             .del("/vll/del_vll/"+ row.id + "?token=" + this.token)
@@ -883,7 +873,7 @@ export default {
               if (res.status == 200) {
                 if (res.data.status == 0) {
                   this.$message({
-                    message: "删除成功!",
+                    message: this.$t('tooltipMes.delSuccess'),
                     type: "success"
                   });
                   this.getUsers();
@@ -909,7 +899,7 @@ export default {
         ids += item.id + ",";
       }
       console.log(ids);
-      this.$confirm("确定要删除选中的数据吗?", "提示", {})
+      this.$confirm(this.$t('confirm.titles'),this.$t('confirm.tooltip'), {type:'warning'})
         .then(() => {
           const id = ids.substring(0, ids.lastIndexOf(","));
           this.isid = id.split(",");
@@ -918,8 +908,9 @@ export default {
             .then(res => {
               if (res.status == 200) {
                 if (res.data.status == 0) {
+                	
                   this.$message({
-                    message: "删除成功!",
+                    message:this.$t('tooltipMes.delSuccess'),
                     type: "success"
                   });
                   this.getUsers();
@@ -940,13 +931,13 @@ export default {
     },
     handleStatus(index, row) {
     	console.log(row);
-    	if(row.specialName==='停止'){
+    	if(row.specialName=== this.$t('tabOperation.stop') ){
     		this.$ajax.put('/vll/to_stop_vll/'+row.id+'?token='+this.token)
     		.then(res => {
     			if(res.status==200){
     				if(res.data.status==0){
     					this.$message({
-    						message:'禁用成功!',
+    						message:this.$t('tooltipMes.stopSuccess'),
     						type:'success'
     					})
     					this.getUsers()
@@ -961,13 +952,13 @@ export default {
     			}
     		})
     		.catch(e => {console.log(e)})
-    	}else if(row.specialName==='运行'){
+    	}else if(row.specialName===this.$t('tabOperation.run')){
     		this.$ajax.put('/vll/to_serve_vll/'+row.id+'?token='+this.token)
     		.then(res => {
     			if(res.status==200){
     				if(res.data.status==0){
     					this.$message({
-    						message:'运行成功!',
+    						message:this.$t('tooltipMes.runSuccess'),
     						type:'success'
               })
               this.getUsers()
@@ -985,15 +976,14 @@ export default {
     handleExport(command) {
       //选择导出的当前还是所有数据
       if (command == "all") {
-        console.log("导出所有的数据");
-        this.$confirm("确定要导出所有的数据吗?", "提示", {})
+        this.$confirm(this.$t('tooltipMes.exportDataAll'), this.$t('confirm.tooltip'), {})
           .then(() => {
             this.exportData();
           })
           .catch(() => {});
       } else if (command == " current") {
-        console.log("导出当前的数据");
-        this.$confirm("确定要导出当前页的数据吗?", "提示", {})
+
+        this.$confirm(this.$t('tooltipMes.exportDataCurr'), this.$t('confirm.tooltip'), {})
           .then(() => {
             var para = {
               page: this.currentPage,
@@ -1073,11 +1063,7 @@ export default {
       };
     }
   },
-  // beforeDestroy(){
-  //   clearInterval(this.timers)
-  //   console.log(3333333)
-  //   this.timers=null;
-  // }
+
 };
 </script>
 

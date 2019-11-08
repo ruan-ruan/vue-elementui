@@ -5,19 +5,19 @@
    	 	<el-row class='toolbar' style='width: 100%;'>
    	 		<el-col :span='24'>
    	 			<el-form :inline='true' :model='filters' ref='filters'>
-   	 				<el-form-item label='名称' prop='name'>
+   	 				<el-form-item :label='$t("Public.name")' prop='name'>
    	 					<el-input v-model='filters.name' placeholder="请输入逻辑端口名称" class='sel'></el-input>
    	 				</el-form-item>
-   	 				<el-form-item label='租户标识' prop='nameLogo'>
-   	 					<el-select v-model='filters.nameLogo' class='sel' placeholder="请选择租户">
+   	 				<el-form-item :label='$t("Public.tenant")' prop='nameLogo'>
+   	 					<el-select v-model='filters.nameLogo' class='sel' :placeholder="$t('Public.plaTenant')">
    	 						<el-option v-for='(item,index ) in tenantData'
    	 							:value='item.id'
    	 							:label='item.name'
    	 							:key='index'></el-option>
    	 					</el-select>
    	 				</el-form-item>
-   	 				<el-form-item label='状态' prop='status'>
-   	 					<el-select v-model='filters.status'placeholder="请选择逻辑端口状态" class='sel'>
+   	 				<el-form-item :label='$t("Public.status")' prop='status'>
+   	 					<el-select v-model='filters.status' :placeholder="$t('Public.plaLogicSt')" class='sel'>
    	 						<el-option v-for=' (item,index) in PortStatus'
    	 							:value='item.value'
    	 							:key='index'
@@ -25,8 +25,8 @@
    	 					</el-select>
    	 				</el-form-item>
    	 				<el-form-item>
-   	 					<el-button type='primary' @click='getUsers'>搜索</el-button>
-   	 					<el-button type='info' @click='reset'>重置</el-button>
+   	 					<el-button type='primary' @click='getUsers'>{{$t('topFilters.search')}}</el-button>
+   	 					<el-button type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
    	 				</el-form-item>
    	 			</el-form>
    	 		</el-col>
@@ -35,14 +35,14 @@
    	 	<el-row>
    	 		<el-col :span='24'>
    	 			<el-col :span='4'>
-   	 				<el-button type='primary' @click='addUsers' v-if=' !tit'>+创建逻辑端口</el-button>
+   	 				<el-button type='primary' @click='addUsers' v-if=' !tit'>+{{$t('Public.creatLogic')}}</el-button>
    	 			</el-col>
    	 			<el-col :span='20' class='table-top'>
    	 				<el-dropdown split-button type='success'@command="handleExport">
-							导出数据
+							<!--导出数据-->{{$t('tabOperation.derived.tit')}}
 							<el-dropdown-menu slot='dropdown'>
-								<el-dropdown-item command="current">当前页 </el-dropdown-item>									
-								<el-dropdown-item command="all">所有页</el-dropdown-item>																				
+								<el-dropdown-item command="current">{{$t('tabOperation.derived.currentPage')}} </el-dropdown-item>									
+								<el-dropdown-item command="all">{{$t('tabOperation.derived.allPage')}}</el-dropdown-item>																				
 							</el-dropdown-menu>
 						</el-dropdown>
    	 			</el-col>
@@ -52,34 +52,34 @@
    	 	
    	 	<!--表格数据部分-->
    	 	<el-table :data='users' highlight-current-row style='width: 100%;' v-loading='loading' 
-   	 		:default-sort = "{prop: 'creation_time', order: 'descending'}">
-   	 		<el-table-column type='index' width='60'label='序号' align='center'>
+   	 		>
+   	 		<el-table-column type='index' width='60':label='$t("Public.index")' align='center'>
    	 			<template slot-scope='scope'>
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
    	 		</el-table-column>
-   	 		<el-table-column prop='creation_time' sortable  label='创建时间' width='101'align='center'></el-table-column>
-   	 		<el-table-column prop='name' label='逻辑端口名称' min-width='100'align='center'>
+   	 		<el-table-column prop='creation_time'   :label='$t("Public.creation")' :formatter='dateFormat' width='80'align='center'></el-table-column>
+   	 		<el-table-column prop='name' :label='$t("Public.logName")' min-width='100'align='center'>
    	 			<template slot-scope='scope'>
    	 				<span class='cli_spn' @click="handleSee(scope.$index,scope.row)">{{scope.row.name}}</span>
    	 			</template>
    	 		</el-table-column>
-   	 		<el-table-column prop='tenant.name' label='租户标识' min-width='100'align='center'></el-table-column>
-   	 		<el-table-column  label='逻辑口状态' min-width='80'align='center'>
+   	 		<el-table-column prop='tenant.name' :label='$t("Public.tenant")' min-width='100'align='center'></el-table-column>
+   	 		<el-table-column  :label='$t("Public.logicStatus")' min-width='100'align='center'>
    	 			<template slot-scope='scope'>
    	 				<span :class='scope.row.usableTextColor'>{{scope.row.usableText}}</span>
    	 			</template>
    	 		</el-table-column>
-   	 		<el-table-column prop='physical_ports_len' label='端口组合数' min-width='80'align='center'></el-table-column>
-   	 		<el-table-column prop='access_type' label='用户连接方式' min-width='80'align='center'></el-table-column>
-   	 		<el-table-column prop='start_time' label='合同开始时间' width='95'align='center'></el-table-column>
-   	 		<el-table-column prop='end_time' label='合同结束时间' width='95'align='center'></el-table-column>
-   	 		<el-table-column prop='descriptionVal' label='备注' min-width='80'align='center'></el-table-column>
-   	 		<el-table-column  label='操作' width='230'  v-if=' !tit'align='center'>
+   	 		<el-table-column prop='physical_ports_len' :label='$t("Public.portNumber")' min-width='100'align='center'></el-table-column>
+   	 		<el-table-column prop='access_type' :label='$t("Public.linkType")' min-width='100'align='center'></el-table-column>
+   	 		<el-table-column prop='start_time' :label='$t("Public.conStart")' :formatter='dateFormat' width='80'align='center'></el-table-column>
+   	 		<el-table-column prop='end_time' :label='$t("Public.conEnd")' :formatter='dateFormat' width='80'align='center'></el-table-column>
+   	 		<el-table-column prop='descriptionVal' :label='$t("Public.description")' min-width='100'align='center'></el-table-column>
+   	 		<el-table-column  :label='$t("Public.operation")' width='120'  v-if=' !tit'align='center'>
    	 			<template slot-scope='scope'>
-   	 				<el-button size='small' type='info' @click='handleStatus(scope.$index, scope.row)'>{{scope.row.btnStatus}}</el-button>
-	   	 			<el-button size='small' type='success' @click='handleEdit(scope.$index,scope.row)'>编辑</el-button>
-	   	 			<el-button size='small' type='danger' @click='handleDel(scope.$index,scope.row)' v-if="scope.row.btnStatus=='启用'">删除</el-button>
+   	 				<el-button size='mini' type='info' @click='handleStatus(scope.$index, scope.row)'>{{scope.row.btnStatus}}</el-button>
+	   	 			<el-button size='mini' type='success' @click='handleEdit(scope.$index,scope.row)'>{{$t('tabOperation.edit')}}</el-button>
+	   	 			<el-button size='mini' type='danger' @click='handleDel(scope.$index,scope.row)' v-if="scope.row.btnStatus== '启用' ">{{$t('tabOperation.delete')}}</el-button>
    	 			</template>
    	 		</el-table-column>
    	 		
@@ -95,8 +95,7 @@
 				     	:current-page.sync="currentPage"  
 				     	:page-count='pageNum'
 				     	:pager-count="pagecount"
-				     	:prev-text='prev'
-				     	:next-text='next'></el-pagination>
+				     	></el-pagination>
    	 		</el-col>
    	 	</el-row>
    	 </section>
@@ -124,10 +123,10 @@
 						label:'DOWN',
 						value:'DOWN'
 					},{
-						label:'异常',
+						label:this.$t('Public.abnormal'),
 						value:'异常'
 					},{
-						label:'禁用',
+						label:this.$t('Public.Prohibit'),
 						value:'禁用'
 					}
 				],
@@ -141,8 +140,7 @@
 				currentPage:1,
 				pageNum:1,
 				pagecount:5,
-				next:'下一页',
-				prev:'上一页',
+
 				excelData:[],
 				//用来控制删除按钮的显示和隐藏
 				statusDel:null,
@@ -168,8 +166,8 @@
 		created(){
 			//获取token
 			this.token=sessionStorage.getItem('token');
-			console.log(this.titleOne)
-			console.log(this.titleTwo)
+//			console.log(this.titleOne)
+//			console.log(this.titleTwo)
 			
 			this.getUsers();
 			this.getTenantData();
@@ -219,20 +217,6 @@
 							this.total=res.data.data.page.total;
 
 							res.data.data.items.forEach(ele => {
-								
-								if( (!ele.start_time && typeof(ele.start_time) !='undefined' && ele.start_time !='') || ele.start_time == ''){
-									ele.start_time=''
-								}else{
-									ele.start_time=datedialogFormat(ele.start_time)
-								}
-								if( (!ele.end_time && typeof(ele.end_time) !='undefined' && ele.end_time !='') || ele.end_time == ''){
-									ele.end_time=''
-								}else{
-									ele.end_time=datedialogFormat(ele.end_time)
-								}
-								ele.creation_time=datedialogFormat(ele.creation_time)
-								
-								
 								ele.physical_ports_len=ele.physical_ports.length;
 
 								if(ele.usable){
@@ -244,14 +228,14 @@
 											ele.usableTextColor='colorGreen'
 										}else if(ele.usableText==='DOWN'){
 											ele.usableTextColor='colorRed'
-										}else if(ele.usableText==='异常'){
+										}else if(ele.usableText=== '异常'){
 											ele.usableText==='DOWN'
 											ele.usableTextColor='colorWarning'
 										}	
-									ele.btnStatus='禁用'
+									ele.btnStatus=this.$t('Public.Prohibit')
 								}else{
 									ele.usableText='禁用';
-									ele.btnStatus='启用';
+									ele.btnStatus=this.$t('Public.enable');
 									ele.usableTextColor='portAbnor'
 								}
 							})
@@ -272,9 +256,7 @@
 			},
 			reset(){
 				this.$refs['filters'].resetFields();
-//				for (let index in sel) {
-//					sel[index]=''
-//				}
+
 			},
 			addUsers(){
 				//添加  逻辑端口
@@ -309,20 +291,20 @@
 			handleStatus(index,row){
 				//设置端口的启用和禁用
 
-				if(row.btnStatus=='禁用'){
+				if(row.btnStatus ==this.$t('Public.Prohibit')){
 
-					this.$confirm('确定要禁用该端口吗?','提示',{})
+					this.$confirm(this.$t('confirm.disPort'),this.$t('confirm.tooltip'),{})
 					.then(() => {
 						this.$ajax.put('/port/to_disable_logic_port/'+row.id+'?token='+this.token)
 						.then(res => {
 							if(res.status==200){
 								if (res.data.status==0) {
 									this.$message({
-										message:'禁用成功!',
+										message:this.$t('tooltipMes.diSuccess'),
 										type:'success'
 									});
 									
-									row.btnstatus='启用'
+//									row.btnstatus='启用'
 									this.getUsers()
 								}else{
 									this.$message({
@@ -333,9 +315,9 @@
 							}
 						})
 					}).catch(() => {})
-				}else if(row.btnStatus=='启用'){
+				}else if(row.btnStatus==this.$t('Public.enable')){
 
-					this.$confirm('确定要启用该端口吗?','提示',{})
+					this.$confirm(this.$t('Public.enPort'),this.$t('confirm.tooltip'),{})
 					.then(() => {
 						
 						this.$ajax.put('/port/to_enable_logic_port/'+row.id+'?token='+this.token)
@@ -343,10 +325,10 @@
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
-										message:'启用成功',
+										message:this.$t('tooltipMes.enSuccess'),
 										type:'success'
 									})
-									row.btnStatus='禁用';
+//									row.btnStatus='禁用';
 									this.getUsers()
 								}else{
 									this.$message({
@@ -361,7 +343,7 @@
 			},
 			handleDel(index,row){
 				//删除
-				this.$confirm('确定要删除该端口吗?','提示',{type:'warning'})
+				this.$confirm(this.$t('confirm.title'),this.$t('confirm.tooltip'),{type:'warning'})
 				.then(() =>{
 					
 					this.$ajax.del('/port/del_logic_port/'+row.id+"?token="+this.token)
@@ -369,7 +351,7 @@
 						if(res.status==200){
 							if(res.data.status==0){
 								this.$message({
-									message:'删除成功!',
+									message:this.$t('tooltipMes.delSuccess'),
 									type:'success'
 								})
 								this.getUsers()
@@ -388,18 +370,18 @@
 			//导出数据部分
 			handleExport(command){
 				if(command=='all'){
-					this.$confirm('确定要导出当前的数据吗?','提示',{})
+					this.$confirm(this.$t('tooltipMes.exportDataAll'),this.$t('confirm.tooltip'),{})
+					.then(() => {
+						this.exportData()
+					}).catch(() => {})
+				}else if(command=='current'){
+					this.$confirm(this.$t('tooltipMes.exportDataCurr'),this.$t('confirm.tooltip'),{})
 					.then(() => {
 						var para={
 		    				page:this.currentPage,
 		    				per_page:this.pagesize,
 						}
 						this.exportData(para)
-					}).catch(() => {})
-				}else if(command=='current'){
-					this.$confirm('确定要导出所页面的数据吗?','提示',{})
-					.then(() => {
-						this.exportData()
 					}).catch(() => {})
 				}
 			},
@@ -421,11 +403,11 @@
 				let that=this;
 				require.ensure([] ,() => {
 					const {export_json_to_excel} = require('@/excel/export2Excel')
-					const tHeader=['创建时间','数据中心','设备ID','管理Ip','备注'];
+					const tHeader=[this.$t('Public.creation'),this.$t('Public.dataCen'),this.$t('Public.deviceID'),this.$t('Public.manageIP'),this.$t('Public.description')];
 					const filterVal=['creation_time','dc_name','id','ip','description'];
 					const list=that.excelData;
 					const data=that.formatJson(filterVal,list);
-					export_json_to_excel(tHeader,data,'下载数据excel')
+					export_json_to_excel(tHeader,data,this.$t('addNode.download')+ 'excel')
 				})
 			},
 			formatJson(filterVal,jsonData){
@@ -434,7 +416,17 @@
 			//表格数据时间转换
 			dateFormat(row,column){
 	    		//将时间戳转换为前端的时间
-	    		let date=new Date(parseInt(row.creation_time)*1000);
+	    		let date=null;
+	    		if(column.property == "creation_time"){
+	    				date=new Date(parseInt(row.creation_time)*1000);
+	    		}
+	    		if(column.property == "start_time"){
+	    				date=new Date(parseInt(row.start_time)*1000);
+	    		}
+	    		if(column.property == "end_time"){
+	    				date=new Date(parseInt(row.end_time)*1000);
+	    		}
+	    		
 	    		let Y=date.getFullYear()+'-';
 	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
 	    		let D=date.getDate() <10? '0' +date.getDate() +' ':date.getDate()+' ';

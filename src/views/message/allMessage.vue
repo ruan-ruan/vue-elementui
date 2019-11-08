@@ -111,7 +111,7 @@
         style='width: 100%;'
         empty-text='暂无数据'
         v-loading='loading'
-        :default-sort="{prop: 'time', order: 'descending'}"
+        
       >
 
         <el-table-column
@@ -121,7 +121,7 @@
         ></el-table-column>
         <el-table-column
           type='index'
-          width='50'
+          width='80'
           align='center'
           :label= "$t('mesModule.unMessage.table.serial')"
         >
@@ -133,7 +133,7 @@
           :label=" $t('mesModule.unMessage.table.title') "
           prop='title'
           align='left'
-          width="240"
+          width="500"
         >
           <template slot-scope="scope">
             <el-popover
@@ -166,14 +166,15 @@
           prop='time'
           :formatter='dateFormat'
           :label="$t('mesModule.unMessage.table.time')"
-          sortable
-          width='101'
+          
+          width='80'
           align='center'
         ></el-table-column>
         <el-table-column
           prop='level'
           :label="$t('mesModule.unMessage.table.level')"
           align='center'
+          
         >
           <template slot-scope="scope">
             <span>{{ scope.row.level}}{{$t('mesModule.sea.leType')}}</span>
@@ -203,8 +204,7 @@
           :current-page.sync="currentPage"
           :page-count='pageNum'
           :pager-count="pagecount"
-          :prev-text='prev'
-          :next-text='next'
+
         ></el-pagination>
       </el-col>
       <messageDialog
@@ -293,8 +293,7 @@ export default {
       currentPage: 1,
       pageNum: 1,
       pagecount: 5,
-      next: "下一页",
-      prev: "上一页",
+
       loading: false,
       isid: [],
       readid: [],

@@ -1,61 +1,61 @@
 <template>
 	<div>
-		<span class="title_h3"style="font-size: 12px;">通过此配置的界面，可以用专线连接数据中心到公有云服务提供商()比如阿里李云，AWS并可以自行定义转此案的起始时间/终止时间以及带宽</span>
+		<span class="title_h3"style="font-size: 12px;">{{$t('business.d2ctitle')}}</span>
 		<el-row>
 			<el-col :span='24'>
 				<el-col :span='18'>
-					<h3 class="title_h3">第一步:创建数据中心互联的虚拟专线 <span class="cli_toTip" title='创建任意两个数据中心之间的二层虚拟专线'>?</span></h3>
+					<h3 class="title_h3">{{$t('business.d2cStep1')}} </h3>
 					<topForm @formVal='getVal' ref='basicForm'></topForm>
-					<h3 class="title_h3">第二步:业务两端基础信息配置</h3>
+					<h3 class="title_h3">{{$t('business.step2')}}</h3>
 					<el-row>
 						<el-col :span='24'>
 							<el-col :span='12'>
-								<h4 class="title_h4">A(云)配置</h4>
+								<h4 class="title_h4">{{$t('business.c2cAshared')}}</h4>
 								<shared-cloun @sendClounbasic='getSharedCloun' @sendClounList='getClounList' ref='editForm'></shared-cloun>
 							</el-col>
 							<el-col :span='12'>
-								<h4 class="title_h4"title="虚拟专线受控的起始端">Z(DC)配置<span class="cli_toTip" >?</span></h4>
+								<h4 class="title_h4":title="$t('business.ztooltip')">{{$t('business.zDc')}}<span class="cli_toTip" >?</span></h4>
 								<dc-port @sendFormData='getDcPort' ref='dcPort'></dc-port>
 							</el-col>
 						</el-col>
 					</el-row>
-					<h3 class="title_h3">第三步:其他配置</h3>
+					<h3 class="title_h3">{{$t('business.step3')}}</h3>
 					<billing @sendTime='getTimeVal' ref='billingForm'></billing>
 				</el-col>
 				<el-col :span='5'  class='pos_row'>
 					<!--<el-row>
 						<el-col :span='24'>-->
-							<h3 class="tit_h3" >配置详情概览</h3>
-							<el-form :model='creatFormDetails' ref='creatFormDetails' style='width: 100%;'label-width='120px'>
-								<el-form-item label='公有云:' class='label_tit' prop='tenant_name'>
+							<h3 class="tit_h3" >{{$t('business.conDetails')}}</h3>
+							<el-form :model='creatFormDetails' ref='creatFormDetails' style='width: 100%;'label-width='125px'>
+								<el-form-item :label='$t("Public.shardCloud")+"："' class='label_tit' prop='tenant_name'>
 									<template >
 										<span>{{creatFormDetails.sharedCloun}}</span>
 									</template>
 								</el-form-item>
-								<el-form-item label='租户标识:' class='label_tit' prop='tenant_name'>
+								<el-form-item :label='$t("Public.tenant")+"："' class='label_tit' prop='tenant_name'>
 									<template >
 										<span>{{creatFormDetails.tenant_name}}</span>
 									</template>
 								</el-form-item>
-								<el-form-item label='计费时间:'  class='label_tit' prop='details_charge_time'>
+								<el-form-item :label='$t("Public.billTime")+"："'  class='label_tit' prop='details_charge_time'>
 									<template >
 										<span>{{creatFormDetails.details_charge_time}}</span>
 									</template>
 								</el-form-item>
-								<el-form-item label='过期时间:'  class='label_tit' prop='details_expiration_time'>
+								<el-form-item :label='$t("Public.expTime")+"："'  class='label_tit' prop='details_expiration_time'>
 									<template >
 										<span>{{creatFormDetails.details_expiration_time}}</span>
 									</template>
 								</el-form-item>
-								<el-form-item label='带宽:'  class='label_tit' prop='bandwidth'>
+								<el-form-item :label='$t("Public.bandW")+"："'  class='label_tit' prop='bandwidth'>
 									<template>
 										<span>{{creatFormDetails.bandwidth}}</span>
 										<span>Mbps</span>
 									</template>
 								</el-form-item>
 								<el-form-item>
-									<el-button size='small' @click.native="reset">重置</el-button>
-					 				<el-button size='small' type='primary' @click='submitBtn'>提交</el-button>
+									<el-button size='small' @click.native="reset">{{$t('topFilters.reset')}}</el-button>
+					 				<el-button size='small' type='primary' @click='submitBtn'>{{$t('tabOperation.Submit')}}</el-button>
 								</el-form-item>
 							</el-form>
 						<!--</el-col>

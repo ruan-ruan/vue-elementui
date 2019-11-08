@@ -21,7 +21,8 @@ const messages = {
 
 const i18n = new VueI18n({
   locale: localStorage.getItem('language') || 'zh', // set locale
-  messages // set locale messages
+  messages, // set locale messages
+   silentTranslationWarn: true
 })
 
 export default i18n

@@ -161,8 +161,8 @@
 				filters:{
 					checkboxGroup1: [this.$t('topology.footerBtn.showLabel')],
 					bandwidthLogo:true,//是否显示宽带标签
-					bandwidth:'显示所有带宽链路',
-					network:['显示骨干节点','显示公有云节点','显示骨干链接'],
+					bandwidth:this.$t('topology.footerBtn.bandW.showAllbandwidth'),
+					network:[this.$t('topology.footerBtn.shwoNet.showBackboneNode'),this.$t('topology.footerBtn.shwoNet.showShardCloud'),this.$t('topology.footerBtn.shwoNet.showBackboneLink')],
 				},
               	cities:[
 					{

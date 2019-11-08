@@ -74,7 +74,7 @@
         style='width: 100%;'
         empty-text='暂无数据'
         v-loading='loading'
-        :default-sort = "{prop: 'time', order: 'descending'}"
+        
       >
         <el-table-column
           type='selection'
@@ -90,7 +90,7 @@
           :label=" $t('mesModule.unMessage.table.title') "
           prop='title'
           align='left'
-          width="240"
+          width="500"
         >
           <template slot-scope="scope">
             <el-popover
@@ -118,8 +118,8 @@
         </el-table-column>
         <el-table-column
           prop='time'
-          width='101'
-          sortable
+          width='80'
+          
           align='center'
           :label="$t('mesModule.unMessage.table.time')"
           :formatter="dateFormat"

@@ -2,25 +2,25 @@
 	<div>
 		<!--虚拟专线的详情的界面-->
 		<section>
-			<el-form :mdoel='seeForm' ref='seeForm' v-loading='seeLoading' label-width='120px'label-position='left'>
+			<el-form :mdoel='seeForm' ref='seeForm' v-loading='seeLoading' label-width='200px'>
 				<el-row>
 					<el-col :span='24'>
 						<el-col :span='12'>
-							<el-form-item label='专线名称：'>
+							<el-form-item :label='$t("Public.specialName") + "："'>
 								<span>{{seeForm.name}}</span>
 							</el-form-item>
-							<el-form-item label='带宽(Mbps)：'>
+							<el-form-item :label='$t("Public.bandwidth") + "："'>
 								<span>{{seeForm.bandwidth}}</span>
 							</el-form-item>
-							<el-form-item label='专线状态：'>
+							<el-form-item :label='$t("Public.specialStatus") + "："'>
 								<span>{{seeForm.status}}</span>
 							</el-form-item>
 						</el-col>
 						<el-col :span='12'>
-							<el-form-item label='专线类型：'>
+							<el-form-item :label='$t("Public.specialType") + "："'>
 								<span>{{seeForm.typeHtml}}</span>
 							</el-form-item>
-							<el-form-item label='租户标识：'>
+							<el-form-item :label='$t("Public.tenant") + "："'>
 								<span>{{seeForm.tenant.name}}</span>
 							</el-form-item>
 						</el-col>						
@@ -29,104 +29,41 @@
 				<el-row class='marT20'>
 					<el-col :span='24'>
 						<el-col :span='12' v-if='seeForm.type== "d2d" '>
-							<h3 class="marB15">DC端A端配置详情</h3>
+							<h3 class="marB15">{{$t('Public.dcAport')}}</h3>
 							<dc :dcData='dcFormA'></dc>
-							<!--<el-form-item label='节点名称：'>
-								<span>{{dcFormA.node_name}}</span>
-							</el-form-item>
-							<el-form-item label='A端逻辑口：'>
-								<span>{{dcFormA.logic_name}}</span>
-							</el-form-item>
-							<el-form-item label='逻辑口状态：'>
-								<span>{{dcFormA.port_status}}</span>
-							</el-form-item>-->
+
 						</el-col>
 						<!--数据中心互联-->
 						<el-col :span='12' v-if='seeForm.type=="d2d"'>
-							<h3 class="marB15">DC端Z端配置详情</h3>
+							<h3 class="marB15">{{$t('Public.dcZport')}}</h3>
 							<dc :dcData='dcFormZ'></dc>
-							<!--<el-form-item label='节点名称：'>
-								<span>{{dcFormZ.node_name}}</span>
-							</el-form-item>
-							<el-form-item label='Z端逻辑口：'>
-								<span>{{dcFormZ.logic_name}}</span>
-							</el-form-item>
-							<el-form-item label='逻辑口状态：'>
-								<span>{{dcFormZ.port_status}}</span>
-							</el-form-item>-->
+
 						</el-col>
 						<!--云互联-->
 						<el-col :span='12' v-if='seeForm.type=="c2c"'>
-							<h3 class="marB15">A(云)端配置详情</h3>						
+							<h3 class="marB15">{{$t('Public.cloudAport')}}</h3>						
 							<cloun :clounData='clFormA'></cloun>
-							<!--<el-form-item label='公有云：'>
-								<span>{{clFormA.cloud_type}}</span>
-							</el-form-item>
-							<el-form-item label='目标Region：'>
-								<span>{{clFormA.region}}</span>
-							</el-form-item>
-							<el-form-item label='云对接链路：'>
-								<span>{{clFormA.name}}</span>
-								<span>{{clFormA.logic_name}}{{clFormA.vlan}}  </span>
-							</el-form-item>
-							<el-form-item label='逻辑口状态：'>
-								<span>{{clFormA.logic_status}}</span>
-							</el-form-item>-->
+
 							
 						</el-col>
 						<el-col :span='12' v-if='seeForm.type=="c2c"'>
-							<h3 class="marB15">Z(云)端配置详情</h3>	
+							<h3 class="marB15">{{$t('Public.cloudZport')}}</h3>	
 							<cloun :clounData='clFormZ'></cloun>
-							
-							<!--<el-form-item label='公有云：'>
 
-								<span>{{clFormZ.cloud_type}}</span>
-							</el-form-item>
-							<el-form-item label='目标Region：'>
-								<span>{{clFormZ.region}}</span>
-							</el-form-item>
-							<el-form-item label='云对接链路：'>
-								<span>{{clFormZ.name}}</span>
-								<span>{{clFormZ.logic_name}}{{clFormZ.vlan}}  </span>
-							</el-form-item>
-							<el-form-item label='逻辑口状态：'>
-								<span>{{clFormZ.logic_status}}</span>
-							</el-form-item>-->
 						</el-col>
 					</el-col>
 					
 					<!--数据中心到云-->
 					<el-col :span='12' v-if='seeForm.type=="d2c"'>
-							<h3 class="marB15">A(云)端配置详情</h3>	
+							<h3 class="marB15">{{$t('Public.cloudAport')}}</h3>	
 							<cloun :clounData='clFormA'></cloun>
-							
-							<!--<el-form-item label='公有云：'>
-								<span>{{clFormA.cloud_type}}</span>
-							</el-form-item>
-							<el-form-item label='目标Region：'>
-								<span>{{clFormA.region}}</span>
-							</el-form-item>
-							<el-form-item label='云对接链路:'>
-								<span>{{clFormA.name}}</span>
-								<span>{{clFormA.logic_name}}{{clFormA.vlan}}  </span>
-							</el-form-item>
-							<el-form-item label='逻辑口状态:'>
-								<span>{{clFormA.logic_status}}</span>
-							</el-form-item>-->
+		
 						</el-col>
 						<el-col :span='12' v-if='seeForm.type=="d2c"'>
-							<h3 class="marB15">Z(DC)端配置详情</h3>	
+							<h3 class="marB15">{{$t('Public.zPortDetails')}}</h3>	
 							<dc :dcData='dcFormZ'></dc>
 							
-							<!--<el-form-item label='节点名称：'>
-								<sapn>{{dcFormZ.name}}</sapn>
-							</el-form-item>
-							<el-form-item label='Z端逻辑口：'>
-								<span>{{dcFormZ.logic_name}}</span>
-							</el-form-item>
-							<el-form-item label='逻辑口状态：'>
-								<span>{{dcFormZ.port_status}}</span>
-							</el-form-item>-->
+
 						</el-col>
 					</el-col>
 					
@@ -135,21 +72,21 @@
 				<el-row class='marT20'>					
 					<el-col :span='24'>
 						<el-col :span='12'>
-							<el-form-item label='计费模式：'>
+							<el-form-item :label='$t("Public.chargModel") + "："'>
 								<span>{{seeForm.charge_mode}}</span>
 							</el-form-item>
-							<el-form-item label='创建时间:'>
+							<el-form-item :label='$t("Public.creation") + "："'>
 								<span>{{seeForm.creation_time}}</span>
 							</el-form-item>
-							<el-form-item label='计费时间：'>
+							<el-form-item :label='$t("Public.billTime") + "："'>
 								<span>{{seeForm.charge_time}}</span>
 							</el-form-item>
 						</el-col>
 						<el-col :span='12'>
-							<el-form-item label='过期时间：'>
+							<el-form-item :label='$t("Public.expTime") + "："'>
 								<span>{{seeForm.expiration_time}}</span>
 							</el-form-item>
-							<el-form-item label='备注：'>
+							<el-form-item :label='$t("Public.description") + "："'>
 								<span>{{seeForm.description}}</span>
 							</el-form-item>
 						</el-col>
@@ -253,13 +190,13 @@
 							let statusVal='';
 //							statusVal=(str.status==='servicing'?'运行中':'stopping'?'停止中':'failure'?'创建失败':'creating'?'创建中':'')
 							if(str.status==='servicing'){
-								statusVal='运行中'
+								statusVal=this.$t('Public.servicing');
 							}else if(str.status==='stopping'){
-								statusVal='停止中'
+								statusVal=this.$t('Public.stopping');
 							}else if(str.status==='failure'){
-								statusVal='创建失败'
+								statusVal=this.$t('Public.failure');
 							}else if(str.status==='creating'){
-								statusVal='创建中'
+								statusVal=this.$t('Public.creating');
 							}
 							
 
@@ -270,9 +207,18 @@
 							isNull(str,'creation_time');
 							isNull(str,'expiration_time');
 							
+							let charge='';
+							if(str.type == 'd2d'){
+								charge='DCI'
+							}else if(str.type == 'd2c'){
+								charge=this.$t('Public.cloudInter');
+								
+							}else if(str.type == 'c2c'){
+								charge=this.$t('Public.cloudsTo');
+								
+							}
 
 							this.seeForm={
-								
 								charge_mode:str.charge_mode,//计费模式
 								public_cloud:str.public_cloud,//共有云类型
 								bandwidth:str.bandwidth,//带宽
@@ -289,9 +235,10 @@
 									id:str.tenant.id
 								},
 								endpoints:{},
-								typeHtml:str.type==='d2d'?'DCI':'d2c'?'云互联':'云直连',
+								typeHtml:charge,
 							};
 							var  objA={},objZ={};
+							let zvlan='',avlan='';
 							if(str.type=='d2d'){
 								objA=res.data.data.endpoints.find(item => {
 									return item.name == "A端"
@@ -300,6 +247,14 @@
 									return item.name == "Z端"
 								})
 								//A端DC
+		
+								if(objA.vlan < 0){
+									avlan=this.$t('Public.passthrough');
+								}else if(objA.vlan == 0){
+									avlan='UNTAG'
+								}else if(objA.vlan){
+									avlan=objA.vlan;
+								}
 								this.dcFormA={
 									name:objA.name,
 									id:objA.id,
@@ -317,7 +272,15 @@
 										name:objA.ports.name,
 										status:objA.ports.status
 									},
-									vlan:objA.vlan < 0 ? '透传' : 0 ? 'UNTAG':objA.vlan
+									vlan:avlan
+								}
+
+								if(objZ.vlan < 0){
+									zvlan=this.$t('Public.passthrough');
+								}else if(objZ.vlan == 0){
+									zvlan='UNTAG'
+								}else if(objZ.vlan){
+									zvlan=objZ.vlan;
 								}
 								//Z端DC
 								this.dcFormZ={
@@ -337,10 +300,8 @@
 										name:objZ.ports.name,
 										status:objZ.ports.status
 									},
-									vlan:objZ.vlan < 0 ? '透传' : 0 ? 'UNTAG':objZ.vlan
+									vlan:zvlan
 								}
-								console.log(this.dcFormA)
-								console.log(objA)
 
 							}
 							if(str.type=='c2c'){
@@ -354,11 +315,29 @@
 								//A云
 								this.clFormA.cloud_type=objA.cloud_type;
 								this.clFormA.region=objA.region;
-								this.clFormA.vlan=objA.vlan < 0 ? '透传' : 0 ? 'UNTAG':objA.vlan;
+								
+								
+								if(objA.vlan < 0){
+									avlan=this.$t('Public.passthrough');
+								}else if(objA.vlan == 0){
+									avlan='UNTAG'
+								}else if(objA.vlan){
+									avlan=objA.vlan;
+								}
+								this.clFormA.vlan=avlan;
 								//Z云
+								
+								
+								if(objZ.vlan < 0){
+									zvlan=this.$t('Public.passthrough');
+								}else if(objZ.vlan == 0){
+									zvlan='UNTAG'
+								}else if(objZ.vlan){
+									zvlan=objZ.vlan;
+								}
 								this.clFormZ.cloud_type=objZ.cloud_type;
 								this.clFormZ.region=objZ.region;
-								this.clFormZ.vlan=objZ.vlan < 0 ? '透传' : 0 ? 'UNTAG':objZ.vlan;
+								this.clFormZ.vlan=objZ;
 
 								
 								this.getClounDetails(objA.id,objA.name);
@@ -375,10 +354,25 @@
 								//A云
 								this.clFormA.cloud_type=objA.cloud_type;
 								this.clFormA.region=objA.region;
-								this.clFormA.vlan=objA.vlan < 0 ? '透传' : 0 ? 'UNTAG':objA.vlan
+								if(objA.vlan < 0){
+									avlan=this.$t('Public.passthrough');
+								}else if(objA.vlan == 0){
+									avlan='UNTAG'
+								}else if(objA.vlan){
+									avlan=objA.vlan;
+								}
+								this.clFormA.vlan=avlan;
+								
 
 								this.getClounDetails(objA.id,objA.name)
 								//Z端DC
+								if(objZ.vlan < 0){
+									zvlan=this.$t('Public.passthrough');
+								}else if(objZ.vlan == 0){
+									zvlan='UNTAG'
+								}else if(objZ.vlan){
+									zvlan=objZ.vlan;
+								}
 								this.dcFormZ={
 									name:objZ.name,
 									id:objZ.id,
@@ -395,7 +389,7 @@
 										name:objZ.ports.name,
 										status:objZ.ports.status
 									},
-									vlan:objZ.vlan < 0 ? '透传' : 0 ? 'UNTAG':objZ.vlan
+									vlan:zvlan
 								}
 								
 							}

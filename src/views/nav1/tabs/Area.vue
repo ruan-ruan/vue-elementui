@@ -52,21 +52,21 @@
 				</el-col>
 
 				<el-table  :data="users" highlight-current-row @selection-change="selsChange" style="width: 100%;" 
-					v-loading='loading' :default-sort = "{prop: 'creation_time', order: 'descending'}">
-					<el-table-column type="selection"  align='center'>
+					v-loading='loading' >
+					<el-table-column type="selection"min-width='80'  align='center'>
 					</el-table-column>
-					<el-table-column type="index"  :label='$t("Public.index")' align='center'>
+					<el-table-column type="index"  :label='$t("Public.index")' min-width='80' align='center'>
 						<template slot-scope='scope'>
 							<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 						</template>
 					</el-table-column>
-					<el-table-column prop="creation_time" sortable :label='$t("Public.creation")' align='center' width='101' :formatter='dateFormat' >
+					<el-table-column prop="creation_time"  :label='$t("Public.creation")' align='center' width='80' :formatter='dateFormat' >
 					</el-table-column>
 					<el-table-column prop="name" :label='$t("Public.name")' align='center' min-width='120'>
 					</el-table-column>
 					<el-table-column prop="descriptionVal" :label='$t("Public.description")'  align='center' min-width='120'>
 					</el-table-column>
-					<el-table-column :label='$t("Public.operation")'  align='center'  width='260'>
+					<el-table-column :label='$t("Public.operation")'  align='center'  width='140'>
 						<template slot-scope="scope" style="width: 100%;">
 							<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>
 								<!--详情-->
@@ -523,6 +523,7 @@
 				return jsonData.map(v => filterVal.map (j => v[j]))
 			},
 			dateFormat(row, column) {
+//				
 		      	let date = new Date(parseInt(row.creation_time) * 1000);
 		      	let Y = date.getFullYear() + "-";
 		      	let M =date.getMonth() + 1 < 10  ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";

@@ -66,25 +66,25 @@
 
 				<!--列表-->
 				<el-table :data="users" highlight-current-row @selection-change="selsChange" style="width: 100%;"
-					:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
-					<el-table-column type="selection" min-width="40" align='center'>
+					 v-loading='loading'>
+					<el-table-column type="selection" min-width="80" align='center'>
 					</el-table-column>
-					<el-table-column type="index" min-width="50" :label='$t("Public.index")' align='center'>
+					<el-table-column type="index" min-width="100" :label='$t("Public.index")' align='center'>
 						<template slot-scope='scope'>
 							<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 						</template>
 					</el-table-column>
-					<el-table-column prop="creation_time" sortable :label="$t('Public.creation')" align='center' width='101' :formatter='dateFormat' >
+					<el-table-column prop="creation_time"  :label="$t('Public.creation')" align='center' width='80' :formatter='dateFormat' >
 					</el-table-column>
-					<el-table-column prop="name" :label="$t('Public.creation')" min-width="80" align='center'>
+					<el-table-column prop="name" :label="$t('Public.name')" min-width="120" align='center'>
 					</el-table-column>
-					<el-table-column prop="region.name" :label="$t('Public.SubordinateArea')" min-width="80" align='center'>
+					<el-table-column prop="region.name" :label="$t('Public.region')" min-width="120" align='center'>
 					</el-table-column>
-					<el-table-column prop="city.name" :label="$t('Public.SubordinateArea')" min-width="80"  align='center'>
+					<el-table-column prop="city.name" :label="$t('Public.SubordinateArea')" min-width="120"  align='center'>
 					</el-table-column>
 					<el-table-column prop="descriptionVal" :label="$t('Public.description')" align='center' >
 					</el-table-column>
-					<el-table-column :label="$t('Public.operation')" align='center'width='260'>
+					<el-table-column :label="$t('Public.operation')" align='center'width='140'>
 						<template slot-scope="scope">
 							<el-button size='mini' type='info' @click='handleSee(scope.$index,scope.row)'>
 								<!--详情-->{{$t('tabOperation.info')}}

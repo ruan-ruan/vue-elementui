@@ -2,12 +2,12 @@
 	<div>
 		<!--<goback></goback>-->
 		<el-button type='info' size='small' @click='goback'>
-			<i class="el-icon-d-arrow-left" aria-hidden="true"></i>返回</el-button>
+			<i class="el-icon-d-arrow-left" aria-hidden="true"></i>{{$t("Public.goback")}}</el-button>
 		<el-tabs v-model='activeName'>
-			<el-tab-pane label='详细信息' name='first'>
+			<el-tab-pane :label=' $t("Public.detailed")' name='first'>
 				<virtualDetails :titData='pointID'></virtualDetails>
 			</el-tab-pane>
-			<el-tab-pane label='图表' name='second'>
+			<el-tab-pane :label='$t("Public.chart")' name='second'>
 				<!--<virtual-chart :titData='pointID'></virtual-chart>-->
 				<mult-charts :titData='pointID'></mult-charts>
 			</el-tab-pane>
@@ -28,8 +28,7 @@
 			goback,
 			virtualDetails,
 			multCharts,
-//			sharedCharts
-//			virtualChart
+
 		},
 		data(){
 			return{

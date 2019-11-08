@@ -67,10 +67,10 @@
 				linkId:'',
 				linkType:'',
 				selectForm:{
-					checkboxGroup1: ['显示标签'],
+					checkboxGroup1: [this.$t('topology.footerBtn.showLabel')],
 					bandwidthLogo:true,//是否显示宽带标签
-					bandwidth:'显示所有带宽链路',
-					network:['显示骨干节点','显示公有云节点','显示骨干链接'],
+					bandwidth:this.$t('topology.footerBtn.bandW.showAllbandwidth'),
+					network:[this.$t('topology.footerBtn.shwoNet.showBackboneNode'),this.$t('topology.footerBtn.shwoNet.showShardCloud'),this.$t('topology.footerBtn.shwoNet.showBackboneLink')],
 				},
 				networkStatus:false,//流量默认的时候是隐藏的
 				logoStatus:true,//标签默认是显示的
@@ -89,6 +89,7 @@
 			
 			let that=this;
 			this.bus.$on('sendType',(msg) => {
+				console.log(msg)
 				that.selectForm=msg;
 				that.getNodesData(msg);
 			})
@@ -139,9 +140,9 @@
 						
 						if(str.length !=0){
 							
-							if(str.indexOf('显示流量') == -1){//隐藏流量
+							if(str.indexOf( this.$t('topology.footerBtn.showFlow') ) == -1){//隐藏流量
 								linkVal=newLink;
-							}else if(str.indexOf('显示流量') !=-1){//显示流量
+							}else if(str.indexOf( this.$t('topology.footerBtn.showFlow') ) !=-1){//显示流量
 								linksData.forEach(ele => {
 									
 									if(!ele.instant_speed && typeof(ele.instant_speed)!='undefined' && ele.instant_speed!=0){
@@ -162,12 +163,12 @@
 								linkVal=linksData
 							}
 							
-							if(str.indexOf('显示标签') ===-1){//未找标签
+							if(str.indexOf( this.$t('topology.footerBtn.showLabel') ) ===-1){//未找标签
 								nodesData.forEach(ele => {
 									ele.node.name=''
 								})
 								nodeVal=nodesData;
-							}else if(str.indexOf('显示标签') !== -1){
+							}else if(str.indexOf( this.$t('topology.footerBtn.showLabel') ) !== -1){
 								nodeVal=newNode;
 							}
 
@@ -200,26 +201,26 @@
 					
 					if(item ==='bandwidth'){//筛选带宽的显示和隐藏
 						let str=obj['bandwidth']
-						if(str === '显示所有带宽链路'){
+						if(str === this.$t('topology.footerBtn.bandW.showAllbandwidth') ){
 							linkVal=linksData;
 						}
 						else{
-							if(str === '显示1G带宽链路'){
+							if(str === this.$t('topology.footerBtn.bandW.showbandwidth1')   ){
 								linkVal=isTopo.isBandWidth(linksData,'bandwidth',1);
 							}
 								
-							if(str === '显示10G带宽链路'){
+							if(str === this.$t('topology.footerBtn.bandW.showbandwidth2') ){
 								linkVal=isTopo.isBandWidth(linksData,'bandwidth',10);
 							}
 							
-							if(str === '显示40G带宽链路'){
+							if(str === this.$t('topology.footerBtn.bandW.showbandwidth3')  ){
 								linkVal=isTopo.isBandWidth(linksData,'bandwidth',40);
 							}
 							
-							if(str  === '显示100G带宽链路'){
+							if(str  === this.$t('topology.footerBtn.bandW.showbandwidth4')  ){
 								linkVal=isTopo.isBandWidth(linksData,'bandwidth',100);
 							}
-							if(str  === '显示其他带宽链路'){
+							if(str  === this.$t('topology.footerBtn.bandW.showbandwidth5')   ){
 								linkVal=isTopo.isBandVal(linksData);
 							}	
 						}			
@@ -227,15 +228,15 @@
 					if(item ==='network'){
 						let arr=obj['network'];
 						if(arr.length !==0){
-							if(arr.indexOf('显示骨干节点') ===-1){
+							if(arr.indexOf(  this.$t('topology.footerBtn.shwoNet.showBackboneNode')    ) ===-1){
 								nodeVal=nodesData.filter(item => {
 									return item.type!=='node';
 								})
-							}else if(arr.indexOf('显示公有云节点') === -1){
+							}else if(arr.indexOf(  this.$t('topology.footerBtn.shwoNet.showShardCloud')   ) === -1){
 								nodeVal=nodesData.filter(item => {
 									return item.type!=='cloun';
 								})
-							}else if(arr.indexOf('显示骨干链接') === -1){
+							}else if(arr.indexOf(this.$t('topology.footerBtn.shwoNet.showBackboneLink')  ) === -1){
 								console.log(linksData)
 								linkVal=linksData.filter(item => {
 									return item.type !=='link';

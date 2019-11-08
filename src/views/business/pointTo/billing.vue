@@ -3,8 +3,8 @@
 		<!--计费时间的选择-->
 		<el-row>
 			<el-col :span='24'>
-				<el-form :model='editForm' ref='editForm'label-position='left' label-width='100px'>
-					<el-form-item label='计费时间'prop='billing_time'>
+				<el-form :model='editForm' ref='editForm' label-width='125px'>
+					<el-form-item :label='$t("Public.billTime")+"： "'prop='billing_time'>
 						<el-date-picker
 			                v-model="editForm.billing_time"  
 			                format="yyyy-MM-dd HH:mm:ss"
@@ -14,10 +14,10 @@
 			                :picker-options="startDatePicker" 					                
 			                type="datetime"					                
 			                class='ipt' 
-			                placeholder="请选择计费开始日期时间">
+			                :placeholder="$t('Public.plaStartBill')">
 			            </el-date-picker>
 					</el-form-item>
-					<el-form-item label='过期时间' prop='overdue_time'>
+					<el-form-item :label='$t("Public.expTime")+"： "' prop='overdue_time'>
 						<el-date-picker
 			                v-model="editForm.overdue_time"  
 			                format="yyyy-MM-dd HH:mm:ss"
@@ -27,7 +27,7 @@
 			                :picker-options="endDatePicker" 					                
 			                type="datetime"
 			                class='ipt'
-			                placeholder="请选择计费截止日期时间">
+			                :placeholder="$t('Public.plaEndBill')">
 			            </el-date-picker>
 					</el-form-item>
 				</el-form>

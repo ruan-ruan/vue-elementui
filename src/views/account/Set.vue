@@ -45,38 +45,38 @@
 			
 			<!--数据部分-->
 			<el-table :data = "users" highlight-current-row @selection-change="selsChange" style='width: 100%;'
-				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
-				<el-table-column type='selection' min-width='40'></el-table-column>
-				<el-table-column type='index' min-width='50' label='序号'>
+				 v-loading='loading'>
+				<el-table-column type='selection' min-width='60'></el-table-column>
+				<el-table-column type='index' min-width='80' label='序号'>
 					<template slot-scope='scope'>
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='creation_time' width='101'sortable :formatter='dateFormat' label='创建时间' align='center'>
+				<el-table-column prop='creation_time' width='80' :formatter='dateFormat' label='创建时间' align='center'>
 				</el-table-column>
-				<el-table-column prop='name' min-width='80' label='账户' align='center'>
+				<el-table-column prop='name' min-width='100' label='账户' align='center'>
 				</el-table-column>
 				<el-table-column prop='real_name' min-width='100' label='姓名' align='center'>
 				</el-table-column>
-				<el-table-column  min-width='80' label='人员状态' align='center'>
+				<el-table-column  min-width='100' label='人员状态' align='center'>
 					<template slot-scope='scope'>
 						<span :class="scope.row.color" v-text="scope.row.roleStatus"></span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='mobile' min-width='80' label='手机号' align='center'>
+				<el-table-column prop='mobile' min-width='100' label='手机号' align='center'>
 				</el-table-column>
-				<el-table-column prop='email' min-width='80' label='邮箱' align='center'>
+				<el-table-column prop='email' min-width='100' label='邮箱' align='center'>
 				</el-table-column>
 				<el-table-column prop='role.name' min-width='100' label='角色名称' align='center'>
 				</el-table-column>
-				<el-table-column prop='descriptionVal' min-width='80' label='备注' align='center'>
+				<el-table-column prop='descriptionVal' min-width='100' label='备注' align='center'>
 				</el-table-column>
-				<el-table-column  width='300' label='操作' align='center'>
+				<el-table-column  width='180' label='操作' align='center'>
 					<template slot-scope='scope'  >
-						<el-button size='small' type='warning'  @click='handleSta(scope.$index, scope.row)' class='btnStatus'>{{scope.row.btnText}}</el-button>
-						<el-button size='small' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
-						<el-button size='small' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
-						<el-button size='small' type='danger' @click='handleDel(scope.$index, scope.row)'>删除</el-button>
+						<el-button size='mini' type='warning'  @click='handleSta(scope.$index, scope.row)' class='btnStatus'>{{scope.row.btnText}}</el-button>
+						<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
+						<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
+						<el-button size='mini' type='danger' @click='handleDel(scope.$index, scope.row)'>删除</el-button>
 						
 					</template>
 				</el-table-column>

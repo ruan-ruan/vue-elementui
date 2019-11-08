@@ -676,7 +676,7 @@ export default {
 
       .breadcrumb-container {
         .title {
-          width: 200px;
+          width: 230px;
           float: left;
           display: inline-block;
         }

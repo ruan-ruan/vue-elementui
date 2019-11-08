@@ -161,3 +161,8 @@
 .el-button+.el-button{
 	margin-left: 1px;
 }
+.el-table .cell, .el-table th div{
+	padding-left: 2px;
+	padding-right: 2px;
+}
+

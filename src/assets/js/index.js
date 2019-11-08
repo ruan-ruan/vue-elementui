@@ -21,7 +21,7 @@ export function datedialogFormat(value){
     return Y + M + D + h + m + s;
 }
 export function dealNull(str,property){
-	console.log(str);
+//	console.log(str);
 	str.map( item => {
 
 		if( !item[property] && typeof(item[property]) && item[property] !=0){
@@ -30,7 +30,7 @@ export function dealNull(str,property){
 			item[property]=''
 		}
 	})
-	console.log(str)
+//	console.log(str)
 //	if( !property && typeof(property) !='undefined' && property !=0 ){
 //		return property=''
 //	}else if(property =='undefined'){
@@ -109,8 +109,8 @@ export var arrayPro={
 		}
 		return -1;
 	},
-	dataIsNot(start,end,type){//当根据时间截取对应的下标的时候，数据不够的时候   ，需要补填数据
-		//start 开始时间   end结束时间    type  选择是开始时间下标找不到  补数据  还是  结束时间下标找不到返回数据  timeVal是选择的时间类型
+	dataIsNot( start,end,type){//当根据时间截取对应的下标的时候，数据不够的时候   ，需要补填数据
+		//start 开始时间   end结束时间    type  选择是开始时间下标找不到  补数据  还是  结束时间下标找不到返回数据  timeVal是选择的时间类型  
 		var  data=[];
 		if(type == 'startIndex'){
 			for(var index = new Date(start).getTime()/1000; index < new Date(end).getTime()/1000 ; index +=60){
@@ -142,29 +142,29 @@ export var arrayPro={
 				data.push(obj);
 			}
 		}else if(type == 'endIndex'){
-			for(var index = new Date(start).getTime()/1000; index < new Date(end).getTime()/1000 ; index +=60){
+			for(var index = new Date(start).getTime()/1000+60; index < new Date(end).getTime()/1000 ; index +=60){//这个时候  是结束的时间没有找到   因为 所有的flow里面已经包含最后一个值，也就是造册假数据第一个值，冲突，所以需要加一个间隔
 				var obj={
 					d1:{
 						input_bytes: 0,
 						input_packages: 0,
-						mac_address: 0,
+//						mac_address: 0,
 						output_bytes: 0,
 						output_packages: 0,
-						total_input_bytes: 0,
-						total_input_packages: 0,
-						total_output_bytes: 0,
-						total_output_packages: 0,
+//						total_input_bytes: 0,
+//						total_input_packages: 0,
+//						total_output_bytes: 0,
+//						total_output_packages: 0,
 					},
 					d2:{
 						input_bytes: 0,
 						input_packages: 0,
-						mac_address: 0,
+//						mac_address: 0,
 						output_bytes: 0,
 						output_packages: 0,
-						total_input_bytes: 0,
-						total_input_packages: 0,
-						total_output_bytes: 0,
-						total_output_packages: 0,
+//						total_input_bytes: 0,
+//						total_input_packages: 0,
+//						total_output_bytes: 0,
+//						total_output_packages: 0,
 					},
 					time:datedialogFormat(index)
 				};
@@ -174,7 +174,6 @@ export var arrayPro={
 		return data;
 	},
 	sortArr(arr, str) {//arr数组   str是属性   查找相同的属性的值  
-
 	    var _arr = [],
 	        _t = [],
 	        // 临时的变量
@@ -184,7 +183,6 @@ export var arrayPro={
 	    arr = arr.sort(function(a, b) {
 	        var s = a[str],
 	            t = b[str];
-	
 	        return s < t ? -1 : 1;
 	    });
 //		console.log(arr)
@@ -203,9 +201,81 @@ export var arrayPro={
 	        }
 	    }
 	    // 将最后的内容推出新数组
-	    _arr.push( _t );
+	    _arr.push( _t );//  得到合并相同id的两层嵌套的数据
 //	    console.log(_arr);
-	    return _arr;
+	    //处理数据  得到新的数组
+	    var newData=[];
+	    for(var index=0;index<_arr.length;index++){
+	    	var obj={},flowData=[];
+	    	_arr[index].map(item => {
+	    		flowData=flowData.concat(item.flow);
+	    		obj={
+	    			id:item.id,
+	    			logic_port:item.logic_port,
+	    			name:item.name,
+	    			physical_ports:item.physical_ports,
+	    			vlan:item.vlan,
+	    			flow:flowData
+	    		}
+	    	})
+	    	newData.push(obj)
+	    }
+//	    console.log(newData)
+	    return newData;
+	},
+	dealTime(Data,start,end){
+		
+		//Data是被处理的数据   start 是开始时间   end是结束时间    因为数据是每分钟一次    为排查中间断点  ，需要获取时间的集合每分钟的间隔集合
+		var extractDatatime=[],newData=[];
+		var timeData=[];
+		for(var index=new Date(start).getTime()/1000; index<new Date(end).getTime()/1000; index+=60  ){//获取每分钟的时间的间隔所有的数据
+			timeData.push( index )//获取开始到结束时间的所有的数据集合
+		}
+		for(var i=0;i<Data.length;i++){
+			var totalObj={},totalData=[],childObj={};
+
+			var tim=[];//提取时间集合
+			Data[i].flow.map( (item,index) => {
+//				tim.push( item.time  ) //
+				tim.push(new Date(item.time).getTime()/1000)
+			})
+			for(var val=0;val<timeData.length;val++){
+				if(tim.indexOf( timeData[val] ) !=-1){
+					totalData.push( Data[i].flow.find(item => {return new Date(item.time).getTime()/1000 == timeData[val] ;})  )
+				}else{
+					childObj={
+						d1:{
+							input_bytes: 0,
+							input_packages: 0,
+//							mac_address: 0,
+							output_bytes: 0,
+							output_packages: 0,
+						},
+						d2:{
+							input_bytes: 0,
+							input_packages: 0,
+//							mac_address: 0,
+							output_bytes: 0,
+							output_packages: 0,
+						},
+						time:arrayPro.datedialogFormat( timeData[val] )
+					}
+					totalData.push(childObj)
+				}
+			}
+			totalObj={
+				id:Data[i].id,
+				logic_port:Data[i].logic_port,
+				name:Data[i].name,
+				physical_ports:Data[i].physical_ports,
+				vlan:Data[i].vlan,
+				flow:totalData
+			}
+			
+			newData.push(totalObj)
+		}
+//		console.log(newData);
+		return newData;
 	},
 	test(arr){
 		var str=[];
@@ -230,13 +300,16 @@ export var arrayPro={
 		//首先判断   d1和d2 内的对象是否为空
 		
 		let avg=0,num=0,obj1={};
-		d1.map(item => {
-			if(JSON.stringify(item )  == '{}'){
-				return ;
-			}else if(JSON.stringify(item ) !='{}'){
-				num+= parseInt(item[property]);
+		for (var index =0;index<d1.length;index ++) {
+			if(JSON.stringify( d1[index][property] ) == '{}'){
+				d1[index][property]={
+					min:0,avg:0,max:0
+				}
+			}else {
+				num+= eval(d1[index][property]);
 			}
-		})
+			
+		}
 		avg=num/d1.length;
 		obj1={
 			min:Math.min.apply(Math, d1.map(function(o) {return o[property]})),
@@ -245,13 +318,17 @@ export var arrayPro={
 		}
 
 		let avg2=0,num2=0,obj2={};
-		d2.map(item => {
-			if(JSON.stringify(item ) =='{}'){
-				num2=0;
-			}else if(JSON.stringify(item ) !='{}'){
-				num2+=parseInt(item[property])
+
+		for (var index =0;index<d2.length;index ++) {
+			if(JSON.stringify( d2[index][property] ) == '{}'){
+				d2[index][property]={
+					min:0,avg:0,max:0
+				}
+			}else {
+				num2+= eval(d2[index][property]);
 			}
-		})
+			
+		}
 		avg2=num2/d2.length;
 		obj2={
 			min:Math.min.apply(Math, d2.map(function(o) {return o[property]})),
@@ -294,7 +371,8 @@ export var arrayPro={
 	        var value2 = Date.parse( new Date(b[property]));
 	        return value1-value2  ;
 		}
-	},
+	}, 
+	
 	sortNum(property){
 		return function (a,b){
 			var value1=a[property];
@@ -303,7 +381,7 @@ export var arrayPro={
 		}
 	},
 	testCharts (data ,property, val){   //获取  z  或者a    端 的数据
-		data.forEach((str,index) => {//线对数据进行处理  判断里面的是否存在NAN
+		data.map(str => {//线对数据进行处理  判断里面的是否存在NAN
 			for(var item in str){
 				for (var val in str[item]){
 					for(var index in str[item][val]){
@@ -323,21 +401,21 @@ export var arrayPro={
 		
 		let d1Charts=[];
 		let d2Charts=[];
-		d1.forEach(ele => {
+		d1.map(ele => {
 			d1Charts.push(ele[property])
 		})
-		d2.forEach(ele => {
+		d2.map(ele => {
 			d2Charts.push(ele[property])
 		})
 
 		let d1Data=[],d2Data=[];
 		
 		
-		d1Charts.forEach(ele => {
+		d1Charts.map(ele => {
 			d1Data.push(ele[val]);
 			
 		})
-		d2Charts.forEach(ele => {
+		d2Charts.map(ele => {
 			d2Data.push(ele[val])
 		})
 		let obj={
@@ -384,12 +462,12 @@ export var isTopo={
 	},
 	isBandVal(str){//显示其他的带宽
 		let arr=[];
-		str.forEach(ele => {
+		str.map(ele => {
 			if(ele.bandwidth !==1&& ele.bandwidth!==10&&ele.bandwidth!==40&&ele.bandwidth!==100){
 				arr.push(ele)
 			}
 		})
-		console.log(arr)
+//		console.log(arr)
 		return arr;
 	}
 }
@@ -407,7 +485,7 @@ export function isNumberInteger(str){//正整数
 	return reg.test(str);
 }
 export function isTest(val){
-	console.log(val)
+//	console.log(val)
 	var num=val.split(',');//首先将输入的字符串分割开成数组
 	var newVal=[];
 	var newData=[];
@@ -417,10 +495,10 @@ export function isTest(val){
 	};
 	var data=[]
 
-	num.forEach(ele => {//获取切割后的数组
+	num.map(ele => {//获取切割后的数组
 		newVal.push(ele.split('-'))
 	})
-	newVal.forEach(ele => {
+	newVal.map(ele => {
 		if(ele.length>1){//判断  数据是区间还是单个的 
 			for(var i=parseInt(ele[0]);i<= parseInt(ele[1]);i++ ){//区间的时候   遍历
 				data.push(i)
@@ -429,7 +507,7 @@ export function isTest(val){
 			data.push( parseInt(ele[0]))
 		}
 	})
-	data.forEach(ele => {
+	data.map(ele => {
 		if(!isNaN(ele)){
 			if(ele>54 || ele<1){
 				str.bool=false
@@ -440,13 +518,13 @@ export function isTest(val){
 				newData.push(ele)
 			}	
 		}else if(isNaN(ele)){
-			console.log(ele)
+//			console.log(ele)
 			str.bool=false
 		}
 	})
-	console.log(str)
+//	console.log(str)
 	str.dataVal=newData;
-	console.log(str);
+//	console.log(str);
 	return str;
 };
 
@@ -531,7 +609,7 @@ export function isValidinteger(str){
 	return reg.test(str);
 }
 export function deepClone(data){  //设置权限的时候  给按钮添加控制部分
-	data.forEach(ele => {
+	data.map(ele => {
 		ele.disabled=false;
 		if(ele.list){
 			if( ele.list.length>0){
@@ -542,7 +620,7 @@ export function deepClone(data){  //设置权限的时候  给按钮添加控制
 }
 
 export function Clone(data){  //角色的详情部分   所有的数据都是不可以点击的
-	data.forEach(ele => {
+	data.map(ele => {
 		// console.log(ele)
 		ele.disabled=true;
 		if(ele.list){
@@ -553,7 +631,7 @@ export function Clone(data){  //角色的详情部分   所有的数据都是不
 export function CloneVal(data){//当权限是  all的时候   默认的是全部选中的
 	var arr=[];
 	if(data.list){
-		data.list.forEach(ele => {
+		data.list.map(ele => {
 			if(ele.code){
 				arr.push(ele.code)
 			}
@@ -570,7 +648,7 @@ export function CloneVal(data){//当权限是  all的时候   默认的是全部
 
 export function descriptionValue(str){   //对列表的里面的备注信息进行处理  
 	let strData=[]
-	str.forEach(ele => {
+	str.map(ele => {
 		//所有的备注信息的输入的时候 进行处理
 		if(!ele.description && typeof(ele.description)!='undefined' && ele.description!=0 ){//判断是否为null
 			ele.descriptionVal=''

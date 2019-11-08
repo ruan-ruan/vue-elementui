@@ -3,13 +3,13 @@
 	<div>
 		<goback></goback>
 		<el-tabs v-model='activeName'  >
-			<el-tab-pane label='详情' name='first'>
+			<el-tab-pane :label='$t("tabOperation.info")' name='first'>
 				<add-cloun :clounId='clounId'></add-cloun>
 			</el-tab-pane>
-			<el-tab-pane label='点到点专线' name='second'>
+			<el-tab-pane :label='$t("Public.pointLine")' name='second'>
 				<cloun-points :id='clounId'></cloun-points>
 			</el-tab-pane>
-			<el-tab-pane label='虚拟组网专线' name='third'>
+			<el-tab-pane :label='$t("Public.virtualLine")' name='third'>
 				<cloun-virtual :clounId='clounId'></cloun-virtual>
 			</el-tab-pane>		
 		</el-tabs>

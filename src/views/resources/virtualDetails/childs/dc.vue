@@ -2,15 +2,15 @@
 	<!--dc配置详情-->
 	<div>
 		<section>
-			<el-form :model='dcForm'ref='dcForm'label-width='120px'style='width: 100%;' label-position='left'>
-				<el-form-item label='节点名称：'>
+			<el-form :model='dcForm'ref='dcForm'label-width='200px'style='width: 100%;' >
+				<el-form-item :label='$t("Public.nodeName") + "："'>
 					<span>{{dcForm.node_name}}</span>
 				</el-form-item>
-				<el-form-item label='逻辑口名称：'>
+				<el-form-item :label='$t("Public.logName") + "："'>
 					<span>{{dcForm.logic_name}}</span>-
 					<span>{{dcForm.vlan}}</span>
 				</el-form-item>
-				<el-form-item label='逻辑口状态：'>
+				<el-form-item :label='$t("Public.logicStatus") + "："'>
 					<span>{{dcForm.port_status}}</span>
 				</el-form-item>
 			</el-form>

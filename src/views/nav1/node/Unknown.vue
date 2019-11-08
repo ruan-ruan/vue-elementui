@@ -41,8 +41,8 @@
 			<el-row>
 				<el-col :span='8'>
 					<template >
-						<el-button type="primary" @click="handleAdd">+{{$t('Public.addNode')}}</el-button>
-						<el-button type='success' @click='foundNode'>{{$t('Public.find')}}</el-button>
+						<el-button type="primary" @click="handleAdd">+{{$t('tooltipMes.addNode')}}</el-button>
+						<el-button type='success' @click='foundNode'>{{$t('tooltipMes.findNode')}}</el-button>
 					</template>
 				</el-col>
 				<el-col :span='16'	class="table-top">
@@ -53,38 +53,38 @@
 			
 			<!--列表部分-->
 			<el-table :data='users'  highlight-current-row style='width: 100%;'@selection-change="selsChange"
-				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
-				<el-table-column type="selection" width="50" align='center'></el-table-column>
-				<el-table-column type='index' min-width='50'max-width='70' :label='$t("Public.index")' align='center'>
+				 v-loading='loading'>
+				<el-table-column type="selection" width="60" align='center'></el-table-column>
+				<el-table-column type='index' min-width='80' :label='$t("Public.index")' align='center'>
 					<template slot-scope='scope'>
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='creation_time'width='101' :label='$t("Public.apply")'sortable align='center' ></el-table-column>
-				<el-table-column prop='name' min-width='100'max-width='120' :label='$t("Public.nodeName")' align='center'></el-table-column>
-				<el-table-column  min-width='120'max-width='140' :label='$t("Public.deviceName")' align='center'>
+				<el-table-column prop='creation_time'width='80' :formatter='dateFormat' :label='$t("Public.apply")' align='center' ></el-table-column>
+				<el-table-column prop='name' min-width='120' :label='$t("Public.nodeName")' align='center'></el-table-column>
+				<el-table-column  min-width='120' :label='$t("Public.deviceName")' align='center'>
 					<template slot-scope='scope'>
 						<span>{{scope.row.devices_name1}}</span> <br />
 						<span>{{scope.row.devices_name2}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column  min-width='70'max-width='90' :label='$t("Public.snNumber")' align='center'> 
+				<el-table-column  min-width='100' :label='$t("Public.snNumber")' align='center'> 
 					<template slot-scope="scope">
 						<span>{{scope.row.devices_sn1}}</span> <br />
 						<span>{{scope.row.devices_sn2}}</span>
 						
 					</template>
 				</el-table-column>			
-				<el-table-column min-width='70'max-width='90' :label='$t("Public.manageIP")' align='center'>
+				<el-table-column min-width='100' :label='$t("Public.manageIP")' align='center'>
 					<template slot-scope="scope">
 						<span>{{scope.row.devices_ip1}}</span>   <br />
 						<span>{{scope.row.devices_ip2}}</span>
 						
 					</template>
 				</el-table-column>
-				<el-table-column prop='vtep' min-width='80' max-width='100' label='Vtep' align='center'></el-table-column>		
-				<el-table-column prop='dc.name' min-width='80'max-width='100' :label='$t("Public.dataCen")' align='center'></el-table-column>
-				<el-table-column prop='description' min-width='60'max-width='80' :label='$t("Public.description")' align='center'></el-table-column>
+				<el-table-column prop='vtep' min-width='90' label='Vtep' align='center'></el-table-column>		
+				<el-table-column prop='dc.name' min-width='100' :label='$t("Public.dataCen")' align='center'></el-table-column>
+				<el-table-column prop='description' min-width='80' :label='$t("Public.description")' align='center'></el-table-column>
 				<el-table-column width='180' align='center':label='$t("Public.operation")'>
 					<template slot-scope='scope'>
 						<el-button type='primary':diasbled='RunStatus' size='mini' @click='run(scope.$index, scope.row)' class='run'>
@@ -232,7 +232,6 @@
 //			    			console.log(res); creation_time datedialogFormat
 			    			res.data.data.items.map(ele => {
 
-								ele.creation_time =	datedialogFormat(ele.creation_time)
 			    				if(ele.devices.length ==1){
 			    					var str1=ele.devices.find(item => {
 				    					return item['sign'] == 'd1' 
@@ -471,7 +470,21 @@
 				.catch(e => {
 					console.log(e)
 				})
-	    	}
+	    	},
+	    	dateFormat(row,column){
+	    		//将时间戳转换为前端的时间
+	    		let date=null;
+	    		date=new Date(parseInt(row.creation_time)*1000);
+	    		
+	    		
+	    		let Y=date.getFullYear()+'-';
+	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
+	    		let D=date.getDate() <10? '0' +date.getDate() +' ':date.getDate()+' ';
+	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
+	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
+	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
+	    		return Y + M + D + h + m + s	    		
+	    }
 	    },
 	    mounted(){
 	    	this.getUsers();

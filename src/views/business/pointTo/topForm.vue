@@ -2,9 +2,8 @@
 	<div>
 		<el-row>
 			<el-col :span='24'>
-				<el-form :model='editForm'label-width='100px 'label-position='left' ref='editForm' :rules='editFormRules'>
-					<el-form-item label='付费模式'>
-						
+				<el-form :model='editForm'label-width='125px ' ref='editForm' :rules='editFormRules'>
+					<el-form-item :label='$t("business.payModel") +"： " '>
 						<el-radio-group v-model="editForm.billingType">
 							<el-radio-button border size='small'
 								v-for='(item,index) in billingData'
@@ -12,10 +11,10 @@
 								:key='index'></el-radio-button>
 					    </el-radio-group>
 					</el-form-item>
-					<el-form-item label='专线名称' prop='specialName'>
+					<el-form-item :label='$t("Public.specialName") +"： "' prop='specialName'>
 						<el-input v-model='editForm.specialName'class='ipt'></el-input>									
 					</el-form-item>
-					<el-form-item label='租户标识 'prop='tenant_id'>
+					<el-form-item :label='$t("Public.tenant") +"： "'prop='tenant_id'>
 						<template>
 							<el-select v-model='editForm.tenant_id' filterable class='ipt'>
 								<el-option v-for='(item,index) in tenantData'
@@ -23,13 +22,13 @@
 									:value='item.id'
 									:key='index'></el-option>
 							</el-select>
-							<span class="cli_toTip" title="该虚拟专线的实际使用者，需先创建后选择！">?</span>
+							<span class="cli_toTip" :title="$t('business.virtualUser')">?</span>
 						</template>			
 					</el-form-item>
-					<el-form-item label='带宽'prop='bandwidth'>
+					<el-form-item :label='$t("Public.bandW" ) +"： "'prop='bandwidth'>
 						<el-input v-model='editForm.bandwidth'class='ipt'></el-input> <span>&nbsp;&nbsp;Mbps</span>
 					</el-form-item>
-					<el-form-item label='备注'prop='describe'>
+					<el-form-item :label='$t("Public.description") +"： "'prop='describe'>
 						<el-input type='textarea' v-model='editForm.describe'class='ipt'></el-input>
 					</el-form-item>
 				</el-form>
@@ -48,11 +47,11 @@
 		data(){
 			let isValidNumber= (rule ,value, callback) => {
 				if(!value){
-					callback(new Error('请输入带宽'))
+					callback(new Error(this.$t('Public.plaBandwidth')))
 				}else if(!isValidinteger(value)){
-					callback(new Error('请输入正确的带宽'))
+					callback(new Error(this.$t('Public.plarightBand')))
 				}else if(value>1000000){
-					callback(new Error('带宽最大不超过1000000Mbps'))
+					callback(new Error(this.$t('Public.maxBand')))
 				}else{
 					callback()
 				}
@@ -68,9 +67,9 @@
 					tenant_name:''
 				},
 				editFormRules:{
-					billingType:[ { required: true, message: '请选择计费方式', trigger: 'change' }],
-					specialName:[ { required: true, message: '请输入名称', trigger: 'blur' }],
-					tenant_id:[ { required: true, message: '请选择租户', trigger: 'change' }],
+					billingType:[ { required: true, message: this.$t('business.plaPayModel'), trigger: 'change' }],
+					specialName:[ { required: true, message: this.$t('Public.plaName'), trigger: 'blur' }],
+					tenant_id:[ { required: true, message: this.$t('Public.plaTenant'), trigger: 'change' }],
 					bandwidth:[ { required: true,  validator: isValidNumber, trigger: 'blur' }],
 				},
 				billingData:[

@@ -50,14 +50,14 @@
 			
 			
 			<el-table :data='users'highlight-current-row @selection-change="selsChange" style='width: 100%;'
-				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
+				 v-loading='loading'>
 				<el-table-column type='selection' min-width='30'></el-table-column>				
 				<el-table-column type='index' min-width='40' align='center' :label='$t("Public.index")'>
 					<template slot-scope='scope'>
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='creation_time'width='101' sortable :label='$t("Public.creation")'align='center' ></el-table-column>
+				<el-table-column prop='creation_time'width='80' :formatter='dateFormat' :label='$t("Public.creation")'align='center' ></el-table-column>
 				<el-table-column  :label='$t("Public.aPort")' align='center' min-width='60' >
 					<template slot-scope='scope'>
 						<el-tag size='small' type='primary'style='cursor: pointer;' @click='handleNode_a(scope.$index, scope.row)'>{{scope.row.a_node.name}}</el-tag>
@@ -91,15 +91,14 @@
 				</el-table-column>
 				<el-table-column prop='monitorHTML' :label='$t("Public.linkCheck")' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='a_desc' :label='$t("Public.aportDescribe")' align='center' min-width='60'>
+				<el-table-column prop='a_desc' :label='$t("Public.aportDescribe")' align='center' min-width='70'>
 				</el-table-column>
-				<el-table-column prop='z_desc' :label='$t("Public.zportDescribe")' align='center' min-width='60'>
+				<el-table-column prop='z_desc' :label='$t("Public.zportDescribe")' align='center' min-width='70'>
 				</el-table-column>
-				<el-table-column prop='descriptionVal' :label='$t("Public.description")' align='center' min-width='60'>
+				<el-table-column prop='descriptionVal' :label='$t("Public.description")' align='center' min-width='70'>
 				</el-table-column>
-				<el-table-column  :label='$t("Public.operation")' align='right'  width='175'>
+				<el-table-column  :label='$t("Public.operation")' align='center'  width='190'>
 					<template slot-scope='scope'>
-						<div>
 							<el-button size='mini' type='primary' @click='handleStatus(scope.$index, scope.row)'
 								v-if='scope.row.maintenance_value=== $t("Public.fau") ? false : true ' class='maintenance'> <!--当状态为故障的时候   这个时候的该按钮银行 -->
 								{{scope.row.maintenanceBtn}}
@@ -107,16 +106,13 @@
 							<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>
 								<!--详情-->{{$t('tabOperation.info')}}
 							</el-button>	
-						</div>
-						<div style="margin-top: 5px;">
+
 							<el-button size='mini' v-if='scope.row.status==="DOWN"?true:false' type='danger' @click='handleDel(scope.$index, scope.row)'>
 								<!--删除-->{{$t('tabOperation.delete')}}
 							</el-button>
 							<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'>
 								<!--编辑-->{{$t('tabOperation.edit')}}
 							</el-button>				
-							
-						</div>
 							
 
 					</template>
@@ -140,71 +136,71 @@
 			
 			<!--编辑界面操作和详情的操作的界面-->
 			<el-dialog :title='textMap[dialogStatus]':visible.sync='dialogFormVisible':close-on-click-modal="false" v-loading='editLoading'>
-				<el-form :model="editForm" label-width='80px'ref='editForm':rules='ruleEditform' label-position='left' >
+				<el-form :model="editForm" label-width='210px'ref='editForm':rules='ruleEditform'  >
 					<!--:rules='editFormRules'-->
-					<el-form-item :label='$t("Public.linkID")'>
+					<el-form-item :label='$t("Public.linkID")+"："'>
 						<template>
 							<span v-text="editForm.id"></span>
 						</template>
 					</el-form-item>
-					<el-form-item :label='$t("Public.creation")'>
+					<el-form-item :label='$t("Public.creation")+"："'>
 						<template>
 							<span v-text="editForm.creation_time"></span>
 						</template>
 					</el-form-item>
-					<el-form-item :label='$t("Public.linkState")'>
+					<el-form-item :label='$t("Public.linkState")+"："'>
 						<template >
 								<span>{{editForm.status}}</span>-
 								<span>{{editForm.maintenance_value}}</span>
 							</template>
 					</el-form-item>
-					<el-form-item :label='$t("Public.aPort")'>
+					<el-form-item :label='$t("Public.aPort")+"："'>
 							<template >
 								<span>{{editForm.a_node.name}}</span>-
 								<span>{{editForm.a_ip}}</span>-
 								<span>{{editForm.a_vlan}}</span>
 							</template>
 					</el-form-item>
-					<el-form-item :label='$t("Public.aportDescribe")'>
+					<el-form-item :label='$t("Public.aportDescribe")+"："'>
 						<template>
 							<span v-text="editForm.a_desc"></span>
 						</template>
 					</el-form-item>
-					<el-form-item :label='$t("Public.zPort")'>
+					<el-form-item :label='$t("Public.zPort")+"："'>
 						<template slot-scope='scope'>
 							<span v-text="editForm.z_node.name"></span>-
 							<span v-text="editForm.z_ip"></span>-
 							<span v-text="editForm.z_vlan"></span>
 						</template>
 					</el-form-item>
-					<el-form-item :label='$t("Public.zportDescribe")'>
+					<el-form-item :label='$t("Public.zportDescribe")+"："'>
 						<template>
 							<span v-text="editForm.z_desc"></span>
 						</template>
 					</el-form-item>
 					
-					<el-form-item :label='$t("Public.sysBandwidth")' prop='bandwidth'>
+					<el-form-item :label='$t("Public.sysBandwidth")+"："' prop='bandwidth'>
 						<el-input v-model='editForm.bandwidth' :disabled='editFormStatue'  class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item :label='$t("Public.phyBandwidth")' prop='physical_bandwidth'>
+					<el-form-item :label='$t("Public.phyBandwidth")+"："' prop='physical_bandwidth'>
 						<el-input v-model='editForm.physical_bandwidth' :disabled='editFormStatue' class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item :label='$t("Public.surBandwidth")'>
+					<el-form-item :label='$t("Public.surBandwidth")+"："'>
 						<template>
 							<span v-text="editForm.bandwidth-editForm.physical_bandwidth"></span>
 						</template>
 					</el-form-item>
-					<el-form-item :label='$t("Public.linkExpen")' prop='link_cost'>
+					<el-form-item :label='$t("Public.linkExpen")+"："' prop='link_cost'>
 						<el-input v-model='editForm.link_cost':disabled='editFormStatue'  class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item :label='$t("Public.linkCheck")' prop='monitoring'>
+					<el-form-item :label='$t("Public.linkCheck")+"："' prop='monitoring'>
 						<el-radio-group v-model='editForm.monitoring' :disabled='editFormStatue' @change="mointradio">
 							<template v-for='item in needDown'>
 								<el-radio :value='item.label' :label='item.val'>{{item.name}}</el-radio>
 							</template>
 						</el-radio-group>
 					</el-form-item>
-					<el-form-item v-if='detectionStatus' :label='$t("Public.checkType")' prop='monitoring_type'>
+					<el-form-item v-if='detectionStatus' :label='$t("Public.checkType")+"："' prop='monitoring_type'>
 						<el-select v-model='editForm.monitoring_type' :disabled='editFormStatue' class='ipt'>
 							<el-option v-for='(item,index) in detectionType'
 								:value='item.value'
@@ -213,13 +209,13 @@
 							</el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item v-show='detectionStatus' :label='$t("Public.checkParams")'>
+					<el-form-item v-show='detectionStatus' :label='$t("Public.checkParams")+"："'>
 						<el-input v-model='editForm.monitoring_param' :disabled='editFormStatue' class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item  :label='$t("Public.get_flow")' prop='get_speed_key'>
+					<el-form-item  :label='$t("Public.get_flow")+"："' prop='get_speed_key'>
 						<el-input v-model='editForm.get_speed_key' :disabled="editFormStatue" class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item :label='$t("Public.description")'>
+					<el-form-item :label='$t("Public.description")+"："'>
 						<!--<textarea name="" rows="" cols="7"></textarea>-->
 						<el-input type='textarea'cols="7" v-model='editForm.description' :disabled='editFormStatue' class='ipt'></el-input>
 					</el-form-item>
@@ -429,7 +425,7 @@
 						if(res.data.data.items){
 							res.data.data.items.map(ele => {
 								//datedialogFormat
-								ele.creation_time=datedialogFormat(ele.creation_time)
+//								ele.creation_time=datedialogFormat(ele.creation_time)
 								//添加新的属性，作为是否维护和故障的字段
 								if(!ele.monitoring){
 									ele.monitorHTML=this.$t('Public.close');									
@@ -611,7 +607,7 @@
 						if(res.data.status==0){
 							this.editLoading=false;
 							this.editForm=Object.assign({},res.data.data)
-							this.editForm.creation_time=datedialogFormat(row.creation_time);
+							this.editForm.creation_time=datedialogFormat(this.editForm.creation_time);
 							if(this.editForm.monitoring==true){
 								this.detectionStatus=true;
 							}else{
@@ -639,6 +635,7 @@
 				
 			},
 			updateData(){
+				this.editLoading=true;
 				this.$refs.editForm.validate(valid => {
 					if(valid){
 							let para={
@@ -773,6 +770,27 @@
 			formatJson(filterVal,jsonData){
 				return jsonData.map(v => filterVal.map(j => v[j]))
 			},
+			dateFormat(row,column){
+	    		//将时间戳转换为前端的时间
+	    		let date=null;
+	    		if(column.property == "creation_time"){
+	    				date=new Date(parseInt(row.creation_time)*1000);
+	    		}
+	    		if(column.property == "start_time"){
+	    				date=new Date(parseInt(row.start_time)*1000);
+	    		}
+	    		if(column.property == "end_time"){
+	    				date=new Date(parseInt(row.end_time)*1000);
+	    		}
+	    		
+	    		let Y=date.getFullYear()+'-';
+	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
+	    		let D=date.getDate() <10? '0' +date.getDate() +' ':date.getDate()+' ';
+	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
+	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
+	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
+	    		return Y + M + D + h + m + s	    		
+	   		}
 		},
 		mounted(){
 			this.getUsers()

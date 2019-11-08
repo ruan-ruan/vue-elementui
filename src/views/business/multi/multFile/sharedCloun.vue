@@ -1,26 +1,26 @@
 <template>
 	<div>
 		<!--公有云部分-->
-		<el-form :model='editForm':rules='editFormRules' ref='editForm'label-width='100px'label-position='left' v-loading='editLoading'>
-			<el-form-item label='公有云'prop='cloun'>
+		<el-form :model='editForm':rules='editFormRules' ref='editForm'label-width='145px' v-loading='editLoading'>
+			<el-form-item :label='$t("Public.shardCloud")+":"'prop='cloun'>
 				<el-select v-model='editForm.cloun' filterable  class='ipt'  @change='handleSelect(editForm.cloun)'>
 					<el-option v-for='(item ,index) in clounData'
 						:label='item'
 						:value='item'
 						:key='index'></el-option>
 				</el-select>
-				<span class="cli_toTip" title="请选择本次链接云的类型">?</span>
+				<span class="cli_toTip" :title="$t('business.cloudTooltip')">?</span>
 			</el-form-item>
-			<el-form-item label='目标Region' prop='targetRegion'>
+			<el-form-item :label='$t("business.tarRegion")+":"' prop='targetRegion'>
 				<el-select v-model='editForm.targetRegion' class='ipt' @change='selRegion(editForm.targetRegion)'>
 					<el-option v-for='(item ,index) in targetRegionData'
 						:label='item'
 						:value='item'
 						:key='index'></el-option>
 				</el-select>
-				<span class="cli_toTip" title="云便捷路由器(VBR)归属区域">?</span>
+				<span class="cli_toTip" :title="$t('business.cloudRouter')">?</span>
 			</el-form-item>
-			<el-form-item label='云对接链路' prop='clounDock'>
+			<el-form-item :label='$t("business.cloudDock")+":"' prop='clounDock'>
 				<el-select v-model='editForm.clounDock'class='ipt' >
 					<el-option v-for='(item ,index) in clounDockData'
 						:label='item.name'
@@ -30,107 +30,102 @@
 					<span style="margin-left: 20px;">{{item.logic_port.name}}</span>
 					</el-option>
 				</el-select>
-				<span class="cli_toTip" title="对接云的物理线路">?</span>
+				<span class="cli_toTip" :title="$t('business.cloudPhyTooltip')">?</span>
 			</el-form-item>
-			<el-form-item label='专线提供方' v-if='JSON.stringify(copy) !="{}" '>
+			<el-form-item :label='$t("business.linePro")+":"' v-if='JSON.stringify(copy) !="{}" '>
 				<el-input v-model='editForm.Dedicated' disabled class='ipt'></el-input>
 				<span style="cursor: pointer; color: orangered;" :title="tcTit">?</span>
 			</el-form-item>
-			<el-form-item label='共享专线ID' v-if='JSON.stringify(copy) !="{}" '>
+			<el-form-item :label='$t("business.lineID")+"："' v-if='JSON.stringify(copy) !="{}" '>
 				<el-input v-model='editForm.shardID' disabled class='ipt'></el-input>
 				<span style="cursor: pointer; color: orangered;" :title="tcTit">?</span>
 				
 			</el-form-item>
-			<el-form-item label='地域' v-if='JSON.stringify(copy) !="{}" '>
+			<el-form-item :label='$t("business.region")+":"' v-if='JSON.stringify(copy) !="{}" '>
 				<el-input v-model='editForm.area' disabled class='ipt'></el-input>
 				<span style="cursor: pointer; color: orangered;" :title="tcTit">?</span>
 			</el-form-item>
-			<el-form-item v-for='(item,index) in dockLinks' :label='item.show_name':key='index' :prop='item.keyVal'
+			<el-form-item v-for='(item,index) in dockLinks' :label='item.show_name +":"':key='index' :prop='item.keyVal'
 				:rules="{required:true,message:item.keyVal+'不能为空',trigger:'blur'}" v-if='editForm.clounDock ==""? false :true  '>
 				<el-input v-model='item.keyVal':placeholder="'请输入'+item.show_name"class='ipt'
 					:disabled='editForm.cloun==="腾讯云"? (item.show_name == "专用通道id"? false:true ) :false' ></el-input>
 					<template v-if='editForm.cloun==="腾讯云"? true : false' v-for='(val ,index) in icoData'>
 						<span v-if='val.name == item.show_name '  :title="val.value"
 							style="cursor: pointer; color: orangered;" >{{val.label}}</span> <br />
-							<span v-if='val.name == "专用通道id"? true:false' style="cursor: pointer; color: orangered;" @click="tenRules"> 点击如何获取专线通道</span>
+							<span v-if='val.name == "专用通道id"? true:false' style="cursor: pointer; color: orangered;" @click="tenRules"> {{$t('business.cliLine')}}</span>
 					</template>
-				<!--<span v-if='editForm.cloun==="腾讯云"?  (item.show_name == "专用通道id"? true:false ):false' 
-					style="cursor: pointer; color: orangered;"  title='腾讯云专心通道ID,即DirectConnectTunnelld'>
-					?</span> <br />  <span style="cursor: pointer; color: orangered;" @click="tenRules">点击如何获取专线通道</span>-->
-				
-					
+
 			</el-form-item>
 		</el-form>
 		
 		<!--腾讯云配置   => rules-->
 		<el-dialog :title='textMap[dialogStatus]' :visible.sync="dialogFormVisible" :close-on-click-modal="false" v-loading='seeLoading'>
 			<el-form label-position='left' :model='seeForm' ref='seeForm'label-width='80px'>
-				<h3>腾讯专用通道ID如何创建?</h3>
+				<h3>{{$t('business.dialog.tit')}}?</h3>
 				<ul class="marT10">
 					<li class="marT10">
-						第一步：让客户登录腾讯云控制台，进入"专线接入"模块下"专用通道"列表中进行创建;点击列表中左上角"创建"按钮,
-						腾讯云控制台登录网址: <a href="https://cloud.tencent.com/login?s_url=https%3A%2F%2Fconsole.cloud.tencent.com%2F" target ='_blank' style="text-decoration: none;">
-							(点击进入腾讯云控制台)
+						{{$t('business.dialog.step1')}}: <a href="https://cloud.tencent.com/login?s_url=https%3A%2F%2Fconsole.cloud.tencent.com%2F" target ='_blank' style="text-decoration: none;">
+							( {{$t('business.dialog.link')}})
 						</a>
 					</li>
 					<li class="marT10">
 						<img :src="tc1"  class="tc_img"/>
 					</li>
 					<li class="marT10">
-						第二步:点击"新建"按钮进入基本配置页面，此页面用户需注意一下四个字段的填写方式，如下图所示: 
+						{{$t('business.dialog.step2')}}
 						<div class="marT5">
 							<span class="span_left_tit span_tit_one">1</span>
-							专线类型:一定要选择"共享专线"类型，否则创建的专线通道ID不能使用	
+							{{$t('business.dialog.lineType')}}
 						</div>
 						 <!--<br />-->
 						<div class="marT5">
 							<span class="span_left_tit span_tit_two ">2</span>
-							专线提供方: <span class="span_toTip">{{copy.Dedicated}}</span>请将此数据填写值基本配置页面中"专线提供方"
+							{{$t('business.dialog.linePorvide')}}: <span class="span_toTip">{{copy.Dedicated}}</span>{{$t('business.dialog.plaDataPro')}}
 							<span class="cur_span"  v-clipboard:copy="copy.Dedicated"  
-								v-clipboard:success="onCopy"  v-clipboard:error="onError">复制</span> 
+								v-clipboard:success="onCopy"  v-clipboard:error="onError">{{$t('tabOperation.copy')}}</span> 
 						</div>
 						<!--<br />-->
 						<div class="marT5">
 							<span class="span_left_tit span_tit_three ">3</span>
-							共享专线ID: <span class="span_toTip">{{copy.shardID}}</span>请将此数据填写至基本配置页面中"共享专线ID"字段中
+							{{$t('business.dialog.lineID')}}: <span class="span_toTip">{{copy.shardID}}</span>{{$t('business.dialog.plaLineID')}}
 							<span class="cur_span"	  v-clipboard:copy="copy.shardID"  
-								v-clipboard:success="onCopy"  v-clipboard:error="onError">复制</span>	
+								v-clipboard:success="onCopy"  v-clipboard:error="onError">{{$t('tabOperation.copy')}}</span>	
 						</div>
 						 <!--<br />-->
 						<div class="marT5">
 							<span class="span_left_tit span_tit_four ">4</span>
-							地域: <span class="span_toTip">{{copy.area}}</span>请根据此数据在基本配置页面中进行相应的地域选择，确保选择的一致性 
+							{{$t('business.region')}}: <span class="span_toTip">{{copy.area}}</span>{{$t('business.dialog.plaRegion')}}
 							<span class="cur_span"	  v-clipboard:copy="copy.area"  
-								v-clipboard:success="onCopy"  v-clipboard:error="onError">复制</span>
+								v-clipboard:success="onCopy"  v-clipboard:error="onError">{{$t('tabOperation.copy')}}</span>
 						</div>	
 						
 					</li>
 					<li class="marT10">
 						<img :src="tc2" alt=""  class="tc_img"/> <br />
 						<template class="marT7">
-							"基本配置"页面值需要注意以上四个字段的填写方式，其余字段信息用户如实填写完成既可，填写完毕点击"下一步"。
+							{{$t('business.dialog.basic')}}
 						</template>
 						
 						
 					</li>
 					<li class="marT10">
-						第三步:点击"下一步"进入"高级配置"页面，里面的字段信息用户如实填写既可，填写完毕点击"下一步"。
+					{{$t('business.dialog.step3')}}
 					</li>
 					<li class="marT10">
-						第四步:点击"下一步"进入"配置IDC设备"页面，里面的字段信息用户如实填写既可，填写完毕点击"提交"等待创建成功, <br />
-						创建成功后，生成专用通道ID，即:列表中蓝色标识ID,如图所示: <br />
-						将此专用通道ID填写到天驰网络系统"专线通道ID"字段中 <br />
+						{{$t('business.dialog.step4')}} <br />
+						{{$t('business.dialog.dock1')}} <br />
+						{{$t('business.dialog.dock2')}} <br />
 						<img :src="tc3"  class="tc_img marT7"/>
 					</li>
 					<li style="text-align: center;" class="marT10">
-						<el-button type='primary' size='small' @click='dialogFormVisible=false' >我已知晓</el-button>
+						<el-button type='primary' size='small' @click='dialogFormVisible=false' >{{$t('business.dialog.know')}}</el-button>
 						
 					</li>
 					
 				</ul>
 			</el-form>
 		</el-dialog>
-		<!--<button @click='tenRules'>click</button>-->
+
 	</div>
 </template>
 
@@ -141,7 +136,7 @@
 		name:'sharedCloun',
 		data(){
 			return{
-				tcTit:'此数据将用户创建腾讯云专线通道ID时使用',
+				tcTit:this.$t('business.tencentTit'),
 				icoData:[//腾讯云开通的时候  需要的数据的提示界面
 					{
 						name:'专用通道id',
@@ -184,9 +179,9 @@
 //				clounDockObj:{},//保存云对接的对象数据
 				dockListObj:{},//选择不同的云对接的时候，将数据发送到父组件
 				editFormRules:{
-					cloun:[{ required: true, message: '请选择公有云', trigger: 'change' }],
-					targetRegion:[{ required: true, message: '请选择目标region', trigger: 'change' }],
-					clounDock:[{ required: true, message: '请选择云对接', trigger: 'change' }],
+					cloun:[{ required: true, message: this.$t('business.plaShared'), trigger: 'change' }],
+					targetRegion:[{ required: true, message: this.$t('business.plaRegion'), trigger: 'change' }],
+					clounDock:[{ required: true, message:this.$t('business.plaDock'), trigger: 'change' }],
 				},
 				editLoading:false,
 				clounData:[],//公有云的数据
@@ -196,7 +191,7 @@
 				str:[],
 				seeLoading:false,
 				textMap: {
-		        	see:'如何获取腾讯专线通道ID'
+		        	see:this.$t('business.seeTencent')
 		      	},
 		      	dialogFormVisible:false,
 		      	dialogStatus:'',
@@ -332,13 +327,13 @@
 			},
 			onCopy(e){
 				this.$message({
-					message:'复制成功!',
+					message:this.$t('tooltipMes.copySuccess'),
 					type:'success'
 				})
 			},
 			onError(e){
 				this.$message({
-					message:'复制失败！',
+					message:this.$t('tooltipMes.copyFail'),
 					type:"warning"
 				})
 			},

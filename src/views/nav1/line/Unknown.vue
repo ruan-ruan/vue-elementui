@@ -53,14 +53,14 @@
 				</el-col>
 
 			<el-table :data='users' highlight-current-row @selection-change="selsChange" style='width: 100%;' 
-				:default-sort = "{prop: 'creation_time', order: 'descending'}" v-loading='loading'>
+				v-loading='loading'>
 				<el-table-column type='selection' min-width='40'></el-table-column>
-				<el-table-column type='index' min-width='50' :label='$t("Public.index")' align='center'>
+				<el-table-column type='index' min-width='80' :label='$t("Public.index")' align='center'>
 					<template slot-scope='scope'>
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='creation_time' width='101' sortable :label='$t("Public.apply")'  align='center'></el-table-column>				
+				<el-table-column prop='creation_time' width='80' :formatter='dateFormat' :label='$t("Public.apply")'  align='center'></el-table-column>				
 				<el-table-column :label='$t("Public.aPort")' min-width='80' align='center'>
 					<template slot-scope='scope'>
 						<el-tag size='small' type='primary'style='cursor: pointer;'@click='handelSee_aNode(scope.$index,scope.row)'>{{scope.row.a_node.name}}</el-tag>
@@ -73,20 +73,20 @@
 						-{{scope.row.z_ip}}-{{scope.row.z_vlan}}
 					</template>
 				</el-table-column>
-				<el-table-column prop='bandwidth' :label='$t("Public.sysBandwidth")' align='center' min-width='70'>
+				<el-table-column prop='bandwidth' :label='$t("Public.sysBandwidth")' align='center' min-width='90'>
 				</el-table-column>
-				<el-table-column prop='physical_bandwidth' :label='$t("Public.phyBandwidth")' align='center' min-width='80'>
+				<el-table-column prop='physical_bandwidth' :label='$t("Public.phyBandwidth")' align='center' min-width='105'>
 				</el-table-column>
-				<el-table-column  :label='$t("Public.surBandwidth")' align='center' width='80'>
+				<el-table-column  :label='$t("Public.surBandwidth")' align='center' width='105'>
 					<template slot-scope='scope'>{{scope.row.bandwidth-scope.row.physical_bandwidth}}</template>
 				</el-table-column>
-				<el-table-column prop='link_cost' :label='$t("Public.linkExpen")' align='center' min-width='60'>
+				<el-table-column prop='link_cost' :label='$t("Public.linkExpen")' align='center' min-width='80'>
 				</el-table-column>
-				<el-table-column prop='monitoringText' :label='$t("Public.linkCheck")' align='center' min-width='60'>
+				<el-table-column prop='monitoringText' :label='$t("Public.linkCheck")' align='center' min-width='80'>
 				</el-table-column>
 				<el-table-column prop='descriptionVal' :label='$t("Public.description")' align='center' min-width='80'>
 				</el-table-column>
-				<el-table-column  label='操作' align='center' width='180'>
+				<el-table-column  :label='$t("Public.operation")' align='center' width='180'>
 					<template slot-scope='scope'>
 						<el-button size='mini' type='primary' @click='handleStart(scope.$index, scope.row)'>{{$t('tabOperation.run')}}</el-button>
 						<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>{{$t('tabOperation.info')}}</el-button>
@@ -448,7 +448,7 @@
 							this.total=res.data.data.page.total;
 							res.data.data.items.map(ele => {
 								//datedialogFormat
-								ele.creation_time=datedialogFormat(ele.creation_time)
+//								ele.creation_time=datedialogFormat(ele.creation_time)
 								if(ele.monitoring){
 									ele.monitoringText=this.$t("Public.open");									
 //									ele.monitoringText='开启'
@@ -571,20 +571,24 @@
 			},
 			handleSee(index,row){
 				//详情
-//				var this=this;
 				this.dialogStatus='see';
 				this.dialogFormVisible=true;
 //				this.disup=true;
 				this.seeStatus=true;
+				this.editFormStatus=true;
+				this.editLoading=true;
 				this.$ajax.get('/link/unknown_link_info/'+row.id+'?token='+this.token)
 				.then( res => {
 					if(res.status==200){
 						if(res.data.status==0){
+							this.editLoading=false;
 							this.editForm=res.data.data;
+							this.editForm.creation_time=datedialogFormat(this.editForm.creation_time)
 							this.editForm.a_node_id=res.data.data.a_node.id;
 							this.editForm.a_node_name=res.data.data.a_node.name;
 							this.editForm.z_node_id=res.data.data.z_node.id;
 							this.editForm.z_node_name=res.data.data.z_node.name;
+							
 						}
 					}
 				}).catch(e => {
@@ -599,6 +603,7 @@
 				this.seeStatus=false;
 				//显示时间
 				this.editFormStatus=true;
+				
 //				console.log(typeof row.monitoring)
 				this.editForm={
 					id:row.id,
@@ -620,16 +625,17 @@
 					monitoring_param:row.monitoring_param,
 					maintenance_type:row.maintenance_type,
 					status:row.status,
-					creation_time:'',
+					creation_time:datedialogFormat(row.creation_time),
 					description:row.description,
 					get_speed_key:row.get_speed_key,
 				}
 
-				this.editForm.creation_time=datedialogFormat(row.creation_time)
+//				this.editForm.creation_time=datedialogFormat(row.creation_time)
 			},
 			updateData(){
 				//编辑操作
 //				var this=this;
+				this.editLoading=true;
 				this.$refs.editForm.validate(valid => {
 					if(valid){
 							let para={
@@ -655,6 +661,7 @@
 								console.log(res);
 								if(res.status==200){
 									if(res.data.status==0){
+										this.editLoading=false;
 										this.$message({
 											message:this.$t('tooltipMes.editSuccess'),
 											type:'success'
@@ -814,13 +821,20 @@
 				})
 				.catch( () => {})
 			},
-			downloadExcelList(){
-				//导出所有页
-			},
-			downloadExcel(){
-//				导出当前页
-			},
 
+			dateFormat(row, column) {
+//				
+		      	let date = new Date(parseInt(row.creation_time) * 1000);
+		      	let Y = date.getFullYear() + "-";
+		      	let M =date.getMonth() + 1 < 10  ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
+		      	let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + "  ";
+		      	let h = date.getHours() < 10  ? "0" + date.getHours() + ":"  : date.getHours() + ":";
+		        let m = date.getMinutes() < 10  ? "0" + date.getMinutes() + ":"  : date.getMinutes() + ":";
+		        let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+//		        var str=Y + M + D+'<br/>' + h + m + s;
+//		        document.write(str)
+		      return Y + M + D + h + m + s;
+		    },
 		},
 	}
 </script>

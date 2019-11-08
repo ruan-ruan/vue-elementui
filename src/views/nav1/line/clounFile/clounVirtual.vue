@@ -1,18 +1,18 @@
 <template>
 	<div>
 <!--		虚拟组网专线-->
-		<virtual-network :clounID='clounID'></virtual-network>
+		<multipoint :clounID='clounID'></multipoint>
 	</div>
 </template>
 
 <script>
 	
-	import virtualNetwork  from '@/views/business/multi/multipoint'
+	import multipoint  from '@/views/business/multi/multipoint'
 	export default{
 		name:'clounVirtual',
 		props:['clounId'],
 		components:{
-			virtualNetwork
+			multipoint
 		},
 		data(){
 			return{

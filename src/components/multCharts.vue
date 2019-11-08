@@ -12,13 +12,13 @@
 						:value='item.value'
 						:key='index'></el-option>
 				</el-select>
-				<el-select v-model='filters.logic_name' class='sel_chart'>
+				<el-select v-model='filters.logic_name' class='sel_chart' @change='selLogic(filters.logic_name)'>
 					<el-option v-for='(item,index) in  logicData'
 						:label='item.name'
 						:value='item.id'
 						:key='index'></el-option>
 				</el-select>
-				<el-button size='small' type='primary' @click='ChartData(titData)'>查询</el-button>
+				<el-button size='small' type='primary' @click='ChartData(strVal)'>查询</el-button>
 			</el-form-item>
 		</el-form>
 		<el-form :model='filters' ref='filters' :inline='true'>
@@ -41,7 +41,7 @@
 						:value='item'
 						:key='index'></el-option>
 				</el-select>
-				<el-button type='primary' size='small'  @click='ChartData(titData)'>搜索</el-button>
+				<el-button type='primary' size='small'  @click='ChartData(strVal)'>搜索</el-button>
 				
 			</el-form-item>
 			<el-form-item v-if='filters.selTime==="自定义"'>
@@ -67,7 +67,7 @@
 			</el-col>
 			<!--组网-->
 			<el-col :span='24' v-if='networkingStatus'>
-				<shard-chart :data='userNet' :user='usersNet' :trafficData='trafficData' :unit='filters.unit':chartLoading='chartLoading' v-if='child'></shard-chart>
+				<shard-chart :data='baseObjNet' :user='usersNet' :trafficData='trafficData' :unit='filters.unit':chartLoading='chartLoading' v-if='child'></shard-chart>
 			</el-col>
 			
 			
@@ -139,6 +139,8 @@
 				optionTraA:null,
 				optionNet:null,
 				child:true,
+				strVal:'',
+				loObj:{},
 			}
 		},
 		watch:{
@@ -146,7 +148,7 @@
 				handler(newVal,oldVal){
 					if(newVal.selTime){//存在新的时间时候
 						this.trafficData=this.getTimeData(newVal.selTime);//根据选择类型来获取对应的时间轴的区间
-						console.log(this.trafficData)
+//						console.log(this.trafficData)
 					}
 					if(newVal.selVal){//根据所选的时间的类型，然后获取数据，在根据值的类型对数据进行处理
 						this.valType=this.seaVal(newVal.selVal)   // 返回值的值的类型   对应的字段
@@ -166,9 +168,18 @@
 				deep:true,
 				
 			},
+			baseObjNet:{
+				handler(newVal,oldVal){
+					this.child=false;
+					this.$nextTick(() => {
+						this.child=true;
+					})
+				},
+				deep:true,
+			},
 			'filters.type':function(newVal,oldVal){//根据选择的端点的类型   选择对应的logic的数据
 
-				this.basicData.forEach(item => {
+				this.basicData.map(item => {
 					if(newVal == item.type){
 						this.logicData.push(item.logic)
 					}
@@ -181,19 +192,22 @@
 			this.token=sessionStorage.getItem('token');
 			this.valType=this.seaVal();
 			this.trafficData=this.getTimeData();
-
-
-			let strVal=''
+//			console.log( this.trafficData )
 			if(typeof this.titData !=='undefined'){
-				strVal=this.titData
+				this.strVal=this.titData;
 			}
 			if(typeof this.topoId !=='undefined'){
-				strVal=this.topoId
+				this.strVal=this.topoId
 			}
-			this.ChartData(strVal);
 			
+			this.ChartData(this.strVal);
+
 		},
+
 		methods:{
+			selLogic(ids){
+				this.loObj={};
+			},
 			goback(){
 				this.$router.go(-1)
 			},
@@ -201,45 +215,42 @@
 				
 				let newData=[];//保存每次获取的数据
 
-				let staIndex='';
-				let endIndex='';
-				var obj={};
-				var ChartsData=[];
 				var sortID=[];//将id相同的部分里面flow合并即可
 
 //				//遍历以后再进行树的排序
 				let time={};
-				
-				
+
 				var selData=[];//选择的时候  展示数据
 
-				this.sendType.forEach(ele => {
+				this.sendType.map(ele => {
 					time={
 						search_date :ele.toString(),
 					}
-//					console.log(time)
+
 					this.chartLoading=true;
 					this.$ajax.get('/vll/get_vll_flow/'+ids+'?token='+this.token,time)
 					.then(res => {
 						if(res.status==200){
 							if(res.data.status==0){
-								console.log(res);
+//								console.log(res);
 								var endObj={};
 								var endData=[];
-								if(res.data.data.endpoints){
+								//下面对业务类型处理    点到点    和云的额业务     以及组网的数据处理
+								if(res.data.data.endpoints){ //点部分数据
 									//判断   里面的点的name属性是否为null   ，不是null的时候，这个时候是点到点的数据，否则是虚拟组网的数据
-									res.data.data.endpoints.forEach(item => {
+									res.data.data.endpoints.map(item => {
 										endObj={//后期可根据逻辑口的id进行数据筛选
 											type:'dataCenter',
 											logic:item.logic_port,
 										}
 										endData.push(endObj)
-										
-										if(!item.name && typeof (item.name) != 'undefined' && item.name !=0){												
-											//这个时候   item.name是null 应该是虚拟组网的数据   这个时候    当隐藏A和Z的表格插件，显示组网的数据的插件  单个插件
+										//这个时候   item.name是null 应该是虚拟组网的数据   这个时候    当隐藏A和Z的表格插件，显示组网的数据的插件  单个插件
+										if( (!item.name && typeof (item.name) != 'undefined' && item.name !=0) || item.name=='' ){												
 											this.networkingStatus=true;//显示组网的部分的 顶部分的筛选的数据
-											newData.push(item);  //组网的数据
-										}else if(item.name && typeof (item.name) != 'undefined' && item.name !=0){//这个时候  name不是null   当为点到的数据
+//											newData.push(item);  //组网的数据
+										}
+										//这个时候  name不是null   当为点到点的数据
+										if(item.name && typeof (item.name) != 'undefined' && item.name !=''){
 										//   分别找到对应的点到点的数据   根据时间的不同进行整合
 //											if(item.name == 'A端'){//获取A端的数据
 //												console.log(item);
@@ -248,16 +259,20 @@
 //											}
 											this.networkingStatus=false;//此时Wie点到点的数据   所以不需要显示
 											//  当item.name不为null的时候   这个时候分为两种情况，A端和Z端
-											newData.push(item);//为点到点的数据
+//											newData.push(item);//为点到点的数据
 										}
+										newData.push(item);
 									})
-								}else if(res.data.data.cloud_endpoints){
-									res.data.data.cloud_endpoints.forEach(item => {
-										if(!item.name && typeof (item.name) != 'undefined' && item.name !=0){	
-											//这个时候   item.name是null 应该是虚拟组网的数据   这个时候    当隐藏A和Z的表格插件，显示组网的数据的插件  单个插件
-											newData.push(item);  //组网的数据
+								}
+								if(res.data.data.cloud_endpoints){
+									res.data.data.cloud_endpoints.map(item => {
+										//这个时候   item.name是null 应该是虚拟组网的数据   这个时候    当隐藏A和Z的表格插件，显示组网的数据的插件  单个插件
+										if( (!item.name && typeof (item.name) != 'undefined' && item.name !=0) || item.name == ''  ){	
+//											newData.push(item);  //组网的数据
 											this.networkingStatus=true;
-										}else if(item.name && typeof (item.name) != 'undefined' && item.name !=0){//这个时候  name不是null   当为点到的数据
+										}
+										//这个时候  name不是null   当为点到点的数据
+										if(item.name && typeof (item.name) != 'undefined' && item.name !=''){
 										//   分别找到对应的点到点的数据   根据时间的不同进行整合
 //											if(item.name == 'A端'){//获取A端的数据
 //												console.log(item);
@@ -266,9 +281,9 @@
 //											}
 											//  当item.name不为null的时候   这个时候分为两种情况，A端和Z端
 											this.networkingStatus=false;
-											newData.push(item);//为点到点的数据
+//											newData.push(item);//为点到点的数据
 										}
-										
+										newData.push(item);
 										endObj={
 											type:'cloud',
 											logic:item.logic_port,
@@ -277,123 +292,42 @@
 									})
 								}
 								this.basicData=endData;
+								sortID=arrayPro.sortArr(newData,'id');//根据id相同部分合并     处理数据   并处理数据  获取到一个新的数组	
 
-								var selLogicData=[]
+								this.selData=sortID;
+								let sliData=[]; //根据选择的开始和结束时间，对该新拼接的数组进行筛选
+//								console.log(flowType);
+								var start_time=this.trafficData[0];
+								var end_time=this.trafficData[this.trafficData.length-1];
+//								console.log(start_time);
+//								console.log(end_time)
+								//sortID   是要处理的数据    根据开始时间  start_time和结束时间end_time  并处理拿到的数据的流量的数据之间存在的断点情况
+								sliData=arrayPro.dealTime(sortID,start_time,end_time);
 
-								sortID=arrayPro.sortArr(newData,'id');//根据id相同部分合并     处理数据	
-
-							var flowType=[];
-								
-							var flowObj={}, obj={};
-								sortID.forEach( item => {
-									var data=[],vals=[];
-									
-									item.forEach(index => {
-										
-										data.push(index.flow);
-										obj={
-											id:index.id,
-											name:index.name,
-											vlan:index.vlan,
-											logic_port:index.logic_port,
-											physical_ports:index.physical_ports,
-										}
-									})
-									data.map(function (value,index,array){
-										vals=vals.concat(value);
-										
-									})
-									flowObj={
-										id:obj.id,
-										name:obj.name,
-										vlan:obj.vlan,
-										logic_port:obj.logic_port,
-										physical_ports:obj.physical_ports,
-										flow:vals.sort(arrayPro.sortTime('time'))//进行排序
-									}
-									flowType.push(flowObj)
-								})
-
-								this.selData=flowType;   //筛选后的数据
-								
-								let sliData=[],setObj={}; //根据选择的开始和结束时间，对该新拼接的数组进行筛选
-								console.log(flowType)
-								flowType.forEach(item => {
-									
-									var endTime=this.trafficData[ this.trafficData.length-1];
-									var startTime=this.trafficData[0];
-									console.log(item);
-									if(item.flow.length !=0){//如果flow里面的存在数据的时候
-
-										var staIndex=arrayPro.findIndex(item.flow,this.trafficData[0]);//获取将要截取起点
-										var endIndex=arrayPro.findIndex(item.flow,this.trafficData[this.trafficData.length-1]);//获取截取的终点
-										
-										var end=item.flow[0].time;
-	
-										console.log(staIndex);
-										console.log(endIndex);
-										
-										//根据开始时间 截取对应的值  查到的时候返回对应的下标   否则返回-1    结束时间也是  对应的额flow的值
-										if(staIndex < 0){//没有找到开始时间对应的流量的值   说明  流量的数据不够   这个时候可以用空的来拼接
-											//当开头的数据没有找到的时候  这个时候  开头的数据  需要进行补数据
-											item.nodeData=arrayPro.dataIsNot(startTime,end,'startIndex').concat(item.flow);
-											
-//											item.sliceData=arrayPro.dataIsNot(startTime,end,'startIndex').concat(item.flow);
-											if(endIndex <0){//没有查到结束的时候对应的额flow的值，这个时候 直接拼接既可，
-												item.sliceData=arrayPro.dataIsNot(startTime,end,'startIndex').concat(  arrayPro.dataIsNot( item.flow[item.flow.length-1].time , endTime,'endIndex' )  )	;
-												item.sliceVal=item.sliceData;
-											}else if(endIndex >=0) {//查找到对应下边的flow的值
-												item.sliceVal=arrayPro.dataIsNot(startTime,end,'startIndex').concat( item.flow.slice(0, endIndex) )
-											}
-										}else if(staIndex >= 0){//返回对应的下边的既可
-	
-											if(endIndex <0){//没有查到结束的时候对应的额flow的值，这个时候 直接拼接既可，
-												item.sliceData=item.flow.concat( arrayPro.dataIsNot(item.flow[item.flow.length-1].time,endTime,'endIndex') )
-												item.sliceVal=item.sliceData.slice(staIndex);
-											}else if(endIndex >0) {//查找到对应下边的flow的值
-												console.log('进来');
-												if(item.sliceData.length>= endIndex){
-													item.sliceVal=item.sliceData.slice(staIndex,endIndex);
-												}else {
-													item.sliceVal=item.sliceData.slice(staIndex);
-												}
-												
-											}
-											
-										}
-									}else {//flow里面的数据是空的时候
-										item.sliceVal=arrayPro.dataIsNot(startTime,endTime,'endIndex');
-									}
-									console.log(item)
-									setObj={
-										id:item.id,
-										name:item.name,
-										vlan:item.vlan,
-										logic_port:item.logic_port,
-										physical_ports:item.physical_ports,
-//										flow:item.flow.slice(staIndex,endIndex),
-										flow:item.sliceVal
-									}
-									sliData.push(setObj)
-									
-									
-								})
-								console.log(sliData)
 								this.sliData=sliData;
 								//获取处理后的数据
-								this.chartLoading=false;
+								this.chartLoading=false;   //处理完数据
 								
 								//组网的数据     搜索
 								if(!this.networkingStatus){//显示   点到点的数据
 									//A端
 									this.users=this.getPartialData(sliData,'A端').usersNet;
-									this.baseObjA=this.getPartialData(sliData,'A端').baseObjNet
+									this.baseObjA=this.getPartialData(sliData,'A端').baseObjNet;
+
 									//Z端
 									this.baseObjZ=this.getPartialData(sliData,'Z端').baseObjNet;
 									this.usersZ=this.getPartialData(sliData,'Z端').usersNet;
 								}else {//显示组网的数据  this.filters.logic_name   为筛选条件
-									this.usersNet=this.getPartialData(sliData,this.filters.logic_name).usersNet;
-									this.baseObjNet=this.getPartialData(sliData,this.filters.logic_name).baseObjNet;
+//									console.log( sliData )
+//									console.log(this.filters.logic_name )
+									if(this.filters.logic_name == ''){
+										this.usersNet=[];
+										this.baseObjNet={};
+									}else if(this.filters.logic_name !=''){
+										this.usersNet=this.getPartialData(sliData,this.filters.logic_name).usersNet;
+										this.baseObjNet=this.getPartialData(sliData,this.filters.logic_name).baseObjNet;
+									}
+
 								}
 							}
 
@@ -404,41 +338,33 @@
 			//对截取完以后的A端，Z端  组网的数据的进行处理
 			
 			getPartialData(sliData,type){//对   A端  ，Z端   组网的单个数据对象的处理整合   type  代表的是需要获取的是A端   Z端  组网的数据   如果找到则返回 ，没有的时候则返回空
-				console.log(sliData)
-				var ZData=[],logicZ={};//data一部分的数据table，一部分是对里面的包含的额详细数据数据charts
-				sliData.map(item => {
-					var val=[];
-					if( type != 'A端' && type != 'Z端' ){//为组网的获取的数据    type为传值的类型
-						if( (!item.name && typeof(item.name) != 'undefined' && item.name !=0) || typeof(item.name) =='undefined' || item.name == '' ){
-							//此时  是虚拟组网的数据
-							//在这一步进行数据的查找
-							if(item.logic.id == type){//查找到对应的逻辑口this.filters.logic_name   筛选组网的逻辑口数据
-								
-								logicZ=item;
-								val.push(item);//获取对应的逻辑口的数据
-								console.log(val)
-								ZData=this.selectVal(val,this.timeInterval)[0].data
-							}
-							console.log(this.logicData);
+				var ZData=[],logicZ=this.loObj;//data一部分的数据table，一部分是对里面的包含的额详细数据数据charts
+				var val=[];
+				var typeName=''
+				if(!this.networkingStatus){//显示点到点的数据
+					logicZ=sliData.find(item => {
+						return item.name == type;
+					})
+					typeName=type;
+				}else {
+					if(type != 'A端' && type != 'Z端' ){
+						if(type == ''){
+							
+						}else{
+							logicZ=sliData.find(item => {
+								return item.logic_port.id == type;
+							})
 							//将查找到的逻辑口的数据的id转换为name显示在表格左上角
-							var str=this.logicData.find(ele => {
-								return ele
-							});
 
-							if(JSON.stringify(str) != '{}'){
-								type =str.name
+							if(this.logicData.length !=0){
+								typeName=this.logicData.find(ele => { return ele.id == type; }).name;
 							}
 						}
-					}else {
-						if(item.name == type){
-							logicZ=item;
-							val.push(item);
-							console.log(val)
-							ZData=this.selectVal(val,this.timeInterval)[0].data
-				
-						}
+						
 					}
-				})
+				}
+				ZData=this.selectVal(logicZ,this.timeInterval).data
+
 				//Z端
 				let  objZ={//    这里面 的数据   是两个单位情况下显示的数据        所以根据单位的不同 进行判断
 					input_bytes_d1:this.dealData('input_bytes',arrayPro.testCharts(ZData,'input_bytes',this.valType).d1),
@@ -491,9 +417,8 @@
 							dev_name2:'',
 						}
 					}
-				console.log(objZ)
 					baseObjZ={//Z端的基本信息    将数据处理后   页添加进去
-						logo_title:type,
+						logo_title:typeName,
 						logic_port:logicZ.logic_port.name,
 						vlan:logicVlanZ,
 						dev_name1:deviceZ.dev_name1,
@@ -529,18 +454,22 @@
 //					}
 ////					this.usersZ=usersZ;
 				}
-				console.log(baseObjZ);
-				console.log(usersZ);
-				return {
-					baseObjNet:baseObjZ,
-					usersNet:usersZ
+				var Total={};
+				if(type == ''){
+					Total={}
+				}else if(type != ''){
+					 Total={ 
+						baseObjNet:baseObjZ,
+						usersNet:usersZ
+					}
 				}
+				return Total;
 			},
 
 			dealData(type,data){//根据不同的单位  进行数据处理
 
 				let newData=[]
-				data.forEach(ele => {
+				data.map(ele => {
 					if(type === 'input_bytes' || type==='output_bytes'|| type =='total_input_bytes' || type == 'total_output_bytes'){
 						newData.push( parseInt(ele/60*8)   )
 					}else if(type === 'input_packages' || type ==='output_packages'|| type == 'total_input_packages' || type=='total_output_packages'){
@@ -563,42 +492,43 @@
 				return val;
 			},
 			selectVal(data , timeFew=5){//data  是数组     timeFew根据时间 的类型获取的时间间隔   也就是值的间隔      valType是值的类型
-				console.log(data);//可根据传值的类型  具体情况而定   A端   Z端    组网
+				//console.log(data);//可根据传值的类型  具体情况而定   A端   Z端    组网
 				//需要获取  逻辑口       以及设备d1    d2的数据      分别是入 和出       所以   一个逻辑口 共有  六条数据
-				let strObj={},strData=[];
-				for(var i=0;i<data.length;i++){
-					  //里面包含a端和z端
-					var dataVal=[];  
-					var setData=data[i].flow;
-					console.log(setData);
-					setData.map(item => {
-						for(var val in item.d1 ){
-							if(item.d1.val <0){
-								console.log(item.d1)
-							}
-						}
-					})
-					 //将数组进行切割  并求出里面的各个值的类型
-					for( var index=0; index<data[i].flow.length; index+=timeFew ){
-						dataVal.push(data[i].flow.slice(index,index+timeFew))
-					}
-					console.log(dataVal)
-					strObj={
-						name:data[i].name,
-						vlan:data[i].vlan,
-						flow:dataVal
-					}
-					strData.push(strObj)
+				var sval=JSON.parse( JSON.stringify(data) );
+				let strObj={};
+//				let strData=[];
+				var dataVal=[];  
+				for( var index=0; index<sval.flow.length; index+=timeFew ){
+					dataVal.push(sval.flow.slice(index,index+timeFew))
 				}
-				let chartsData=[];
-				console.log(strData)
-				strData.forEach(ele => {
+				strObj={
+					name:sval.name,
+					vlan:sval.vlan,
+					flow:dataVal
+				}
+//				for(var i=0;i<data.length;i++){
+//					  //里面包含a端和z端
+//					var dataVal=[];  
+//					var setData=data[i].flow;
+//
+//					 //将数组进行切割  并求出里面的各个值的类型
+//					for( var index=0; index<data[i].flow.length; index+=timeFew ){
+//						dataVal.push(data[i].flow.slice(index,index+timeFew))
+//					}
+////					console.log(dataVal)
+//					strObj={
+//						name:data[i].name,
+//						vlan:data[i].vlan,
+//						flow:dataVal
+//					}
+//					strData.push(strObj)
+//				};
+
+				
+//				let chartsData=[];
+//				strData.map(ele => {
 					let str=[];	
-					ele.flow.map((item,index) => {
-						
-//						if(index == 279){
-//							console.log(item)
-						
+					strObj.flow.map((item,index) => {		
 						let obj={}
 							obj={
 						 	d1:{
@@ -629,19 +559,17 @@
 						 	}
 						 }
 							str.push(obj)
-//						}
 					})
 					let chartObj={
-						name:ele.name,
-						vlan:ele.vlan,
+						name:strObj.name,
+						vlan:strObj.vlan,
 						data:str,
 					}
-					
-					chartsData.push(chartObj)
-				})
-
-				console.log(chartsData)
-				return chartsData;//   返回的是  处理完成以后的数组里面的对象    a端和z端所有的数据       下一步是对每一个属性进行  最大值  和最小值进行遍历
+//					
+//					chartsData.push(chartObj)
+//				})
+//				console.log(chartsData)
+				return chartObj;//   返回的是  处理完成以后的数组里面的对象    a端和z端所有的数据       下一步是对每一个属性进行  最大值  和最小值进行遍历
 			},
 
 
@@ -699,12 +627,16 @@
 						str=60*60*1000;
 					}
 				}
+				//根据时间类型获取不同的额时间的间隔数据
 				strTime=this.getTimeVal( Number(start_time) , Number(end_time) , str ).data;
+				//遍历  获取所有的时间的日期  用来获取数据
 				var timeVal=arrayPro.unique(this.getTimeVal(Number(start_time),Number(end_time),str).send).sort(arrayPro.sortNum);
 				this.sendType=timeVal;
+//				console.log(timeVal)
 				this.timeInterval=str/(60*1000);
 				
-				console.log(this.timeInterval);//获取时间间隔  用来处理数据    单位是分钟
+				//console.log(this.timeInterval);//获取时间间隔  用来处理数据    单位是分钟
+				
 				return strTime;
 			},
 			getTimeVal(start_time,end_time,str){
@@ -719,7 +651,7 @@
 					arr.push( isChartTime(item/1000) );
 				}
 				timeObj.send=arr.map(Number);
-
+//				console.log(timeObj)
 				return timeObj;//数组
 			},
 		}
