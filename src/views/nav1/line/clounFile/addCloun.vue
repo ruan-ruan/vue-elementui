@@ -25,11 +25,19 @@
 							<el-form-item :label='$t("Public.cloudName")'prop='name'>
 								<el-input v-model='editForm.name'class='ipt' :disabled='!clounStatus'></el-input>
 							</el-form-item>
-							<el-form-item :label='$t("Public.region")' prop='region_id'>
-								<el-input v-model='editForm.region_id'class='ipt':disabled='!clounStatus'></el-input>
+<!--<<<<<<< HEAD-->
+							<el-form-item :label='$t("Public.region")' prop='region'>
+								<el-input v-model='editForm.region'class='ipt':disabled='!clounStatus'></el-input>
 							</el-form-item>
-							<el-form-item :label='$t("Public.accessPoint")' prop='access_point_id'>
-								<el-input v-model='editForm.access_point_id'class='ipt':disabled='!clounStatus'></el-input>
+							<el-form-item :label='$t("Public.accessPoint")' prop='access_point'>
+								<el-input v-model='editForm.access_point'class='ipt':disabled='!clounStatus'></el-input>
+<!--=======
+							<el-form-item label='区域' prop='region'>
+								<el-input v-model='editForm.region'class='ipt':disabled='!clounStatus'></el-input>
+							</el-form-item>
+							<el-form-item label='接入点' prop='access_point'>
+								<el-input v-model='editForm.access_point'class='ipt':disabled='!clounStatus'></el-input>
+>>>>>>> af27a7ee67fd85c23aa099e541c5aaed37e60620-->
 							</el-form-item>
 							<el-form-item :label='$t("Public.bandwid")' prop='bandwidth'>
 								<el-input v-model='editForm.bandwidth'class='ipt':disabled='!clounStatus'></el-input> Gbps
@@ -125,8 +133,8 @@
 				editForm:{
 					type:'',
 					name:'',
-					region_id:'',
-					access_point_id:'',
+					region:'',
+					access_point:'',
 					bandwidth:'',
 					description:'',
 					node_id:'',
@@ -148,13 +156,23 @@
 				driveData:[],//接口驱动的数据
 				editFormRules:{
 					bandwidth:[{  required: true, validator: isvalidNumber, trigger: 'blur' }],
+//<<<<<<< HEAD
 					type:[ { required: true, message: this.$t('Public.plpublicClo'), trigger: 'change' }],
 					name:[ { required: true, message: this.$t('Public.plblueclo'), trigger: 'blur' }],
-					region_id:[ { required: true, message: this.$t('Public.plRegion'), trigger: 'blur' }],
-					access_point_id:[ { required: true, message:this.$t('Public.plAccess'), trigger: 'blur' }],
+					region:[ { required: true, message: this.$t('Public.plRegion'), trigger: 'blur' }],
+					access_point:[ { required: true, message:this.$t('Public.plAccess'), trigger: 'blur' }],
 					node_id:[ { required: true, message: this.$t('Public.plChNode'), trigger: 'blur' }],
 					logic_port_id:[ { required: true, message: this.$t('Public.plChLogic'), trigger: 'blur' }],
 					interface_driver:[ { required: true, message: this.$t('Public.plChInter'), trigger: 'blur' }],
+//=======
+//					type:[ { required: true, message: '请选择公有云类型', trigger: 'change' }],
+//					name:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
+//					region:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
+//					access_point:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
+//					node_id:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
+//					logic_port_id:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
+//					interface_driver:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
+//>>>>>>> af27a7ee67fd85c23aa099e541c5aaed37e60620
 				},
 				btnStatus:true,
 				bakcUpData:{},
@@ -297,7 +315,7 @@
 								id:str.id,
 								type:str.type,
 								name:str.name,
-								region_id:str.region,
+								region:str.region,
 								access_point:str.access_point,
 								bandwidth:str.bandwidth,
 								description:str.description,
@@ -322,41 +340,78 @@
 					if(valid){
 						this.editLoading=true;
 //							let para=Object.assign({},this.editForm)
-						console.log(this.editForm)
-						let para={
-							type:this.editForm.type,
-							name:this.editForm.name,
-							region:this.editForm.region_id,
-							access_point:this.editForm.access_point_id,
-							bandwidth:this.editForm.bandwidth,
-							description:this.editForm.description,
-							node_id:this.editForm.node_id,
-							logic_port_id:this.editForm.logic_port_id,
-							interface_driver:this.editForm.interface_driver,
-							api_url:this.editForm.api_url,
-							api_token:this.editForm.api_token,
-							api_uuid:this.editForm.api_uuid,
-							extension:this.editForm.extension,
-							get_speed_key:this.editForm.get_speed_key,
-						}
-						this.$ajax.post('/link/add_cloud_link'+'?token='+this.token,para)
-						.then(res => {
-							this.editLoading=false;
-							if(res.status==200){
-								if(res.data.status==0){
-									this.$message({
-										message:this.$t('tooltipMes.addSuccess'),
-										type:'success'
-									})
-									this.$refs['editForm'].resetFields();
-									this.$router.replace('/location/line/cloun')
-								}else{
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
-								}
+//<<<<<<< HEAD
+//						console.log(this.editForm)
+//						let para={
+//							type:this.editForm.type,
+//							name:this.editForm.name,
+//							region:this.editForm.region_id,
+//							access_point:this.editForm.access_point_id,
+//							bandwidth:this.editForm.bandwidth,
+//							description:this.editForm.description,
+//							node_id:this.editForm.node_id,
+//							logic_port_id:this.editForm.logic_port_id,
+//							interface_driver:this.editForm.interface_driver,
+//							api_url:this.editForm.api_url,
+//							api_token:this.editForm.api_token,
+//							api_uuid:this.editForm.api_uuid,
+//							extension:this.editForm.extension,
+//							get_speed_key:this.editForm.get_speed_key,
+//						}
+//						this.$ajax.post('/link/add_cloud_link'+'?token='+this.token,para)
+//						.then(res => {
+//							this.editLoading=false;
+//							if(res.status==200){
+//								if(res.data.status==0){
+//									this.$message({
+//										message:this.$t('tooltipMes.addSuccess'),
+//										type:'success'
+//									})
+//									this.$refs['editForm'].resetFields();
+//									this.$router.replace('/location/line/cloun')
+//								}else{
+//									this.$message({
+//										message:res.data.message,
+//										type:'warning'
+//									})
+//=======
+							console.log(this.editForm)
+							let para={
+								type:this.editForm.type,
+								name:this.editForm.name,
+								region:this.editForm.region,
+								access_point:this.editForm.access_point,
+								bandwidth:this.editForm.bandwidth,
+								description:this.editForm.description,
+								node_id:this.editForm.node_id,
+								logic_port_id:this.editForm.logic_port_id,
+								interface_driver:this.editForm.interface_driver,
+								api_url:this.editForm.api_url,
+								api_token:this.editForm.api_token,
+								api_uuid:this.editForm.api_uuid,
+								extension:this.editForm.extension,
+								get_speed_key:this.editForm.get_speed_key,
 							}
+							this.$ajax.post('/link/add_cloud_link'+'?token='+this.token,para)
+							.then(res => {
+								this.editLoading=false;
+								if(res.status==200){
+									if(res.data.status==0){
+										this.$message({
+											message:this.$t('tooltipMes.addSuccess'),
+											type:'success'
+										})
+										this.$refs['editForm'].resetFields();
+										this.$router.replace('/location/line/cloun')
+									}else{
+										this.$message({
+											message:res.data.message,
+											type:'warning'
+										})
+									}
+//>>>>>>> af27a7ee67fd85c23aa099e541c5aaed37e60620
+								}
+//							}
 						}).catch(e => {console.log(e)})
 					}
 				})
@@ -367,6 +422,7 @@
 				this.$refs.editForm.validate(valid => {
 					if(valid) {
 
+//<<<<<<< HEAD
 						this.editLoading=true;
 						let obj={
 							node_id:'',
@@ -386,8 +442,8 @@
 						let para={
 							type:this.editForm.type,
 							name:this.editForm.name,
-							region:this.editForm.region_id,
-							access_point:this.editForm.access_point_id,
+							region:this.editForm.region,
+							access_point:this.editForm.access_point,
 							bandwidth:this.editForm.bandwidth,
 							description:this.editForm.description,
 							node_id:obj.node_id,
@@ -416,6 +472,7 @@
 										message:res.data.message,
 										type:'warning'
 									})
+
 								}
 							}
 						}).catch(e => {console.log(e)
