@@ -9,10 +9,10 @@
 							<el-input v-model="filters.name" :placeholder="$t('validateMes.place')+$t('topFilters.name')"></el-input>
 						</el-form-item>
 						<el-form-item>
-							<el-button type="primary" v-on:click="getUsers" >
+							<el-button size='small' type="primary" v-on:click="getUsers" >
 								{{$t('topFilters.search')}}
 							</el-button>
-							<el-button type='info' @click='reset'>
+							<el-button size='small' type='info' @click='reset'>
 								<!--重置-->
 								{{$t('topFilters.reset')}}
 							</el-button>
@@ -23,17 +23,17 @@
 				<!--列表-->
 				<el-col :span='24'>
 					<el-col :span='4'>
-						<el-button type="primary" @click="handleAdd">
+						<el-button size='small' type="primary" @click="handleAdd">
 							<!--新增-->
 							{{$t('tabOperation.add')}}
 						</el-button>
 					</el-col>
 					<el-col :span='20'class="table-top"	>
-						<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">
+						<el-button size='small' type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">
 							<!--批量删除-->
 							{{$t('tabOperation.batchDel')}}
 						</el-button>
-						<el-dropdown split-button type='success'@command="handleExport">
+						<el-dropdown size='small' split-button type='success'@command="handleExport">
 							<!--导出数据-->
 								{{$t('tabOperation.derived.tit')}}
 							<el-dropdown-menu slot='dropdown'>
@@ -499,6 +499,10 @@
 		    	.then(res => {
 		    		if(res.status==200){
 		    			if(res.data.status==0){
+		    				res.data.data.items.map(item => {
+		    					//datedialogFormat
+		    					item.creation_time=datedialogFormat(item.creation_time)
+		    				})
 		    				this.excelData=res.data.data.items;
 							this.export2Excel();
 		    			}
@@ -512,7 +516,7 @@
 				let that=this;
 				require.ensure([],() => {
 					const {export_json_to_excel} =require('../../../excel/export2Excel');
-					const tHeader=['id','名称ID','备注','创建时间'];
+					const tHeader=['id',this.$t('Public.name')+'ID',this.$t('Public.description'),this.$t('Public.creation')];
 					const filterVal=['id','name','description','creation_time'];
 					const list=that.excelData;
 					const data=that.formatJson(filterVal,list);

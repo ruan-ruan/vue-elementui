@@ -339,43 +339,8 @@
 				this.$refs.editForm.validate(valid => {
 					if(valid){
 						this.editLoading=true;
-//							let para=Object.assign({},this.editForm)
-//<<<<<<< HEAD
-//						console.log(this.editForm)
-//						let para={
-//							type:this.editForm.type,
-//							name:this.editForm.name,
-//							region:this.editForm.region_id,
-//							access_point:this.editForm.access_point_id,
-//							bandwidth:this.editForm.bandwidth,
-//							description:this.editForm.description,
-//							node_id:this.editForm.node_id,
-//							logic_port_id:this.editForm.logic_port_id,
-//							interface_driver:this.editForm.interface_driver,
-//							api_url:this.editForm.api_url,
-//							api_token:this.editForm.api_token,
-//							api_uuid:this.editForm.api_uuid,
-//							extension:this.editForm.extension,
-//							get_speed_key:this.editForm.get_speed_key,
-//						}
-//						this.$ajax.post('/link/add_cloud_link'+'?token='+this.token,para)
-//						.then(res => {
-//							this.editLoading=false;
-//							if(res.status==200){
-//								if(res.data.status==0){
-//									this.$message({
-//										message:this.$t('tooltipMes.addSuccess'),
-//										type:'success'
-//									})
-//									this.$refs['editForm'].resetFields();
-//									this.$router.replace('/location/line/cloun')
-//								}else{
-//									this.$message({
-//										message:res.data.message,
-//										type:'warning'
-//									})
-//=======
-							console.log(this.editForm)
+
+//							console.log(this.editForm)
 							let para={
 								type:this.editForm.type,
 								name:this.editForm.name,

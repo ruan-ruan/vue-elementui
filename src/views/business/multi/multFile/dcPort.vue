@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<!--数据中心的端口-->
-		<el-form :model='editForm' ref='editForm':rules='editFormRules'v-loading='editLoading' label-width='125px'>
-			<el-form-item :label='$t("Public.nodeName") +"： "' prop='nodeName'>
+		<el-form :model='editForm' ref='editForm':rules='editFormRules'v-loading='editLoading' label-width='145px'>
+			<el-form-item :label='$t("Public.nodeName") +":"' prop='nodeName'>
 				<el-select v-model='editForm.nodeName' filterable  @change='selectNode(editForm.nodeName)' class='ipt'>
 					<el-option v-for='(item ,index) in nodeData'
 						:label='item.name'
@@ -10,7 +10,7 @@
 						:key='index'></el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item :label='$t("Public.logic") +"： "' prop='logic'>
+			<el-form-item :label='$t("Public.logic") +":"' prop='logic'>
 				<el-select v-model='editForm.logic' filterable @change='selecLogic(editForm.logic)' class='ipt'>
 					<el-option v-for='(item,index) in logicPort'
 						:value='item.id'
@@ -25,7 +25,7 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item :label='$t("business.logicType")+"： "' prop='endpoints_vlan'>
+			<el-form-item :label='$t("business.logicType")+":"' prop='endpoints_vlan'>
 				<template>
 					<el-radio-group v-model='editForm.endpoints_vlan' >
 						<el-radio-button size='small' v-for='item in portType'
@@ -35,7 +35,7 @@
 					</el-radio-group>
 				</template>
 			</el-form-item>
-			<el-form-item label='vlan ：'prop='vlan' v-if='editForm.endpoints_vlan ==="trunk"? true :false '>
+			<el-form-item label='vlan :'prop='vlan' v-if='editForm.endpoints_vlan ==="trunk"? true :false '>
 				<template>
 					<el-input v-model='editForm.vlan' v-show='false'></el-input>
 					<el-switch v-model='editForm.chooseVlan'
@@ -44,7 +44,7 @@
 						<el-button v-text='editForm.logic==""?$t("business.changeVlan"):editForm.endpoints_vlan === "trunk" ?  editForm.selVlan ? editForm.selVlan:$t("business.changeVlan") : $t("business.changeVlan")         '
 							size='small' 
 							@click='addVlan' 
-							title='请先选择节点和逻辑口'
+							:title='$t("business.tooltip1")'
 							:disabled=' editForm.logic === "" ? true : false '
 							v-if='!editForm.chooseVlan'></el-button>
 				</template>		
@@ -55,21 +55,21 @@
 			<el-form   :model='portVlan' ref='portVlan'>
 				<el-form-item>
 					<template>
-						<span>逻辑口:</span>
+						<span>{{$t('Public.logic')}}:</span>
 						<span>{{logicDetails.name}}</span>
 					</template>
 					<br />
 					<template>
-						<span>逻辑口状态:</span>
+						<span>{{$t('Public.logicStatus')}}:</span>
 						<span>{{logicDetails.portStatus}}</span>
 					</template>
 					<template>
-						<el-input v-model='portVlan.vlanName' placeholder='请输入vlan号'class='details'></el-input>
-						<el-button size='small' type='primary' @click='getVlan'>搜索</el-button>
+						<el-input v-model='portVlan.vlanName'  :placeholder='$t("business.plaVlan")'class='details'></el-input>
+						<el-button size='small' type='primary' @click='getVlan'>{{$t('topFilters.search')}}</el-button>
 					</template>
 					<template>
-						<span>VLAN区间</span>
-						<el-select v-model='portVlan.selVlanVal'placeholder='请选择vlan区间'class='details'>
+						<span>{{$t('business.vlanSection')}}</span>
+						<el-select v-model='portVlan.selVlanVal':placeholder='$t("business.plaVlanSection")'class='details'>
 							<el-option v-for='(item,index) in vlanInterval'
 								:value='item.value'
 								:label='item.label'
@@ -92,20 +92,20 @@
 						
 						
 						<div id="barcon">
-							<span class='spn_tit'>共{{vlanData.length}}条记录{{totalPage}}页</span>
-							<span @click='goPaseSize(1,100)' class="spn">首页</span>
-							<span @click='goPaseSize(currentPage-1>0?currentPage-1:1,100)' class="spn" >上一页</span>
+							<span class='spn_tit'>{{$t('business.common')}}{{vlanData.length}}{{$t('business.bar')}}{{totalPage}}{{$t('business.page')}}</span>
+							<span @click='goPaseSize(1,100)' class="spn">{{$t('business.home')}}</span>
+							<span @click='goPaseSize(currentPage-1>0?currentPage-1:1,100)' class="spn" >{{$t('business.prev')}}</span>
 							<span v-for='(item,index) in pageVal'
 								:key='index' @click='goPaseSize(item,100)'class="spn">{{item}}</span>
-							<span @click='goPaseSize(currentPage+1<totalPage?currentPage+1:totalPage,100)'class="spn">下一页</span>
-							<span @click='goPaseSize(6,100)'class="spn">尾页</span>
+							<span @click='goPaseSize(currentPage+1<totalPage?currentPage+1:totalPage,100)'class="spn">{{$t('business.next')}}</span>
+							<span @click='goPaseSize(6,100)'class="spn">{{$t('business.tail')}}</span>
 						</div>
 					</template>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				 <el-button size='small' @click.native="dialogFormVisible=false">取消</el-button>
-				 <el-button size='small' type='primary' @click='creatVlan'>保存</el-button>
+				 <el-button size='small' @click.native="dialogFormVisible=false">{{$t('tabOperation.cancel')}}</el-button>
+				 <el-button size='small' type='primary' @click='creatVlan'>{{$t('tabOperation.save')}}</el-button>
 			</div>
 		</el-dialog>
 
@@ -127,7 +127,7 @@
 //					}
 //				}else
 				if(! value){
-					callback(new Error('不能为空'))
+					callback(new Error(this.$t('Public.notEmity')))
 				}else {
 					callback()
 				}
@@ -153,16 +153,16 @@
 				nodeObj:{},//根据选择的nodeName(id)获取对应的json对象
 				logicObj:{},//根据逻辑口的部分，获取对应的对象里面的数据
 				editFormRules:{
-					nodeName:[  { required: true, message: '请选择节点', trigger: 'change' }],
+					nodeName:[  { required: true, message: this.$t('Public.plChNode'), trigger: 'change' }],
 					
 					logic:[  { required: true,  validator:logic_port ,trigger: 'change' }],
 					
-					endpoints_vlan:[  { required: true, message: '请选择逻辑口类型', trigger: 'change' }],
+					endpoints_vlan:[  { required: true, message: this.$t('Public.plaChangeLogic'), trigger: 'change' }],
 //					vlan:[  { required: true, message: '请选择vlan', trigger: 'change' }],
 				},
 				portType:[{label:'透传',value:'-1'},{label:'trunk',value:'0'}],//逻辑口的类型
 				textMap:{
-					title:'添加'
+					title:this.$t('tabOperation.add')
 				},
 				dialogStatus:'',
 				dialogFormVisible:false,
@@ -212,12 +212,11 @@
 			},
 			editForm:{
 				handler(newVal,oldVal){	
-					console.log(newVal);
-					console.log(oldVal)
-					console.log(this.baseObj);
+//					console.log(newVal);
+//					console.log(oldVal)
+//					console.log(this.baseObj);
 ////					验证逻辑口
 					if(newVal.endpoints_vlan == '透传' ){
-						console.log('touchuan')
 						if(this.baseObj.length != 0){
 							var obj1=this.baseObj.find(item => {
 								return item.statusVal == 0;
@@ -229,7 +228,7 @@
 								
 								
 								this.$message({
-									message:'请重新选择,该逻辑口已经选择trunk模式，不能再选择透传模式',
+									message:this.$t('business.plaTrunk'),
 									type:'warning'
 								})
 
@@ -264,7 +263,7 @@
 									
 									console.log('untage')
 									this.$message({
-										message:'该逻辑口已经为UNTAG模式，不可在为该模式！',
+										message:this.$t('business.plaUntag'),
 										type:'warning'
 									})
 									newVal.logic='';
@@ -290,12 +289,12 @@
 				},
 				deep:true,
 			},
-			'editForm.logic':function(newVal,oldVal){
-				console.log(newVal)
-			},
+//			'editForm.logic':function(newVal,oldVal){
+//				console.log(newVal)
+//			},
 			sendForm:{
 				handler(newVal,oldVal){
-					console.log(newVal)
+//					console.log(newVal)
 					this.$emit('sendFormData',newVal)
 					this.$emit('sendFormData_a',newVal)
 					this.$emit('sendFormData_z',newVal)
@@ -386,7 +385,7 @@
 			    //获取云对接链路里面的数据  cloudLogic
 			    this.$ajax.get('/link/cloud_links'+'?token='+this.token)
 			    .then(res => {
-			    	console.log(res);
+//			    	console.log(res);
 			    	res.data.data.items.forEach(ele =>{
 			    		obj={
 			    			name:ele.logic_port.name,
@@ -406,11 +405,9 @@
 				}
 				this.$ajax.get('/port/logic_ports'+'?token='+this.token,para)
 				.then(res => {
-					console.log(res)
+//					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
-
 							res.data.data.items.map(ele => {
 								let staus=[]
 								ele.physical_ports.map(items => {
@@ -461,9 +458,7 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
-//							isPortStatus   logicPort
-							
+
 							let str=res.data.data;
 							for(let item in str){
 								str.portStatus=isPortStatus(str.physical_ports)
@@ -475,26 +470,20 @@
 					console.log(e)
 				})
 
-				console.log(this.pointData);
-
-				
 				var obj1=this.pointData.filter(item => {
 					return item.id == ids;
 				})
-				console.log(obj1)
+
 				this.baseObj=[];
 				if(typeof obj1 !='undefined'){
 					this.baseObj=obj1;
 				}
-				console.log(this.baseObj)
-
 
 				//获取逻辑口下的vlan的信息
 				this.$ajax.get('/vll/get_disable_vlan/'+ids+'?token='+this.token)
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
 							this.disabeldData=res.data.data;
 							this.disVlan=JSON.parse(JSON.stringify(this.conversion(this.vlanData))); 
 						}
@@ -585,7 +574,7 @@
 					}
 				}else if(parseInt(this.portVlan.vlanName)<1||parseInt(this.portVlan.vlanName)>4094){
 					this.$message({
-						message:'该号不在区间内！',
+						message:this.$t('business.numIsNot'),
 						type:'warning'
 					})
 				}else{
@@ -598,14 +587,14 @@
 					this.editForm.selVlan=this.portVlan.vlanVal;
 					this.editForm.vlan=this.portVlan.vlanVal;
 					this.$message({
-						message:'选择成功！',
+						message:this.$t('tooltipMes.changeSuccess'),
 						type:'success'
 					})
 					this.dialogFormVisible=false;
 					
 				}else{
 					this.$message({
-						message:'vlan值不能为空!',
+						message:this.$t('business.vlanNot'),
 						type:'warning'
 					})
 				}

@@ -1,12 +1,12 @@
 <template>
 	<div>
-		<!--虚拟组网相情感-->
+		<!--虚拟组网详情-->
 		<goback>返回</goback>
 		<el-tabs v-model='activeName'>
-			<el-tab-pane label='详细信息' name='first'>
+			<el-tab-pane :label='$t("Public.detailed")' name='first'>
 				<details-mult :detailsID='detailsID'></details-mult>
 			</el-tab-pane>
-			<el-tab-pane label='图表' name='second'>
+			<el-tab-pane :label='$t("Public.chart")' name='second'>
 				<details-chart :detailsID='detailsID'></details-chart>
 			</el-tab-pane>
 		</el-tabs>

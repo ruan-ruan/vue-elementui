@@ -19,11 +19,11 @@
 							</el-select>
 						</el-form-item>
 						<el-form-item>
-							<el-button type="primary" v-on:click="getCitys">
+							<el-button size='small' type="primary" v-on:click="getCitys">
 								<!--查询-->
 								{{$t('topFilters.search')}}
 							</el-button>
-							<el-button type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
+							<el-button size='small' type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
 						</el-form-item>
 						
 					</el-form>	
@@ -32,13 +32,13 @@
 			
 			<el-col :span='24'>
 				<el-col :span='4'>
-					<el-button type="primary" @click="handleAdd">{{$t('tabOperation.add')}}</el-button>
+					<el-button size='small' type="primary" @click="handleAdd">{{$t('tabOperation.add')}}</el-button>
 				</el-col>
 				<el-col :span='20' class='table-top'>
-					<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">
+					<el-button size='small' type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">
 						<!--批量删除-->{{$t('tabOperation.batchDel')}}
 					</el-button>
-					<el-dropdown split-button trigger="click" type='success'@command="handleExport">
+					<el-dropdown size='small' split-button trigger="click" type='success'@command="handleExport">
 						<!--导出数据--> {{$t('tabOperation.derived.tit')}}
 						<el-dropdown-menu slot='dropdown'>
 							<el-dropdown-item command="current">
@@ -178,7 +178,7 @@
 
 <script>
 	
-	import {descriptionValue} from '@/assets/js/index.js'
+	import {descriptionValue ,datedialogFormat} from '@/assets/js/index.js'
 	export default{
 		name:'City',
 		data() {
@@ -539,6 +539,7 @@
 		    					message:this.$t('tooltipMes.exportSucess'),
 		    					type:'success'
 		    				})
+
 		    				res.data.data.items.forEach(ele => {
 			    					ele.region_name=ele.region.name;
 			    				})

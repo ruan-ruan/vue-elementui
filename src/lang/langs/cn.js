@@ -400,7 +400,10 @@ const cn = {
     	c2cZshared:'Z公有云',
     	d2ctitle:'通过此配置的界面，可以用专线连接数据中心到公有云服务提供商(比如阿里云，AWS),并可以自行定义转此案的起始时间/终止时间以及带宽',
     	zDc:'Z(DC)配置',
-    	d2cStep1:'第一步:创建数据中心到云的虚拟专线'
+    	d2cStep1:'第一步:创建数据中心到云的虚拟专线',
+    	plaVlan:'请输入vlan号',
+    	plaTrunk:"请重新选择,该逻辑口已经选择trunk模式，不能再选择透传模式!",
+    	plaUntag:'该逻辑口已经为UNTAG模式，不可在为该模式！',
     	
     	
     },
@@ -411,8 +414,84 @@ const cn = {
     	assPoints:'关联端点数',
     	plaMultiName:'请输入组网名称',
     	newAdd:'新增虚拟组网',
+    	addLogicPort:'添加逻辑端口',
+    	SelectType:'类型选择',
+    	dataCentPort:'数据中心端口',
+    	sharedCloud:'公有云端口',
+    	multiInformation:'组网基本信息配置',
+    	multiPort:'组网端点配置',
+
+    	
+    	
     },
-    
+    customer:{//租户信息列表
+    	tenantPho:'租户手机号',
+    	addCustomer:'添加租户',
+    	tenantName:'租户标识(公司名称)',
+    	tenantUser:'租户联系人',
+    	phone:'手机号',
+    	email:'邮箱',
+    	cus:'客户标识',
+    	corporate:'公司名称',
+    	corporateType:'公司类型',
+    	corporatePho:'公司电话',
+    	address:'详细地址',
+    	plaRun:'确定要启用该租户吗?',
+    	plaStop:'确认要禁用该租户吗?',
+    	tenantStatus:'租户状态',
+    	logicList:'逻辑端口列表',
+    	tooltip1:'公司名称应该与客户签订合同的主题名称一致!',
+    	plaTenantUser:'请输入租户联系人',
+    	plaTenantPho:'请输入租户手机号',
+    	plaTenantEma:'请输入租户邮箱',
+    	assTenant:'关联租户标识',
+    	comporateType:'公司行业类型',
+    	plaComporate:'按类型列表选择客户公司行业类型',
+    	comporatePho:'公司电话',
+    	comporateAddress:'公司地址',
+    	plAddress:'请输入详细地址',
+    	plaMax:'备注字符最长为200',
+    	plaPho:'请输入手机号',
+    	plaRightPho:'请输入正确的手机号',
+    	plaEma:'请输入邮箱',
+    	plaRightEma:'请输入正确的邮箱',
+    	plaTenant:'请输入租户标识',
+    	plaComporate:'请输入公司名称',
+    	cloud:'云服务商',
+    	idc:'IDC运用商',
+    	government:'政府客户',
+    	industry:'行业客户',
+    	network:'网络提供商',
+    	other:'其他'
+    },
+    roles:{//角色
+    	roleName:'角色名称',
+    	roleStatus:'角色状态',
+    	plaDis:'确定要禁用该角色吗?',
+    	plaEnable:'确定要启用该角色吗?',
+    	role:'角色',
+    	extentList:'角色的权限列表',
+    	extentChange:'权限选择',
+    	plaStatus:'请选择状态',
+    	extentEmt:'权限不能为空',
+    	account:'账户',
+    	personStatus:'人员状态',
+    	accNumber:'账号',
+    	assRoles:'关联角色',
+    	psd:'密码',
+    	psdCon:'密码必须包含数字，小写、大写字母',
+    	conPsd:'确认密码',
+    	plAdginPsd:'请再次输入密码',
+    	plaConPsd:'两次输入密码不一致',
+    	plaPsd:'请输入密码',
+//  	plaPsdRules:'密码必须包含数字，小写、大写字母',
+    	plaPho:'手机号不能为空',
+    	plaRightPho:'请输入正确的手机号',
+    	placcoun:'请输入账号',
+    	max30:'不能超过 30 个字符',
+    	plaRoles:'请选择角色'
+    	
+    },
     confirm:{
     	tooltip:'提示',
     	confi:'确定',
@@ -424,9 +503,14 @@ const cn = {
     	enPort:'确定要启用该端口吗?',
     	delPhy:'确定要删除该物理端口吗?',
     	editVir:'编辑虚拟专线',
-
-    	
-//  	cancel:'取消'
+		plaSureStop:'请确认是否确认禁用?',
+		plaSureRun:'请确认是否确认启用?',
+    	dataEmt:'数据为空不能执行导出操作!',
+    	conExportAll:'确定导出所有的数据吗?',
+    	conExportCur:'确定要导出当前页的数据吗?',
+		conStop:'确认要禁用吗?',
+		conRun:'确认要启用吗?',
+		
 		
     },
     topFilters:{//单页面  搜索栏   
@@ -481,9 +565,9 @@ const cn = {
     	stopSuccess:"禁止成功!",
     	changeSuccess:'选择成功！',
     	copySuccess:'复制成功!',
-    	copyFail:'复制失败！'
-//  	downloading:'正在'
-    	
+    	copyFail:'复制失败！',
+    	creaSuccess:'创建成功!',
+
     },
     
     

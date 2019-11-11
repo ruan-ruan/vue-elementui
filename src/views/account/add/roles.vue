@@ -3,11 +3,11 @@
 		<!--设置-->
 		<section>
 			<goback v-if='typeof id !="undefined" '></goback>
-			<el-form  :model='editForm' label-width='100px' :rules='editFormRules' ref='editForm' v-loading='Loading'>
-				<el-form-item label='名称' prop='name'>
+			<el-form  :model='editForm' label-width='150px' :rules='editFormRules' ref='editForm' v-loading='Loading'>
+				<el-form-item :label='$t("Public.name")' prop='name'>
 					<el-input v-model='editForm.name'  class='ipt_sels' :disabled='disUp'></el-input>
 				</el-form-item>
-				<el-form-item label='角色状态' prop='usable'>
+				<el-form-item :label='$t("roles.roleStatus")' prop='usable'>
 					<template>
 						<el-radio-group v-model='editForm.usable' :disabled='disUp'>
 							<el-radio v-for='(item,index) in Sta'
@@ -18,12 +18,12 @@
 						</el-radio-group>			
 					</template>		
 				</el-form-item>
-				<el-form-item label='备注'>
+				<el-form-item :label='$t("Public.description")'>
 					<el-input type='textarea' v-model='editForm.description' class='ipt_sels' :disabled='disUp'></el-input>
 				</el-form-item>
 				<!--添加的时候-->
-				<h3  class="toolbar text_c">角色的权限列表</h3>
-				<el-form-item label='权限选择' prop='rights' v-model='editForm.rights'>	
+				<h3  class="toolbar text_c">{{$t('roles.extentList')}}</h3>
+				<el-form-item :label='$t("roles.extentChange")' prop='rights' v-model='editForm.rights'>	
 					<el-tree v-model='editForm.rights'
 						ref='organizationData'
 						:data='organizationData'
@@ -41,11 +41,11 @@
 				</el-form-item>
 			</el-form>
 			<div style="text-align: right; margin-right: 30px;" v-if='disNo'>
-				<el-button @click='reset(editForm)'>返回</el-button>
+				<el-button size='small' @click='reset(editForm)'>{{$t('Public.goback')}}</el-button>
 				<!--角色的添加部分-->
-				<el-button  type="primary" @click="addUsers" v-if="roleBtnStatus">保存</el-button>
+				<el-button  size='small' type="primary" @click="addUsers" v-if="roleBtnStatus">{{$t('tabOperation.save')}}</el-button>
 				<!--角色的编辑的界面-->
-				<el-button  type="primary" @click="handleEdit" v-else-if="!roleBtnStatus">保存</el-button>
+				<el-button size='small'  type="primary" @click="handleEdit" v-else-if="!roleBtnStatus">{{$t('tabOperation.save')}}</el-button>
 				
 			</div>
 		</section>
@@ -91,18 +91,18 @@
 				},
 				editFormRules:{
 					name:[
-						{ required: true, message: '请输入名称', trigger: 'blur' },
-            			{  max: 30, message: '长度能超过30个字符', trigger: 'blur' }
+						{ required: true, message: this.$t('Public.plaName'), trigger: 'blur' }
+            			
 					],
-					usable:[{ required: true, message: '请输选择状态', trigger: 'change' }],
-					rights:[{ required: true, message: '权限不能为空', trigger: 'change' }]
+					usable:[{ required: true, message:this.$t('roles.plaStatus'), trigger: 'change' }],
+					rights:[{ required: true, message: this.$t('roles.extentEmt'), trigger: 'change' }]
 				},
 				//角色的状态
 				Sta:[{
-						name:'启用',
+						name:this.$t('Public.enable'),
 						value:true,
 					},{
-						name:'禁用',
+						name:this.$t('Public.Prohibit'),
 						value:false,
 					}],
 				Loading:false,
@@ -112,17 +112,7 @@
 				basicData:[],//编辑的时候 ，数据备份
 			}
 		},
-		watch:{
-			'editForm.usable':function(newVal,oldVal){
-				
-				console.log(typeof  Boolean(newVal))
-				console.log(typeof newVal)
-				console.log(newVal)
-			},
-			'editForm.rights':function(newVal,oldVal){
-				console.log(typeof newVal)
-			}
-		},
+
 		created(){
 			//获取token
 			this.token=sessionStorage.getItem('token');
@@ -138,7 +128,7 @@
 			
 			if(typeof this.roleID !='undefined' &&  typeof this.id =='undefined'){
 				str=true
-				console.log('执行角色的编辑的界面');
+//				console.log('执行角色的编辑的界面');
 				//获取编辑的按钮
 				this.roleBtnStatus=false;
 				this.getEditRole(this.roleID);				
@@ -197,7 +187,7 @@
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
-										message:'添加成功!',
+										message:this.$t('tooltipMes.addSuccess'),
 										type:'success'
 									})
 									this.$router.replace('/account');
@@ -212,9 +202,8 @@
 						.catch(e => {
 							console.log(e)
 						})
-					}else{
-						return false
 					}
+
 				})
 				
 			},
@@ -309,7 +298,7 @@
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
-										message:'修改成功!',
+										message:this.$t('tooltipMes.editSuccess'),
 										type:'success'
 									})
 									this.$router.replace('/account')
@@ -327,7 +316,7 @@
 				})
 			},
 			getRoleDetails(rows){  //详情的界面
-				console.log('详情部分数据')
+//				console.log('详情部分数据')
 				this.Loading=true;
 				//详情的界面的进来的时候显示
 				this.$ajax.get('/role/role_info/'+rows+'?token='+this.token)

@@ -7,11 +7,11 @@
         <el-col :span='24'>
           <el-form :inline='true' :model='filters' ref='filters'> 
 
-            <el-form-item label='租户标识：' prop='name'>
+            <el-form-item :label='$t("Public.tenant")' prop='name'>
               <el-input  v-model='filters.name' class='sel' ></el-input>
             </el-form-item>
-            <el-form-item label='状态：' prop='status'>
-              <el-select v-model='filters.status' class='ipt_sta'  placeholder="请选择" >
+            <el-form-item :label='$t("Public.status")' prop='status'>
+              <el-select v-model='filters.status' class='ipt_sta'  :placeholder="$t('validateMes.placeCh')" >
                 <el-option
                   v-for='(item,index) in staData'
                   :key='index'
@@ -20,31 +20,32 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label='租户手机号：' prop='pho'>
+            <el-form-item :label='$t("customer.tenantPho")' prop='pho'>
               <el-input v-model='filters.pho' class='sel_sels' ></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type='primary'  @click='getUsers' @keydown.enter='getUsers' >搜索</el-button>
-              <el-button type='info'  @click='reset' >重置</el-button>
+              <el-button size='small' type='primary'  @click='getUsers' @keydown.enter='getUsers' >{{$t('topFilters.search')}}</el-button>
+              <el-button size='small' type='info'  @click='reset' >{{$t('topFilters.reset')}}</el-button>
             </el-form-item>
           </el-form>
         </el-col>
       </el-col>
 			<el-col :span='24'>
 				<el-col :span='4'>
-					<el-button type='primary' @click='handleAdd' >添加租户</el-button>
+					<el-button size='small' type='primary' @click='handleAdd' >{{$t('customer.addCustomer')}}</el-button>
 				</el-col>
 				<el-col :span='20' class='table-top'>
 					<el-button
+						size='small'
             type="danger"
             @click="batchRemove(sels)"
             :disabled="this.sels.length===0"
-          >批量删除</el-button>
-					<el-dropdown  split-button type='success' @command="handleExport" >
-	        		导出数据
+          >{{$t('tabOperation.batchDel')}}</el-button>
+					<el-dropdown size='small'  split-button type='success' @command="handleExport" >
+	        		{{$t('tabOperation.derived.tit')}}
 	        <el-dropdown-menu slot='dropdown'>
-	          <el-dropdown-item command="current">当前页 </el-dropdown-item>
-	          <el-dropdown-item command="all">所有页</el-dropdown-item>
+	          <el-dropdown-item command="current">{{$t('tabOperation.derived.currentPage')}} </el-dropdown-item>
+	          <el-dropdown-item command="all">{{$t('tabOperation.derived.allPage')}}</el-dropdown-item>
 	        </el-dropdown-menu>
 	      </el-dropdown>
 				</el-col>
@@ -62,61 +63,61 @@
       >
         <el-table-column
           type='selection'
-          width='60'
+          
           align='center'
         ></el-table-column>
         <el-table-column
           type='index'
-          width='60'
+          
           align='center'
-          label='序号'
+          :label='$t("Public.index")'
         >
         	<template slot-scope='scope'>
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
         </el-table-column>
           <!--:formatter='dateTableFormat'-->
-        <el-table-column prop='creation_time' :formatter='dateTableFormat' width='80' label='创建时间' align='center'>	
+        <el-table-column prop='creation_time' :formatter='dateTableFormat' width='80' :label='$t("Public.creation")' align='center'>	
         </el-table-column>
-        <el-table-column  min-width='120'align='center'label='租户标识(公司名称)' >
+        <el-table-column  align='center':label='$t("customer.tenantName")' >
           <template slot-scope='scope'>
             <span class="tem_span" @click="handleSee(scope.$index, scope.row)"
             >{{scope.row.name}}</span>  <br />
             <span>{{scope.row.company_name}}</span>
           </template>
         </el-table-column>
-        <el-table-column    min-width='100'  align='center' label='租户状态' >
+        <el-table-column    min-width='100'  align='center' :label='$t("customer.tenantStatus")' >
         	<template slot-scope='scope'>
         		<span :class='scope.row.color' v-text="scope.row.usableText"></span>
         	</template>
         </el-table-column>
         <el-table-column
           prop='contact'
-          min-width='120'
+          
           align='center'
-          label='租户联系人'
+          :label='$t("customer.tenantUser")'
         ></el-table-column>
         <el-table-column
           prop='mobile'
-          min-width='120'
+          
           align='center'
-          label='手机号'
+          :label='$t("customer.phone")'
         ></el-table-column>
         <el-table-column
           prop='email'
-          min-width='120'
+         
           align='center'
-          label='邮箱'
+          :label='$t("customer.email")'
         ></el-table-column>
         <el-table-column
           prop='descriptionVal'
-          min-width='100'
+          
           align='center'
-          label='备注'
+          :label='$t("Public.description")'
         ></el-table-column>
         <el-table-column
-          width='140'
-          label='操作'
+          width='150'
+          :label='$t("Public.operation")'
           align='center'
         >
           <template slot-scope='scope'>
@@ -130,12 +131,12 @@
               type='success'
               size='mini'
               @click='handleEdit(scope.$index, scope.row)'
-            >编辑</el-button>
+            >{{$t('tabOperation.edit')}}</el-button>
             <el-button
               type='danger'
               size='mini'
               @click='handleDel(scope.$index, scope.row)'
-            >删除</el-button>
+            >{{$t('tabOperation.delete')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -151,8 +152,6 @@
             :page-sizes="[10, 20, 50, 100]"
             :page-count='pageNum'
             :pager-count="pagecount"
-            :prev-text='prev'
-            :next-text='next'
           >
           </el-pagination>
         <!--</el-col>-->
@@ -177,11 +176,11 @@ export default {
       },
       staData: [
         {
-          name: "启用",
+          name: this.$t('Public.enable'),
           value: "true"
         },
         {
-          name: "禁用",
+          name: this.$t('Public.Prohibit'),
           value: "false"
         }
       ],
@@ -194,8 +193,7 @@ export default {
       currentPage: 1,
       pageNum: 1,
       pagecount: 5,
-      next: "下一页",
-      prev: "上一页"
+
     };
   },
   created() {
@@ -218,8 +216,9 @@ export default {
     getUsers() {
       //搜索
       this.loading = true;
+      var para={};
       if(this.filters.status=='') {
-         var para = {
+          para = {
           page: this.currentPage,
           per_page: this.pagesize,
           search_name: this.filters.name,
@@ -227,7 +226,7 @@ export default {
           search_mobile: this.filters.pho
         };
       }else {
-          var para = {
+           para = {
           page: this.currentPage,
           per_page: this.pagesize,
           search_name: this.filters.name,
@@ -250,12 +249,12 @@ export default {
               this.users.forEach(ele => {
                 if (ele.usable) {
                 	ele.color='colorGreen'
-                  ele.usableText = "启用";
-                  ele.usableBtnText = "禁用";
+                  ele.usableText = this.$t('Public.enable');
+                  ele.usableBtnText = this.$t('Public.Prohibit');
                 } else {
                 	ele.color='colorRed'
-                  ele.usableText = "禁用";
-                  ele.usableBtnText = "启用";
+                  ele.usableText = this.$t('Public.Prohibit');
+                  ele.usableBtnText = this.$t('Public.enable');
                 }
               });
             }
@@ -270,64 +269,57 @@ export default {
     },
     handleSta(index, row) {
       //禁用和启用切换
-      var cusSta = document.getElementsByClassName("cusSta");
-      if (cusSta[index].innerText === "启用") {
-        this.$confirm("确定要启用该租户吗?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "primary"
-        }).then(() => {
-          this.$ajax
-            .put("/tenant/to_enable_tenant/" + row.id + "?token=" + this.token)
-            .then(res => {
-              if (res.status == "200") {
-                if (res.data.status == "0") {
-                  this.$message({
-                    message: "启用成功!",
-                    type: "success"
-                  });
-                  cusSta[index].innerText = "禁用";
-                  this.getUsers();
-                } else {
-                  this.$message({
-                    message: res.data.message,
-                    type: "warning"
-                  });
-                }
-              }
-            });
-        });
-      } else if (cusSta[index].innerText === "禁用") {
-        this.$confirm("确认要禁用该租户吗?", "提示", {
-          confirmButtontText: "确定",
-          cancelButtonText: "取消",
+      console.log(row);
+      if(row.usable){//状态是启用的     点击  禁用
+      	this.$confirm(this.$t('customer.plaStop'), this.$t('confirm.tooltip'), {
           type: "warning"
-        }).then(() => {
-          this.$ajax
-            .put("/tenant/to_disable_tenant/" + row.id + "?token=" + this.token)
-            .then(res => {
-              console.log(res);
-              if (res.status == "200") {
-                if (res.data.status == "0") {
-                  this.$message({
-                    message: "禁用成功！",
-                    type: "success"
-                  });
-                  cusSta[index].innerText = "启用";
-                  this.getUsers();
-                } else {
-                  this.$message({
-                    message: res.data.message,
-                    type: "warning"
-                  });
-                }
-              }
-            });
-        });
+        })
+      	.then(() => {
+      		this.$ajax.put("/tenant/to_disable_tenant/" + row.id + "?token=" + this.token)
+      		.then(res => {
+      			if(res.status ==200 ){
+      				if(res.data.status  ==0 ){
+      					this.$message({
+	                message: this.$t('tooltipMes.diSuccess'),
+	                type: "success"
+	              });
+	              this.getUsers();
+      				}else{
+      					this.$message({
+	                message: res.data.message,
+	                type: "warning"
+	              });
+      				}
+      			}
+      		}).catch(e => {console.log(e)})
+      	}).catch(() => {})
+      }else if(!row.usable){//状态是禁用的  点击启用
+      	this.$confirm(this.$t('customer.plaRun'), this.$t('confirm.tooltip'), {
+          type: "warning"
+        })
+      	.then(() => {
+      		this.$ajax.put("/tenant/to_enable_tenant/" + row.id + "?token=" + this.token)
+      		.then(res => {
+      			if(res.status ==200){
+      				if(res.data.status  == 0){
+      					this.$message({
+	                message:this.$t('tooltipMes.enSuccess'),
+	                type: "success"
+	              });
+	              this.getUsers();
+      				}else{
+      					this.$message({
+	                message: res.data.message,
+	                type: "warning"
+	              });
+      				}
+      			}
+      		}).catch(e => {console.log(e)})
+      	}).catch(() => {})
       }
     },
     handleAdd() {
-      console.log("添加租户");
+//    console.log("添加租户");
       //添加
       this.$router.push({
         path: "/customer/addCus",
@@ -337,8 +329,6 @@ export default {
       });
     },
     handleSee(index, row) {
-      console.log("执行详情的界面");
-      console.log(row.id);
       //查看详情-传递id
       this.$router.push({
         path: "/customer/details/tenant/" + row.id
@@ -346,7 +336,7 @@ export default {
     },
     handleEdit(index, row) {
       //编辑 -传递id
-      console.log("这一步执行编辑的部分的传值id");
+//    console.log("这一步执行编辑的部分的传值id");
       this.$router.push({
         path: "/customer/editCus",
         query: {
@@ -379,7 +369,7 @@ export default {
                   }
                 }
               })
-              .catch(() => {});
+              .catch((e) => {console.log(e)});
         })
         .catch(() => {});
     },
@@ -426,7 +416,7 @@ export default {
     },
     handleExport(command) {
       var _this = this;
-      if (_this.users == "") {
+      if (_this.users.length == 0) {
         console.log(_this.users);
         this.$message({
           message: "数据为空，不能执行导出操作!",
@@ -438,27 +428,24 @@ export default {
         if (command == "all") {
           //导出所有的数据
           this.$confirm("确定要导出所有的数据吗?", "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
             type: "warning"
           })
             .then(() => {
-              var para = {
-                page: this.currentPage,
-                per_page: this.pagesize
-              };
-              this.exportData(para);
+              this.exportData();
             })
             .catch(() => {});
         } else if (command == "current") {
           //导出当前
           this.$confirm("确定要导出当前页数据吗?", "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
             type: "warning"
           })
             .then(() => {
-              this.exportData();
+            	var para = {
+                page: this.currentPage,
+                per_page: this.pagesize
+              };
+              this.exportData(para);
+
             })
             .catch(() => {});
         }
@@ -487,7 +474,7 @@ export default {
           "邮箱",
           "手机号",
           "公司名称",
-          "公司 类型",
+          "公司类型",
           "公司电话",
           "详细地址",
           "描述信息"
@@ -524,9 +511,6 @@ export default {
 			return Y + M + D + h + m + s
 		}
   }
-  //		mounted(){
-  //			this.getUsers()
-  //		}
 };
 </script>
 

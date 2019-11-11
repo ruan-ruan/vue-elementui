@@ -132,7 +132,8 @@ const en = {
     	stopSuccess:"Stop Success!",
     	changeSuccess:'Select success！',
     	copySuccess:'Copy success!',
-    	copyFail:'Copy failed ！'
+    	copyFail:'Copy failed ！',
+    	creaSuccess:'Create success !',
     	
     	
     },
@@ -386,7 +387,13 @@ const en = {
     	disPort:'Are you sure you want to disable this port ?',
     	enPort:'Are you sure you want to enable this port?',
     	delPhy:'Are you sure you want to delete the physical port ?',
-    	
+		plaSureStop:'Please confirm to disable ?',
+		plaSureRun:'Please confirm whether to enable ?',
+		dataEmt:'Data is empty and cannot be exported !',
+    	conExportAll:'Are you sure to export all data ?',
+    	conExportCur:'Are you sure you want to export the data of the current page ?',
+    	conStop:'Are you sure you want to disable ?',
+		conRun:'Are you sure you want to enable ?',
     	
 //  	cancel:'取消'
 		
@@ -475,7 +482,12 @@ const en = {
     	c2cZshared:'Z public cloud ',
     	d2ctitle:'Through this configuration interface, you can connect the data center to the public cloud service provider (such as Alibaba cloud, AWS) with a dedicated line, and you can define the start time, end time and bandwidth of the transfer ',
     	zDc:'Z (DC) configuration ',
-    	d2cStep1:'Step 1: create a virtual private line from the data center to the cloud '
+    	d2cStep1:'Step 1: create a virtual private line from the data center to the cloud ',
+    	plaVlan:'Please enter VLAN number',
+    	plaTrunk:"Please re select. Trunk mode has been selected for this logic port. You can no longer select passthrough mode!",
+    	plaUntag:'This logic port is already in untag mode, not in this mode! ',
+    	
+    	
     	
     },
     multi:{//组网
@@ -485,11 +497,81 @@ const en = {
     	assPoints:'Associated end points ',
     	plaMultiName:'Please enter the network name ',
     	newAdd:'New virtual networking ',
-    	
+    	addLogicPort:'Add logical port ',
+    	SelectType:'Type selection ',
+    	dataCentPort:'Data center port ',
+    	sharedCloud:'Public cloud port ',
+    	multiInformation:'Basic information configuration of networking ',
+    	multiPort:'Networking endpoint configuration ',
     	
     },
-    
-    
+    customer:{//租户信息列表
+    	tenantPho:'Mobile',
+    	addCustomer:'Add tenants ',
+    	tenantName:'Tenant ID (company name) ',
+    	tenantUser:'Contact ',
+    	phone:'Mobile',
+    	email:'Enail',
+    	cus:'Customer ID',
+    	corporate:'Company name',
+    	corporateType:'Company type ',
+    	corporatePho:'Company telephone ',
+    	address:'Address ',
+    	plaRun:'Are you sure you want to enable this tenant ?',
+    	plaStop:'Are you sure you want to disable this tenant ?',
+    	tenantStatus:'Status',
+    	logicList:'Logic list',
+    	tooltip1:'The company name should be consistent with the subject name of the contract signed by the customer !',
+    	plaTenantUser:'Please enter tenant contact ',
+    	plaTenantPho:'Please enter the mobile number of the tenant ',
+    	plaTenantEma:'Please enter tenant email ',
+    	assTenant:'Associated tenant ID ',
+    	comporateType:'Company industry type ',
+    	plaComporate:'Select customer company industry type by type list ',
+    	comporatePho:'Company telephone ',
+    	comporateAddress:'Company address ',
+    	plAddress:'Please enter the detailed address ',
+    	plaMax:'Note characters up to 200 ',
+    	plaPho:'Please enter your mobile number ',
+    	plaRightPho:'Please input the correct mobile number ',
+    	plaEma:'Please enter email ',
+    	plaRightEma:'Please enter the correct email ',
+    	plaTenant:'Please enter tenant ID ',
+    	plaComporate:'Please enter company name ',
+    	cloud:'Cloud service providers ',
+    	idc:'IDC operator ',
+    	government:'Government customer ',
+    	industry:'Industry customer ',
+    	network:'Network provider',
+    	other:'Other '
+    },
+     roles:{//角色
+    	roleName:'Role name',
+    	roleStatus:'Role status',
+    	plaDis:'Are you sure you want to disable this role?',
+    	plaEnable:'Are you sure you want to enable this role ?',
+    	role:'Role',
+    	extentList:'Permission list for role ',
+    	extentChange:'Permission selection ',
+    	plaStatus:'Please select status ',
+    	extentEmt:'Permission cannot be empty ',
+    	account:'Account ',
+    	personStatus:'Personnel status ',
+    	accNumber:'Account number ',
+    	assRoles:'Associated roles ',
+    	psd:'Password ',
+    	psdCon:'Password must contain numbers, lowercase and uppercase letters ',
+    	conPsd:'Confirm password ',
+    	plAdginPsd:'Please input the password again. ',
+    	plaConPsd:'The two passwords are inconsistent ',
+    	plaPsd:'Please input a password ',
+//  	plaPsdRules:'密码必须包含数字，小写、大写字母',
+    	plaPho:'Mobile number cannot be empty ',
+    	plaRightPho:'Please input the correct mobile number',
+    	placcoun:'Please enter your account number ',
+    	max30:'Cannot exceed 30 characters ',
+    	plaRoles:'请选择角色'
+    },
     //消息部分
     mesModule:{//消息模块
     	newDetails:{

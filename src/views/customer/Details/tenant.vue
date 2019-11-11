@@ -2,16 +2,16 @@
 	<div>
 		<goback></goback>
 		<el-tabs v-model='activeName'>
-			<el-tab-pane label='租户详情'name='first'>
+			<el-tab-pane :label='$t("aside.detaTenant")'name='first'>
 				<cusDetails :tit='cusSeeID'></cusDetails>
 			</el-tab-pane>
-			<el-tab-pane label='逻辑端口列表'name='second'>
+			<el-tab-pane :label='$t("customer.logicList")'name='second'>
 				<logicPort :tenantID='cusSeeID'></logicPort>
 			</el-tab-pane>
-			<el-tab-pane label='点到点专线'name='three'>
+			<el-tab-pane :label='$t("Public.pointLine")'name='three'>
 				<points-to :customerID='cusSeeID'></points-to>  <!--向子组件传id即可    根据id在子组件内进行判断-->
 			</el-tab-pane>
-			<el-tab-pane label='虚拟组网专线'name='four'>
+			<el-tab-pane :label='$t("Public.virtualLine")'name='four'>
 				<virtualNetwork :customerID='cusSeeID'></virtualNetwork>
 			</el-tab-pane>
 		</el-tabs>

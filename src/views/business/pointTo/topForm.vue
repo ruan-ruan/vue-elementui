@@ -2,7 +2,7 @@
 	<div>
 		<el-row>
 			<el-col :span='24'>
-				<el-form :model='editForm'label-width='125px ' ref='editForm' :rules='editFormRules'>
+				<el-form :model='editForm'label-width='145px ' ref='editForm' :rules='editFormRules'>
 					<el-form-item :label='$t("business.payModel") +"： " '>
 						<el-radio-group v-model="editForm.billingType">
 							<el-radio-button border size='small'

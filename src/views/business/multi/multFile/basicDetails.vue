@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<el-form :model='basicForm' ref='basicForm' :rules='basicFormRules' label-position='left' v-loading='basicLoading' label-width='120px' >
-			<el-form-item label='带宽(Mbps)' prop='bandwidth'>
+		<el-form :model='basicForm' ref='basicForm' :rules='basicFormRules'  v-loading='basicLoading' label-width='145px' >
+			<el-form-item :label='$t("Public.bandwidth")+":"' prop='bandwidth'>
 				<el-input v-model='basicForm.bandwidth'class='ipt'  :disabled='typeof type != "undefined"'></el-input>
 			</el-form-item>
-			<el-form-item label='计费模式' prop='changeModel'>
+			<el-form-item :label='$t("Public.chargModel")+":"' prop='changeModel'>
 				 <el-radio-group v-model="basicForm.changeModel" :disabled='typeof type != "undefined"'>
 				 	<el-radio-button border v-for='(item,index) in modelData'
 				 	:value='item.value'
@@ -13,7 +13,7 @@
 				 	></el-radio-button>
 				 </el-radio-group>
 			</el-form-item>
-			<el-form-item label='计费时间'prop='billing_time'>
+			<el-form-item :label='$t("Public.billTime")+":"'prop='billing_time'>
 				<el-date-picker :disabled='typeof type != "undefined"'
 	                v-model="basicForm.billing_time"  
 	                format="yyyy-MM-dd HH:mm:ss"
@@ -23,11 +23,11 @@
 	                :picker-options="startDatePicker" 					                
 	                type="datetime"					                
 	                class='ipt' 
-	                placeholder="请选择计费开始日期时间"
+	                :placeholder="$t('Public.plaStartBill')"
 	                >
 	            </el-date-picker>
 			</el-form-item>
-			<el-form-item label='过期时间' prop='overdue_time'>
+			<el-form-item :label='$t("Public.expTime")+":"' prop='overdue_time'>
 				<el-date-picker :disabled='typeof type != "undefined"'
 	                v-model="basicForm.overdue_time"  
 	                format="yyyy-MM-dd HH:mm:ss"
@@ -37,11 +37,11 @@
 	                :picker-options="endDatePicker" 					                
 	                type="datetime"
 	                class='ipt'
-	                placeholder="请选择计费截止日期时间"
+	                :placeholder="$t('Public.plaEndBill')"
 	                >
 	            </el-date-picker>
 			</el-form-item>
-			<el-form-item label='备注' prop='des'>
+			<el-form-item :label='$t("Public.description")' prop='des'>
 				<el-input type='textarea'cols='4' v-model='basicForm.des' class='ipt':disabled='typeof type != "undefined"'></el-input>
 			</el-form-item>
 		</el-form>
@@ -56,11 +56,11 @@
 		data(){
 			let isValidNumber= (rule ,value, callback) => {
 				if(!value){
-					callback(new Error('请输入带宽'))
+					callback(new Error(this.$t('Public.plaBandwidth')))
 				}else if(!isValidinteger(value)){
-					callback(new Error('请输入正确的带宽'))
+					callback(new Error(this.$t('Public.plarightBand')))
 				}if(value>1000000){
-					callback(new Error('带宽最大不超过1000000Mbps'))
+					callback(new Error(this.$t('Public.maxBand')))
 				}else{
 					callback()
 				}

@@ -5,12 +5,12 @@
 			<!--顶部工具栏-->
 			<el-col :span='24' class='toolbar' style='padding-bottom: 0px;'>
 				<el-form :inline='true' :model='filters' ref='filters'>
-					<el-form-item label='名称' prop='name'>
+					<el-form-item :label='$t("Public.name")' prop='name'>
 						<el-input v-model='filters.name'></el-input>
 					</el-form-item>
 					<el-form-item>
-						<el-button type='primary' @click='getUsers'>搜索</el-button>
-						<el-button type='info' @click='reset'>重置</el-button>
+						<el-button size='small' type='primary' @click='getUsers'>{{$t('topFilters.search')}}</el-button>
+						<el-button size='small' type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
 					</el-form-item>
 					
 				</el-form>
@@ -18,38 +18,44 @@
 			
 			<el-col :span='24'>
 				<el-col :span='4'>
-					<el-button type='primary' @click='addUsers()'>+添加角色</el-button>
+					<el-button size='small' type='primary' @click='addUsers()'>+{{$t('aside.addRole')}}</el-button>
 				</el-col>
 				<el-col :span='20' class='table-top'>
-					<el-button type='danger'  @click='batchRemove(sels)' :disabled="this.sels.length===0">批量删除</el-button>
-					
+					<el-button size='small' type='danger'  @click='batchRemove(sels)' :disabled="this.sels.length===0">{{$t('tabOperation.batchDel')}}</el-button>
+					<el-dropdown size='small' split-button type='success' @command="handleExport" >
+						{{$t('tabOperation.derived.tit')}}
+						<el-dropdown-menu slot='dropdown'>
+							<el-dropdown-item command="current">{{$t('tabOperation.derived.currentPage')}} </el-dropdown-item>
+							<el-dropdown-item command="all">{{$t('tabOperation.derived.allPage')}}</el-dropdown-item>
+						</el-dropdown-menu>
+					</el-dropdown>
 				</el-col>
 			</el-col>
 
 			<!--主体数据部分-->
 			<el-table :data ="users"  highlight-current-row style='width: 100%;' @selection-change="selsChange" 
 				 v-loading='loading'>
-				<el-table-column type='selection' width='60'></el-table-column>
-				<el-table-column type='index' width='100' label='序号' align='center'>
+				<el-table-column type='selection' align='center'></el-table-column>
+				<el-table-column type='index':label='$t("Public.index")' align='center'>
 				</el-table-column>
-				<el-table-column prop='creation_time'  width='80' :formatter='dateFormat' label='创建时间' align='center'>
+				<el-table-column prop='creation_time'  width='80' :formatter='dateFormat' :label='$t("Public.creation")' align='center'>
 				</el-table-column>
-				<el-table-column prop='name' min-width='200' label='角色名称' align='center'>
+				<el-table-column prop='name' :label='$t("roles.roleName")' align='center'>
 				</el-table-column>
-				<el-table-column  min-width='200' label='角色状态' align='center'>
+				<el-table-column   :label='$t("roles.roleStatus")' align='center'>
 					<template slot-scope='scope'>
 						<span :class='scope.row.color' v-text="scope.row.usableText"></span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='descriptionVal' min-width='120' label='描述' align='center'>
+				<el-table-column prop='descriptionVal' :label='$t("Public.description")' align='center'>
 				</el-table-column>
-				<el-table-column  width='180' label='操作' align='center'>
+				<el-table-column  width='180' :label='$t("Public.operation")' align='center'>
 					<template slot-scope='scope'>
 						<!--下面的这个是对角色的启用和禁用的设置-->
-						<el-button size='mini'  @click='handleSta(scope.$index, scope.row)' class='btnStatus'>{{scope.row.btnText}}</el-button>
-						<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>详情</el-button>
-						<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'>编辑</el-button>				
-						<el-button size='mini' type='danger' @click='handleDel(scope.$index, scope.row)'>删除</el-button>
+						<el-button size='mini'type='warning'  @click='handleSta(scope.$index, scope.row)' class='btnStatus'>{{scope.row.btnText}}</el-button>
+						<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>{{$t('tabOperation.info')}}</el-button>
+						<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'>{{$t('tabOperation.edit')}}</el-button>				
+						<el-button size='mini' type='danger' @click='handleDel(scope.$index, scope.row)'>{{$t('tabOperation.delete')}}</el-button>
 						
 					</template>
 				</el-table-column>
@@ -64,8 +70,7 @@
 	            :current-page.sync="currentPage"
 	            :page-count='pageNum'
 	            :pager-count="pagecount"
-	            :prev-text='prev'
-	            :next-text='next'
+
 	          ></el-pagination>
         </el-col>
 
@@ -74,7 +79,8 @@
 </template>
 
 <script>
-		import {descriptionValue} from '@/assets/js/index.js'
+
+		import {descriptionValue,datedialogFormat} from '@/assets/js/index.js'
 	export default{
 		name:'Role',
 		data(){
@@ -92,8 +98,7 @@
 			    currentPage: 1,
 			    pageNum: 1,
 			    pagecount: 5,
-			    next: "下一页",
-			    prev: "上一页",
+
 			}
 		},
 		created(){
@@ -139,14 +144,14 @@
 							res.data.data.items.forEach(ele => {
 								if(ele.usable){
 									ele.color='colorGreen'
-									ele.usableText='可用';
+									ele.usableText=this.$t('Public.enable');
 
-									ele.btnText='禁用';
+									ele.btnText=this.$t('Public.Prohibit');
 								}else if(!ele.usable){
 									ele.color='colorRed'
-									ele.usableText='禁用';
+									ele.usableText=this.$t('Public.Prohibit');
 
-									ele.btnText='启用';	
+									ele.btnText=this.$t('Public.enable');
 								}
 							})
 							this.users=res.data.data.items;
@@ -180,10 +185,9 @@
 			},
 			handleSta(index,row){
 				//角色的禁用和启用
-				var   btnText=document.getElementsByClassName('btnStatus');
-				if(btnText[index].textContent=='禁用'){
-					console.log('禁用');
-					this.$confirm('确定要禁用该角色吗?','提示',{})
+				console.log(row)
+				if(row.usable){//状态为可用   点击  为禁用
+					this.$confirm(this.$t('roles.plaDis'),this.$t('confirm.tooltip'),{type:'warning'})
 					.then(() => {
 						
 						this.$ajax.put('/role/to_disable_role/'+row.id+"?token="+this.token)
@@ -192,11 +196,9 @@
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
-										message:'禁用成功！',
+										message:this.$t('tooltipMes.disSuccess'),
 										type:'success'
 									})
-									
-									btnText[index].textContent='启用';
 									this.getUsers();
 								}else{
 									this.$message({
@@ -205,11 +207,10 @@
 									})
 								}
 							}
-						})
+						}).catch(e => {console.log(e)})
 					}).catch(() => {})
-				}else if(btnText[index].textContent=='启用'){
-					console.log('启用');
-					this.$confirm('确定要启用该角色吗?','提示 ',{})
+				}else if(!row.usable){//状态为禁用  ，点击 为可用
+					this.$confirm(this.$t('roles.plaEnable'),this.$t('confirm.tooltip'),{type:'warning'})
 					.then(() => {
 						
 						this.$ajax.put('/role/to_enable_role/'+row.id+'?token='+this.token)
@@ -218,10 +219,9 @@
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
-										message:'启用成功!',
+										message:this.$t('tooltipMes.enSuccess'),
 										type:'success'
 									})
-									btnText[index].textContent='禁用';
 									this.getUsers();
 								}else{
 									this.$message({
@@ -230,13 +230,14 @@
 									})
 								}
 							}
-						})
+						}).catch(e => {console.log(e)})
 					}).catch(() => {})
 				}
+
 			},
 			handleDel(index,row){
 				//删除
-				this.$confirm('确认要删除该角色吗？','提示',{
+				this.$confirm(this.$t('confirm.title'),this.$t('confirm.tooltip'),{
 					type:'warning'
 				})
 				.then(() => {
@@ -247,7 +248,7 @@
 						if(res.status=='200'){
 							if(res.data.status=='0'){
 								this.$message({
-									message:'删除成功！',
+									message:this.$t('tabOperation.delSuccess'),
 									type:'success'
 								})
 								this.getUsers()
@@ -278,7 +279,7 @@
 				rows.forEach(ele => {
 					ids.push(ele.id)
 				})
-				this.$confirm('确认要删除选中的数据吗?','提示',{
+				this.$confirm(this.$t('confirm.titles'),this.$t('confirm.tooltip'),{
 					type:'warning '
 				})
 				.then(() => {
@@ -291,7 +292,7 @@
 						if(res.status==200){
 							if(res.data.status==0){
 								this.$message({
-									message:'删除成功！',
+									message:this.$t('tabOperation.delSuccess'),
 									type:'success'
 								})
 								this.getUsers()
@@ -312,8 +313,72 @@
 					console.log(e)
 				})
 			},
+			
 			//获取表格里面的数据
-			//表格里面的 数据导出
+			
+			handleExport(command){
+				//选择当初当前页还是所有页
+				var _this=this;
+				if(_this.users.length == 0){
+//					console.log('数据为空不能执行')
+					this.$message({
+						message:this.$t('confirm.dataEmt'),
+						type:'warning'
+					})
+				}else{
+
+					if(command=='all'){
+						this.$confirm(this.$t('confirm.conExportAll'),this.$t('confirm.tooltip'),{
+							type:'warning'
+						})
+						.then(() => {
+						this.exportData()
+							
+						}).catch(() => {})
+					}else if(command=='current'){
+
+						this.$confirm(this.$t('confirm.conExportCur'),this.$t('confirm.tooltip'),{
+							type:'warning'
+						}).then(() => {
+							var para={
+								page:this.currentPage,
+								per_page:this.pagesize
+							}
+							this.exportData(para)
+						}).catch(() => {
+							
+						})
+					}
+				}												
+			},
+			exportData:function(params){
+				this.$ajax.get('/admin/admins'+'?token='+this.token,params)
+				.then(res => {
+					console.log(res);
+					res.data.data.items.map(item => {
+						item.creation_time=datedialogFormat(item.creation_time)
+					})
+					this.excelData=res.data.data.items;
+					this.export2Excel();
+				}).catch(e => {
+					console.log(e)
+				})
+			},
+			export2Excel(){
+				let that=this;
+				require.ensure([] ,() => {
+					const {export_json_to_excel} = require('@/excel/export2Excel')
+					const tHeader=[this.$t('Public.creation'),this.$t('Public.name'),this.$t('customer.phone'),this.$t('customer.email'),this.$t('Public.description'),this.$t('roles.role')];
+					const filterVal=['creation_time','name','mobile','email','description','roles.name'];
+					const list=that.excelData;
+					const data=that.formatJson(filterVal,list);
+					export_json_to_excel(tHeader,data,this.$t('tooltipMes.download')+'excel')
+				})
+			},
+			formatJson(filterVal,jsonData){
+				return jsonData.map(v => filterVal.map(j => v[j]))
+			},
+			
 			dateFormat(row,column){
 	    		//将时间戳转换为前端的时间
 	    		let date=new Date(parseInt(row.creation_time)*1000);

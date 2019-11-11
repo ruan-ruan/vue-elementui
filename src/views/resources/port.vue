@@ -25,8 +25,8 @@
    	 					</el-select>
    	 				</el-form-item>
    	 				<el-form-item>
-   	 					<el-button type='primary' @click='getUsers'>{{$t('topFilters.search')}}</el-button>
-   	 					<el-button type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
+   	 					<el-button size='small' type='primary' @click='getUsers'>{{$t('topFilters.search')}}</el-button>
+   	 					<el-button size='small' type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
    	 				</el-form-item>
    	 			</el-form>
    	 		</el-col>
@@ -35,10 +35,10 @@
    	 	<el-row>
    	 		<el-col :span='24'>
    	 			<el-col :span='4'>
-   	 				<el-button type='primary' @click='addUsers' v-if=' !tit'>+{{$t('Public.creatLogic')}}</el-button>
+   	 				<el-button size='small' type='primary' @click='addUsers' v-if=' !tit'>+{{$t('Public.creatLogic')}}</el-button>
    	 			</el-col>
    	 			<el-col :span='20' class='table-top'>
-   	 				<el-dropdown split-button type='success'@command="handleExport">
+   	 				<el-dropdown size='small' split-button type='success'@command="handleExport">
 							<!--导出数据-->{{$t('tabOperation.derived.tit')}}
 							<el-dropdown-menu slot='dropdown'>
 								<el-dropdown-item command="current">{{$t('tabOperation.derived.currentPage')}} </el-dropdown-item>									

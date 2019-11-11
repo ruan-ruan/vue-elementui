@@ -4,29 +4,29 @@
 		<section >
 			<el-row>
 				<el-col :span='24'style='margin-left: 40px;'>
-						<el-form :model='customer' ref='customer' :rules='customerRules' v-loading='editLoading' label-width='95px'>
-							<el-form-item label='创建时间'v-show='editOpera'>
+						<el-form :model='customer' ref='customer' :rules='customerRules' v-loading='editLoading' label-width='210px'>
+							<el-form-item :label='$t("Public.creation")+"："'v-show='editOpera'>
 								<el-input disabled v-model='customer.creation_time' class='ipt_sels'  ></el-input>
 							</el-form-item>
-							<el-form-item label='租户标识(公司名称)' prop='name'>
+							<el-form-item :label='$t("customer.tenantName")+"："' prop='name'>
 								<template>
 									<el-input v-model='customer.name' class='ipt_sels' :disabled='!btnStatus'></el-input>
-									<span class="cli_toTip" title="公司名称应该与客户签订合同的主题名称一致">?</span>	
+									<span class="cli_toTip" :title="$t('customer.tooltip1')">?</span>	
 								</template>
 							</el-form-item>
-							<el-form-item label='租户联系人'prop='contact'>
-								<el-input v-model='customer.contact' class='ipt_sels'placeholder='请输入租户联系人':disabled='!btnStatus'></el-input>
+							<el-form-item :label='$t("customer.tenantUser")+"："'prop='contact'>
+								<el-input v-model='customer.contact' class='ipt_sels':placeholder='$t("customer.plaTenantUser")':disabled='!btnStatus'></el-input>
 							</el-form-item>
-							<el-form-item label='租户手机号'prop='mobile'>
-								<el-input v-model='customer.mobile' class='ipt_sels'placeholder='请输入租户手机号':disabled='!btnStatus'></el-input>
+							<el-form-item :label='$t("customer.tenantPho")+"："'prop='mobile'>
+								<el-input v-model='customer.mobile' class='ipt_sels':placeholder='$t("customer.plaTenantPho")':disabled='!btnStatus'></el-input>
 							</el-form-item>
-							<el-form-item label='租户邮箱'prop='email'>
-								<el-input v-model='customer.email' class='ipt_sels'placeholder='请输入租户邮箱':disabled='!btnStatus'></el-input>
+							<el-form-item :label='$t("customer.email")+"："'prop='email'>
+								<el-input v-model='customer.email' class='ipt_sels':placeholder='$t("customer.plaTenantEma")':disabled='!btnStatus'></el-input>
 							</el-form-item>
-							<el-form-item label='关联租户标识' v-show='false' prop='tenant_id'>
+							<el-form-item :label='$t("customer.assTenant")+"："' v-show='false' prop='tenant_id'>
 								<el-input v-model='customer.tenant_id' class='ipt_sels' disabled></el-input>
 							</el-form-item>
-							<el-form-item label='公司行业类型'>
+							<el-form-item :label='$t("customer.comporateType")+"："'>
 								<template>
 									<el-select v-model='customer.company_type':disabled='!btnStatus'class='ipt_sels'>
 										<el-option v-for='(item,index) in industryType'
@@ -35,13 +35,13 @@
 											:key='index'>									
 										</el-option>
 									</el-select>
-									<span class="cli_toTip" title="按类型列表选择客户公司行业类型">?</span>
+									<span class="cli_toTip" :title="$t('customer.plaComporate')">?</span>
 								</template>		
 							</el-form-item>
-							<el-form-item label='公司电话'>
+							<el-form-item :label='$t("customer.comporatePho")+"："'>
 								<el-input v-model='customer.phone' class='ipt_sels':disabled='!btnStatus'></el-input>
 							</el-form-item>
-							<el-form-item label='公司地址'>
+							<el-form-item :label='$t("customer.comporateAddress")+"："'>
 								<el-cascader
 							      	size="large"
 							      	:options="options"
@@ -49,19 +49,19 @@
 							      	@change="addressChange"class='ipt_sels':disabled='!btnStatus'>
 							 	</el-cascader>	<br />
 							 	<!--selectedOptions-->
-								<el-input v-model='customer.extra' placeholder='请输入详细地址' class='ipt_sels':disabled='!btnStatus'></el-input>
+								<el-input v-model='customer.extra' :placeholder='$t("customer.plAddress")' class='ipt_sels':disabled='!btnStatus'></el-input>
 							</el-form-item>
-							<el-form-item label='备注'>
-								<el-input v-model='customer.description'placeholder='备注字符最长为200'type="textarea"
+							<el-form-item :label='$t("Public.description")+"："'>
+								<el-input v-model='customer.description':placeholder='$t("customer.plaMax")'type="textarea"
 									maxlength="200"cols="4" class='ipt_sels':disabled='!btnStatus'></el-input>
 							</el-form-item>
 							<el-form-item v-show='btnStatus'class='tc_L'>
-								<el-button size='small' @click='goback'>返回</el-button>
+								<el-button size='small' @click='goback'>{{$t('Public.goback')}}</el-button>
 								
 								<!--添加-->
-								<el-button size='small' type='primary' v-show='addOpera' @click='handleAdd'>保存</el-button>
+								<el-button size='small' type='primary' v-show='addOpera' @click='handleAdd'>{{$t('tabOperation.save')}}</el-button>
 								<!--编辑-->
-								<el-button size='small' type='primary' v-show='!addOpera' @click='handleEdit'>保存</el-button>
+								<el-button size='small' type='primary' v-show='!addOpera' @click='handleEdit'>{{$t('tabOperation.save')}}</el-button>
 
 							</el-form-item>
 						</el-form>
@@ -128,8 +128,7 @@
 					
 				},
 				customerRules:{
-					name:[{ required: true, message: '请输入租户标识', trigger: 'blur' },
-            			{ min: 2, message: '最少2个字符', trigger: 'blur' }],
+					name:[{ required: true, message: '请输入租户标识', trigger: 'blur' }],
             		contact:[{ required: true, message: '请输入租户联系人', trigger: 'blur' }],
             		email:[{ required: true, trigger: 'blur', validator: validEamil }],
      				mobile:[{ required: true, trigger: 'blur', validator: validPhone }],
@@ -173,20 +172,20 @@
 		created(){
 			this.token=sessionStorage.getItem('token');
 			if(typeof this.tit !='undefined'&&(this.addCustome !=='add' && typeof this.cusEditID =='undefined')){
-				console.log('执行详情的界面');
+//				console.log('执行详情的界面');
 				//设置成不可以编辑
 				this.btnStatus=false;
 				//传入对应的实参
 				this.editOpera=true;
 				this.getCusDetails(this.tit)
 			}else if((typeof this.tit =='undefined'&& typeof this.cusEditID =='undefined')&&this.addCustome ==='add'){
-				console.log('进入可以添加的界面');
+//				console.log('进入可以添加的界面');
 				this.btnStatus=true;
 				this.addOpera=true;
 				this.editOpera=false;
 //				this.getTenant()
 			}else if(typeof this.cusEditID !='undefined'&&(typeof this.tit =='undefined'&&this.addCustome !=='add')){
-				console.log('进入编辑的界面');
+//				console.log('进入编辑的界面');
 				this.btnStatus=true;
 				this.addOpera=false;
 				this.editOpera=true;
@@ -199,115 +198,98 @@
 			addressChange(arr) {
 		        console.log(arr);
 		        //获取城市区号
-//		        console.log(CodeToText[arr[0]], CodeToText[arr[1]], CodeToText[arr[2]]);
+
 		        console.log(this.selectedOptions)
 		    },
 			goback(){
 				this.$router.go(-1);
 			},
-//			getTenant(){
-//				this.$ajax.get('/tenant/tenants'+'?token='+this.token)
-//				.then(res => {
-//					console.log(res)
-//					if(res.status==200){
-//						if(res.data.status==0){
-//							this.tenantData=res.data.data.items
-//						}
-//					}
-//				}).catch(e => {console.log(e)})
-//			},
 			handleAdd(){
 				//添加租户的时候保存按钮
-				console.log('执行添加保存的按钮');
-				this.$confirm('确定要添加吗？','提示',{})
-				.then(() => {
-					var para={
-						name:this.customer.name,
-						contact:this.customer.contact,
-						email:this.customer.email,
-						mobile:this.customer.mobile,
-						company_name:this.customer.company_name,
-						company_type:this.customer.company_type,
-						phone:this.customer.phone,
-						province:this.selectedOptions[0],
-						city:this.selectedOptions[1],
-						district:this.selectedOptions[2],
-						extra:this.customer.extra,
-						description:this.customer.description
-					}
-					
-					this.$ajax.post('/tenant/add_tenant'+"?token="+this.token,para)
-					.then(res => {
-						console.log(res);
-						if(res.status==200){
-							if(res.data.status==0){
-								this.$message({
-									message:'添加成功!',
-									type:'success'
-								})
-								this.$refs["customer"].resetFields();
-								this.$router.push('/customer/cus');
-							}else{
-								this.$message({
-									message:res.data.message,
-									type:'warning'
-								})
-							}
+				var para={
+					name:this.customer.name,
+					contact:this.customer.contact,
+					email:this.customer.email,
+					mobile:this.customer.mobile,
+					company_name:this.customer.company_name,
+					company_type:this.customer.company_type,
+					phone:this.customer.phone,
+					province:this.selectedOptions[0],
+					city:this.selectedOptions[1],
+					district:this.selectedOptions[2],
+					extra:this.customer.extra,
+					description:this.customer.description
+				}
+				
+				this.$ajax.post('/tenant/add_tenant'+"?token="+this.token,para)
+				.then(res => {
+					console.log(res);
+					if(res.status==200){
+						if(res.data.status==0){
+							this.$message({
+								message:'添加成功!',
+								type:'success'
+							})
+							this.$refs["customer"].resetFields();
+							this.$router.push('/customer/cus');
+						}else{
+							this.$message({
+								message:res.data.message,
+								type:'warning'
+							})
 						}
-					})
-				}).catch(() => {})
+					}
+				})
 			},
 			handleEdit(){
 				//租户编辑的时候保存按钮
-				console.log('执行编辑保存按钮');
+//				console.log('执行编辑保存按钮');
 				this.$refs.customer.validate(valid => {
 					if(valid){
-						this.$confirm('确定要 修改吗?','提示',{})
-						.then(() => {
-							let  para={
-								name:this.customer.name,
-								contact:this.customer.contact,
-								email:this.customer.email,
-								mobile:this.customer.mobile,
-								company_name:this.customer.company_name,
-								company_type:this.customer.company_type,
-								phone:this.customer.phone,
-								province:this.selectedOptions[0],
-								city:this.selectedOptions[1],
-								district:this.selectedOptions[2],
-								extra:this.customer.extra,
-								description:this.customer.description
-							}
-							
-							this.$ajax.put('/tenant/edit_tenant/'+this.customer.id+'?token='+this.token,para)
-							.then(res => {
-								console.log(res);
-								if(res.status==200){
-									if(res.data.status==0){
-										this.$message({
-											message:'修改成功!',
-											type:'success'
-										})
-										this.$refs["customer"].resetFields();
-										this.$router.replace('/customer/cus')
-									}else{
-										this.$message({
-											message:res.data.messae,
-											type:'warning'
-										})
-									}
+
+						let  para={
+							name:this.customer.name,
+							contact:this.customer.contact,
+							email:this.customer.email,
+							mobile:this.customer.mobile,
+							company_name:this.customer.company_name,
+							company_type:this.customer.company_type,
+							phone:this.customer.phone,
+							province:this.selectedOptions[0],
+							city:this.selectedOptions[1],
+							district:this.selectedOptions[2],
+							extra:this.customer.extra,
+							description:this.customer.description
+						}
+						
+						this.$ajax.put('/tenant/edit_tenant/'+this.customer.id+'?token='+this.token,para)
+						.then(res => {
+							console.log(res);
+							if(res.status==200){
+								if(res.data.status==0){
+									this.$message({
+										message:'修改成功!',
+										type:'success'
+									})
+									this.$refs["customer"].resetFields();
+									this.$router.replace('/customer/cus')
+								}else{
+									this.$message({
+										message:res.data.messae,
+										type:'warning'
+									})
 								}
-							}).catch(e => {
-								console.log(e)
-							})
-						}).catch(() => {})
+							}
+						}).catch(e => {
+							console.log(e)
+						})
 					}
 				})
 			},
 			//获取租户的详细的界面的信息
 			getCusDetails(row){
 				var _this=this;
-
+				this.editLoading=true;
 				this.$ajax.get('/tenant/tenant_info/'+row+'?token='+this.token)
 				.then(res => {
 					console.log(res);
@@ -332,5 +314,3 @@
 	}
 </script>
 
-<style>
-</style>

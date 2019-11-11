@@ -44,8 +44,8 @@
           </el-form-item>
           <el-form-item>
             <span>
-              <el-button  type='primary'  @click='getData' >{{ $t('topFilters.search')}}</el-button>
-              <el-button type='info' @click='reset' >{{$t('topFilters.reset')}}</el-button>
+              <el-button size='small'  type='primary'  @click='getData' >{{ $t('topFilters.search')}}</el-button>
+              <el-button size='small' type='info' @click='reset' >{{$t('topFilters.reset')}}</el-button>
               
             </span>
           </el-form-item>
@@ -58,11 +58,13 @@
             type="success"
             @click='markTap'
             :disabled="this.sels.length===0"
+            size='small'
           >{{$t('mesModule.operation.marked')}}</el-button>
           <el-button
             type='danger'
             @click='delMes'
             :disabled="this.sels.length===0"
+            size='small'
           >{{$t('tabOperation.delete')}}</el-button>
         </span>
       </el-col>

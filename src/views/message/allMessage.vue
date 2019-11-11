@@ -77,10 +77,12 @@
           <el-form-item>
             <span>
               <el-button
+              	size='small'
                 type='primary'
                 @click='getData'
               >{{ $t('topFilters.search')}}</el-button>
               <el-button
+              	size='small'
                 type='info'
                 @click='reset'
               >{{$t('topFilters.reset')}}</el-button>
@@ -95,11 +97,13 @@
             type="success"
             :disabled="this.sels.length===0"
             @click='markTap'
+            size='small'
           >{{$t('mesModule.operation.marked')}}</el-button>
           <el-button
             type='danger'
             :disabled="this.sels.length===0"
             @click='delMes'
+            size='small'
           >{{$t('tabOperation.delete')}}</el-button>
         </span>
       </el-col>

@@ -28,18 +28,18 @@
 					    </el-date-picker>
 					</el-form-item>
 					<el-form-item>
-						<el-button type='primary'v-on:click='getUsers()'>{{$t('topFilters.search')}}</el-button>
-						<el-button type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
+						<el-button size='small' type='primary'v-on:click='getUsers()'>{{$t('topFilters.search')}}</el-button>
+						<el-button size='small' type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
 					</el-form-item>
 				</el-form>				
 			</el-col>
 			
 			<!--列表数据部分-->
 			<div class="table-top">
-				<el-button type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">
+				<el-button size='small' type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">
 					{{$t('tabOperation.batchDel')}}</el-button>
 				
-				<el-dropdown split-button type='success'@command="handleExport">
+				<el-dropdown size='small' split-button type='success'@command="handleExport">
 					<!--导出数据-->{{$t('tabOperation.derived.tit')}}
 					<el-dropdown-menu slot='dropdown'>
 						<el-dropdown-item command="current">{{$t('tabOperation.derived.currentPage')}} </el-dropdown-item>									

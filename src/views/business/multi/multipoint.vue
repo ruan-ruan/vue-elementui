@@ -24,7 +24,7 @@
 							</el-select>
 						</el-form-item>
 						<el-form-item >
-							<el-button size='small' type='primary'  @click='getUsers'> {{$t('topFilters.search')}}</el-button>
+							<el-button  size='small'type='primary'  @click='getUsers'> {{$t('topFilters.search')}}</el-button>
 							<el-button size='small' @click='reset'> {{$t('topFilters.reset')}}</el-button>
 						</el-form-item>
 					</el-form>

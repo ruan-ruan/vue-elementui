@@ -43,10 +43,10 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type='primary' v-on:click='getUsers' >
+            <el-button size='small' type='primary' v-on:click='getUsers' >
             	<!--查询-->{{$t('topFilters.search')}}
             </el-button>
-            <el-button  type='info'  @click='reset' >
+            <el-button size='small'  type='info'  @click='reset' >
             	<!--重置-->{{$t('topFilters.reset')}}
             </el-button>
           </el-form-item>
@@ -55,10 +55,10 @@
 
 
       <div class="table-top">
-          <el-button   type="danger"   @click="batchRemove(sels)"   :disabled="this.sels.length===0"  >
+          <el-button size='small'  type="danger"   @click="batchRemove(sels)"   :disabled="this.sels.length===0"  >
           	<!--批量删除-->{{$t('tabOperation.batchDel')}}
           </el-button>
-      	 <el-dropdown split-button  type='success'  @command="handleExport"  >
+      	 <el-dropdown size='small' split-button  type='success'  @command="handleExport"  >
          		 <!--导出数据-->{{$t('tabOperation.derived.tit')}}
           <el-dropdown-menu slot='dropdown'>
             <el-dropdown-item command="current"> 

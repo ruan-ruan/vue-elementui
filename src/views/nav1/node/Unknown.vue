@@ -29,10 +29,10 @@
 							</el-date-picker>
 						</el-form-item>
 						<el-form-item>
-							<el-button type='primary'@click='getUsers'>{{$t('topFilters.search')}}</el-button>
+							<el-button size='small' type='primary'@click='getUsers'>{{$t('topFilters.search')}}</el-button>
 						</el-form-item>
 						<el-form-item>
-							<el-button type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
+							<el-button size='small' type='info' @click='reset'>{{$t('topFilters.reset')}}</el-button>
 						</el-form-item>
 					</el-form>
 				</el-col>
@@ -41,12 +41,12 @@
 			<el-row>
 				<el-col :span='8'>
 					<template >
-						<el-button type="primary" @click="handleAdd">+{{$t('tooltipMes.addNode')}}</el-button>
-						<el-button type='success' @click='foundNode'>{{$t('tooltipMes.findNode')}}</el-button>
+						<el-button size='small' type="primary" @click="handleAdd">+{{$t('tooltipMes.addNode')}}</el-button>
+						<el-button size='small' type='success' @click='foundNode'>{{$t('tooltipMes.findNode')}}</el-button>
 					</template>
 				</el-col>
 				<el-col :span='16'	class="table-top">
-					<el-button type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">{{$t('tabOperation.batchDel')}}</el-button>
+					<el-button size='small' type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">{{$t('tabOperation.batchDel')}}</el-button>
 					
 				</el-col>
 			</el-row>
