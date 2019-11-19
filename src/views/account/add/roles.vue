@@ -67,7 +67,7 @@
 			return{
 //				isOk:false,
 				//角色详情的时候获取的id
-				id:this.$route.params.id,
+				id:this.$route.query.id,
 				//角色编辑的时候获取的部分
 				roleID:this.$route.query.roleID,
 				disUp:false,
@@ -191,11 +191,6 @@
 										type:'success'
 									})
 									this.$router.replace('/account');
-								}else{
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
 								}
 							}
 						})
@@ -302,11 +297,6 @@
 										type:'success'
 									})
 									this.$router.replace('/account')
-								}else{
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
 								}
 							}
 						}).catch(e => {

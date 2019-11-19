@@ -111,11 +111,6 @@
 								type:'success'
 							})
 							this.getNodesData(this.selectForm)
-						}else{
-							this.$message({
-								message:res.data.message,
-								type:'warning'
-							})
 						}
 					}
 				}).catch(e => {

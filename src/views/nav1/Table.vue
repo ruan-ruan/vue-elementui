@@ -16,8 +16,6 @@
 </template>
 
 <script>
-import util from "../../common/util";
-
 import City from '@/views/nav1/tabs/City'
 import Area from '@/views/nav1/tabs/Area'
 import Data from '@/views/nav1/tabs/Data'
@@ -30,7 +28,6 @@ export default {
 	data(){
 		return{
 			activeName:'first',
-//			name:'first'
 		}
 		
 	},

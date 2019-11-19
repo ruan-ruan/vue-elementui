@@ -51,6 +51,9 @@
 }
 
 /*日志里input的宽度*/
+.ipt_sels2{
+	width: 150px;
+}
 .ipt_sels{
 	width: 300px;
 }
@@ -58,7 +61,7 @@
 	width: 300px !important;
 }
 .el-dialog{
-	/*width: 500px;*/
+	width: 700px;
 	border-radius: 10px;
 }
 .el-dialog__header{
@@ -78,7 +81,7 @@
 
 /*状态选择部分*/
 .ipt_sta{
-	width: 100px;
+	width: 120px;
 }
 
 /*表格数据的宽度*/

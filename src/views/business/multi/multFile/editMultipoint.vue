@@ -67,7 +67,7 @@
 						<el-button size='mini' v-if='scope.row.status == "success" ' @click='handleTabStatus(scope.$index,scope.row)'>{{scope.row.changeBtn}}</el-button>
 						<el-button size='mini'v-if='scope.row.status == "success" ' type='primary' @click='handleEdit(scope.$index,scope.row)'>{{$t('tabOperation.edit')}}</el-button>
 						<el-button size='mini' type='info' @click='handleDetails(scope.$index,scope.row)'>{{$t('tabOperation.info')}}</el-button>
-						<el-button size='mini' type='danger' @click='handleDel(scope.$index,scope.row)'>{{$t('tabOperation.info')}}</el-button>
+						<el-button size='mini' type='danger' @click='handleDel(scope.$index,scope.row)'>{{$t('tabOperation.delete')}}</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -218,11 +218,6 @@
 							this.$refs['basicForm'].$refs['basicForm'].resetFields();
 //							this.getDetails(this.editForm.id);
 							this.getDetails(this.id);
-						}else {
-							this.$message({
-								message:res.data.message,
-								type:'warning'
-							})
 						}
 						
 					}
@@ -250,44 +245,44 @@
 					
 					ele.validate(valid => {
 						if(valid) {
-							this.editLoading=true;
-							var colun={
-								cloud_type:this.clounBasic.cloun,
-								region:this.clounBasic.targetRegion,
-								cloud_config_id:this.clounBasic.clounDock
-							}
-							
-							obj=Object.assign({},this.clounList,colun,this.basicObj);
-							
-							this.$ajax.post('/vll/add_cloud_endpoint/'+this.id+'?token='+this.token)
-							.then(res => {
-								this.editLoading=false;
-//								console.log(res)
-								if(res.status==200){
-									if(res.data.status==0){
-										this.$message({
-											message:this.$t('tooltipMes.addSuccess'),
-											type:'success'
-										})
-										this.resetFields();
-										that.dialogFormVisible=false;
-										this.$router.push({
-											path:'/business/editMultipoint',
-											query:{
-												id:this.id,
-											}
-										})
-									}else{
-										this.$message({
-											message:res.data.message,
-											type:'warning'
-										})
-									}
+							this.$confirm('确认要添加吗?',{})
+							.then(() => {
+								this.editLoading=true;
+								var colun={
+									cloud_type:this.clounBasic.cloun,
+									region:this.clounBasic.targetRegion,
+									cloud_config_id:this.clounBasic.clounDock
 								}
+								
+								obj=Object.assign({},this.clounList,colun,this.basicObj);
+								
+								this.$ajax.post('/vll/add_cloud_endpoint/'+this.id+'?token='+this.token)
+								.then(res => {
+									this.editLoading=false;
+	//								console.log(res)
+									if(res.status==200){
+										if(res.data.status==0){
+											this.$message({
+												message:this.$t('tooltipMes.addSuccess'),
+												type:'success'
+											})
+											this.resetFields();
+											that.dialogFormVisible=false;
+											this.$router.push({
+												path:'/business/editMultipoint',
+												query:{
+													id:this.id,
+												}
+											})
+										}
+									}
+								})
+								.catch(e => {
+									console.log(e)
+								})
 							})
-							.catch(e => {
-								console.log(e)
-							})
+							.catch(() => {})
+							
 						}
 					})
 				})
@@ -303,52 +298,48 @@
 				str.map(ele => {
 					ele.validate(valid => {
 						if(valid){
-//							console.log('kkkk')
-							this.editLoading=true;
-
-							obj={
-								node_id:that.dcObj.nodeName,
-								logic_port_id:that.dcObj.logic,
-								vlan:this.dcObj.vlan,
-								bandwidth:that.basicObj.bandwidth,								
-								charge_mode:that.basicObj.charge_mode,
-								
-								charge_time:that.basicObj.charge_time ,
-								expiration_time:that.basicObj.expiration_time,
-								
-								description:that.basicObj.description,
-							}
-
-//							console.log(obj);
-//							Debug
-							this.$ajax.post('/vll/add_endpoint/'+this.id+'?token='+this.token,obj)
-							.then(res => {
-								this.editLoading=false;
-								if(res.status==200){
-									if(res.data.status==0){
-										console.log(res)
-										this.$message({
-											message:res.data.message,
-											type:'success'
-										})
-										ele.resetFields();
-										that.dialogFormVisible=false;
-										that.componentStatus=false;
-										that.$nextTick(() => {
-											that.componentStatus=true;
-										})
-										
-										this.getDetails(this.id)
-
-									}else{
-									this.$message({
-											message:res.data.message,
-											type:'warning'
-										})
-									}
+							this.$confirm('确认要添加吗?',{})
+							.then(() => {
+								this.editLoading=true;
+	
+								obj={
+									node_id:that.dcObj.nodeName,
+									logic_port_id:that.dcObj.logic,
+									vlan:this.dcObj.vlan,
+									bandwidth:that.basicObj.bandwidth,								
+									charge_mode:that.basicObj.charge_mode,
+									
+									charge_time:that.basicObj.charge_time ,
+									expiration_time:that.basicObj.expiration_time,
+									
+									description:that.basicObj.description,
 								}
+	
+								this.$ajax.post('/vll/add_endpoint/'+this.id+'?token='+this.token,obj)
+								.then(res => {
+									this.editLoading=false;
+									if(res.status==200){
+										if(res.data.status==0){
+											console.log(res)
+											this.$message({
+												message:res.data.message,
+												type:'success'
+											})
+											ele.resetFields();
+											that.dialogFormVisible=false;
+											that.componentStatus=false;
+											that.$nextTick(() => {
+												that.componentStatus=true;
+											})
+											
+											this.getDetails(this.id)
+	
+										}
+									}
+								}).catch(e => {console.log(e)})
 							})
-							.catch(e => {console.log(e)})
+							.catch(() => {})
+							
 							
 						}
 					})
@@ -493,11 +484,6 @@
 								})
 							}
 
-						}else{
-							this.$message({
-								message:res.data.message,
-								type:'warning'
-							})
 						}
 					}
 				})
@@ -525,12 +511,7 @@
 										type:'success'
 									})
 									this.$refs['editForm'].resetFields();
-									this.$router.replace('/business/multipoint')
-								}else{
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
+									this.$router.push('/business/multipoint')
 								}
 							}
 						})
@@ -578,13 +559,7 @@
 									})
 									this.getDetails(this.editForm.id);
 									
-								}else {
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
 								}
-								
 							}
 						}).catch(e => {console.log(e)})
 					}).catch( () => {})
@@ -614,13 +589,7 @@
 									})
 									this.getDetails(this.editForm.id);
 									
-								}else {
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
 								}
-								
 							}
 						}).catch(e => {console.log(e)})
 						
@@ -662,11 +631,6 @@
 									type:'success'
 								})
 								this.getDetails(this.id);
-							}else{
-								this.$message({
-									message:res.data.message,
-									type:'warning'
-								})
 							}
 						}
 					})
@@ -675,27 +639,7 @@
 					})
 				}).catch(() => {})
 			},
-			//表格数据时间转换
-//			dateFormat(row, column) {
-//		      	let date = new Date(parseInt(row.charge_time) * 1000);
-//		      	let Y = date.getFullYear() + "-";
-//		      	let M =date.getMonth() + 1 < 10  ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
-//		      	let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
-//		      	let h = date.getHours() < 10  ? "0" + date.getHours() + ":"  : date.getHours() + ":";
-//		        let m = date.getMinutes() < 10  ? "0" + date.getMinutes() + ":"  : date.getMinutes() + ":";
-//		        let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-//		      return Y + M + D + h + m + s;
-//		    },
-//		    dateFormatExpiration(row, column) {
-//		      	let date = new Date(parseInt(row.expiration_time) * 1000);
-//		      	let Y = date.getFullYear() + "-";
-//		      	let M =date.getMonth() + 1 < 10  ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
-//		      	let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
-//		      	let h = date.getHours() < 10  ? "0" + date.getHours() + ":"  : date.getHours() + ":";
-//		        let m = date.getMinutes() < 10  ? "0" + date.getMinutes() + ":"  : date.getMinutes() + ":";
-//		        let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-//		      return Y + M + D + h + m + s;
-//		    },
+
 		}
 	}
 </script>

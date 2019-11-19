@@ -39,7 +39,7 @@
 				token:'',
 				activeName:'first',
 				// 在节点的详情界面按钮传递来的id
-				id:this.$route.params.id,
+				id:this.$route.query.detailsID,
 				//未知节点的穿过id
 				lineUnknown:this.$route.query.id,
 				physicalValue:'',

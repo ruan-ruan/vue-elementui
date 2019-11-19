@@ -166,7 +166,6 @@
 				str.forEach(ele => {
 					ele.validate((valid) => {
 						if(valid){
-							
 							this.$confirm('确定要提交吗?','提示',{})
 							.then(() => {
 								

@@ -168,7 +168,11 @@
 
 			handleSee(index,row){
 				//查看详情
-				this.$router.push({path:'/account/roles/details/'+row.id})
+				this.$router.push({path:'/account/roles/details',
+				query:{
+					id:row.id
+				}
+				})
 			},
 			handleEdit(index,row){
 //				console.log(row);
@@ -196,15 +200,10 @@
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
-										message:this.$t('tooltipMes.disSuccess'),
+										message:this.$t('tooltipMes.diSuccess'),
 										type:'success'
 									})
 									this.getUsers();
-								}else{
-									this.$message({
-										message:res.data.message,
-										type:'warnings'
-									})
 								}
 							}
 						}).catch(e => {console.log(e)})
@@ -223,11 +222,6 @@
 										type:'success'
 									})
 									this.getUsers();
-								}else{
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
 								}
 							}
 						}).catch(e => {console.log(e)})
@@ -251,29 +245,22 @@
 									message:this.$t('tabOperation.delSuccess'),
 									type:'success'
 								})
-								this.getUsers()
-							}else if(res.data.status){
-								this.$message({
-									message:res.data.message,
-									type:'danger'
-								})
 							}
+							this.getUsers()
 						}
 					})
 					.catch(e => {
 						console.log(e)
 					})
 				})
-				.catch(( e) => {
-					console.log(e)
-				})
+				.catch(( ) => {})
 			},
 			selsChange:function(sels){
 				//选择
 				this.sels=sels
 			},
 			batchRemove:function(rows){
-				console.log(rows)
+//				console.log(rows)
 				//批量删除
 				var ids=[];
 				rows.forEach(ele => {
@@ -295,23 +282,12 @@
 									message:this.$t('tabOperation.delSuccess'),
 									type:'success'
 								})
-								this.getUsers()
-							}else{
-								this.$message({
-									message:res.data.message,
-									type:'danger'
-								})
-								this.getUsers()
 							}
+							this.getUsers()
 						}
 					})
-					.catch(e => {
-						console.log(e)
-					})
-				})
-				.catch(( e) => {
-					console.log(e)
-				})
+					.catch(e => {console.log(e)})
+				}).catch(( ) => {})
 			},
 			
 			//获取表格里面的数据

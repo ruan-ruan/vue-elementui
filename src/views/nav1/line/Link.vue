@@ -6,7 +6,7 @@
 			<el-col :span='24' class='toolbar' style='width: 100%;'>
 				<el-form :inline='true' :model='filters' ref='filters'>
 					<el-form-item :label='$t("Public.name")' prop='search_name'>
-						<el-input v-model='filters.search_name' class='sel'></el-input>
+						<el-input v-model='filters.search_name' class='ipt_sta'></el-input>
 					</el-form-item>
 					<el-form-item :label='$t("Public.status")' prop='search_status'>
 						<el-select v-model='filters.search_status' :plachodle='$t("topFilters.placeholder")' class='sel'>
@@ -24,7 +24,8 @@
 					      :range-separator="$t('Public.to')"
 						  @change="timeValSearchBtn"
 					      :start-placeholder="$t('Public.start')"
-					      :end-placeholder="$t('Public.end')" class='ipt'>
+					      :end-placeholder="$t('Public.end')" 
+					      class='port_sel'>
 					    </el-date-picker>
 					</el-form-item>
 					<el-form-item>
@@ -494,7 +495,7 @@
 				
 				this.$ajax.del('/link/del_links'+'?token='+this.token,para)
 		        .then(res => {
-		          	console.log(res);
+//		          	console.log(res);
 		          	if( res.status==200){
 						if(res.data.status==0){
 							this.listLoading = false;
@@ -502,17 +503,12 @@
 								message:this.$t('tooltipMes.delSucess'),
 								type:'success'
 							})
-							this.getUsers();
-						}else if(res.data.status){
-							this.$message({
-								message:res.data.message,
-								type:'warning'
-							})
-							this.getUsers()	
+
 						}
+						this.getUsers();
 		          	}
 
-		          });
+		          }).catch(e => {console.log(e)})
 		        })
 		        .catch(() => {});
 			},
@@ -525,7 +521,6 @@
 				var _this=this;
 				console.log(row)
 				if(row.maintenanceBtn ===  this.$t('Public.openMain') ){
-//					console.log('进入开发')
 					this.$confirm(this.$t('confirm.linkOpen'),this.$t('confirm.tooltip'),{
 						type:'success'
 					})
@@ -540,15 +535,7 @@
 										message:this.$t('tooltipMes.openSuc'),
 										type:'success'
 									})
-//									this.editForm.maintenance_type=true;
-//									mainVal[index].textContent='关闭维护';
-									row.maintenanceBtn=this.$t('Public.closeMain')
 									this.getUsers();
-								}else{
-									this.$message({
-										message:res.data.msg,
-										type:'warning'
-									})
 								}
 							}
 						})
@@ -567,15 +554,8 @@
 										message:this.$tc('tooltipMes.closeSuc'),
 										type:'success'
 									})
-									row.maintenanceBtn= this.$t('Public.openMain')
-//									this.editForm.maintenance_type=false;
-//									mainVal[index].textContent='开启维护';
+
 									this.getUsers();
-								}else{
-									this.$message({
-										message:res.data.msg,
-										type:'warning'
-									})
 								}
 							}
 						})
@@ -586,11 +566,19 @@
 			//节点a的点击详情
 			handleNode_a(index,row){
 				console.log(row)
-				this.$router.push({path:'/location/index/unknown/nodedetails/'+row.a_node.id});
+				this.$router.push({path:'/location/index/unknown/nodedetails',
+				query:{
+					detailsID:row.a_node.id
+				}
+				});
 			},
 			//节点z的详情
 			handleNode_z(index,row){
-				this.$router.push({path:'/location/index/unknown/nodedetails/'+row.z_node.id});
+				this.$router.push({path:'/location/index/unknown/nodedetails',
+				query:{
+					detailsID:row.z_node.id
+				}
+				});
 			},
 			//详情
 			handleSee(index,row){
@@ -670,14 +658,11 @@
 										})
 									}
 									this.$refs["editForm"].resetFields();
-								this.dialogFormVisible = false;
-								this.getUsers();
+									this.dialogFormVisible = false;
+									this.getUsers();
 								}else {
 									this.editLoading=false;
-									this.$message({
-										message:res.data.msg,
-										type:'warning'
-									})
+									
 								}
 									
 							})
@@ -700,11 +685,6 @@
 									type:'success'
 								})
 								this.getUsers()
-							}else if(res.data.status){
-								this.$message({
-									message:res.data.msg,
-									type:'warning'
-								})
 							}
 						}
 					})

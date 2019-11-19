@@ -595,7 +595,7 @@ export default {
 							dealNull(res.data.data.items,'charge_time')
 							
               res.data.data.items.map(ele => {
-//            	console.log(ele)
+              	console.log(ele)
               	//设置   a端  z端数据  datedialogFormat
 								if((!ele.charge_time && typeof(ele.charge_time) !='undefined' && ele.charge_time !=0) || ele.charge_time==''|| typeof ele.charge_time =='undefined'){
 	            		ele.charge_time=''
@@ -609,15 +609,27 @@ export default {
 	            	}
 	            	
 	            	ele.creation_time=datedialogFormat(ele.creation_time)
+	            	var str=[];
                 if (ele.type == "d2d") {
                   ele.typeName = "DCI";
+                  str=ele.endpoints;
                 } else if (ele.type == "d2c") {
                   ele.typeName = this.$t('Public.cloudInter');//云互联
+                  ele.endpoints.map(item => {
+                  	str.push(item)
+                  })
+                  ele.cloud_endpoints.map(item => {
+                  	str.push(item)
+                  })
                 } else if (ele.type == "c2c") {
                   ele.typeName = this.$t('Public.cloudsTo');//云直连
+                  str=ele.cloud_endpoints
                 }
+								
+//              var str = ele.endpoints;//存在点的数据
+//              var cloudStr=ele.
                 
-                var str = ele.endpoints;
+                
                 if (ele.status == "failure") {
                   ele.statusHTML = this.$t('Public.failure');
                   ele.statusColor = "creatFie";
@@ -686,57 +698,62 @@ export default {
                   if (str.length !== 0) {
                     if (str.length == 1) {
                       console.log(ele);
-                      ele.statusValA = getPortStatus(str[0].ports);
-                      ele.logicPortA = str[0].logic_port.name;
-                      if (str[0].vlan) {
-                        if (str[0].vlan == "-1") {
+                      var objZ=str.find(item => {
+                      	return item.name =='Z端'
+                      })
+                      ele.statusValZ = getPortStatus(objZ.ports);
+                      ele.logicPortZ = objZ.logic_port.name;
+                      if (objZ.vlan) {
+                        if (objZ.vlan == "-1") {
                           ele.vlanHTMLA = this.$t('Public.passthrough');
-                        } else if (str[0].vlan == "0") {
+                        } else if (objZ.vlan == "0") {
                           ele.vlanHTMLA = "UNTAG";
                         } else {
-                          ele.vlanHTMLA = str[0].vlan;
+                          ele.vlanHTMLA = objZ.vlan;
                         }
                       } else {
                         return;
                       }
                     } else if (str.length === 2) {
-                      ele.statusValA = getPortStatus(str[0].ports);
-                      ele.statusValZ = getPortStatus(str[1].ports);
-                      if(getPortStatus(str[0].ports) ==='UP'){
+                    	var objA=str.find(item => {
+                    		return item.name == 'A端'
+                    	})
+                    	var objZ=str.find(item => {
+                    		return item.name == 'Z端'
+                    	})
+                      ele.statusValA = getPortStatus(objA.ports);
+                      ele.statusValZ = getPortStatus(objZ.ports);
+                      if(getPortStatus(objA.ports) ==='UP'){
                       	ele.colorA='colorGreen'
-                      }else if(getPortStatus(str[0].ports)==='DOWN'){
+                      }else if(getPortStatus(objA.ports)==='DOWN'){
                       	ele.colorA='colorRed'
-                      }else if(getPortStatus(str[0].ports) ==='异常'){
+                      }else if(getPortStatus(objA.ports) ==='异常'){
                       	ele.colorA='colorWarning'
                       }
-                      if(getPortStatus(str[1].ports) ==='UP'){
+                      if(getPortStatus(objZ.ports) ==='UP'){
                       	ele.colorZ='colorGreen'
-                      }else if(getPortStatus(str[1].ports)==='DOWN'){
+                      }else if(getPortStatus(objZ.ports)==='DOWN'){
                       	ele.colorZ='colorRed'
-                      }else if(getPortStatus(str[1].ports) ==='异常'){
+                      }else if(getPortStatus(objZ.ports) ==='异常'){
                       	ele.colorZ='colorWarning'
                       }
-                      
-                      
-                      ele.logicPortA = ele.endpoints[0].logic_port.name;
-                      ele.logicPortZ = ele.endpoints[1].logic_port.name;
-//                    if (str[0].vlan) {
-                        if (str[0].vlan == "-1") {
+
+                      ele.logicPortA = objA.logic_port.name;
+                      ele.logicPortZ = objZ.logic_port.name;
+                        if (objA.vlan == "-1") {
                           ele.vlanHTMLA = this.$t('Public.passthrough');//透传
-                        } else if (str[0].vlan == "0") {
+                        } else if (objA.vlan == "0") {
                           ele.vlanHTMLA = "UNTAG";
                         } else {
-                          ele.vlanHTMLA = str[0].vlan;
+                          ele.vlanHTMLA = objA.vlan;
                         }
-//                    } else if (str[1].vlan) {
-                        if (str[1].vlan == "-1") {
+                        if (objZ.vlan == "-1") {
                           ele.vlanHTMLZ = this.$t('Public.passthrough');
-                        } else if (str[1].vlan == "0") {
+                        } else if (objZ.vlan == "0") {
                           ele.vlanHTMLZ = "UNTAG";
                         } else {
-                          ele.vlanHTMLZ = str[1].vlan;
+                          ele.vlanHTMLZ = objZ.vlan;
                         }
-//                    }
                     }
                   }
                 }
@@ -772,26 +789,43 @@ export default {
     handleSeeA(index, row) {
     	console.log(row)
       //查看A的详情
-
-      this.$router.push({
-        path: "/resource/see/logicalPort",
-        query: {
-          detailsID: row.endpoints[0].logic_port.id
-        }
-      });
-      this.$emit('send',row.endpoints[0].logic_port.id)//改组件被引用的时候  向父组件传值更新
+      var obj={};
+      if(row.endpoints){
+	      obj=row.endpoints.find(item => {
+					return item.name == 'A端'
+				})
+      }
+			if(JSON.stringify(obj) !=='{}'){
+				this.$router.push({
+	        path: "/resource/see/logicalPort",
+	        query: {
+	          detailsID: obj.logic_port.id
+	        }
+	      });
+	      this.$emit('send',obj.logic_port.id)//改组件被引用的时候  向父组件传值更新
+			}
+      
     },
     handleSeeZ(index, row) {
 //  	console.log(row)
       //查看Z端的详情
 //    console.log("进入Z端的详情");
-      this.$router.push({
-        path: "/resource/see/logicalPort",
-        query: {
-          detailsID: row.endpoints[1].logic_port.id
-        }
-      });
-      this.$emit('send',row.endpoints[1].logic_port.id)//改组件被引用的时候  向父组件传值更新
+			var obj={};
+			if(row.endpoints){
+				obj=row.endpoints.find(item => {
+					return item.name == 'Z端'
+				})
+			}
+			if(JSON.stringify( obj) !=='{}'){
+				this.$router.push({
+	        path: "/resource/see/logicalPort",
+	        query: {
+	          detailsID: obj.logic_port.id
+	        }
+	      });
+	      this.$emit('send',obj.logic_port.id)//改组件被引用的时候  向父组件传值更新
+			}
+     
       
     },
     handleEdit(index, row) {
@@ -845,16 +879,11 @@ export default {
                         message: this.$t('tooltipMes.editSuccess'),
                         type: "success"
                       });
-                      this.$refs["editForm"].resetFields();
-                      this.dialogFormVisible = false;
-                      this.getUsers();
-                    } else {
-                      this.$message({
-                        message: res.data.message,
-                        type: "warning"
-                      });
-                      this.getUsers()
+                      
                     }
+                    this.$refs["editForm"].resetFields();
+                  	this.dialogFormVisible = false;
+                  	this.getUsers();
                   }
                 })
                 .catch(e => {
@@ -876,14 +905,10 @@ export default {
                     message: this.$t('tooltipMes.delSuccess'),
                     type: "success"
                   });
-                  this.getUsers();
-                } else {
-                  this.$message({
-                    message: res.data.message,
-                    type: "warning"
-                  });
-                  this.getUsers()
+
                 }
+                  this.getUsers();
+                
               }
             })
             .catch(e => {
@@ -913,14 +938,8 @@ export default {
                     message:this.$t('tooltipMes.delSuccess'),
                     type: "success"
                   });
-                  this.getUsers();
-                } else {
-                  this.$message({
-                    message: res.data.message,
-                    type: "warning"
-                  });
-                  this.getUsers();
                 }
+                this.getUsers();
               }
             })
             .catch(e => {
@@ -940,14 +959,9 @@ export default {
     						message:this.$t('tooltipMes.stopSuccess'),
     						type:'success'
     					})
-    					this.getUsers()
-    				}else{
-    					this.$message({
-    						message:res.data.message,
-    						type:'warning'
-              })
-              this.getUsers()
+
     				}
+    					this.getUsers()
     				
     			}
     		})
@@ -961,14 +975,10 @@ export default {
     						message:this.$t('tooltipMes.runSuccess'),
     						type:'success'
               })
-              this.getUsers()
-    				}else{
-    					this.$message({
-    						message:res.data.message,
-    						type:'warning'
-              })
-              this.getUsers()
+
     				}
+              this.getUsers()
+    				
     			}
     		})
     	} 

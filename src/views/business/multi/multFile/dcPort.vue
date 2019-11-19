@@ -225,8 +225,6 @@
 								return item.statusVal > 0;
 							})
 							if((JSON.stringify(obj1) !='{}'&&typeof obj1 !='undefined') || obj2.length !=0){
-								
-								
 								this.$message({
 									message:this.$t('business.plaTrunk'),
 									type:'warning'
@@ -580,6 +578,7 @@
 				}else{
 					return
 				}
+//				vlanVal
 			},
 			creatVlan(){
 				//设置vlan号的时候保存

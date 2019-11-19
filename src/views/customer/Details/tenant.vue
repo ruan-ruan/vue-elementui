@@ -38,7 +38,7 @@
 		data(){
 			return{
 				token:'',
-				cusSeeID:this.$route.params.id,
+				cusSeeID:this.$route.query.id,
 				activeName:'first',
 
 			}

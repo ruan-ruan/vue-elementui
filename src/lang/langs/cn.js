@@ -14,6 +14,8 @@ const cn = {
     	message:'消息',
     },
     aside:{//  侧边  导航栏
+    	topoChartInfo:'链路图表',
+    	changePsd:'密码修改',
     	myself:'个人中心',
     	standLetter:'站内信',
     	unMessage:'未读消息',
@@ -22,7 +24,7 @@ const cn = {
     	topoView:'拓扑视图',
     	physicalLocation:'物理位置',
     	nodeManage:'节点管理',
-    	backNode:'骨干节点',
+    	backNode:'骨干',
     	nodeDetails:'节点详情',
     	nodeEditor:'节点编辑',
     	unknown:'未知节点编辑',

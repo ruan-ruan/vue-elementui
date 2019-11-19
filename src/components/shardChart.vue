@@ -112,19 +112,19 @@
 					        type: 'value',
 					        axisTick:true,
 					        scale:true,
-					        axisLabel: {
-					            margin: 2,
-					            formatter: function (value, index) {
-					                if (value >= 10000 && value < 10000000) {
-					                    value = value / 10000 + "万";
-					                } else if (value >= 10000000 && value <100000000) {
-					                    value = value / 10000000 + "千万";
-					                }else if(value>= 100000000) {
-					                	value=value/100000000+'亿'
-					                }
-					                return value;
-					            }
-					        },
+//					        axisLabel: {
+//					            margin: 2,
+//					            formatter: function (value, index) {
+//					                if (value >= 10000 && value < 10000000) {
+//					                    value = value / 10000 + "万";
+//					                } else if (value >= 10000000 && value <100000000) {
+//					                    value = value / 10000000 + "千万";
+//					                }else if(value>= 100000000) {
+//					                	value=value/100000000+'亿'
+//					                }
+//					                return value;
+//					            }
+//					        },
 					    },
 					    series: [
 					    {

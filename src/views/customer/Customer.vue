@@ -280,15 +280,10 @@ export default {
       			if(res.status ==200 ){
       				if(res.data.status  ==0 ){
       					this.$message({
-	                message: this.$t('tooltipMes.diSuccess'),
-	                type: "success"
-	              });
-	              this.getUsers();
-      				}else{
-      					this.$message({
-	                message: res.data.message,
-	                type: "warning"
-	              });
+			                message: this.$t('tooltipMes.diSuccess'),
+			                type: "success"
+			            });
+			            this.getUsers();
       				}
       			}
       		}).catch(e => {console.log(e)})
@@ -303,15 +298,10 @@ export default {
       			if(res.status ==200){
       				if(res.data.status  == 0){
       					this.$message({
-	                message:this.$t('tooltipMes.enSuccess'),
-	                type: "success"
-	              });
-	              this.getUsers();
-      				}else{
-      					this.$message({
-	                message: res.data.message,
-	                type: "warning"
-	              });
+			                message:this.$t('tooltipMes.enSuccess'),
+			                type: "success"
+			            });
+			            this.getUsers();
       				}
       			}
       		}).catch(e => {console.log(e)})
@@ -331,7 +321,10 @@ export default {
     handleSee(index, row) {
       //查看详情-传递id
       this.$router.push({
-        path: "/customer/details/tenant/" + row.id
+        path: "/customer/details/tenant",
+        query:{
+        	id:row.id
+        }
       });
     },
     handleEdit(index, row) {
@@ -361,11 +354,6 @@ export default {
                       type: "success"
                     });
                     this.getUsers();
-                  } else {
-                    this.$message({
-                      message: res.data.message,
-                      type: "warning"
-                    });
                   }
                 }
               })
@@ -398,14 +386,9 @@ export default {
                     message: "删除成功!",
                     type: "success"
                   });
-                  this.getUsers();
-                } else {
-                  this.$message({
-                    message: res.data.message,
-                    type: "warning"
-                  });
-                  this.getUsers();
                 }
+                this.getUsers();
+                
               }
             })
             .catch(e => {

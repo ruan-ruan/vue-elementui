@@ -189,25 +189,29 @@
 				str.forEach(ele => {
 					ele.validate(valid => {
 						if(valid){
-							this.$ajax.post('/vll/add_c2c_vll'+'?token='+this.token,para)
-							.then(res => {
-								if(res.status==200){
-									if(res.data.status==0){
-										this.$confirm(this.$t('business.busiSubmitS'),this.$t('confirm.tooltip'),{
-											confirmButtonText: this.$t('business.continueOpen'),
-									        cancelButtonText: this.$t('business.goToSee'),
-									        type: 'success'
-										})
-										.then(() => {
-											//继续开通
-											this.reset();//对所有的表单进行清空
-										}).catch(() => {
-											//消息列表的查看
-											this.$router.replace('/resource/virtualLine/pointTo')
-										})
+							this.$confirm('确认要添加吗?',{})
+							.then(() => {
+								this.$ajax.post('/vll/add_c2c_vll'+'?token='+this.token,para)
+								.then(res => {
+									if(res.status==200){
+										if(res.data.status==0){
+											this.$confirm(this.$t('business.busiSubmitS'),this.$t('confirm.tooltip'),{
+												confirmButtonText: this.$t('business.continueOpen'),
+										        cancelButtonText: this.$t('business.goToSee'),
+										        type: 'success'
+											})
+											.then(() => {
+												//继续开通
+												this.reset();//对所有的表单进行清空
+											}).catch(() => {
+												//消息列表的查看
+												this.$router.replace('/resource/virtualLine/pointTo')
+											})
+										}
 									}
-								}
-							}).catch(e => {console.log(e)})
+								}).catch(e => {console.log(e)})
+							}).catch(() => {})
+							
 
 						}
 					})

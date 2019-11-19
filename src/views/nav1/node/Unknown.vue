@@ -6,10 +6,10 @@
 				<el-col :span='24' class='toolbar' style='padding-bottom: 0px;'>
 					<el-form :inline='true' :model='filters' ref='filters'>
 						<el-form-item :label="$t('Public.name')" prop='name'>
-							<el-input v-model='filters.name' class='sel'></el-input>
+							<el-input v-model='filters.name' class='ipt_sta'></el-input>
 						</el-form-item>
 						<el-form-item :label="$t('Public.dataCen')"prop='search_dc'>
-							<el-select v-model='filters.search_dc' filterable :placeholder='$t("topFilters.placeholder")' class='sel'>
+							<el-select v-model='filters.search_dc' filterable :placeholder='$t("topFilters.placeholder")' class='ipt_sta'>
 								<el-option
 									v-for='(item,index) in datac'
 									:key='index'
@@ -25,7 +25,8 @@
 								@change="timeValSearchBtn"
 								:range-separator='$t("Public.to")'
 								:start-placeholder='$t("Public.start")'
-								:end-placeholder='$t("Public.end")'>
+								:end-placeholder='$t("Public.end")'
+								class='port_sel'>
 							</el-date-picker>
 						</el-form-item>
 						<el-form-item>
@@ -231,7 +232,7 @@
 	    					console.log(res)
 //			    			console.log(res); creation_time datedialogFormat
 			    			res.data.data.items.map(ele => {
-
+								
 			    				if(ele.devices.length ==1){
 			    					var str1=ele.devices.find(item => {
 				    					return item['sign'] == 'd1' 
@@ -249,7 +250,6 @@
 
 				    					return item.sign == 'd1' 
 				    				})
-			    					
 			    					var str2=ele.devices.find(item => {
 				    					return item.sign =='d2' 
 				    				})
@@ -265,8 +265,6 @@
 			    			})
 							this.users=res.data.data.items
 							this.total = res.data.data.page.total;
-	    				}else{
-	    					this.loading=false
 	    				}
 	    			}	
 	    		})
@@ -312,11 +310,6 @@
 	    								})
 	    								this.dialogFormVisible=false
 	    								this.$refs['foundForm'].resetFields();
-	    							}else {
-	    								this.$message({
-	    									message:res.data.message,
-	    									type:'warning'
-	    								})
 	    							}
 	    						}
 	    					}).catch((e ) => {console.log(e)})
@@ -328,20 +321,31 @@
 	    	handleSee(index,row){
 	    		console.log(row)
 				this.$router.push({
-					path:'/location/index/unknown_details/'+row.id,
+					path:'/location/index/unknown_details',
+					query:{
+						unknownID:row.id
+					}
 				})
 	    	},
 	    	//编辑
 	    	handleEdit(index,row){
 				this.$router.push({
 //					name:'未知节点编辑',
-					path:'/location/index/unknown_editForm/'+row.id,
+					path:'/location/index/unknown_editForm',
+					query:{
+						unknownEditID:row.id
+					}
 				})
 	    	},
 	    	//运行
 	    	run(index,row){
-	    		console.log(row)
+	    		console.log(row);
+	    		var data=[row.dc,row.devices_sn1,row.devices_name1,row.devices_ip1,row.vtep,row.name];//将设备一的必填项里面是否存在null或者''或者undefined这个时候都是需要重新配置
+	    		
+//	    		debug;
 	    		//设备运行
+	    		//区别自发现和手动配置的节点
+	    		if(row.exist_status == "normal"){//手动配置   必填项已经验证合格  可以直接运行
 	    			this.$confirm(this.$t('Public.runDevice'),this.$t('confirm.tooltip'),{})
 	    			.then(() => {
 	    				this.$ajax.put('/node/run_node/'+row.id+'?token='+this.token)
@@ -355,19 +359,40 @@
 	    							})
 	    							this.getUsers()
 	    							this.$router.push('/location/backbone')
-	    						}else{
-	    							this.$message({
-	    								message:res.data.message,
-	    								type:'warning'
-	    							})
 	    						}
 	    					}
-	    				}).catch(e => {
-	    					console.log(e)
-	    				})
-	    			}).catch(() => {
-	    				
+	    				}).catch(e => {console.log(e)})
+	    			}).catch(() => {})
+	    		}else if(row.exist_status == "found"){//自发现   需要进入编辑配置完毕以后才可以   配置完必填项才可以
+	    			data.map(item => {
+	    				if( (!item && typeof(item) !='undefined' && item !=0) ||item =='' || typeof(item) =='undefined'  ){
+	    					this.$message({
+	    						message:'该节点为自发现，应先配置基本信息，才能运行！',
+	    						type:'warning'
+	    					})
+	    				}else {
+	    					this.$confirm(this.$t('Public.runDevice'),this.$t('confirm.tooltip'),{})
+			    			.then(() => {
+			    				this.$ajax.put('/node/run_node/'+row.id+'?token='+this.token)
+			    				.then(res => {
+			    					console.log(res);
+			    					if(res.status==200){
+			    						if(res.data.status==0){
+			    							this.$message({
+			    								message:this.$t('Publice.runSuccess'),
+			    								type:'success'
+			    							})
+			    							this.getUsers()
+			    							this.$router.push('/location/backbone')
+			    						}
+			    					}
+			    				}).catch(e => {console.log(e)})
+			    			}).catch(() => {})
+	    				}
 	    			})
+	    		}
+	    		
+	    			
 
 	    	},
 	    	//删除
@@ -386,11 +411,6 @@
 					              type: "success"
 					            });
 					            this.getUsers();
-		          			}else if( res.data.status){
-		          				this.$message({
-		          					message:res.data.message,
-		          					type:'warning'
-		          				})
 		          			}
 		          		}
 		          })
@@ -426,17 +446,12 @@
 				              message: this.$t('tooltipMes.delSuccess'),
 				              type: "success"
 				            });
-				            this.getUsers();
-		          		}else if(res.data.status){
-		          			this.$message({
-		          				message:res.data.message,
-		          				type:'warning'
-		          			})
-		          			this.getUsers();
+				           
 		          		}
+		          		 this.getUsers();
 		          	}
 		              
-		          });
+		          }).catch(e => {console.log(e)})
 		        })
 		        .catch(() => {});
 		    },

@@ -6,7 +6,7 @@
 				<el-col :span='24'>
 					<el-form :inline='true' :model='filters' ref='filters' @submit.native.prevent>
 						<el-form-item :label='$t("Public.cloudName")' prop='name'>
-							<el-input v-model='filters.name' class='sel_chart'></el-input>
+							<el-input v-model='filters.name' class='ipt_sta'></el-input>
 						</el-form-item>
 						<el-form-item :label='$t("Public.shardCloud")' prop='cloun'>
 							<el-select v-model='filters.cloun' class='sel'>
@@ -65,7 +65,7 @@
 				</el-table-column>
 				<el-table-column  :label='$t("Public.cloudName")' min-width='100' align='center'>
 					<template slot-scope='scope'>
-						<a href="#" @click='handleSeeLink(scope.$index,scope.row)'>{{scope.row.name}}</a>
+						<a href="#" @click='handleSeeLink(scope.$index,scope.row)'style="text-decoration: none;">{{scope.row.name}}</a>
 					</template>
 				</el-table-column>
 				<el-table-column prop='status'  :label='$t("Public.linkState")' min-width='80' align='center'>
@@ -80,7 +80,7 @@
 				</el-table-column>
 				<el-table-column prop='logic_port.name'  :label='$t("Public.logic")' min-width='80' align='center'>
 					<template slot-scope='scope'>
-						<a href="#" @click="handleSeeLogic(scope.$index,scope.row)">{{scope.row.logic_port.name}}</a>
+						<a href="#" @click="handleSeeLogic(scope.$index,scope.row)"style="text-decoration: none;">{{scope.row.logic_port.name}}</a>
 					</template>
 				</el-table-column>
 				<el-table-column   :label='$t("Public.logicStatus")' min-width='80' align='center'>
@@ -269,11 +269,6 @@
 									type:'success'
 								})
 								this.getUser()
-							}else{
-								this.$message({
-									message:res.data.message,
-									type:'warning'
-								})
 							}
 						}
 					})
@@ -299,16 +294,11 @@
 									message:this.$t('tooltipMes.delSuccess'),
 									type:'success'
 								})
-								this.getUser()
-							}else{
-								this.$message({
-									message:res.data.message,
-									type:'warning'
-								})
-								this.getUser()
 							}
+							this.getUser()
+							
 						}
-					})
+					}).catch(e => {console.log(e)})
 				}).catch(() => {})
 			},
 			handleExport(command){

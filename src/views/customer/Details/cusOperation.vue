@@ -48,8 +48,8 @@
 							      	v-model="selectedOptions"
 							      	@change="addressChange"class='ipt_sels':disabled='!btnStatus'>
 							 	</el-cascader>	<br />
-							 	<!--selectedOptions-->
-								<el-input v-model='customer.extra' :placeholder='$t("customer.plAddress")' class='ipt_sels':disabled='!btnStatus'></el-input>
+
+								<el-input type='textarea' v-model='customer.extra' :placeholder='$t("customer.plAddress")' class='ipt_sels':disabled='!btnStatus'></el-input>
 							</el-form-item>
 							<el-form-item :label='$t("Public.description")+"："'>
 								<el-input v-model='customer.description':placeholder='$t("customer.plaMax")'type="textarea"
@@ -171,20 +171,22 @@
 		},
 		created(){
 			this.token=sessionStorage.getItem('token');
-			if(typeof this.tit !='undefined'&&(this.addCustome !=='add' && typeof this.cusEditID =='undefined')){
+			if(typeof this.tit ==='string'){
 //				console.log('执行详情的界面');
 				//设置成不可以编辑
 				this.btnStatus=false;
 				//传入对应的实参
 				this.editOpera=true;
 				this.getCusDetails(this.tit)
-			}else if((typeof this.tit =='undefined'&& typeof this.cusEditID =='undefined')&&this.addCustome ==='add'){
+			}
+			if(this.addCustome ==='add'){
 //				console.log('进入可以添加的界面');
 				this.btnStatus=true;
 				this.addOpera=true;
 				this.editOpera=false;
 //				this.getTenant()
-			}else if(typeof this.cusEditID !='undefined'&&(typeof this.tit =='undefined'&&this.addCustome !=='add')){
+			}
+			if(typeof this.cusEditID ==='string'){
 //				console.log('进入编辑的界面');
 				this.btnStatus=true;
 				this.addOpera=false;
@@ -232,11 +234,6 @@
 							})
 							this.$refs["customer"].resetFields();
 							this.$router.push('/customer/cus');
-						}else{
-							this.$message({
-								message:res.data.message,
-								type:'warning'
-							})
 						}
 					}
 				})
@@ -273,11 +270,6 @@
 									})
 									this.$refs["customer"].resetFields();
 									this.$router.replace('/customer/cus')
-								}else{
-									this.$message({
-										message:res.data.messae,
-										type:'warning'
-									})
 								}
 							}
 						}).catch(e => {

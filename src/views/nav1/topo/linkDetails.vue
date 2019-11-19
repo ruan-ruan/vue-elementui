@@ -207,11 +207,6 @@
 										topoId:ids
 									}
 								});
-							}else{
-								this.$message({
-									message:res.data.message,
-									type:'warning'
-								})
 							}
 						}
 					}).catch(e => {console.log(e)})

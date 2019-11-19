@@ -94,7 +94,12 @@
 				}).catch(e => {console.log(e)})
 			},
 			seedetails(){
-				this.$router.push('/location/index/unknown/nodedetails/'+this.nodeId)
+				this.$router.push({
+					path:'/location/index/unknown/nodedetails',
+					query:{
+						detailsID:this.nodeId
+					}
+				})
 			}
 			
 		}

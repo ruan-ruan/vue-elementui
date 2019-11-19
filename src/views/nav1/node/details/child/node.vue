@@ -157,9 +157,9 @@
 				//接收未知节点的里面的数据中心里面的数据
 				unknown_id:this.$route.query.id,
 				//接收未知节点的里面的详情的id
-				unknownID:this.$route.params.unknownID,
+				unknownID:this.$route.query.unknownID,
 				//未知节点的编辑
-				unknown_editFormID:this.$route.params.unknownEditID,
+				unknown_editFormID:this.$route.query.unknownEditID,
 				unknown_editFormData:{},
 				timeVal:'',
 				seeForm:{
@@ -314,7 +314,7 @@
 				//未知节点的编辑
 				this.unknown_editForm_status=false;
 				
-//				this.addEquipStatus=true;
+				this.addEquipStatus=true;
 				
 				this.StaEditForm=false;
 				this.StaNot=false;
@@ -454,11 +454,6 @@
 							
 							this.seeForm=Object.assign({},setObj);
 							console.log(this.seeForm)
-						}else{
-							this.$message({
-								message:res.data.message,
-								type:'warning'
-							})
 						}
 					}
 				})
@@ -468,8 +463,8 @@
 			},
 			editForm(){
 				console.log('节点的编辑')
-				console.log(this.seeForm)
-				console.log(this.baseData)
+//				console.log(this.seeForm)
+//				console.log(this.baseData)
 				var  para={};
 				
 				if(this.baseData.devices.length ==1){
@@ -532,11 +527,6 @@
 										})
 										//返回节点数据主页
 										this.$router.push({path:'/location/backbone'})
-									}else {
-										this.$message({
-											message:res.data.message,
-											type:'warning'
-										})
 									}
 								}
 							}).catch(e => {
@@ -624,11 +614,6 @@
 										this.$store.state.statusname=true;
 										this.$router.push('/location/backbone')
 
-									}else{
-										this.$message({
-											message:res.data.message,
-											type:'warning'
-										})
 									}
 								}
 							}).catch(e => {
@@ -640,9 +625,14 @@
 			},
 			unknownEditForm(){
 				//未知节点的额编辑
+				//this.addEquipStatus=true;
+//				console.log(this.addEquipStatus);
+//				console.log(this.equStatusTwo)
+				//当this.equStatusTwo   为true的时候    显示两个设备    this.equStatusTwo为false的时候显示一个设备
 				var para;
-				console.log(this.seeForm);
-				console.log(this.unknown_editFormData)
+//				console.log(this.seeForm);
+//				console.log(this.unknown_editFormData);
+//				debug;
 				var str=this.unknown_editFormData.devices;
 				let obj={
 					name:'',
@@ -665,8 +655,7 @@
 						id:this.unknown_editFormData.dc.id
 					}
 				}
-				
-				if(str.length=1){
+				if(!this.equStatusTwo){//默认为false  显示一个设备
 					para={
 						id:this.seeForm.id,
 						name:this.seeForm.name,
@@ -689,20 +678,12 @@
 						]
 					}	
 					
-				}else if(str.length=2){
-//					var d1=str.find((item) => {
-//						return item['sign']=='d1'
-//					})
-//					var d2=str.find((item ) => {
-//						return item['sign']=='d2'
-//					})
-					
-					
-					
+				}else if(this.equStatusTwo){
+
 					para={
 						id:this.seeForm.id,
 						name:this.seeForm.name,
-						dc_id:this.seeForm.dc_id,
+						dc_id:this.seeForm.dc_id==obj.name?obj.id:this.seeForm.dc_id,
 						vtep:this.seeForm.vtep,
 						devices:[
 							{
@@ -735,8 +716,7 @@
 					}
 				}
 				console.log(para);
-				
-//				debug
+
 				this.$refs.seeForm.validate(valid => {
 					if(valid){
 						this.$confirm('确认要修改吗?','提示',{})
@@ -755,11 +735,6 @@
 										this.$store.state.statusname=true;
 										this.$router.push('/location/backbone')
 
-									}else{
-										this.$message({
-											message:res.data.message,
-											type:'warning'
-										})
 									}
 								}
 							}).catch(e => {

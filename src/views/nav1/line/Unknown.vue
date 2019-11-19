@@ -5,7 +5,7 @@
 			<el-col :span='24' class='toolbar ' style='width:100%;'>
 				<el-form :inline='true' :model='filters' ref='filters'>
 					<el-form-item :label='$t("Public.name")' prop='search_name'>
-						<el-input v-model='filters.search_name'></el-input>
+						<el-input v-model='filters.search_name' class='ipt_sta'></el-input>
 					</el-form-item>
 					<el-form-item :label='$t("Public.status")' prop='search_status'>
 						<el-select v-model='filters.search_status' :plachodle='$t("topFilters.placeholder")' class='sel'>
@@ -25,7 +25,8 @@
 					      :range-separator="$t('Public.to')"
 					      :start-placeholder="$t('Public.start')"
 						  @change="timeValSearchBtn"
-					      :end-placeholder="$t('Public.end')">
+					      :end-placeholder="$t('Public.end')"
+					      class='port_sel'>
 					    </el-date-picker>
 					</el-form-item>
 					<el-form-item>
@@ -550,18 +551,10 @@
 											message:this.$t('tooltipMes.addSuccess'),
 											type:'success'
 										})
-
-										this.$refs['editForm'].resetFields();
-										
-										this.dialogFormVisible=false;
-										this.getUsers()
-									}else if(res.data.status){
-										this.$refs.editForm.resetFields();
-										this.$message({
-											message:res.data.message,
-											type:'warning'
-										})
 									}
+									this.$refs['editForm'].resetFields();
+									this.dialogFormVisible=false;
+									this.getUsers()
 								}
 							}).catch(e => {
 								console.log(e)
@@ -668,13 +661,7 @@
 										})
 										this.dialogFormVisible=false;
 										this.getUsers();
-									}else if(res.data.status){
-										this.$message({
-											message:res.data.message,
-											type:'warning'
-										})
 									}
-									
 								}
 							})
 							.catch(e => {
@@ -700,11 +687,6 @@
 								})
 								row.maintain_type=true
 								this.getUsers()
-							}else if(res.data.status){
-								this.$message({
-									message:res.data.message,
-									type:'danger'
-								})
 							}
 						}
 					})
@@ -717,11 +699,20 @@
 			handelSee_aNode(index,row){
 				console.log(row);
 				//查看a的节点的详细的信息
-				this.$router.push({path:'/location/index/unknown/nodedetails/'+row.a_node.id});	
+				this.$router.push({path:'/location/index/unknown/nodedetails',
+				query:{
+					detailsID:row.a_node.id
+				}
+				
+				});
 			},
 			handelSee_zNode(index,row){
 				//查看z节点额详细信息
-				this.$router.push({path:'/location/index/unknown/nodedetails/'+row.z_node.id});
+				this.$router.push({path:'/location/index/unknown/nodedetails',
+				query:{
+					detailsID:row.z_node.id
+				}
+				});
 				
 			},
 			handleDel(index,row){
@@ -740,11 +731,6 @@
 									type:'success'
 								})
 								this.getUsers()
-							}else if( res.data.status){
-								this.$message({
-									message:res.data.message,
-									type:'danger'
-								})
 							}
 						}
 					})
@@ -805,14 +791,9 @@
 									message:this.$t('tooltipMes.delSuccess'),
 									type:'success'
 								})
-								this.getUsers()							
-							}else{
-								this.$message({
-									message:res.data.message,
-									type:'danger'
-								})
-								this.getUsers()	
 							}
+							this.getUsers()	;						
+							
 						}
 					})
 					.catch( e => {

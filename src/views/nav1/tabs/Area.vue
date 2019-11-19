@@ -1,6 +1,5 @@
 <template>
 	<div>
-
 			<section>
 				<!--工具条-->
 				<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
@@ -88,73 +87,45 @@
 				     <el-pagination 
 						:total="total"
 				     	@size-change="handleSizeChange"
-                   		 @current-change="handleCurrentChange"
-				     	 layout="total, sizes, prev, pager, next, jumper"
-				     	 :page-sizes="[10, 20, 30,50]" 						     	 
-				     	  :current-page.sync="currentPage"  
-				     	  :page-count='pageNum'
-				     	  :pager-count="pagecount"
-				     	  
-				     	   >						     	
+                   		@current-change="handleCurrentChange"
+				     	layout="total, sizes, prev, pager, next, jumper"
+				     	:page-sizes="[10, 20, 30,50]" 						     	 
+				     	:current-page.sync="currentPage"  
+				     	:page-count='pageNum'
+				     	:pager-count="pagecount"
+				     	>						     	
 				     </el-pagination>
 				</el-col>
 		
-				<!--编辑界面-->
+				<!--添加， 编辑界面   详情界面-->
 				<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false"  v-loading='editLoading'>
-					<el-form label-position='left' :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm" >
+					<el-form  :model="editForm" label-width="200px" :rules="editFormRules" ref="editForm" >
+						<el-form-item :label="$t('Form.creation')" v-if=' dialogStatus =="see" ' >
+							<el-input v-model='Time':disabled=' dialogStatus =="see"  '  class='ipt_sels' ></el-input>
+						</el-form-item>
+						<el-form-item label="ID :"  v-if=' dialogStatus =="see" ' >
+							<el-input v-model='editForm.id' :disabled=' dialogStatus =="see"  '  class='ipt_sels'></el-input>
+						</el-form-item>
 						<el-form-item :label="$t('Public.name')+'：'" prop="name">
-							<el-input v-model="editForm.name" auto-complete="off" class='ipt_sels' ></el-input>
+							<el-input v-model="editForm.name" auto-complete="off" class='ipt_sels' :disabled=' dialogStatus =="see"  ' ></el-input>
 						</el-form-item>
 						<el-form-item :label="$t('Public.description')+':'">
-							<el-input type="textarea" v-model="editForm.description" class='ipt_sels' ></el-input>
+							<el-input type="textarea" v-model="editForm.description" class='ipt_sels'  :disabled=' dialogStatus =="see"  '  ></el-input>
 						</el-form-item>
 					</el-form>
 					<div slot="footer" class="dialog-footer">
-						 <el-button @click.native="dialogFormVisible=false">
+						 <el-button size='small' @click.native="dialogFormVisible=false">
 						 	<!--取消-->
 						 	{{$t('tabOperation.cancel')}}
 						 </el-button>
 						<!--添加-->
-						<el-button v-if="dialogStatus=='create'" type="primary" @click="createData">
-							<!--保存-->
+						<el-button size='small'  v-if="dialogStatus=='create'" type="primary" @click="createData">
 						 	{{$t('tabOperation.save')}}
 						</el-button>
 						  <!--编辑-->
-			        	<el-button v-else type="primary" @click="updateData">
-			        		<!--保存-->
+			        	<el-button size='small' v-else-if=" dialogStatus=='update' " type="primary" @click="updateData">
 						 	{{$t('tabOperation.save')}}
 			        	</el-button>
-					</div>
-				</el-dialog>
-				<!--详情界面-->
-				<el-dialog  :title="textMap[dialogStatus]":visible.sync="dialog"  :close-on-click-modal="false" v-loading='editLoading'>
-					<el-form label-position='left' :model="seeForm" label-width="80px"  ref="seeForm">
-						<el-form-item  :label="$t('Form.creation')" >
-							<template>
-								<span v-text="Time"></span>
-							</template>
-						</el-form-item>
-						<el-form-item label="ID :" >
-							<template>
-								<span v-text='seeForm.id'></span>
-							</template>
-						</el-form-item>
-						<el-form-item :label="$t('physicalPosition.regionName')" >
-							<template>
-								<span v-text="seeForm.name"></span>
-							</template>
-						</el-form-item>
-						<el-form-item :label="$t('Public.description')">
-							<template>
-								<span v-text="seeForm.description"></span>
-							</template>
-						</el-form-item>
-					</el-form>
-					<div slot="footer" class="dialog-footer">
-						 <el-button @click.native="dialog=false"> 
-						 	<!--取消-->
-						 	{{$t('tabOperation.cancel')}}
-						 </el-button>
 					</div>
 				</el-dialog>
 			</section>
@@ -164,8 +135,6 @@
  
 <script>
 
-
-	import util from "@/common/util";
 	import {datedialogFormat,descriptionValue} from '@/assets/js/index.js'
 	export default {
 		name:'Area',
@@ -177,7 +146,6 @@
 		    	
 		    	activeName:'first',
 		      	dialogStatus: "",
-		      	dialog:'',
 		      	textMap: {
 		        	update: this.$t('tabOperation.edit'),
 		        	create: this.$t('tabOperation.add'),
@@ -194,13 +162,10 @@
 		      //保存获取的列表的数据
 		      	users: [],
 		      	total: 0,
-		//	  page:1,
 			  	pagesize:10,
 			  	currentPage:1,
 			  	pageNum:1,
 			  	pagecount:5,
-			  
-			  
 		      	sels: [], //列表选中列
 		        editLoading: false,
 		      	editFormRules: {
@@ -212,23 +177,13 @@
 		        	name: "",
 		        	description: ""
 		      	},
-		      //详情界面
-		      	seeForm:{
-		      	//时间戳
-		      		creation_time:'',
-		      		description:'',
-		      		id:'',
-		      		name:''
-		      	},
 		      	Time:0,
-		      	dialog:false,
 		      	addFormVisible: false, //新增界面是否显示
 		      	addFormRules: {
 		        	name: [{ required: true,  message:this.$t('validateMes.place')+this.$t('tooltipMes.name') , trigger: "blur" }]
 		      	},
 		      	excelData:[],
 		      	token:'',
-				url:'',
 		    };
 	  	},
 	  	created(){
@@ -238,11 +193,12 @@
 	  			
 		mounted() {
 //		    console.log(this.users)
-		    this.bus.$emit('Area',this.users);
+//		    this.bus.$emit('Area',this.users);
 		},
 		methods: { 	
 			reset(){
 				this.$refs['filters'].resetFields();
+				console.log(this.$router.options.routes)
 			},
 		//改变的时候
 			handleSizeChange(val){
@@ -267,18 +223,15 @@
 				
 				this.$ajax.get('/location/regions'+'?token='+this.token,para)
 		      	.then(res => {
+			      	this.loading=false;
 			      	if(res.status==200){
-			      		
 			      		if(res.data.status==0){
-			      			this.loading=false;
-							console.log(res)
 							descriptionValue(res.data.data.items)//处理   备注信息
-
 					        this.total=res.data.data.page.total;
 					        this.pageNum=res.data.data.page.pages;
 							this.users=res.data.data.items;
 							//将区域的数据保存到vuexstate的arae
-							this.$store.state.area=res.data.data.items;
+//							this.$store.state.area=res.data.data.items;
 			      		}
 			      	}
 			    }).catch(e => {
@@ -299,8 +252,8 @@
 		    		title: this.$t('confirm.tooltip'),
 		    		message: h('div', null, newDatas),
 		    		showCancelButton: true,
-		    		confirmButtonText: this.$t('confirm.confi'),
-		            cancelButtonText: this.$t('tabOperation.cancel'),
+//		    		confirmButtonText: this.$t('confirm.confi'),
+//		            cancelButtonText: this.$t('tabOperation.cancel'),
 		            type: 'warning'
 		    	})
 		    	.then(()=> {
@@ -314,35 +267,31 @@
 		    						type:'success'
 		    					})
 		    					this.getUsers()
-		    				}else{
-		    					this.$message({
-		    						message:res.data.message,
-		    						type:'warning'
-		    					})
 		    				}
 		    			}
 		    		}).catch(e => {
 		    			console.log(e)
 		    		})
 		    	}).catch(() => {
-		    		console.log()
 		    	})
 		   	},
 		    //详情界面
 		    handleSee:function(index, row){
 			    this.dialogStatus = "see";
-			    this.dialog = true;
+			    this.dialogFormVisible = true;
 		        this.editLoading = true;       
-		        let para = Object.assign({}, this.editForm);
 				this.$ajax.get('/location/region_info/'+row.id+'?token='+this.token)
 		        .then(res => {
-		          	this.seeForm=res.data.data;
-		          	//将时间戳转化为时间格式
-					this.Time=datedialogFormat(this.seeForm.creation_time)
-		            this.editLoading = false;
-		
-		        })
-		        .catch(e => {
+		        	if(res.status ==200){
+		        		if(res.data.status ==0){
+		        			console.log(res);
+		        			//将时间戳转化为时间格式
+							this.Time=datedialogFormat(res.data.data.creation_time)
+				            this.editLoading = false;
+		        			this.editForm=res.data.data;
+		        		}
+		        	}
+		        }).catch(e => {
 		          	console.log(e);
 		        })
 		    },		    
@@ -356,7 +305,7 @@
 		    //显示新增界面
 		    handleAdd: function() {
 		      	this.dialogStatus = "create";
-		     	 this.dialogFormVisible = true;
+		     	this.dialogFormVisible = true;
 		      	this.editForm = {
 		        	name: "",
 		        	description: ""
@@ -366,9 +315,7 @@
 		    updateData:function() {
 		    	
 		      this.$refs.editForm.validate(valid => {
-
 		        if (valid) {
-
 		            let para = Object.assign({}, this.editForm);
 					this.$ajax.put('/location/edit_region/'+para.id+'?token='+this.token,para)
 		              .then( (res) => {             	
@@ -381,14 +328,8 @@
 				                this.$refs["editForm"].resetFields();
 				                 this.dialogFormVisible = false;
 				                this.getUsers();
-		              		}else if(res.data.status){
-		              			this.$message({
-		              				message:res.data.message,
-		              				type:'warning '
-		              			})
 		              		}
 		              	}
-		                  
 		              })
 		              .catch(e => {
 		              	console.log(e);
@@ -413,11 +354,6 @@
 				                this.$refs["editForm"].resetFields();
 								this.dialogFormVisible = false;
 								this.getUsers();
-							}else if(res.data.status){
-								this.$message({
-									message:res.data.message,
-									type:'warning'
-								})
 							}
 						}  
 					})
@@ -452,14 +388,8 @@
 					              message: "批量删除成功",
 					              type: "success"
 					            });
-					            this.getUsers();
-			          		}else {
-			          			this.$message({
-			          				message:res.data.message,
-			          				type:'warning'
-			          			})
-			          			 this.getUsers();
 			          		}
+			          		this.getUsers();
 			          	}    
 		          	}).catch(e => {console.log(e)})
 		        }).catch(() => {});

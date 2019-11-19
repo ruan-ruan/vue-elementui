@@ -170,6 +170,7 @@
                     v-for="sun  in child.children"
                     :index="sun.path"
                     :key="sun.path"
+                     v-if="!sun.hidden"
                   >
                     <span slot="title">
                       <!--{{sun.name}}-->
@@ -208,7 +209,6 @@
               <span slot="title">
                 <!--{{item.children[0].name}}-->
                 {{$t(item.children[0].name)}}
-
               </span>
 
             </el-menu-item>
@@ -343,7 +343,6 @@ export default {
       collapsed: false,
       sysUserName: "",
       sysUserAvatar: require("../assets/images/touxiang.jpg"),
-      //				sysLanguage:[{title:'CH'},{title:'English'}],
       form: {
         name: "",
         region: "",
@@ -473,25 +472,16 @@ export default {
     });
   },
   methods: {
-    Change(e = "cn", type) {
-      console.log(e);
-      console.log(type);
+    Change(e , type) {
       window.location.reload(); //实现项目的刷新
       localStorage.setItem("language", e);
       this.$i18n.locale = e;
-      //		     document.title = this.$t('win.title');//网站的title
-      //1.设置页面title这个是二级title
-      //		     document.title = this.$t('message.title');
-      // 2.三级title设置 得根据当前页面路由位置，去拿到title
-      var page = this.$route.path.split("/").pop();
-      //		    document.title = this.$t('message.pageTitle.'+page);
     },
     psd: function(row) {
-      this.$confirm("确认要修改密码吗?", "提示", {})
+      this.$confirm("确认要修改密码吗?", "提示", {type:'warning'})
         .then(() => {
           this.$router.push({ path: "/changepassword" });
-        })
-        .catch(() => {});
+        }).catch(() => {});
     },
     timestamp(timestamp) {
       let timestampString = null;
@@ -529,7 +519,7 @@ export default {
     //退出登录
     logout: function() {
       var _this = this;
-      this.$confirm("确认退出吗?", "提示", {})
+      this.$confirm("确认退出吗?", "提示", {type:'warning'})
         .then(() => {
           sessionStorage.removeItem("user");
           sessionStorage.removeItem("token");

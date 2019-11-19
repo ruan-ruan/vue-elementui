@@ -213,11 +213,6 @@
 									type:'success'
 								})
 								this.getUsers()
-							}else {
-								this.$message({
-									message:res.data.message,
-									type:'warning'
-								})
 							}
 						}
 						
@@ -233,11 +228,6 @@
 									type:'success'
 								})
 								this.getUsers()
-							}else{
-								this.$message({
-									message:res.data.message,
-									type:'warning'
-								})
 							}
 						}
 					}).catch(e => {console.log(e)})
@@ -345,11 +335,6 @@
 										this.$refs['editForm'].resetFields();
 										this.dialogFormVisible=false;
 										this.getUsers()
-									}else{
-										this.$message({
-											message:res.data.message,
-											type:'warning'
-										})
 									}
 								}
 							}).catch(e => {console.log(e)})
@@ -396,11 +381,6 @@
 									type:'success'
 								})
 								this.getUsers()
-							}else{
-								this.$message({
-									message:res.data.message,
-									type:'warning'
-								})
 							}
 						}
 					}).catch(e => {console.log(e)})
@@ -425,14 +405,9 @@
 	                    message:this.$t('tooltipMes.delSuccess'),
 	                    type: "success"
 	                  });
-	                  this.getUsers();
-	                } else {
-	                  this.$message({
-	                    message: res.data.message,
-	                    type: "warning"
-	                  });
-	                  this.getUsers();
+	                 
 	                }
+	                this.getUsers();
 	              }
 	            })
 	            .catch(e => {

@@ -182,8 +182,8 @@
 				str.forEach(ele => {
 					ele.validate(valid => {
 						if(valid){
-//							this.$confirm('确定要提交吗?','提示',{})
-//							.then(() => {
+							this.$confirm('确定要提交吗?','提示',{})
+							.then(() => {
 								console.log(this.editForm);
 								console.log(this.basic)
 								if(this.editForm.endpoints_logic_port_id_a == this.editForm.endpoints_logic_port_id_z){
@@ -192,7 +192,6 @@
 										type:'warning'
 									})
 								}else {
-									
 
 								let para={
 									name:this.basic.name,
@@ -233,18 +232,13 @@
 												this.$router.push('/resource/virtualLine/pointTo')
 											}).catch(() => {})
 											
-										}else{
-											this.$message({
-												message:res.data.message,
-												type:'warning'
-											})
 										}
 									}
 								}).catch(e => {
 									console.log(e)
 								})
 								}
-//							}).catch(() => {})
+							}).catch(() => {})
 						}
 					})
 				})	

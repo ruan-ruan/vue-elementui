@@ -44,6 +44,7 @@ Vue.prototype.$ajax=ajax;  //对axios的数据请求的二次封装
 
 
 Vue.config.productionTip = false;
+//Vue.prototype.router = router;
 
 
 if (window.sessionStorage.getItem('token')) {

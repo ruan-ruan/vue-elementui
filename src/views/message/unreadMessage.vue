@@ -180,7 +180,7 @@ export default {
   data() {
     return {
       //获取用户的token
-      token: "",
+      token:'',
       //顶部的搜索的部分对用参数
       formList: {
         name: "",
@@ -336,12 +336,7 @@ export default {
                     if (this.$store.state.message < 0) {
                       this.$store.state.message = 0;
                     }
-                  } else if (res.data.status) {
-                    this.$message({
-                      messaeg: res.data.message,
-                      type: "warning"
-                    });
-                  }
+                  } 
                 }
               })
               .catch(e => {
@@ -389,18 +384,14 @@ export default {
                       message: "删除成功!",
                       type: "success"
                     });
-                    this.getData();
+
                     this.$store.state.message = this.$store.state.message - 1;
                     if (this.$store.state.message < 0) {
                       this.$store.state.message = 0;
                     }
-                  } else if (res.data.status) {
-                    this.$message({
-                      messaeg: res.data.message,
-                      type: "warning"
-                    });
-                    this.getData();
                   }
+                    this.getData();
+                  
                 }
               })
               .catch(e => {
@@ -503,11 +494,6 @@ export default {
               if (this.$store.state.message < 0) {
                 this.$store.state.message = 0;
               }
-            } else if (res.data.status) {
-              this.$message({
-                messaeg: res.data.message,
-                type: "warning"
-              });
             }
           }
         })

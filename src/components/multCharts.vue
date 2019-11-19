@@ -471,9 +471,12 @@
 				let newData=[]
 				data.map(ele => {
 					if(type === 'input_bytes' || type==='output_bytes'|| type =='total_input_bytes' || type == 'total_output_bytes'){
-						newData.push( parseInt(ele/60*8)   )
+						newData.push( parseInt(ele/(60*1024)*8  ))
+//						newData.push( parseInt(ele/(60*1024*8 ) ))
+//						newData.push(ele/(60*1024*8 ).toFixed(2))
 					}else if(type === 'input_packages' || type ==='output_packages'|| type == 'total_input_packages' || type=='total_output_packages'){
-						newData.push( parseInt(ele/60) )
+//						newData.push( parseInt(ele/60) )
+						newData.push(ele/(60 ).toFixed(2))
 					}
 				})
 

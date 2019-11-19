@@ -98,6 +98,8 @@
 			            };
 			            this.$ajax.post('/login/admin_login',loginParams)
 						.then(res => {
+							this.logining=false;
+							
 							if(res.status==200){
 								if(res.data.status==0){
 									if(this.checked){
@@ -107,7 +109,6 @@
 										localStorage.setItem('user','')
 										localStorage.setItem('psd','')
 									}
-									this.logining=false;
 									this.$message({
 										message:'登录成功!',
 										type:'success'
@@ -116,19 +117,10 @@
 									sessionStorage.setItem('user',loginParams.name);
 									sessionStorage.setItem('psd',loginParams.password)
 									sessionStorage.setItem('token',res.data.data.token);
-//									let redirect = decodeURIComponent( this.$route.query.redirect ||'/topology' );
-									let redirect = decodeURIComponent('/topology' || this.$route.query.redirect);
-									console.log(this.$route.query.redirect)
-									console.log(redirect);
+									let redirect = decodeURIComponent('/message/unreadMessage' || this.$route.query.redirect);
 							        this.$router.push({
 							            path: redirect,
 							        })
-								}else if(res.data.status){
-									this.logining=false;
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
 								}
 							}
 						})

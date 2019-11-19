@@ -102,75 +102,44 @@
 	
 			<!--编辑界面-->
 			<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
-				<el-form label-position='left' :model="editForm"  label-width="120px" :rules="editFormRules" ref="editForm">
-					<el-form-item label="id： " v-show='dialogStatus == "create"? false:true'>
+				<el-form :model="editForm"  label-width="200px" :rules="editFormRules" ref="editForm">
+					<el-form-item label="ID： " v-show='dialogStatus == "create" ? false:true'>
 						<el-input v-model="editForm.id"  auto-complete="off" disabled class='ipt_sels'></el-input>
 					</el-form-item>
 					<el-form-item :label="$t('Public.name')+'：' " prop="name">
-						<el-input v-model="editForm.name" auto-complete="off" class='ipt_sels'></el-input>
+						<el-input v-model="editForm.name" auto-complete="off" class='ipt_sels' :disabled='dialogStatus == "see" '></el-input>
 					</el-form-item>
 					<el-form-item :label="$t('Public.SubordinateArea')+'：' "  prop='region_id'>
-							<el-select  v-model='editForm.region_id'    class='ipt'>
-								<el-option
-									v-for='(item,index) in areaData'
-									:key='index'
-									:label='item.name'
-									:value='item.id'>	
-								</el-option>
-							</el-select>
-							<!--<p></p>-->
-						</el-form-item>
+						<el-select  v-model='editForm.region_id'  :disabled='dialogStatus == "see" '   class='ipt'>
+							<el-option
+								v-for='(item,index) in areaData'
+								:key='index'
+								:label='item.name'
+								:value='item.id'>	
+							</el-option>
+						</el-select>
+					</el-form-item>
 					<el-form-item :label="$t('Public.description')+'：' " prop='description'>
-						<el-input type="textarea" v-model="editForm.description" class='ipt_sels'></el-input>
+						<el-input type="textarea" v-model="editForm.description" class='ipt_sels' :disabled='dialogStatus == "see" '></el-input>
 					</el-form-item>
 				</el-form>
 				<div slot="footer" class="dialog-footer">
-					 <el-button @click.native="dialogFormVisible=false"> 
+					 <el-button size='small'  @click.native="dialogFormVisible=false"> 
 					 	<!--取消-->
 					 	{{$t('tabOperation.cancel')}}
 					 </el-button>
 					<!--添加-->
-					<el-button v-if="dialogStatus=='create'" type="primary" @click="createData">
+					<el-button size='small' v-if="dialogStatus=='create'" type="primary" @click="createData">
 						<!--保存-->{{$t('tabOperation.save')}}
 					</el-button>
 					  <!--编辑-->
-		        	<el-button v-else type="primary" @click="updateData">
+		        	<el-button size='small' v-else-if=' dialogStatus=="update" ' type="primary" @click="updateData">
 		        		<!--保存-->{{$t('tabOperation.save')}}
 		        	</el-button>
 				</div>
 				
 			</el-dialog>
-			<!--详情界面-->
-			<el-dialog :title="textMap[dialogStatus]":visible.sync="dialog"  :close-on-click-modal="false" v-loading='editLoading'>
-				<el-form label-position='left' :model="seeForm" label-width="80px"  ref="seeForm">
-					<el-form-item label="ID:" >
-						<template>
-							<span v-text='seeForm.id'></span>
-						</template>
-					</el-form-item>
-					<el-form-item  :label="$t('Public.name')+'：' "  >
-						<template>
-							<span v-text="seeForm.name"></span>
-						</template>
-					</el-form-item>
-					<!--region_id-->
-					<el-form-item :label="$t('Public.SubordinateArea')+'：' ">
-						<template>
-							<span v-text="seeForm.region.name"></span>
-						</template>
-					</el-form-item>
-					<el-form-item :label="$t('Public.description')+'：' ">
-						<template>
-							<span v-text="seeForm.description"></span>
-						</template>
-					</el-form-item>
-				</el-form>
-				<div slot="footer" class="dialog-footer">
-					 <el-button @click.native="dialog=false">
-					 	<!--取消-->{{$t('tabOperation.cancel')}}
-					 </el-button>
-				</div>
-			</el-dialog>
+
 		</section>	
 	</div>
 </template>
@@ -217,30 +186,13 @@
 		      	},
 		      //编辑界面数据
 		      	editForm: {
-//		        	id: "",
+		        	id: "",
 		        	name: "",
 		        	description: "",
 		        	region_id:'',
 		        	region_name:''
 		      	},
-		      	backUp:{},//数据备份
-		    //详情界面
-		      	seeForm:{
-		      		description:'',
-		      		id:'',
-		      		name:'',
-					region:{
-						id:'',
-						name:''
-					}
-		      	},
 		      	Time:0,
-		      	dialog:false,
-		      //区域数据name
-		     	areaForm:{
-		     		name:'',
-		     		id:''
-		     	},
 		     	areaData:[],
 		      	addFormVisible: false, //新增界面是否显示
 		      	excelData:[],
@@ -288,13 +240,11 @@
 			 }
 			this.$ajax.get('/location/cities'+'?token='+this.token,para)
 		    .then(res => {
+		    	this.loading = false;
 		    	if(res.status==200){
 		    		if(res.data.status==0){
-		    			console.log(res);
-		    			this.loading = false;
 		    			descriptionValue(res.data.data.items);
 		    			this.total = res.data.data.page.total;
-
 						this.users=res.data.data.items;
 		    		}
 		    	}
@@ -315,11 +265,6 @@
 					              type: "success"
 					            });
 					            this.getCitys();
-			          		}else if(res.data.status){
-			          			this.$message({
-			          				message:res.data.message,
-			          				type:'warning'
-			          			})
 			          		}
 			          	}					
 		          	}).catch( e =>{
@@ -331,20 +276,23 @@
 		    //查看详情界面
 		    handleSee:function(index,row){
 		    	this.dialogStatus='see';
-		    	this.dialog=true;
-
+//		    	this.dialog=true;
+				this.dialogFormVisible = true;
 		    	this.editLoading=true;
 
 				this.$ajax.get('/location/city_info/'+row.id+'?token='+this.token)
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-
-							console.log(res);
 							this.editLoading=false;
-
-
-							this.seeForm=res.data.data;
+							var str=res.data.data;
+							this.editForm={
+					        	id: str.id,
+					        	name: str.name,
+					        	description: str.description,
+					        	region_id:str.region.id,
+					        	region_name:str.region.name
+					      	}
 						}
 					}
 				}).catch(e => {console.log(e)})
@@ -353,11 +301,10 @@
 		    handleEdit: function(index, row) {
 		      	this.dialogStatus = "update";
 		      	this.dialogFormVisible = true;
-//		      	console.log(row);
-				this.backUp=Object.assign({} ,row);
+
 				this.editForm={
 					name:row.name,
-					region_id:row.region.name,
+					region_id:row.region.id,
 					id:row.id,
 					description:row.description
 				}
@@ -367,9 +314,9 @@
 		      this.dialogStatus = "create";
 		      this.dialogFormVisible = true;
 		      this.editForm = {
-		        name: "",
-				region_id:'',
-		        description: "",
+			        name: "",
+					region_id:'',
+			        description: "",
 				}
 		    },
 		    //编辑
@@ -377,22 +324,12 @@
 		      this.$refs.editForm.validate(valid => {
 		        if (valid) {
 	                this.editLoading = true;
-					let obj={};
-					if(this.editForm.region_id==this.backUp.region.name){
-						obj={
-							region_id:this.backUp.region.id
-						}
-					}else{
-						obj={
-							region_id:this.editForm.region_id
-						}
-					}
 					let para={
 						name:this.editForm.name,
-						region_id:obj.region_id,
+						region_id:this.editForm.region_id,
 						description:this.editForm.description
 					}
-					this.$ajax.put('/location/edit_city/'+this.backUp.id+'?token='+this.token,para)
+					this.$ajax.put('/location/edit_city/'+this.editForm.id+'?token='+this.token,para)
 	              	.then(res => {
 						if(res.status==200){
 							if(res.data.status==0){
@@ -404,11 +341,6 @@
 				                this.$refs["editForm"].resetFields();
 				                 this.dialogFormVisible = false;
 				                this.getCitys();	
-							}else if(res.data.status){
-								this.$message({
-									message:res.data.message,
-									type:'warning'
-								})
 							}
 						}
 
@@ -420,31 +352,23 @@
 		    createData: function() {
 		      this.$refs.editForm.validate(valid => {
 		        if (valid) {
-		         	//  this.$confirm("确认提交吗？", "提示", {})
-		            // .then(() => {
-		                this.editLoading = true;
-		             	let para = Object.assign({}, this.editForm);
-						this.$ajax.post('/location/add_city'+'?token='+this.token,para)
-			            .then(res => {
-			              	if(res.status=='200'){
-			              		if(res.data.status=='0'){
-			              			this.addLoading = false;
-					                this.$message({
-					                    message: this.$t('tooltipMes.addSuccess'),
-					                    type: "success"
-					                });
-					                this.$refs["editForm"].resetFields();
-					                this.dialogFormVisible = false;
-					                this.getCitys();
-			              		}else if(res.data.status){
-			              			this.$message({
-			              				message:res.data.message,
-			              				type:'warning'
-			              			})
-			              		}
-			              	} 
-			            }).catch(e => {console.log(e)})
-		            // }) .catch( ()=> { });
+	                this.editLoading = true;
+	             	let para = Object.assign({}, this.editForm);
+					this.$ajax.post('/location/add_city'+'?token='+this.token,para)
+		            .then(res => {
+		              	if(res.status=='200'){
+		              		if(res.data.status=='0'){
+		              			this.addLoading = false;
+				                this.$message({
+				                    message: this.$t('tooltipMes.addSuccess'),
+				                    type: "success"
+				                });
+				                this.$refs["editForm"].resetFields();
+				                this.dialogFormVisible = false;
+				                this.getCitys();
+		              		}
+		              	} 
+		            }).catch(e => {console.log(e)})
 		        }
 		      });
 		    },
@@ -465,22 +389,14 @@
 		        let para = { ids: ids };
 				this.$ajax.del('/location/del_regions'+'?token='+this.token,para)
 		          .then(res => {
-		          	console.log(res)
 		          	if(res.status=='200'){
 		          		if(res.data.status=='0'){
-
 				            this.$message({
-				              message:this.$t('tooltipMes.delSucess'),
-				              type: "success"
+				                message:this.$t('tooltipMes.delSucess'),
+				                type: "success"
 				            });
-				            this.getCitys();
-		          		}else {
-		          			this.$message({
-		          				message:res.data.message,
-		          				type:'warning'
-		          			})
-		          			this.getCitys();
 		          		}
+		          		this.getCitys();
 		          	}
 		          })
 		          .catch( e => {
@@ -498,12 +414,9 @@
 		    			type:'warning'
 		    		})
 		    	}else if(_this.users.length!=0){
-//		    		console.log('数据不是空')
 					if(command=='all'){
 		    		//导出所有的数据
 			    		this.$confirm(this.$t('tooltipMes.exportDataAll'),this.$t('confirm.tooltip'),{
-			    			confirmButtonText:this.$t('confirm.confi'),
-			    			cancelButtonText:this.$t('tabOperation.cancel'),
 			    			type:'warning'
 			    		}).then(() => {
 			    			
@@ -514,8 +427,6 @@
 			    	}else if(command=='current'){
 			    		//导出当前
 			    		this.$confirm(this.$t('tooltipMes.exportDataCurr'),this.$t('confirm.tooltip'),{
-			    			confirmButtonText:this.$t('confirm.confi'),
-			    			cancelButtonText:this.$t('tabOperation.cancel'),
 			    			type:'warning'
 			    		}).then(() => {
 			    			var para={
@@ -545,11 +456,6 @@
 			    				})
 		    				this.excelData=res.data.data.items;
 							this.export2Excel();
-		    			}else{
-		    				this.$message({
-		    					message:res.data.message,
-		    					type:'warning'
-		    				})
 		    			}
 		    		}
 		    		
@@ -580,7 +486,7 @@
 		      	let h = date.getHours() < 10  ? "0" + date.getHours() + ":"  : date.getHours() + ":";
 		        let m = date.getMinutes() < 10  ? "0" + date.getMinutes() + ":"  : date.getMinutes() + ":";
 		        let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-		      return Y + M + D + h + m + s;
+		      	return Y + M + D + h + m + s;
 		    },
 		  }
 	}

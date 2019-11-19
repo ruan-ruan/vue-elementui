@@ -6,7 +6,7 @@
       <el-col :span='24' class='toolbar' style='padding-bottom: 0px;'  >
         <el-form :inline='true' :model='filters' ref='filters'>
           <el-form-item :label='$t("Public.name")' prop='name' >
-            <el-input  v-model='filters.name' class='sel' ></el-input>
+            <el-input  v-model='filters.name' class='ipt_sta' ></el-input>
           </el-form-item>
           <el-form-item :label='$t("physicalPosition.tab.data")' prop='search_dc' >
             <el-select class='ipt_sta' v-model='filters.search_dc' :placeholder='$t("topFilters.placeholder")' filterable  >
@@ -37,7 +37,7 @@
               :range-separator="$t('Public.to')"
               :start-placeholder="$t('Public.start')"
               :end-placeholder="$t('Public.end')"
-              class='ipt_sels'
+              class='port_sel'
               @change="timeValSearchBtn"
             >
             </el-date-picker>
@@ -357,8 +357,6 @@ export default {
             if (res.data.status == 0) {
             	console.log(res)
             	descriptionValue(res.data.data.items)
-            	
-//          	res.data.data.items.sort( sortVal( 'creation_time',false ) )
               let params = res.data.data.items;
 
               params.forEach((ele, index) => {
@@ -466,7 +464,10 @@ export default {
     //详情界面
     handleSee(index, row) {
       this.$router.push({
-        path: "/location/index/unknown/nodedetails/" + row.id
+        path: "/location/index/unknown/nodedetails",
+        query:{
+        	detailsID:row.id
+        }
       });
     },
     //显示编辑的界面
@@ -496,11 +497,6 @@ export default {
                     type: "success"
                   });
                   this.getUsers();
-                } else {
-                  this.$message({
-                    message: res.data.message,
-                    type: "warning"
-                  });
                 }
               }
             })
@@ -532,14 +528,8 @@ export default {
                     message: this.$t('tooltipMes.delSuccess'),
                     type: "success"
                   });
-                  this.getUsers();
-                } else if (res.data.status) {
-                  this.$message({
-                    message: res.data.message,
-                    type: "warning"
-                  });
-                  this.getUsers();
                 }
+                this.getUsers();
               }
             });
         })

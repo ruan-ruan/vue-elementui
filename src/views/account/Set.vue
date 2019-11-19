@@ -420,22 +420,17 @@
 						.then( res => {
 
 							if(res.status=='200'){
+								this.loading=false;
 								if(res.data.status=='0'){
-									this.loading=false;
+									
 									this.$message({
 										message:'修改成功',
 										type:'success'
 									})
-									this.$refs["editForm"].resetFields();
-									this.dialogFormVisible=false;
-									this.getUsers();
-								}else if(res.data.status){
-									this.dialogFormVisible=false;
-									this.$message({
-										message:res.data.message,
-										type:'waring'
-									})
+									this.$refs["editForm"].resetFields();									
 								}
+								this.dialogFormVisible=false;
+								this.getUsers();
 							}
 						}).catch( e=> {console.log(e)})
 
@@ -487,15 +482,10 @@
 											message:this.$t('tooltipMes.addSuccess'),
 											type:'success'
 										})
-										this.$refs["editForm"].resetFields();
-										this.dialogFormVisible=false;
-										this.getUsers()
-									}else {
-										this.$message({
-											message:res.data.message,
-											type:'danger'
-										})
 									}
+									this.$refs["editForm"].resetFields();
+									this.dialogFormVisible=false;
+									this.getUsers()
 								}
 						}).catch(e => {console.log(e)})
 					}
@@ -521,13 +511,9 @@
 										message:this.$t('tooltipMes.diSuccess'),
 										type:'success'
 									})
-									this.getUsers()
-								}else {
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
+
 								}
+								this.getUsers()
 							}
 						}).catch(e => {
 							console.log(e)
@@ -547,11 +533,6 @@
 										type:'success'
 									})
 									this.getUsers()
-								}else if(res.data.status){
-									this.$message({
-										message:res.data.messaeg,
-										type:'warning'
-									})
 								}
 							}
 						}).catch(e => {
@@ -621,13 +602,8 @@
 									message:this.$t('tooltipMes.delSuccess'),
 									type:'success'
 								})
-								this.getUsers();
-							}else {
-								this.$message({
-									message:res.data.message,
-									type:'danger'
-								})
 							}
+							this.getUsers();
 						}
 					})
 				})
@@ -656,21 +632,14 @@
 									message:this.$t('tooltipMes.delSuccess'),
 									type:'success'
 								})
-								this.getUsers()
-							}else{
-								this.$message({
-									message:res.data.message,
-									type:'danger'
-								})
-								this.getUsers()
 							}
+							this.getUsers();
 						}
 					})
 					.catch(e => {
 						console.log(e)
 					})
-				})
-				.catch(() => {})
+				}).catch(() => {})
 			},
 			handleExport(command){
 				//选择当初当前页还是所有页
@@ -688,12 +657,9 @@
 							type:'warning'
 						})
 						.then(() => {
-	//						this.getUsers()
-						
 							this.exportData()
 						}).catch(() => {})
 					}else if(command=='current'){
-	//					console.log('这是点击了当前的部分')
 						this.$confirm(this.$t('confirm.conExportCur'),this.$t('confirm.tooltip'),{
 
 							type:'warning'

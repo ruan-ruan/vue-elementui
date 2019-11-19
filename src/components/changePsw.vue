@@ -111,17 +111,11 @@
 											type:'success'
 										})
 										this.$router.push({path:'/login'})
-									}else{
-										this.$message({
-											message:res.data.message,
-											type:'warning'
-										})
 									}
 								}
-								console.log(res)
 							})
 							.catch(e =>{
-								conso;le.log(e)
+								console.log(e)
 							})
 						}).catch((e) => {})
 					}

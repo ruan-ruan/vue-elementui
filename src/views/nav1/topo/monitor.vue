@@ -99,11 +99,6 @@
 							})
 							
 							this.itemsData=res.data.data.items.slice(0,7)//截取数据的里面的前面的七个
-						}else{
-							this.$message({
-								message:res.data.message,
-								type:'warning'
-							})
 						}
 					}
 				}).catch(e => {console.log(e)})

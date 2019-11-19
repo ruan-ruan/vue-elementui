@@ -115,13 +115,16 @@
 					
 		
 				<!--编辑界面-->
-				<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
-					<el-form  :model="editForm" label-width="160px" label-ailgn='center' :rules="editFormRules" ref="editForm">
+				<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false" v-loading='editLoading'>
+					<el-form  :model="editForm" label-width="200px" label-ailgn='center' :rules="editFormRules" ref="editForm">
+						<el-form-item label="ID:" prop='id' v-if=' dialogStatus !=="create" '>
+							<el-input v-model="editForm.id" disabled  auto-complete="off" class='ipt_sels'></el-input>
+						</el-form-item>
 						<el-form-item :label="$t('Public.name')+'：'" prop='name'>
-							<el-input v-model="editForm.name"  auto-complete="off" class='ipt_sels'></el-input>
+							<el-input v-model="editForm.name" :disabled='dialogStatus=="see" '  auto-complete="off" class='ipt_sels'></el-input>
 						</el-form-item>
 						<el-form-item :label='$t("Public.SubordinateArea")+"："' prop='region_id' >		
-							<el-select  v-model='editForm.region_id'  filterable  @change='selectAreaDia(editForm.region_id)' class='sel' >
+							<el-select  v-model='editForm.region_id'  filterable :disabled='dialogStatus=="see" '   @change='selectAreaDia(editForm.region_id)' class='ipt_sels2' >
 								<el-option
 									v-for='(item,index) in areaData'
 									:key='index'
@@ -129,7 +132,7 @@
 									:value='item.id'>	
 								</el-option>
 							</el-select>
-							<el-select v-model='editForm.city_id' class='sel'>
+							<el-select v-model='editForm.city_id' class='ipt_sels2' :disabled='dialogStatus=="see" ' >
 								<el-option
 									v-for='(item,index) in cityData'
 									:key='index'
@@ -139,55 +142,26 @@
 							</el-select>
 						</el-form-item>
 						<el-form-item :label="$t('Public.description')+'：'" prop='description'>
-							<el-input type="textarea" v-model="editForm.description" class='ipt_sels'></el-input>
+							<el-input type="textarea" v-model="editForm.description" :disabled='dialogStatus=="see" '  class='ipt_sels'></el-input>
 						</el-form-item>
 					</el-form>
 					<div slot="footer" class="dialog-footer">
-						 <el-button @click.native="dialogFormVisible=false">
+						 <el-button size='small' @click.native="dialogFormVisible=false">
 						 	<!--取消-->{{$t('tabOperation.cancel')}}
 						 </el-button>
 						<!--添加-->
-						<el-button v-if="dialogStatus=='create'" type="primary" @click="createData">
+						<el-button size='small' v-if="dialogStatus=='create'" type="primary" @click="createData">
 							{{$t('tabOperation.save')}}
 						</el-button>
 						  <!--编辑-->
-			        	<el-button v-else type="primary" @click="updateData">
+			        	<el-button size='small' v-else-if=' dialogStatus=="update" ' type="primary" @click="updateData">
 			        		<!--保存-->{{$t('tabOperation.save')}}
 			        	</el-button>
 
 					</div>
 					
 				</el-dialog>
-				<!--详情界面-->
-				<el-dialog :title="textMap[dialogStatus]":visible.sync="dialog"  :close-on-click-modal="false">
-					<el-form  :model="seeForm" label-width="160px"  ref="seeForm">
-						<el-form-item :label="$t('Public.name')+'：'" >
-							<template>
-								<span v-text="seeForm.name"></span>
-							</template>
-						</el-form-item>
-						<el-form-item :label="$t('Public.SubordinateArea')+'：'" >
-							<template>	
-								<span v-text="seeForm.region.name"></span>
-							</template>
-						</el-form-item>
-						<el-form-item :label="$t('Public.SubordinateCity')+'：'" >
-							<template>
-								<span v-text="seeForm.city.name"></span>
-							</template>
-						</el-form-item>
-						<el-form-item :label="$t('Public.description')+'：'">
-							<template>
-								<span v-text="seeForm.description"></span>
-							</template>
-						</el-form-item>
-					</el-form>
-					<div slot="footer" class="dialog-footer">
-						 <el-button @click.native="dialog=false">
-						 	<!--取消-->{{$t('tabOperation.cancel')}}
-						 </el-button>
-					</div>
-				</el-dialog>
+
 			</section>	
 	</div>
 </template>
@@ -214,38 +188,17 @@
 			        name: "",
 					search_region:'',
 					city_id:''
-					
-			    },
-			      //详情界面的数据
-			    seeForm:{
-			      	//时间戳
-			      	creation_time:'',
-			      	description:'',
-			      	id:'',
-			      	name:'',
-			      
-			      	region:{
-			      		id:'',
-			      		name:''
-			      	},
-			      	city:{
-			      		id:'',
-			      		name:''
-			      	}
 			    },
 			    Time:0,
-			    dialog:false,
-			      //加载等待时间
-			    loading:false,
-			      //保存获取的列表的数据
-			    users: [],
-			      //分页部分的数据
+			    loading:false,//加载等待时间
+			    users: [],//保存获取的列表的数据
+			    //分页部分的数据
 			    pagesize:10,
 			    currentPage:1,
 			    total: 0,
 			    pageNum:1,
 			    pagecount:5,
-
+				editLoading:false,
 			    sels: [], //列表选中列
 			    editFormRules: {
 			        id:[{required:true, message:this.$t('validateMes.place')+'id', trigger:'bur'}],
@@ -254,7 +207,7 @@
 			        { required: true, message:  this.$t('validateMes.placeCh')+this.$t('tooltipMes.city'), trigger: "change" }],
 			        
 			    },
-			      //编辑界面数据
+			    //编辑界面数据
 			    editForm: {
 			        name: "",
 			        region_id:'',
@@ -262,14 +215,13 @@
 			        description: "",
 			        region_val:'',
 			      	city_val:"",
+			      	id:'',
 			    },
 			    backUp:{},//编辑的时候数据的备份
 			    areaData:[],
 			    cityData:[],
-			    addFormVisible: false, //新增界面是否显示
-	
+//			    addFormVisible: false, //新增界面是否显示
 			    excelData:[],
-			    base:'',
 		    };
 		},
 		created(){
@@ -310,7 +262,11 @@
 				}
 				this.$ajax.get('/location/cities'+'?token='+this.token,para)
 				.then(res => {
-					this.cityData=res.data.data.items;
+					if(res.status ==200){
+						if(res.data.status ==0 ){
+							this.cityData=res.data.data.items;
+						}
+					}
 				}).catch( e => {
 					console.log(e)
 				})
@@ -336,19 +292,13 @@
 				}
 				this.$ajax.get('/location/dcs'+'?token='+this.token,para)
 				.then( res => {
+					this.loading = false;
 					if(res.status==200){
 						if(res.data.status==0){
-							this.loading = false;
 							descriptionValue(res.data.data.items);
 							this.total = res.data.data.page.total;
 					        this.pageNum=res.data.data.page.pages;
 							this.users=res.data.data.items;
-					        
-						}else{
-							this.$message({
-								message:res.data.message,
-								type:'warning'
-							})
 						}
 					}
 				}).catch( e => {
@@ -366,17 +316,11 @@
 		          	.then(res => {
 						if(res.status=='200'){
 							if(res.data.status=='0'){
-
 								this.$message({
 									message:this.$t('tooltipMes.delSucess'),
 									type:'success'
 								})
 				                this.getDatas();
-							}else if(res.data.status){
-								this.$message({
-									message:res.data.message,
-									type:'warning'
-								})
 							}
 						}		           
 		          })
@@ -386,15 +330,24 @@
 		    //查看详情界面
 		    handleSee:function(index,row){
 		    	this.dialogStatus='see';
-		    	this.dialog=true;
-		    	this.seeForm=Object.assign({}, row);
+		    	this.dialogFormVisible = true;
 		    	this.editLoading = true;
 		    	//克隆赋值
 				this.$ajax.get('/location/dc_info/'+row.id+'?token='+this.token,)
 				.then( res =>{
 					if(res.status==200){
 						if(res.data.status==0){
-							this.seeForm=res.data.data
+							this.editLoading = false;
+							var str=res.data.data;
+							this.editForm={
+								id:str.id,
+						        name: str.name,
+						        region_id:str.region.id,
+						        city_id:str.city.name,
+						        description: str.description,
+						        region_val:'',
+						      	city_val:"",
+						    }
 						}
 					}
 				})
@@ -406,11 +359,10 @@
 		    handleEdit: function(index, row) {
 		     	this.dialogStatus = "update";
 		     	this.dialogFormVisible = true;
+		     	
 				this.editForm={
-					region_id:row.region.name,
-					region_val:row.region.id,
+					region_id:row.region.id,
 					city_id:row.city.name,
-					city_val:row.city.id,
 					id:row.id,
 					description:row.description,
 					name:row.name
@@ -438,19 +390,11 @@
 			    this.$refs.editForm.validate(valid => {
 			        if (valid) {
 		                this.editLoading = true;
-						let para={};
-						if(this.editForm.region_id==this.backUp.region.name){
-							para.region_id=this.editForm.region_val;
-							para.city_id=this.editForm.city_val;
-						}else{
-							para.region_id=this.editForm.region_id;
-							para.city_id=this.editForm.city_id;
-						}
 		              	let  params={
 		              		name:this.editForm.name,
 		              		description:this.editForm.description,
-		              		city_id:para.city_id,
-		              		region_id:para.region_id
+		              		city_id:this.editForm.city_id === this.backUp.city.name ? this.backUp.city.id : this.editForm.city_id,
+		              		region_id:this.editForm.region_id
 		              	}
 						this.$ajax.put('/location/edit_dc/'+this.editForm.id+"?token="+this.token,params)
 		              	.then((res) => {
@@ -460,15 +404,11 @@
 									this.$message({
 										message:this.$t('tooltipMes.editSuccess'),
 										type:'success'
-									})
+									});
+									
 									this.$refs["editForm"].resetFields();
-					                 this.dialogFormVisible = false;
+					                this.dialogFormVisible = false;
 					                this.getDatas();
-								}else if(res.data.status){
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
 								}
 			              	}		              	
 		              	}).catch(e => {console.log(e)})
@@ -480,32 +420,23 @@
 		    createData: function() {
 		      this.$refs.editForm.validate(valid => {
 		        if (valid) {
-		          	// this.$confirm("确认提交吗？", "提示", {})
-		            // .then(() => {
 		                this.editLoading = true;
 		              	let para = Object.assign({}, this.editForm);	              
 						this.$ajax.post('/location/add_dc'+'?token='+this.token,para)
 			            .then(res => {
 			              	if(res.status=='200'){
 								if(res.data.status=='0'){
-									this.addLoading = false;
+									this.editLoading = false;
 									this.$message({
 										message:this.$t('tooltipMes.addSuccess'),
 										type:'success'
 									})
 									this.$refs["editForm"].resetFields();
 					                this.dialogFormVisible = false;
-					                //this.addFormVisible = false;
 					                this.getDatas();
-								}else if(res.data.status){
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
-								}		              		
+								}	              		
 			              	}
 			            }).catch( e =>{console.log(e)})
-		            // }) .catch(() => { });
 		        }
 		      });
 		    },
@@ -529,19 +460,12 @@
 			        .then(res => {
 			          	if( res.status=='200'){
 							if(res.data.status=='0'){
-
 								this.$message({
 									message:this.$t('tooltipMes.delSucess'),
 									type:'success'
 								})
-								this.getDatas();
-							}else if(res.data.status){
-								this.$message({
-									message:res.data.message,
-									type:'warning'
-								})
-								this.getDatas();
 							}
+							this.getDatas();
 			          	}
 			        }).catch(e => {console.log(e)})
 		        }).catch(() => {});
@@ -583,11 +507,6 @@
 			    				})
 			    				this.excelData=res.data.data.items;
 								this.export2Excel();
-			    			}else{
-			    				this.$message({
-			    					message:res.data.message,
-			    					type:'warning '
-			    				})
 			    			}
 			    		}
 			    	}).catch(e => {console.log(e)})

@@ -367,11 +367,6 @@ export default {
                     if (this.$store.state.message < 0) {
                       this.$store.state.message = 0;
                     }
-                  } else if (res.data.status) {
-                    this.$message({
-                      messaeg: res.data.message,
-                      type: "warning"
-                    });
                   }
                 }
               })
@@ -412,14 +407,10 @@ export default {
                       message: "删除成功!",
                       type: "success"
                     });
-                    this.getData();
-                  } else if (res.data.status) {
-                    this.$message({
-                      messaeg: res.data.message,
-                      type: "warning"
-                    });
-                    this.getData();
+
                   }
+                    this.getData();
+                  
                 }
               })
               .catch(e => {
@@ -522,11 +513,6 @@ export default {
               if (this.$store.state.message < 0) {
                 this.$store.state.message = 0;
               }
-            } else if (res.data.status) {
-              this.$message({
-                messaeg: res.data.message,
-                type: "warning"
-              });
             }
           }
         })

@@ -569,11 +569,6 @@
 										})
 										this.$refs["filters"].resetFields();
 										this.$router.push('/resource/port')
-									}else{
-										this.$message({
-											message:res.data.message,
-											type:'warning'
-										})
 									}
 								}
 							}).catch(e => {console.log(e)})
@@ -637,11 +632,6 @@
 										})
 										this.$refs["filters"].resetFields();
 										this.$router.push('/resource/port')
-									}else{
-										this.$message({
-											message:res.data.message,
-											type:'warning'
-										})
 									}
 								}
 							})

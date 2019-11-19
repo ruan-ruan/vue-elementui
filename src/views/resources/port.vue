@@ -6,7 +6,7 @@
    	 		<el-col :span='24'>
    	 			<el-form :inline='true' :model='filters' ref='filters'>
    	 				<el-form-item :label='$t("Public.name")' prop='name'>
-   	 					<el-input v-model='filters.name' placeholder="请输入逻辑端口名称" class='sel'></el-input>
+   	 					<el-input v-model='filters.name' :placeholder="$t('Public.plaName')" class='ipt_sta'></el-input>
    	 				</el-form-item>
    	 				<el-form-item :label='$t("Public.tenant")' prop='nameLogo'>
    	 					<el-select v-model='filters.nameLogo' class='sel' :placeholder="$t('Public.plaTenant')">
@@ -303,14 +303,7 @@
 										message:this.$t('tooltipMes.diSuccess'),
 										type:'success'
 									});
-									
-//									row.btnstatus='启用'
 									this.getUsers()
-								}else{
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
 								}
 							}
 						})
@@ -328,13 +321,7 @@
 										message:this.$t('tooltipMes.enSuccess'),
 										type:'success'
 									})
-//									row.btnStatus='禁用';
 									this.getUsers()
-								}else{
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
 								}
 							}
 						})
@@ -355,11 +342,6 @@
 									type:'success'
 								})
 								this.getUsers()
-							}else{
-								this.$message({
-									message:res.data.message,
-									type:'warning'
-								})
 							}
 						}
 					})

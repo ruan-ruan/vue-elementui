@@ -340,7 +340,6 @@
 					if(valid){
 						this.editLoading=true;
 
-//							console.log(this.editForm)
 							let para={
 								type:this.editForm.type,
 								name:this.editForm.name,
@@ -368,15 +367,8 @@
 										})
 										this.$refs['editForm'].resetFields();
 										this.$router.replace('/location/line/cloun')
-									}else{
-										this.$message({
-											message:res.data.message,
-											type:'warning'
-										})
 									}
-//>>>>>>> af27a7ee67fd85c23aa099e541c5aaed37e60620
 								}
-//							}
 						}).catch(e => {console.log(e)})
 					}
 				})
@@ -432,12 +424,6 @@
 									})
 									this.$refs['editForm'].resetFields();
 									this.$router.replace('/location/line/cloun')
-								}else{
-									this.$message({
-										message:res.data.message,
-										type:'warning'
-									})
-
 								}
 							}
 						}).catch(e => {console.log(e)

@@ -4,14 +4,13 @@ import axios from 'axios'
 import {base} from '@/api/api'
 import *as types from '@/api/types'
 import getters from './getters'
-import app from './modules/app.js'
 Vue.use(Vuex)
 
 
 
 const store = new Vuex.Store({
     state:{
-    	token:'',
+    	token:localStorage.getItem('token'),
     	//用户的数据的密码和账号
     	user:{
     		name:'',
@@ -38,6 +37,7 @@ const store = new Vuex.Store({
     		state.roles=msg
     	},
 		[types.LOGIN]: (state, data) => {
+//			localStorage.setItem('token',data)
             localStorage.token = data;
             state.token = data;
         },
@@ -54,9 +54,6 @@ const store = new Vuex.Store({
        sendLink(state,msg){//拓扑图点击链路的详情
        		state.linkObj=msg;
        },
-//     sendFilters(state,msg){
-//     	state.filters=msg;
-//     }
     },
     actions:{
     	setRoles({commit,state},msg){
@@ -64,10 +61,6 @@ const store = new Vuex.Store({
     	},
 
     },
-//  modules:{
-//  	app
-//  },
-//  getters
 })
 
 export default store

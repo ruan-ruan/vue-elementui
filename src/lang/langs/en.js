@@ -18,6 +18,8 @@ const en = {
 
     },
     aside:{
+    	LinkCharts:'Link Charts',
+    	changePsd:'Change Password',
     	myself:'Personal center',
     	standLetter:'message',
     	unMessage:'Unread messages',
@@ -26,7 +28,7 @@ const en = {
     	topoView:'Topology',
     	physicalLocation:'Physical location',
     	nodeManage:'Node manage',
-    	backNode:'Backbone nodes',
+    	backNode:'Backbone',
     	nodeDetails:'Node details',
     	nodeEditor:'Node editor',
     	unknown:'Unknown node editor',

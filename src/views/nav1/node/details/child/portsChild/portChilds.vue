@@ -211,19 +211,9 @@
 										this.dialogFormVisible=false;
 										this.getList(this.title.id)
 //										this.getUsers()
-									}else if(res.data.message){
-										this.$message({
-											message:res.data.msg,
-											type:'warning'
-										})
 									}
-								}else{
-									this.$message({
-										message:res.status,
-										type:'warning'
-									})
 								}
-						})
+						}).catch(e => {console.log(e)})
 					}
 				})
 			}
