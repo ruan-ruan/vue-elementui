@@ -1,3 +1,5 @@
+
+
 import Vue from 'vue'
 import Router from 'vue-router'
 //登录
@@ -50,7 +52,6 @@ var router = new Router({
 		{		
 			path: '/',
 			component: Home,
-	//		name:"个人中心",
 			name: 'aside.myself',
 			iconCls: require('@/assets/images/aside/myself.png'),
 			leaf:false,
@@ -66,7 +67,6 @@ var router = new Router({
 					{path:'/message/unreadMessage',component: () => import ('@/views/message/unreadMessage'), name: 'aside.unMessage',leaf:true,meta:{requireAuth:true,name:'未知消息'}},
 					{path:'/message/allMessage',component: () => import ('@/views/message/allMessage'), name: 'aside.allMessage',leaf:true,meta:{requireAuth:true,name:'全部消息'} },   
 				]}
-				
 			] 
 		},
 		{
@@ -74,6 +74,7 @@ var router = new Router({
 	        component: Home,
 			name:'aside.backManage',
 	        iconCls: require('../assets/images/aside/backbone.png'),//图标样式class    
+	        hidden:false,
 	        leaf:false,
 	        meta:{
 	        	requireAuth:true,
@@ -202,13 +203,17 @@ var router = new Router({
 	    			
 	    			{path:'/account/set',component:() => import('@/views/account/Set'),name:'aside.peopleSet',leaf:true,meta:{ requireAuth:true, name:'人员设置'},}
 	    	]
-	    }, {
+	    }, 
+	    {
 	        path: '*',
 	        hidden: true,
 	        redirect: { path: '/404' }
-	    }
+	    },
+
 	]
 })
 
-export default router
+
+export default router;
+
 

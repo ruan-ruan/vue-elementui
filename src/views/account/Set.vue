@@ -27,10 +27,10 @@
 			</el-col>
 			<el-col :span='24'>
 				<el-col :span='4'>
-					<el-button type='primary' @click='addUser(editForm)'size='small' >+{{$t('tabOperation.add')}}</el-button>
+					<el-button type='primary' @click='addUser(editForm)'size='small' v-if='buttonVal.add'>+{{$t('tabOperation.add')}}</el-button>
 				</el-col>
 				<el-col :span='20'class="table-top">
-					<el-button size='small' type='danger' @click='batchRemove(sels)' :disabled="this.sels.length===0">{{$t('tabOperation.batchDel')}}</el-button>
+					<el-button size='small' type='danger' @click='batchRemove(sels)' :disabled="this.sels.length===0" v-if='buttonVal.del'>{{$t('tabOperation.batchDel')}}</el-button>
 					
 					<el-dropdown size='small' split-button type='success' @command="handleExport" >
 						{{$t('tabOperation.derived.tit')}}
@@ -73,10 +73,10 @@
 				</el-table-column>
 				<el-table-column  width='180' :label='$t("Public.operation")' align='center'>
 					<template slot-scope='scope'  >
-						<el-button size='mini' type='warning'  @click='handleSta(scope.$index, scope.row)' class='btnStatus'>{{scope.row.btnText}}</el-button>
-						<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>{{$t('tabOperation.info')}}</el-button>
-						<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'>{{$t('tabOperation.edit')}}</el-button>				
-						<el-button size='mini' type='danger' @click='handleDel(scope.$index, scope.row)'>{{$t('tabOperation.delete')}}</el-button>
+						<el-button size='mini' type='warning'  @click='handleSta(scope.$index, scope.row)' class='btnStatus' v-if='buttonVal.stop'>{{scope.row.btnText}}</el-button>
+						<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)' v-if='buttonVal.see'>{{$t('tabOperation.info')}}</el-button>
+						<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'v-if='buttonVal.edit'>{{$t('tabOperation.edit')}}</el-button>				
+						<el-button size='mini' type='danger' @click='handleDel(scope.$index, scope.row)'v-if='buttonVal.del'>{{$t('tabOperation.delete')}}</el-button>
 						
 					</template>
 				</el-table-column>
@@ -302,12 +302,21 @@
 				staCreat:false,
 				//在选择人员设置启用和暂停
 				changeRoleStatus:false,
-				
+				buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏 "link@add_unknown_link"
+			  		add:this.codeVal(this.recursion( this.$store.state.aside ,"aside.peopleSet").list,"admin@add_admin").show,//添加	
+			  		del:this.codeVal(this.recursion( this.$store.state.aside ,"aside.peopleSet").list, "admin@del_admin").show,//单个删除和批量的删除是绑定在一起的  
+			  		edit:this.codeVal(this.recursion( this.$store.state.aside ,"aside.peopleSet").list,"admin@edit_admin").show,//编辑的值
+			  		see:this.codeVal(this.recursion( this.$store.state.aside ,"aside.peopleSet").list, "admin@admin_info").show,//查看详情
+			  		run:this.codeVal(this.recursion( this.$store.state.aside ,"aside.peopleSet").list, "admin@to_enable_admin").show,//运行
+			  		stop:this.codeVal(this.recursion( this.$store.state.aside ,"aside.peopleSet").list,"admin@to_disable_admin").show,//停止
+			  	}
 				
 			}
 		},
 		created(){
 			this.token=sessionStorage.getItem('token');
+//			  	console.log(this.$store.state.aside)
+			
 		},
 		methods:{
 			

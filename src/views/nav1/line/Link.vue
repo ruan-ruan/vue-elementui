@@ -37,7 +37,7 @@
 			
 			<!--列表数据部分-->
 			<div class="table-top">
-				<el-button size='small' type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">
+				<el-button size='small' type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0" v-if='buttonVal.del'>
 					{{$t('tabOperation.batchDel')}}</el-button>
 				
 				<el-dropdown size='small' split-button type='success'@command="handleExport">
@@ -101,17 +101,17 @@
 				<el-table-column  :label='$t("Public.operation")' align='center'  width='190'>
 					<template slot-scope='scope'>
 							<el-button size='mini' type='primary' @click='handleStatus(scope.$index, scope.row)'
-								v-if='scope.row.maintenance_value=== $t("Public.fau") ? false : true ' class='maintenance'> <!--当状态为故障的时候   这个时候的该按钮银行 -->
+								v-if='buttonVal.open? scope.row.maintenance_value=== $t("Public.fau") ? false : true : buttonVal.open' class='maintenance'> <!--当状态为故障的时候   这个时候的该按钮 -->
 								{{scope.row.maintenanceBtn}}
 							</el-button>
-							<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>
+							<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'v-if='buttonVal.see'>
 								<!--详情-->{{$t('tabOperation.info')}}
 							</el-button>	
 
-							<el-button size='mini' v-if='scope.row.status==="DOWN"?true:false' type='danger' @click='handleDel(scope.$index, scope.row)'>
+							<el-button size='mini' v-if='buttonVal.del?  scope.row.status==="DOWN"?true:false: buttonVal.del' type='danger' @click='handleDel(scope.$index, scope.row)'>
 								<!--删除-->{{$t('tabOperation.delete')}}
 							</el-button>
-							<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'>
+							<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'v-if='buttonVal.edit'>
 								<!--编辑-->{{$t('tabOperation.edit')}}
 							</el-button>				
 							
@@ -367,11 +367,20 @@
 				excelData:[],
 				//控制检测类型和检测参数的显示隐藏，默认的时候是隐藏的
 				detectionStatus:false,
+//				buttonData:this.recursion( this.$store.state.aside ,"Public.backLink"),//获取节点内
+			  	buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏
+			  		del:this.codeVal(this.recursion( this.$store.state.aside ,"Public.backLink").list, "link@del_link").show,//单个删除和批量的删除是绑定在一起的  
+			  		edit:this.codeVal(this.recursion( this.$store.state.aside ,"Public.backLink").list,"link@edit_link").show,//编辑的值
+			  		see:this.codeVal(this.recursion( this.$store.state.aside ,"Public.backLink").list, "link@link_info" ).show,//查看详情
+			  		open:this.codeVal(this.recursion( this.$store.state.aside ,"Public.backLink").list,"link@open_maintenance_link" ).show,//开启
+			  		close:this.codeVal(this.recursion( this.$store.state.aside ,"Public.backLink").list, "link@close_maintenance_link" ).show,//关闭
+			  	}
 			}
 		},
 		created(){
 			//获取用户的权限
 			this.token =sessionStorage.getItem('token');
+			console.log( this.$store.state.aside )
 			
 		},
 		methods:{

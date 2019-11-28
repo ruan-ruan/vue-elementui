@@ -22,13 +22,16 @@ import ajax from '@/api/api'
 
 //import i18n from './lang'
 import i18n from './lang/i18n';
-
+import { fil } from '@/assets/js/index.js'
+import {recursion,exportCom,exportIcon,codeVal} from '@/assets/js/index'	
 //语言处理
 Vue.use(ElementUI,{
 	size:'medium',
 	i18n:(key ,value) => i18n.t(key,value)
 })
 
+Vue.prototype.recursion=recursion;
+Vue.prototype.codeVal=codeVal;
 
 import VueClipboard from 'vue-clipboard2'
 Vue.use(VueClipboard)
@@ -44,28 +47,45 @@ Vue.prototype.$ajax=ajax;  //对axios的数据请求的二次封装
 
 
 Vue.config.productionTip = false;
-//Vue.prototype.router = router;
-
 
 if (window.sessionStorage.getItem('token')) {
     store.commit(types.LOGIN, window.sessionStorage.getItem('token'))
 }
+if(window.sessionStorage.getItem('asideList')){
+	store.commit('setAside',JSON.parse( window.sessionStorage.getItem('asideList') )  )
+}
 //完成全局的路由的守卫
+
 router.beforeEach( (to,from,next) => {
+	let data = JSON.parse( window.sessionStorage.getItem('asideList'))
+	fil(router.options.routes ,data);
+//	console.log(data)
 	var token=sessionStorage.getItem('token');
 	var Users=sessionStorage.getItem('user');
-	if (to.matched.some(r => r.meta.requireAuth)) {
-        if (store.state.token) {
-            next();
-        } else {
+//	if(token && to.path === '/login'){
+//		window.sessionStorage.removeItem('token');
+//  	window.sessionStorage.removeItem('user');
+//  	window.sessionStorage.removeItem('asideList');
+//	}
+
+	if (to.matched.some(r => r.meta.requireAuth)) {//需要权限  路由拦截 的界面
+        if( store.state.token){
+			if( to.path === '/login' ){
+				window.sessionStorage.removeItem('token');
+		    	window.sessionStorage.removeItem('user');
+		    	window.sessionStorage.removeItem('asideList');
+			}else {
+				next();
+			}
+		}else{
             next({
                 path: '/login',
-                query:{
-                	redirect:to.fullPath
-                }
+//              query:{
+//              	redirect:to.fullPath
+//              }
             })
         }
-    } else {
+    }else {
         next();
     }
 })

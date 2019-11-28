@@ -22,13 +22,13 @@
 				<!--列表-->
 				<el-col :span='24'>
 					<el-col :span='4'>
-						<el-button size='small' type="primary" @click="handleAdd">
+						<el-button size='small' type="primary" @click="handleAdd" v-if='buttonVal.add'>
 							<!--新增-->
 							{{$t('tabOperation.add')}}
 						</el-button>
 					</el-col>
 					<el-col :span='20'class="table-top"	>
-						<el-button size='small' type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">
+						<el-button size='small' type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0" v-if='buttonVal.del'>
 							<!--批量删除-->
 							{{$t('tabOperation.batchDel')}}
 						</el-button>
@@ -67,15 +67,15 @@
 					</el-table-column>
 					<el-table-column :label='$t("Public.operation")'  align='center'  width='140'>
 						<template slot-scope="scope" style="width: 100%;">
-							<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>
+							<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'v-if='buttonVal.see'>
 								<!--详情-->
 								{{$t('tabOperation.info')}}
 							</el-button>
-							<el-button size="mini"type='success' @click="handleEdit(scope.$index, scope.row)">
+							<el-button size="mini"type='success' @click="handleEdit(scope.$index, scope.row)" v-if='buttonVal.edit'>
 								<!--编辑-->
 								{{$t('tabOperation.edit')}}
 							</el-button>
-							<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)">
+							<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)" v-if='buttonVal.del'>
 								<!--删除-->
 								{{$t('tabOperation.delete')}}
 							</el-button>
@@ -184,17 +184,20 @@
 		      	},
 		      	excelData:[],
 		      	token:'',
+		      	buttonData:this.recursion( this.$store.state.aside , 'physicalPosition.tab.area'),//获取区域内的所有的按钮的权限
+		      	buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏
+		      		del:this.codeVal(this.recursion( this.$store.state.aside , 'physicalPosition.tab.area').list, "location@del_region").show,//单个删除和批量的删除是绑定在一起的  
+		      		edit:this.codeVal(this.recursion( this.$store.state.aside , 'physicalPosition.tab.area').list, "location@edit_region").show,//编辑的值
+		      		add:this.codeVal(this.recursion( this.$store.state.aside , 'physicalPosition.tab.area').list, "location@add_region").show,//添加的值
+		      		see:this.codeVal(this.recursion( this.$store.state.aside , 'physicalPosition.tab.area').list, "location@region_info" ).show,//查看详情
+		      	}
 		    };
 	  	},
 	  	created(){
 			this.token=sessionStorage.getItem('token');
 			this.getUsers();
-	  	},
-	  			
-		mounted() {
-//		    console.log(this.users)
-//		    this.bus.$emit('Area',this.users);
-		},
+	  	},	
+
 		methods: { 	
 			reset(){
 				this.$refs['filters'].resetFields();
@@ -465,8 +468,6 @@
 		      	let h = date.getHours() < 10  ? "0" + date.getHours() + ":"  : date.getHours() + ":";
 		        let m = date.getMinutes() < 10  ? "0" + date.getMinutes() + ":"  : date.getMinutes() + ":";
 		        let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-//		        var str=Y + M + D+'<br/>' + h + m + s;
-//		        document.write(str)
 		      return Y + M + D + h + m + s;
 		    },
 		},

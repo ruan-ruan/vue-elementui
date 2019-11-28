@@ -34,12 +34,13 @@
 			<el-row>
 				<el-col :span='24'>
 				<el-col :span='4'>
-					<div v-show='(typeof virTit !=="undefined"?false: (typeof clounID !=="undefined"?false:true)) '>
-						<el-button size='small' @click='add' type='primary'>{{$t('multi.addMulti')}}</el-button>	
+					<div v-if='buttonVal.add'>
+						<el-button size='small' @click='add' type='primary'
+							v-show='(typeof virTit !=="undefined"?false: (typeof clounID !=="undefined"?false:true)) '>{{$t('multi.addMulti')}}</el-button>	
 					</div>
 				</el-col>
-				<el-col :span='20' class='table-top' :class='(typeof virTit !=="undefined"?"marL": (typeof clounID !=="undefined"?"marL":"table_top")) '  v-if='(typeof clounID !=="undefined"?false:true)' >
-					<el-button type='danger' size='small'  @click='batchRemove(sels)':disabled="this.sels.length===0">
+				<el-col :span='20' class='table-top' :class='(typeof virTit !=="undefined"?"marL": (typeof clounID !=="undefined"?"marL":"table_top")) ' v-if='buttonVal.del'  >
+					<el-button type='danger' size='small'  @click='batchRemove(sels)':disabled="this.sels.length===0" v-if='(typeof clounID !=="undefined"?false:true)'>
 						{{$t('tabOperation.delete')}}</el-button>
 				</el-col>
 			</el-col>
@@ -72,11 +73,11 @@
 				<el-table-column prop='descriptionVal':label='$t("Public.description")' align='center'min-width='150' ></el-table-column>
 				<el-table-column :label='$t("Public.operation")' align='center' width='140'>
 					<template slot-scope='scope' v-if='scope.row.status == "creating" ? false : true ' >
-						<el-button size='mini' type='' @click='handleSta(scope.$index,scope.row)' v-if='scope.row.status == "failure"? false : true '>{{scope.row.btnStatus}}</el-button>
-						<el-button size='mini' type='info' @click='handleDetails(scope.$index,scope.row)'>{{$t('tabOperation.info')}}</el-button>
-						 <el-button size='mini' type='primary' @click='handleEdit(scope.$index,scope.row)' v-if='(typeof clounID !=="undefined"?false:scope.row.status == "failure"?false:true)'>
+						<el-button size='mini' type='' @click='handleSta(scope.$index,scope.row)' v-if='buttonVal.run?  scope.row.status == "failure"? false : true :buttonVal.run'>{{scope.row.btnStatus}}</el-button>
+						<el-button size='mini' type='info' @click='handleDetails(scope.$index,scope.row)'v-if='buttonVal.see'>{{$t('tabOperation.info')}}</el-button>
+						 <el-button size='mini' type='primary' @click='handleEdit(scope.$index,scope.row)' v-if='buttonVal.edit?(typeof clounID !=="undefined"?false:scope.row.status == "failure"?false:true):buttonVal.edit'>
 							{{$t('tabOperation.edit')}}</el-button>
-						<el-button size='mini' type='danger'@click='handleDel(scope.$index,scope.row)'v-if='(typeof clounID !=="undefined"? false: scope.row.status == "failure"?true:false  )'>
+						<el-button size='mini' type='danger'@click='handleDel(scope.$index,scope.row)'v-if='buttonVal.del? (typeof clounID !=="undefined"? false: scope.row.status == "failure"?true:false  ): buttonVal.del'>
 							{{$t('tabOperation.delete')}}</el-button> 
 						
 					</template>
@@ -187,8 +188,15 @@
 				editFormRules:{
 					name:[{ required: true, message: this.$t('multi.plaMultiName'), trigger: 'blur' },],
 					tenant_id:[{ required: true, message: this.$t('Public.plaChaTenant'), trigger: 'change' },],
-					
-				}
+				},
+				buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏 
+			  		add:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointsMultiInter").list, "vll@add_virtual_host").show,//添加	
+			  		del:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointsMultiInter").list, "vll@del_vll").show,//单个删除和批量的删除是绑定在一起的  
+			  		edit:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointsMultiInter").list,"vll@edit_virtual_host").show,//编辑的值
+			  		see:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointsMultiInter").list, "vll@multi_vll_info").show,//查看详情
+			  		run:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointsMultiInter").list,"vll@to_serve_vll" ).show,//运行
+			  		stop:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointsMultiInter").list,"vll@to_stop_vll" ).show,//停止
+			  	}
 			}
 		},
 		created(){
@@ -199,6 +207,8 @@
 				//执行云对接里面的详情的界面的数据
 				this.getUsers();//加上 this.clounID
 			}
+
+			
 		},
 		methods:{
 			handleSta(index,row){

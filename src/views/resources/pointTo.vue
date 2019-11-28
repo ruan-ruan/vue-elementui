@@ -3,7 +3,7 @@
     <!--点到点专线-->
     <section>
       <el-row class='toolbar'>
-        <el-col  :soan='24'  >
+        <el-col  :span='24'  >
           <el-form :model='filters':inline='true' ref='filters'>
             <el-form-item :label='$t("Public.name")' prop='search_name'>
               <el-input
@@ -104,7 +104,7 @@
         </el-col>
       </el-row>
 				<div class="table-top">
-          <el-button size='small' type="danger"  @click="batchRemove()" :disabled="this.sels.length===0" v-if='parentStatus'  >
+          <el-button size='small' type="danger"  @click="batchRemove()" :disabled="this.sels.length===0" v-if='buttonVal.del? parentStatus :buttonVal.del'  >
              	{{$t('tabOperation.delete')}}</el-button>   	
            <el-dropdown size='small' split-button type='success' @command="handleExport"  >
              	 {{$t('tabOperation.derived.tit')}}
@@ -265,20 +265,20 @@
               <template slot-scope='scope' v-if='scope.row.creat'>
                 <el-button
                   size='mini'
-									v-if='!scope.row.btn'
+									v-if='buttonVal.stop? !scope.row.btn:buttonVal.stop'
                   @click='handleStatus(scope.$index,scope.row)'
                 >{{scope.row.specialName}}</el-button>
                 <el-button
                   size='mini'
                   type='primary'
                   @click='handleEdit(scope.$index,scope.row)'
-                  v-if='!scope.row.btn'
+                  v-if='buttonVal.edit? !scope.row.btn:buttonVal.edit'
                 >{{$t('tabOperation.edit')}}</el-button>
                 <el-button
                   size='mini'
                   type='danger'
                   @click='handleDel(scope.$index,scope.row)'
-                  v-if='scope.row.btn'
+                  v-if='buttonVal.del? scope.row.btn : buttonVal.del'
                 >{{$t('tabOperation.delete')}}</el-button>
               </template>
             </el-table-column>
@@ -507,10 +507,19 @@ export default {
       parentStatus: true, //该组件被调用的S时候，上面控制部分隐藏
       isid: [],
       baseForm:{},//数据的备份
-      timers:null
+      timers:null,
+      buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏 "link@add_unknown_link"
+	  		del:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list, "vll@del_vll").show,//单个删除和批量的删除是绑定在一起的  
+	  		edit:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list,"vll@edit_p2p_vll").show,//编辑的值
+	  		see:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list, "vll@p2p_vll_info" ).show,//查看详情
+	  		stop:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list, "vll@to_stop_vll").show,//查看逻辑口的详情
+	  		run:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list, "vll@to_serve_vll").show,//查看逻辑口的详情
+	  		
+	  	}
     };
   },
   created() {
+
     this.token = sessionStorage.getItem("token");
     this.getFiltersData();
     if (
@@ -585,8 +594,7 @@ export default {
         .then(res => {
           if (res.status == 200) {
             if (res.data.status == 0) {
-            	console.log(res)
-            	
+            	console.log(res);
             	this.getLoading=false;
               // this.users=res.data.data.items;
               this.total=res.data.data.page.total;
@@ -608,155 +616,273 @@ export default {
 	            		ele.expiration_time=datedialogFormat(ele.expiration_time)
 	            	}
 	            	
-	            	ele.creation_time=datedialogFormat(ele.creation_time)
-	            	var str=[];
-                if (ele.type == "d2d") {
-                  ele.typeName = "DCI";
-                  str=ele.endpoints;
-                } else if (ele.type == "d2c") {
-                  ele.typeName = this.$t('Public.cloudInter');//云互联
-                  ele.endpoints.map(item => {
-                  	str.push(item)
-                  })
-                  ele.cloud_endpoints.map(item => {
-                  	str.push(item)
-                  })
-                } else if (ele.type == "c2c") {
-                  ele.typeName = this.$t('Public.cloudsTo');//云直连
-                  str=ele.cloud_endpoints
-                }
-								
-//              var str = ele.endpoints;//存在点的数据
-//              var cloudStr=ele.
-                
-                
-                if (ele.status == "failure") {
-                  ele.statusHTML = this.$t('Public.failure');
-                  ele.statusColor = "creatFie";
-                  //creat   控制操作部分   btn控制  删除按钮和其他按钮的互斥
-                  ele.creat = true;
-                  ele.btn=true;
-                } else if (ele.status == "creating") {
-                  ele.statusHTML = this.$t('Public.creating');
-                  ele.statusColor = "creating";
-                  ele.creat = false;
-                  ele.btn=true;
-                } else if (ele.status == "stopping") {
-                	
-                  ele.statusHTML = this.$t('Public.stopping');
+	            	ele.creation_time=datedialogFormat(ele.creation_time);
+	            	if(ele.type ==='d2d'){
+	            		ele.typeName = "DCI";
+	            		
+	            		if (ele.status == "failure") {
+	                  ele.statusHTML = this.$t('Public.failure');
+	                  ele.statusColor = "creatFie";
+	                  //creat   控制操作部分   btn控制  删除按钮和其他按钮的互斥
+	                  ele.creat = true;
+	                  ele.btn=true;
+	                } else if (ele.status == "creating") {
+	                  ele.statusHTML = this.$t('Public.creating');
+	                  ele.statusColor = "creating";
+	                  ele.creat = false;
+	                  ele.btn=true;
+	                } else if (ele.status == "stopping") {
+	                	
+	                  ele.statusHTML = this.$t('Public.stopping');
+	
+	                  ele.specialName = this.$t('tabOperation.run');
+	                  ele.statusColor = "stopVal";
+	                  ele.creat = true;
+	                  ele.btn=false;
+	                }else if (ele.status == "servicing"){
+//	                	var str=ele.endpoints;
+	                	var objA=ele.endpoints.find(item =>{
+		            			return item.name =='A端';
+		            		})
+		            		var objZ=ele.endpoints.find(item => {
+		            			return item.name =='Z端';
+		            		})
+	                	
+//	                	if(str.length == 2 ){//点到点的数据
 
-                  ele.specialName = this.$t('tabOperation.run');
-                  ele.statusColor = "stopVal";
-                  ele.creat = true;
-                  ele.btn=false;
-                } else if (ele.status == "servicing"){
-									
-									if(str.length == 2 ){//点到点的数据
-
-										if(getPortStatus(str[0].ports) =='UP' || getPortStatus(str[0].ports) =='异常' ){
-
-	                  	if(getPortStatus(str[1].ports) =='UP' || getPortStatus(str[1].ports) =='异常'){
-	                  		ele.statusHTML = this.$t('Public.servicing');
-	                  		ele.statusColor = "ServerVal";
-	                  	}else if(getPortStatus(str[1].ports)=='DOWN'){
-	                  			ele.statusHTML = this.$t('Public.fau');
-	                  			ele.statusColor = "creatFie";
-	                  	}
-	                  	
-	                  }else if(getPortStatus(str[0].ports)=='DOWN'){
-	                  	if(getPortStatus(str[1].ports) =='UP' || getPortStatus(str[1].ports) =='异常'){
-	                  		ele.statusHTML = this.$t('Public.fau');
-	                  		ele.statusColor = "creatFie";
-	                  		
-	                  	}else if(getPortStatus(str[1].ports)=='DOWN'){
-	                  			ele.statusHTML = this.$t('Public.fau');
-	                  			ele.statusColor = "creatFie";
-	                  			
-	                  	}
+											if(getPortStatus(objA.ports) =='UP' || getPortStatus(objA.ports) =='异常' ){
+	
+		                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
+		                  		ele.statusHTML = this.$t('Public.servicing');
+		                  		ele.statusColor = "ServerVal";
+		                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
+		                  			ele.statusHTML = this.$t('Public.fau');
+		                  			ele.statusColor = "creatFie";
+		                  	}
+		                  	
+		                  }else if(getPortStatus(objA.ports)=='DOWN'){
+		                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
+		                  		ele.statusHTML = this.$t('Public.fau');
+		                  		ele.statusColor = "creatFie";
+		                  		
+		                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
+		                  			ele.statusHTML = this.$t('Public.fau');
+		                  			ele.statusColor = "creatFie";
+		                  			
+		                  	}
+		                  }
+//										}
+	                	
+	                	ele.statusValA = getPortStatus(objA.ports);
+	                  ele.statusValZ = getPortStatus(objZ.ports);
+	                  if(getPortStatus(objA.ports) ==='UP'){
+	                  	ele.colorA='colorGreen'
+	                  }else if(getPortStatus(objA.ports)==='DOWN'){
+	                  	ele.colorA='colorRed'
+	                  }else if(getPortStatus(objA.ports) ==='异常'){
+	                  	ele.colorA='colorWarning'
 	                  }
-									}else if(str.length == 1){//云互联
-										if(getPortStatus(str[0].ports) =='UP' || getPortStatus(str[0].ports) =='异常' ){
-											ele.statusHTML = this.$t('Public.servicing');
-	                  	ele.statusColor = "ServerVal";
-										}else if(getPortStatus(str[0].ports)=='DOWN'){
-											ele.statusHTML = this.$t('Public.fau');
-	                  	ele.statusColor = "creatFie";
-										}
-									}else if(str.length ==0) { //云互联
-										ele.statusHTML = this.$t('Public.servicing');
-	                  ele.statusColor = "ServerVal";
-									}
-//                ele.colorZ='colorWarning'
-                  ele.specialName = this.$t('tabOperation.stop');
-//                ele.statusColor = "ServerVal";
-                  ele.creat = true;
-                  ele.btn=false;
-                }
+	                  if(getPortStatus(objZ.ports) ==='UP'){
+	                  	ele.colorZ='colorGreen'
+	                  }else if(getPortStatus(objZ.ports)==='DOWN'){
+	                  	ele.colorZ='colorRed'
+	                  }else if(getPortStatus(objZ.ports) ==='异常'){
+	                  	ele.colorZ='colorWarning'
+	                  }
+	
+	                  ele.logicPortA = objA.logic_port.name;
+	                  ele.logicPortZ = objZ.logic_port.name;
+	                    if (objA.vlan == "-1") {
+	                      ele.vlanHTMLA = this.$t('Public.passthrough');//透传
+	                    } else if (objA.vlan == "0") {
+	                      ele.vlanHTMLA = "UNTAG";
+	                    } else {
+	                      ele.vlanHTMLA = 'vlan:' + objA.vlan;
+	                    }
+	                    if (objZ.vlan == "-1") {
+	                      ele.vlanHTMLZ = this.$t('Public.passthrough');
+	                    } else if (objZ.vlan == "0") {
+	                      ele.vlanHTMLZ = "UNTAG";
+	                    } else {
+	                      ele.vlanHTMLZ ='vlan:' + objZ.vlan;
+	                    }
+	                }
+	            	}else if(ele.type == "d2c"){
+	            			ele.typeName = this.$t('Public.cloudsTo');//云直连
+	            	
+	            		if (ele.status == "failure") {
+	                  ele.statusHTML = this.$t('Public.failure');
+	                  ele.statusColor = "creatFie";
+	                  //creat   控制操作部分   btn控制  删除按钮和其他按钮的互斥
+	                  ele.creat = true;
+	                  ele.btn=true;
+	                } else if (ele.status == "creating") {
+	                  ele.statusHTML = this.$t('Public.creating');
+	                  ele.statusColor = "creating";
+	                  ele.creat = false;
+	                  ele.btn=true;
+	                } else if (ele.status == "stopping") {
+	                	
+	                  ele.statusHTML = this.$t('Public.stopping');
+	
+	                  ele.specialName = this.$t('tabOperation.run');
+	                  ele.statusColor = "stopVal";
+	                  ele.creat = true;
+	                  ele.btn=false;
+	                }else if (ele.status == "servicing"){
+	                	var objA=ele.cloud_endpoints.find(item =>{
+		            			return item.name =='A端';
+		            		})
+		            		var objZ=ele.endpoints.find(item => {
+		            			return item.name =='Z端';
+		            		})
+	                	
+											if(getPortStatus(objA.ports) =='UP' || getPortStatus(objA.ports) =='异常' ){
+	
+		                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
+		                  		ele.statusHTML = this.$t('Public.servicing');
+		                  		ele.statusColor = "ServerVal";
+		                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
+		                  			ele.statusHTML = this.$t('Public.fau');
+		                  			ele.statusColor = "creatFie";
+		                  	}
+		                  	
+		                  }else if(getPortStatus(objA.ports)=='DOWN'){
+		                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
+		                  		ele.statusHTML = this.$t('Public.fau');
+		                  		ele.statusColor = "creatFie";
+		                  		
+		                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
+		                  			ele.statusHTML = this.$t('Public.fau');
+		                  			ele.statusColor = "creatFie";
+		                  			
+		                  	}
+		                  }
+	                	
+	                	ele.statusValA = getPortStatus(objA.ports);
+	                  ele.statusValZ = getPortStatus(objZ.ports);
+	                  if(getPortStatus(objA.ports) ==='UP'){
+	                  	ele.colorA='colorGreen'
+	                  }else if(getPortStatus(objA.ports)==='DOWN'){
+	                  	ele.colorA='colorRed'
+	                  }else if(getPortStatus(objA.ports) ==='异常'){
+	                  	ele.colorA='colorWarning'
+	                  }
+	                  if(getPortStatus(objZ.ports) ==='UP'){
+	                  	ele.colorZ='colorGreen'
+	                  }else if(getPortStatus(objZ.ports)==='DOWN'){
+	                  	ele.colorZ='colorRed'
+	                  }else if(getPortStatus(objZ.ports) ==='异常'){
+	                  	ele.colorZ='colorWarning'
+	                  }
+	
+	                  ele.logicPortA = objA.cloud_config.logic_port.name;
+	                  ele.logicPortZ = objZ.logic_port.name;
+	                    if (objA.vlan == "-1") {
+	                      ele.vlanHTMLA = this.$t('Public.passthrough');//透传
+	                    } else if (objA.vlan == "0") {
+	                      ele.vlanHTMLA = "UNTAG";
+	                    } else {
+	                      ele.vlanHTMLA = 'vlan:' + objA.vlan;
+	                    }
+	                    if (objZ.vlan == "-1") {
+	                      ele.vlanHTMLZ = this.$t('Public.passthrough');
+	                    } else if (objZ.vlan == "0") {
+	                      ele.vlanHTMLZ = "UNTAG";
+	                    } else {
+	                      ele.vlanHTMLZ ='vlan:' + objZ.vlan;
+	                    }
+	                }
+	            	}else if(ele.type == "c2c"){
+	            		ele.typeName = this.$t('Public.cloudInter');//云互联
+	            		if (ele.status == "failure") {
+	                  ele.statusHTML = this.$t('Public.failure');
+	                  ele.statusColor = "creatFie";
+	                  //creat   控制操作部分   btn控制  删除按钮和其他按钮的互斥
+	                  ele.creat = true;
+	                  ele.btn=true;
+	                } else if (ele.status == "creating") {
+	                  ele.statusHTML = this.$t('Public.creating');
+	                  ele.statusColor = "creating";
+	                  ele.creat = false;
+	                  ele.btn=true;
+	                } else if (ele.status == "stopping") {
+	                	
+	                  ele.statusHTML = this.$t('Public.stopping');
+	
+	                  ele.specialName = this.$t('tabOperation.run');
+	                  ele.statusColor = "stopVal";
+	                  ele.creat = true;
+	                  ele.btn=false;
+	                }else if (ele.status == "servicing"){
+	                	var objA=ele.cloud_endpoints.find(item =>{
+		            			return item.name =='A端';
+		            		})
+		            		var objZ=ele.cloud_endpoints.find(item => {
+		            			return item.name =='Z端';
+		            		})
+	                	
+//	                	if(str.length == 2 ){//点到点的数据
 
-               
-                if (str) {
-                  if (str.length !== 0) {
-                    if (str.length == 1) {
-                      console.log(ele);
-                      var objZ=str.find(item => {
-                      	return item.name =='Z端'
-                      })
-                      ele.statusValZ = getPortStatus(objZ.ports);
-                      ele.logicPortZ = objZ.logic_port.name;
-                      if (objZ.vlan) {
-                        if (objZ.vlan == "-1") {
-                          ele.vlanHTMLA = this.$t('Public.passthrough');
-                        } else if (objZ.vlan == "0") {
-                          ele.vlanHTMLA = "UNTAG";
-                        } else {
-                          ele.vlanHTMLA = objZ.vlan;
-                        }
-                      } else {
-                        return;
-                      }
-                    } else if (str.length === 2) {
-                    	var objA=str.find(item => {
-                    		return item.name == 'A端'
-                    	})
-                    	var objZ=str.find(item => {
-                    		return item.name == 'Z端'
-                    	})
-                      ele.statusValA = getPortStatus(objA.ports);
-                      ele.statusValZ = getPortStatus(objZ.ports);
-                      if(getPortStatus(objA.ports) ==='UP'){
-                      	ele.colorA='colorGreen'
-                      }else if(getPortStatus(objA.ports)==='DOWN'){
-                      	ele.colorA='colorRed'
-                      }else if(getPortStatus(objA.ports) ==='异常'){
-                      	ele.colorA='colorWarning'
-                      }
-                      if(getPortStatus(objZ.ports) ==='UP'){
-                      	ele.colorZ='colorGreen'
-                      }else if(getPortStatus(objZ.ports)==='DOWN'){
-                      	ele.colorZ='colorRed'
-                      }else if(getPortStatus(objZ.ports) ==='异常'){
-                      	ele.colorZ='colorWarning'
-                      }
+											if(getPortStatus(objA.ports) =='UP' || getPortStatus(objA.ports) =='异常' ){
+	
+		                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
+		                  		ele.statusHTML = this.$t('Public.servicing');
+		                  		ele.statusColor = "ServerVal";
+		                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
+		                  			ele.statusHTML = this.$t('Public.fau');
+		                  			ele.statusColor = "creatFie";
+		                  	}
+		                  	
+		                  }else if(getPortStatus(objA.ports)=='DOWN'){
+		                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
+		                  		ele.statusHTML = this.$t('Public.fau');
+		                  		ele.statusColor = "creatFie";
+		                  		
+		                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
+		                  			ele.statusHTML = this.$t('Public.fau');
+		                  			ele.statusColor = "creatFie";
+		                  			
+		                  	}
+		                  }
+//										}
+	                	
+	                	ele.statusValA = getPortStatus(objA.ports);
+	                  ele.statusValZ = getPortStatus(objZ.ports);
+	                  if(getPortStatus(objA.ports) ==='UP'){
+	                  	ele.colorA='colorGreen'
+	                  }else if(getPortStatus(objA.ports)==='DOWN'){
+	                  	ele.colorA='colorRed'
+	                  }else if(getPortStatus(objA.ports) ==='异常'){
+	                  	ele.colorA='colorWarning'
+	                  }
+	                  if(getPortStatus(objZ.ports) ==='UP'){
+	                  	ele.colorZ='colorGreen'
+	                  }else if(getPortStatus(objZ.ports)==='DOWN'){
+	                  	ele.colorZ='colorRed'
+	                  }else if(getPortStatus(objZ.ports) ==='异常'){
+	                  	ele.colorZ='colorWarning'
+	                  }
+	
+	                  ele.logicPortA = objA.cloud_config.logic_port.name;
+	                  ele.logicPortZ = objZ.cloud_config.logic_port.name;
+	                    if (objA.vlan == "-1") {
+	                      ele.vlanHTMLA = this.$t('Public.passthrough');//透传
+	                    } else if (objA.vlan == "0") {
+	                      ele.vlanHTMLA = "UNTAG";
+	                    } else {
+	                      ele.vlanHTMLA = 'vlan:' + objA.vlan;
+	                    }
+	                    if (objZ.vlan == "-1") {
+	                      ele.vlanHTMLZ = this.$t('Public.passthrough');
+	                    } else if (objZ.vlan == "0") {
+	                      ele.vlanHTMLZ = "UNTAG";
+	                    } else {
+	                      ele.vlanHTMLZ ='vlan:' + objZ.vlan;
+	                    }
+	                }
+	            	}
 
-                      ele.logicPortA = objA.logic_port.name;
-                      ele.logicPortZ = objZ.logic_port.name;
-                        if (objA.vlan == "-1") {
-                          ele.vlanHTMLA = this.$t('Public.passthrough');//透传
-                        } else if (objA.vlan == "0") {
-                          ele.vlanHTMLA = "UNTAG";
-                        } else {
-                          ele.vlanHTMLA = objA.vlan;
-                        }
-                        if (objZ.vlan == "-1") {
-                          ele.vlanHTMLZ = this.$t('Public.passthrough');
-                        } else if (objZ.vlan == "0") {
-                          ele.vlanHTMLZ = "UNTAG";
-                        } else {
-                          ele.vlanHTMLZ = objZ.vlan;
-                        }
-                    }
-                  }
-                }
               });
 
 						this.users=res.data.data.items
@@ -777,14 +903,19 @@ export default {
       console.log(row);
       //专线的详情的
       //		    	console.log('进入专线详情');
-      this.$router.push({
-        path: "/resource/virtualLine/pointdetails",
-        query: {
-          pointID: row.id
-        }
-      });
-
-//    this.$emit('send',true);
+      if(this.buttonVal.see){
+      	this.$router.push({
+	        path: "/resource/virtualLine/pointdetails",
+	        query: {
+	          pointID: row.id
+	        }
+	      });
+      }else{
+      	this.$message({
+      		message:'暂无查看权限！',
+      		type:'warning'
+      	})
+      }
     },
     handleSeeA(index, row) {
     	console.log(row)
@@ -851,7 +982,7 @@ export default {
         charge_mode:row.charge_mode
       };
       this.baseForm=Object.assign({},row);
-     this.baseForm.charge_time==datedialogFormat(row.charge_time)
+     	this.baseForm.charge_time==datedialogFormat(row.charge_time)
     },
     reset() {
       this.$refs['filters'].resetFields()

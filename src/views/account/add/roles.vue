@@ -266,7 +266,8 @@
 				})
 			},
 			handleEdit(){//编辑的保存界面
-
+//				console.log(this.editForm);
+//				Debug
 
 				var str=''
 				if (!this.editForm.rights && typeof(this.editForm.rights)!="undefined" && this.editForm.rights!=0){
@@ -286,7 +287,7 @@
 							usable:this.editForm.usable ,
 							description:this.editForm.description
 						}
-
+						console.log(para)
 						this.$ajax.put('/role/edit_role/'+this.editForm.id+'?token='+this.token,para)
 						.then(res => {
 							console.log(res)
@@ -336,18 +337,18 @@
 				})
 			},
 			setrole(data,checked){
-
-				var str=[]
-				checked.checkedKeys.forEach(ele => {
+//				console.log(data);
+//				console.log(checked);
+				this.editForm.rights=[];
+				var str=[];
+				checked.checkedKeys.map(ele => {
 					if(typeof ele !=='undefined'){
 						str.push(ele)
 						this.editForm.rights.push(ele)
 					}
 				})
-
 				this.editForm.dataCen=str;
 
-				console.log( this.editForm.rights)
 
 			},
 

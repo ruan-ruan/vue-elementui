@@ -11,7 +11,7 @@ axios.interceptors.request.use(
 config => {
 	
     if (store.state.token) {
-      config.headers.Authorization = `token ${store.state.token}`
+      	config.headers.Authorization = `token ${store.state.token}`
 //    axios.defaults.headers.common['Authentication-Token'] = `${store.state.token}`
     }
     return config
@@ -32,7 +32,7 @@ axios.interceptors.response.use(
 			router.currentRoute.path !== '/login' &&
 			router.replace({
 				path: '/login',
-				query: { redirect: router.currentRoute.path },
+//				query: { redirect: router.currentRoute.path },
 			})
 		}
 		Message.warning({

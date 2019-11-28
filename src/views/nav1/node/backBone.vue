@@ -55,7 +55,7 @@
 
 
       <div class="table-top">
-          <el-button size='small'  type="danger"   @click="batchRemove(sels)"   :disabled="this.sels.length===0"  >
+          <el-button size='small'  type="danger"   @click="batchRemove(sels)"   :disabled="this.sels.length===0"  v-if='buttonVal.del'>
           	<!--批量删除-->{{$t('tabOperation.batchDel')}}
           </el-button>
       	 <el-dropdown size='small' split-button  type='success'  @command="handleExport"  >
@@ -167,6 +167,7 @@
                   type='info'
                   size='mini'
                   @click='handleSee(scope.$index, scope.row)'
+                  v-if='buttonVal.see'
                 > 
                 <!--详情-->{{ $t('tabOperation.info')}}
                 </el-button>
@@ -174,6 +175,7 @@
                   type='success'
                   size='mini'
                   @click='handleEdit(scope.$index, scope.row)'
+                  v-if='buttonVal.edit'
                 >
                 <!--编辑-->{{ $t('tabOperation.edit')}}
                 </el-button>
@@ -181,7 +183,7 @@
                   type='danger'
                   size='mini'
                   @click='handleDel(scope.$index, scope.row)'
-                  v-if='diStatus'
+                  v-if='buttonVal.del?diStatus:false'
                 >
                 <!--删除-->{{ $t('tabOperation.delete')}}
                 </el-button>
@@ -212,7 +214,7 @@
 <script>
 
 	
-		import {descriptionValue,getTime,sortVal} from '@/assets/js/index.js'
+import {descriptionValue,getTime,sortVal} from '@/assets/js/index.js'
 
 export default {
   name: "Service",
@@ -264,7 +266,13 @@ export default {
       dataCen: {
         id: "",
         name: ""
-      }
+      },
+      buttonData:this.recursion( this.$store.state.aside ,"Public.backboneNode"),//获取节点内
+	  	buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏
+	  		del:this.codeVal(this.recursion( this.$store.state.aside ,"Public.backboneNode").list, "node@del_node").show,//单个删除和批量的删除是绑定在一起的  
+	  		edit:this.codeVal(this.recursion( this.$store.state.aside ,"Public.backboneNode").list, "node@edit_node").show,//编辑的值
+	  		see:this.codeVal(this.recursion( this.$store.state.aside ,"Public.backboneNode").list, "node@node_info" ).show,//查看详情
+	  	}
     };
   },
   created() {
@@ -272,7 +280,9 @@ export default {
     this.token = sessionStorage.getItem("token");
 
     this.selectData();
-    this.getUsers()
+    this.getUsers();
+
+    
   },
   methods: {
 
@@ -316,7 +326,7 @@ export default {
       this.sels = sels;
     },
     timeValSearchBtn(value) {
-    	console.log(value)
+//  	console.log(value)
     	if( (!value   && typeof (value) !='undefined' && value !=0) || typeof value =='undefined' ){
     		return 
     		this.filters.start_time='';
@@ -331,7 +341,7 @@ export default {
     getUsers() {
       var _this = this;
       this.loading = true;
-      console.log(this.filters.timeVal )
+//    console.log(this.filters.timeVal )
       var str=this.filters.timeVal;
       if(   ! str &&  typeof(str) !='undefined' && str!=0 ){
       	this.filters.start_time='';
@@ -355,12 +365,12 @@ export default {
           _this.loading = false;
           if (res.status == 200) {
             if (res.data.status == 0) {
-            	console.log(res)
+//          	console.log(res)
             	descriptionValue(res.data.data.items)
               let params = res.data.data.items;
 
               params.forEach((ele, index) => {
-              	console.log(ele)
+//            	console.log(ele)
                 //将数据的状态保
                 //根据状态对删除的按钮的显示是否渲染到模板做处理
                 if (ele.status == "运行中") {

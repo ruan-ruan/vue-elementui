@@ -35,10 +35,10 @@
 			<el-row>
 				<el-col :span='24'>
 					<el-col :span='4'>
-						<el-button size='small' type='primary' @click='addClounLink'>+{{$t('Public.addCloud')}}</el-button>
+						<el-button size='small' type='primary' @click='addClounLink'v-if='buttonVal.add' >+{{$t('Public.addCloud')}}</el-button>
 					</el-col>
 					<el-col :span='20' class='table-top'>
-						<el-button size='small' type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">
+						<el-button size='small' type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0" v-if='buttonVal.del' >
 							{{$t("tabOperation.batchDel")}}</el-button>
 						<el-dropdown size='small' split-button type='success'@command="handleExport">
 							{{$t('tabOperation.derived.tit')}}
@@ -92,8 +92,8 @@
 				</el-table-column>
 				<el-table-column   :label='$t("Public.operation")' width='100' align='center'>
 					<template slot-scope='scope'>
-						<el-button size='mini' type='primary' @click='handleEdit(scope.$index,scope.row)'>{{$t('tabOperation.edit')}}</el-button>
-						<el-button size='mini' type='danger' @click='handleDel(scope.$index,scope.row)'>{{$t("tabOperation.delete")}}</el-button>
+						<el-button size='mini' type='primary' @click='handleEdit(scope.$index,scope.row)' v-if='buttonVal.edit' >{{$t('tabOperation.edit')}}</el-button>
+						<el-button size='mini' type='danger' @click='handleDel(scope.$index,scope.row)' v-if='buttonVal.del' >{{$t("tabOperation.delete")}}</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -160,7 +160,14 @@
 				pageNum:1,
 				pagecount:5,
 
-				excelData:[]
+				excelData:[],
+				buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏 "link@add_unknown_link"
+			  		add:this.codeVal(this.recursion( this.$store.state.aside ,"aside.cloudLine").list, "link@add_cloud_link").show,//添加	
+			  		del:this.codeVal(this.recursion( this.$store.state.aside ,"aside.cloudLine").list, "link@del_cloud_link").show,//单个删除和批量的删除是绑定在一起的  
+			  		edit:this.codeVal(this.recursion( this.$store.state.aside ,"aside.cloudLine").list,"link@edit_cloud_link").show,//编辑的值
+			  		see:this.codeVal(this.recursion( this.$store.state.aside ,"aside.cloudLine").list, "link@cloud_link_info" ).show,//查看详情
+			  		seeLogic:this.codeVal(this.recursion( this.$store.state.aside ,"aside.logicManage").list, "port@logic_port_info" ).show,//查看逻辑口的详情
+			  	} 
 			}
 		},
 		created(){
@@ -231,21 +238,38 @@
 			},
 			handleSeeLogic(index,row){
 				//详情， 逻辑口
-			this.$router.push({
-					path:'/resource/see/logicalPort',
-					query:{
-						detailsID:row.id
-					}
-				})
+				if(this.buttonVal.seeLogic){
+					this.$router.push({
+						path:'/resource/see/logicalPort',
+						query:{
+							detailsID:row.id
+						}
+					})
+				}else{
+					this.$message({
+						message:'没有查看详情的权限！',
+						type:'warning'
+					})
+				}
+				
 			},
 			handleSeeLink(index,row){
 				//详情   云莲路详情
-				this.$router.push({
-					path:'/location/line/clounDetails',
-					query:{
-						id:row.id
-					}
-				})
+//				v-if='buttonVal.add' 
+				if(this.buttonVal.see){
+					this.$router.push({
+						path:'/location/line/clounDetails',
+						query:{
+							id:row.id
+						}
+					})
+				}else{
+					this.$message({
+						message:'没有查看详情的权限！',
+						type:'warning'
+					})
+				}
+				
 			},
 			handleEdit(index,row){
 				//编辑

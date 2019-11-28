@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<!--数据中心的端口-->
-		<el-form :model='editForm' ref='editForm':rules='editFormRules'v-loading='editLoading' label-width='145px'>
-			<el-form-item :label='$t("Public.nodeName") +":"' prop='nodeName'>
+		<el-form :model='editForm' ref='editForm':rules='editFormRules'v-loading='editLoading' label-width='160px'>
+			<el-form-item :label='$t("Public.nodeName") +"："' prop='nodeName'>
 				<el-select v-model='editForm.nodeName' filterable  @change='selectNode(editForm.nodeName)' class='ipt'>
 					<el-option v-for='(item ,index) in nodeData'
 						:label='item.name'
@@ -10,7 +10,7 @@
 						:key='index'></el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item :label='$t("Public.logic") +":"' prop='logic'>
+			<el-form-item :label='$t("Public.logic") +"："' prop='logic'>
 				<el-select v-model='editForm.logic' filterable @change='selecLogic(editForm.logic)' class='ipt'>
 					<el-option v-for='(item,index) in logicPort'
 						:value='item.id'
@@ -25,7 +25,7 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item :label='$t("business.logicType")+":"' prop='endpoints_vlan'>
+			<el-form-item :label='$t("business.logicType")+"："' prop='endpoints_vlan'>
 				<template>
 					<el-radio-group v-model='editForm.endpoints_vlan' >
 						<el-radio-button size='small' v-for='item in portType'
@@ -35,7 +35,7 @@
 					</el-radio-group>
 				</template>
 			</el-form-item>
-			<el-form-item label='vlan :'prop='vlan' v-if='editForm.endpoints_vlan ==="trunk"? true :false '>
+			<el-form-item label='vlan ：'prop='vlan' v-if='editForm.endpoints_vlan ==="trunk"? true :false '>
 				<template>
 					<el-input v-model='editForm.vlan' v-show='false'></el-input>
 					<el-switch v-model='editForm.chooseVlan'
@@ -89,17 +89,16 @@
 								:disabled=' item.clas==="active" ? true : false'
 								>{{item.value}}</el-button>
 						</div>
-						
-						
-						<div id="barcon">
-							<span class='spn_tit'>{{$t('business.common')}}{{vlanData.length}}{{$t('business.bar')}}{{totalPage}}{{$t('business.page')}}</span>
-							<span @click='goPaseSize(1,100)' class="spn">{{$t('business.home')}}</span>
-							<span @click='goPaseSize(currentPage-1>0?currentPage-1:1,100)' class="spn" >{{$t('business.prev')}}</span>
-							<span v-for='(item,index) in pageVal'
-								:key='index' @click='goPaseSize(item,100)'class="spn">{{item}}</span>
-							<span @click='goPaseSize(currentPage+1<totalPage?currentPage+1:totalPage,100)'class="spn">{{$t('business.next')}}</span>
-							<span @click='goPaseSize(6,100)'class="spn">{{$t('business.tail')}}</span>
-						</div>
+						<el-pagination 
+							@size-change="handleSizeChange" 
+							@current-change="handleCurrentChange" 
+							:current-page="index" 							
+							:page-size="size" 
+							:page-sizes="[100]"
+							layout="total, sizes, prev, pager, next, jumper" 
+							:total="tableCopyTableList.length">
+			    		</el-pagination>
+
 					</template>
 				</el-form-item>
 			</el-form>
@@ -121,11 +120,6 @@
 		props:['tit','resVal'],
 		data(){
 			var logic_port= (rule ,value ,callback) => {
-//				if(this.baseObj){
-//					if(this.baseObj.statusVal == 0 && this.editForm.chooseVlan){
-//						callback(new Error('当前端口已为UNTAG端口'))
-//					}
-//				}else
 				if(! value){
 					callback(new Error(this.$t('Public.notEmity')))
 				}else {
@@ -179,11 +173,7 @@
 				{label:'1801-2400',value:'1801-2400'},{label:'2401-3000',value:'2401-3000'},{label:'3001-3600',value:'3001-3600'},{
 				label:'3601-4094',value:'3601-4094'},],//数据中心互联的是偶是这个区间段  ali和腾讯vlan根据列表进行手添加就可以了
 				timeIndex:null,
-				//自定义分页
-				totalPage:0,//一共有几页
-				currentPage:0,//当前是第几页   默认的显示的是第一页
-				pageSize:0,//每页显示数量
-				pageVal:[1,2,3,4,5,6],
+
 				nodeData:[],//获取节点的数据
 				logicPort:[],//逻辑口的数据
 				logicDetails:{},//获取逻辑口的详情
@@ -194,14 +184,24 @@
 				pointData:[],//获取所有的点到点的所有数据，用来判断里面的逻辑口的状态 //获取组网的数据列表   也是为了获取逻辑口的数据  
 				baseObj:[],
 				cloudLogic:[],//获取云对接链路列表里所有的逻辑口，将不可在用于开通业务
+				//自定义分页
+				
+				index: 1,
+      			size: 100,
+      			tableCopyTableList: [],//数据copy
+//    			pagecount:5,
+				
 			}
 		},
 		watch:{
 			
 			'portVlan.selVlanVal':function(newVal,oldVal){
 				this.vlanVal=this.portVlan.selVlanVal.split('-');
-				this.vlanData=this.getData(parseInt(this.vlanVal[0]),parseInt(this.vlanVal[1]));
+				this.vlanData =this.getData(parseInt(this.vlanVal[0]),parseInt(this.vlanVal[1]));
 				this.disVlan=JSON.parse(JSON.stringify(this.conversion(this.vlanData))); 
+				
+				this.tableCopyTableList = JSON.parse(JSON.stringify(this.disVlan));
+				this.disVlan = this.paging(this.size, this.index);
 
 			},
 			baseObj:{
@@ -212,9 +212,6 @@
 			},
 			editForm:{
 				handler(newVal,oldVal){	
-//					console.log(newVal);
-//					console.log(oldVal)
-//					console.log(this.baseObj);
 ////					验证逻辑口
 					if(newVal.endpoints_vlan == '透传' ){
 						if(this.baseObj.length != 0){
@@ -255,8 +252,7 @@
 								var obj2=this.baseObj.filter(item => {
 									return item.statusVal > 0;
 								})
-								console.log(obj1);
-								console.log(obj2)
+
 								if(JSON.stringify(obj1) !='{}' && typeof obj1 !='undefined'){
 									
 									console.log('untage')
@@ -287,9 +283,7 @@
 				},
 				deep:true,
 			},
-//			'editForm.logic':function(newVal,oldVal){
-//				console.log(newVal)
-//			},
+
 			sendForm:{
 				handler(newVal,oldVal){
 //					console.log(newVal)
@@ -305,6 +299,9 @@
 			this.vlanVal=this.portVlan.selVlanVal.split('-');
 			this.vlanData=this.getData(parseInt(this.vlanVal[0]),parseInt(this.vlanVal[1]));
 			this.disVlan=JSON.parse(JSON.stringify(this.conversion(this.vlanData))); 
+			
+			this.tableCopyTableList = JSON.parse(JSON.stringify(this.disVlan));
+			this.disVlan = this.paging(this.size, this.index);
 			this.getformData();
 			if(typeof this.tit !=='undefined'){
 				this.textMap.title=this.tit;
@@ -313,7 +310,27 @@
 			
 		},
 		methods:{
-			
+			// 页数改变事件
+		    handleSizeChange(size) {
+		      	this.size = size;
+		      	this.disVlan = this.paging(size, this.index);
+		    },
+		    // 页码改变事件
+		    handleCurrentChange(current) {
+		      	this.index = current;
+		      	this.disVlan = this.paging(this.size, current);
+		    },
+			// 本地分页的方法
+		    paging(size, current) {
+		      	const tableList = JSON.parse(JSON.stringify(this.tableCopyTableList));
+		      	const tablePush = [];
+		      	tableList.forEach((item, index) => {
+		        	if (size * (current - 1) <= index && index <= size * current - 1) {
+		          		tablePush.push(item);
+		        	}
+		      	});
+		      	return tablePush;
+		    },
 			conversion(data){
 				let disData=this.disabeldData
 				var str=data.map(item => {
@@ -484,6 +501,8 @@
 						if(res.data.status==0){
 							this.disabeldData=res.data.data;
 							this.disVlan=JSON.parse(JSON.stringify(this.conversion(this.vlanData))); 
+							this.tableCopyTableList = JSON.parse(JSON.stringify(this.disVlan));
+							this.disVlan = this.paging(this.size, this.index);
 						}
 					}
 				})
@@ -496,7 +515,7 @@
 				this.dialogStatus='title'
 				this.dialogFormVisible=true;	
 
-				this.goPaseSize(1,100)
+//				this.goPaseSize(1,100)
 			},
 			getData(start,end){
 				//获取选择的vlan的区间的时候转换为数据
@@ -524,33 +543,6 @@
 				})
 
 			},
-			goPaseSize(pno=1,psize=100){
-//				let itable=document.getElementById('idData').getElementsByTagName("span");//bor_data
-				let itable=document.getElementById('idData').getElementsByClassName('bor_data');
-//				let itable=this.itable;
-				this.totalPage=0;
-				this.pageSize=psize;
-				let num=itable.length;
-			        //总共分几页 
-			    if(num/this.pageSize > parseInt(num/this.pageSize)){   
-			        this.totalPage=parseInt(num/this.pageSize)+1; 
-					
-			    }else{   
-			        this.totalPage=parseInt(num/this.pageSize);   
-			    }
-			    this.currentPage=pno;//当前页数
-			    var startRow = (this.currentPage - 1) * this.pageSize+1;//开始显示的行  31 
-			    var endRow = this.currentPage * this.pageSize;//结束显示的行   40
-			    endRow = (endRow > num)? num : endRow;    //40
-			    for(var i=1;i<(num+1);i++){    
-			        var irow = itable[i-1];
-			        if(i>=startRow && i<=endRow){
-			            irow.style.display = "inline-block";    
-			        }else{
-			            irow.style.display = "none";
-			        }
-			    }
-			},
 			selectData(start,end){//获取选择的vlan的区间的时候转换为数据
 				let strVal=[];
 				for (let i=start;i<end+1;i++) {
@@ -559,17 +551,23 @@
 				return strVal;//将获取的vlan的不可用的区间标识出来
 			},
 			getVlan(){
-				//获取所有的vlan区间内的数据
+				//获取所有的vlan区间内的数据  portVlan.vlanName
 				let obj={};
 				let  strVal=[];
 				let numVla=parseInt(this.portVlan.vlanName);
 				let str=['1-600','601-1200','1201-1800','1801-2400','2401-3000','3001-3600','3601-4094'];
 				if(parseInt(this.portVlan.vlanName)>=1&&parseInt(this.portVlan.vlanName)<=4094){
 					for(let index in str){
-						if(numVla>=parseInt(str[index].split('-')[0])&&numVla<=parseInt(str[index].split('-')[1])){
+						if(numVla>=parseInt(str[index].split('-')[0]) && numVla<=parseInt(str[index].split('-')[1])){
 							this.portVlan.selVlanVal=str[index];
 						}
 					}
+//					console.log(this.vlanData)
+//					this.vlanData.filter( item => {
+//						return item == this.portVlan.vlanName;
+//					})
+//					
+//					console.log(this.portVlan.selVlanVal)	
 				}else if(parseInt(this.portVlan.vlanName)<1||parseInt(this.portVlan.vlanName)>4094){
 					this.$message({
 						message:this.$t('business.numIsNot'),
@@ -578,7 +576,12 @@
 				}else{
 					return
 				}
-//				vlanVal
+			},
+			search(data,val){
+				//this.vlanData
+				return  data.find(item => {
+					return item == val;
+				})
 			},
 			creatVlan(){
 				//设置vlan号的时候保存
@@ -634,16 +637,6 @@
 	#barcon{
 		text-align: center;
 	}
-	.spn{
-		cursor: pointer;
-		color: #2B8CFC;
-		display: inline-block;
-		margin-left: 5px;
-	}
-	.spn_tit{
-		font-family: "微软雅黑";	
-		font-weight: bold;	
-	}
 	.spn_val{
 		text-align: right;
 		margin-right: 5px;
@@ -651,9 +644,7 @@
 	.bor_data{
 		width: 60px;
 		margin: 2px 1px !important;
-		/*margin-left: 1px !important;
-		margin-top:2px !important;*/
-		
+		padding: 10px;
 	}
 	.details{
 		width: 150px;

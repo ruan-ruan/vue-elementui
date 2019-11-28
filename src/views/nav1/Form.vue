@@ -1,14 +1,13 @@
 <template>
 	<div>
 		<el-tabs v-model='activeName'  @tab-click="handleClick">
-			<el-tab-pane :label='$t("Public.backboneNode")' name='first'>		
+			<el-tab-pane :label='$t("Public.backboneNode")' name='first' v-if='backbone'>		
 				<backBone v-if="isChildUpdate1"></backBone>
 			</el-tab-pane>
-			<el-tab-pane :label='$t("Public.unNode")' name='second'>
+			<el-tab-pane :label='$t("Public.unNode")' name='second' v-if='unknown'>
 				<Unknown v-if="isChildUpdate2"></Unknown>
 			</el-tab-pane>	
 		</el-tabs>	
-		<!--<router-view></router-view>-->
 	</div>
 </template>
 
@@ -24,9 +23,12 @@
 				isChildUpdate1:true,
 				isChildUpdate2:false,
 				Tabs:this.$route.query.tab,
+				backbone:this.recursion( this.$store.state.aside , "Public.backboneNode").show,
+				unknown:this.recursion( this.$store.state.aside , "Public.unNode").show,
 			}
 		},
 		created(){
+			
 			if(this.$store.state.statusname){
 				this.activeName='second';
 				this.isChildUpdate1 = false;

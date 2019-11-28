@@ -27,48 +27,45 @@
 					</el-col>
 				</el-row>
 				<el-row class='marT20'>
-					<el-col :span='24'>
-						<el-col :span='12' v-if='seeForm.type== "d2d" '>
+					<el-col :span='24' v-if='seeForm.type=="d2d"'><!--数据中心互联-->
+						<el-col :span='12' >
 							<h3 class="marB15">{{$t('Public.dcAport')}}</h3>
 							<dc :dcData='dcFormA'></dc>
-
 						</el-col>
-						<!--数据中心互联-->
-						<el-col :span='12' v-if='seeForm.type=="d2d"'>
+						<el-col :span='12' >
 							<h3 class="marB15">{{$t('Public.dcZport')}}</h3>
 							<dc :dcData='dcFormZ'></dc>
-
 						</el-col>
-						<!--云互联-->
-						<el-col :span='12' v-if='seeForm.type=="c2c"'>
+					</el-col>
+					
+					
+					
+					<el-col :span='24'v-if='seeForm.type=="c2c"'><!--云互联-->
+						<el-col :span='12' >
 							<h3 class="marB15">{{$t('Public.cloudAport')}}</h3>						
 							<cloun :clounData='clFormA'></cloun>
-
-							
 						</el-col>
-						<el-col :span='12' v-if='seeForm.type=="c2c"'>
+						<el-col :span='12' >
 							<h3 class="marB15">{{$t('Public.cloudZport')}}</h3>	
 							<cloun :clounData='clFormZ'></cloun>
-
 						</el-col>
 					</el-col>
 					
-					<!--数据中心到云-->
-					<el-col :span='12' v-if='seeForm.type=="d2c"'>
+					
+					
+					<el-col :span='24' v-if='seeForm.type=="d2c"'><!--数据中心到云-->
+						<el-col :span='12' >
 							<h3 class="marB15">{{$t('Public.cloudAport')}}</h3>	
-							<cloun :clounData='clFormA'></cloun>
+							<cloun :clounData='clFormA'   ></cloun>
 		
 						</el-col>
-						<el-col :span='12' v-if='seeForm.type=="d2c"'>
+						<el-col :span='12'>
 							<h3 class="marB15">{{$t('Public.zPortDetails')}}</h3>	
 							<dc :dcData='dcFormZ'></dc>
-							
-
 						</el-col>
 					</el-col>
-					
-					
 				</el-row>
+				
 				<el-row class='marT20'>					
 					<el-col :span='24'>
 						<el-col :span='12'>
@@ -136,32 +133,10 @@
 					endpoints:{},
 					typeHtml:'',
 				},
-				dcFormA:{
-					logic_name:'',
-					name:'',
-					port_status:'',
-				},
-				dcFormZ:{
-					logic_name:'',
-					name:'',
-					port_status:'',
-				},
-				clFormA:{
-					cloud_type:'',
-					region:'',
-					vlan:'',
-					name:'',
-					logic_name:'',
-					logic_status:''
-				},
-				clFormZ:{
-					cloud_type:'',
-					region:'',
-					vlan:'',
-					name:'',
-					logic_name:'',
-					logic_status:''
-				},
+				dcFormA:{},
+				dcFormZ:{},
+				clFormA:{},
+				clFormZ:{},
 				endpointsData:[],
 				seeLoading:false,
 
@@ -184,7 +159,6 @@
 				.then(res =>{
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
 							this.seeLoading=false;
 							var  str=res.data.data;
 							let statusVal='';
@@ -238,7 +212,7 @@
 								typeHtml:charge,
 							};
 							var  objA={},objZ={};
-							let zvlan='',avlan='';
+//							let zvlan='',avlan='';
 							if(str.type=='d2d'){
 								objA=res.data.data.endpoints.find(item => {
 									return item.name == "A端"
@@ -246,63 +220,8 @@
 								objZ=res.data.data.endpoints.find(item => {
 									return item.name == "Z端"
 								})
-								//A端DC
-		
-								if(objA.vlan < 0){
-									avlan=this.$t('Public.passthrough');
-								}else if(objA.vlan == 0){
-									avlan='UNTAG'
-								}else if(objA.vlan){
-									avlan=objA.vlan;
-								}
-								this.dcFormA={
-									name:objA.name,
-									id:objA.id,
-									port_status:isPort(objA.ports),
-									logic_name:objA.logic_port.name,
-									node_name:objA.node.name,
-									port_no:objA.ports.port_no,
-									
-									logic_port:{
-										id:objA.logic_port.id,
-										name:objA.logic_port.name
-									},
-									ports:{
-										id:objA.ports.id,
-										name:objA.ports.name,
-										status:objA.ports.status
-									},
-									vlan:avlan
-								}
-
-								if(objZ.vlan < 0){
-									zvlan=this.$t('Public.passthrough');
-								}else if(objZ.vlan == 0){
-									zvlan='UNTAG'
-								}else if(objZ.vlan){
-									zvlan=objZ.vlan;
-								}
-								//Z端DC
-								this.dcFormZ={
-									name:objZ.name,
-									id:objZ.id,
-									port_status:isPort(objZ.ports),
-									logic_name:objZ.logic_port.name,
-									port_no:objZ.ports.port_no,
-									node_name:objZ.node.name,
-									
-									logic_port:{
-										id:objZ.logic_port.id,
-										name:objZ.logic_port.name
-									},
-									ports:{
-										id:objZ.ports.id,
-										name:objZ.ports.name,
-										status:objZ.ports.status
-									},
-									vlan:zvlan
-								}
-
+								this.dcFormZ=JSON.parse(JSON.stringify(objZ))
+								this.dcFormA=JSON.parse(JSON.stringify(objA))
 							}
 							if(str.type=='c2c'){
 
@@ -313,35 +232,33 @@
 									return item.name == "Z端"
 								});
 								//A云
-								this.clFormA.cloud_type=objA.cloud_type;
-								this.clFormA.region=objA.region;
+//								this.clFormA.cloud_type=objA.cloud_type;
+//								this.clFormA.region=objA.region;
 								
 								
-								if(objA.vlan < 0){
-									avlan=this.$t('Public.passthrough');
-								}else if(objA.vlan == 0){
-									avlan='UNTAG'
-								}else if(objA.vlan){
-									avlan=objA.vlan;
-								}
-								this.clFormA.vlan=avlan;
+//								if(objA.vlan < 0){
+//									avlan=this.$t('Public.passthrough');
+//								}else if(objA.vlan == 0){
+//									avlan='UNTAG'
+//								}else if(objA.vlan){
+//									avlan=objA.vlan;
+//								}
+//								this.clFormA.vlan=avlan;
 								//Z云
 								
 								
-								if(objZ.vlan < 0){
-									zvlan=this.$t('Public.passthrough');
-								}else if(objZ.vlan == 0){
-									zvlan='UNTAG'
-								}else if(objZ.vlan){
-									zvlan=objZ.vlan;
-								}
-								this.clFormZ.cloud_type=objZ.cloud_type;
-								this.clFormZ.region=objZ.region;
-								this.clFormZ.vlan=objZ;
-
-								
-								this.getClounDetails(objA.id,objA.name);
-								this.getClounDetails(objA.id,objZ.name);
+//								if(objZ.vlan < 0){
+//									zvlan=this.$t('Public.passthrough');
+//								}else if(objZ.vlan == 0){
+//									zvlan='UNTAG'
+//								}else if(objZ.vlan){
+//									zvlan=objZ.vlan;
+//								}
+//								this.clFormZ.cloud_type=objZ.cloud_type;
+//								this.clFormZ.region=objZ.region;
+//								this.clFormZ.vlan=objZ;
+								this.clFormA=JSON.parse(JSON.stringify(objA));
+								this.clFormZ=JSON.parse(JSON.stringify(objZ));
 							}
 							
 							if(str.type=='d2c'){
@@ -351,47 +268,20 @@
 								objZ=res.data.data.endpoints.find(item => {
 									return item.name == "Z端"
 								})
+//								this.getCloudList(objA);
 								//A云
-								this.clFormA.cloud_type=objA.cloud_type;
-								this.clFormA.region=objA.region;
-								if(objA.vlan < 0){
-									avlan=this.$t('Public.passthrough');
-								}else if(objA.vlan == 0){
-									avlan='UNTAG'
-								}else if(objA.vlan){
-									avlan=objA.vlan;
-								}
-								this.clFormA.vlan=avlan;
-								
-
-								this.getClounDetails(objA.id,objA.name)
-								//Z端DC
-								if(objZ.vlan < 0){
-									zvlan=this.$t('Public.passthrough');
-								}else if(objZ.vlan == 0){
-									zvlan='UNTAG'
-								}else if(objZ.vlan){
-									zvlan=objZ.vlan;
-								}
-								this.dcFormZ={
-									name:objZ.name,
-									id:objZ.id,
-									port_status:isPort(objZ.ports),
-									logic_name:objZ.logic_port.name,
-									port_no:objZ.ports.port_no,
-									
-									logic_port:{
-										id:objZ.logic_port.id,
-										name:objZ.logic_port.name
-									},
-									ports:{
-										id:objZ.ports.id,
-										name:objZ.ports.name,
-										status:objZ.ports.status
-									},
-									vlan:zvlan
-								}
-								
+//								this.clFormA.cloud_type=objA.cloud_type;
+//								this.clFormA.region=objA.region;
+//								if(objA.vlan < 0){
+//									avlan=this.$t('Public.passthrough');
+//								}else if(objA.vlan == 0){
+//									avlan='UNTAG'
+//								}else if(objA.vlan){
+//									avlan=objA.vlan;
+//								}
+								this.clFormA=JSON.parse(JSON.stringify(objA))
+//								this.clFormA.vlan=avlan;
+								this.dcFormZ=JSON.parse(JSON.stringify(objZ))
 							}
 						}
 					}
@@ -400,39 +290,6 @@
 				})
 				
 			},
-			getClounDetails(clounID,type){//根据云的id获取云莲路的详情的数据   
-				if(type ==='A端'){
-					this.$ajax.get('/link/cloud_link_info/'+clounID+'?token='+this.token)
-					.then(res => {
-						if(res.status==200){
-							if(res.data.status==0){
-								console.log(res);
-								var str=res.data.data;
-								this.clFormA.name=str.name;
-								this.clFormA.logic_name=str.logic_port.name;
-								this.clFormA.logic_status=str.getPortStatus(str.logic_port.physical_port);
-							
-							}
-						}
-					}).catch(e => {console.log(e)})
-				}else if(type ==='Z端'){
-					this.$ajax.get('/link/cloud_link_info/'+clounID+'?token='+this.token)
-					.then(res => {
-						if(res.status==200){
-							if(res.data.status==0){
-								console.log(res);
-								var str=res.data.data;
-								this.clFormZ.name=str.name;
-								this.clFormZ.logic_name=str.logic_port.name;
-								this.clFormZ.logic_status=str.getPortStatus(str.logic_port.physical_port);
-							}
-						}
-					}).catch(e => {console.log(e)})
-				}
-				
-				
-				
-			}
 		}
 	}
 </script>

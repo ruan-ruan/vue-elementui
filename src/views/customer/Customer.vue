@@ -32,7 +32,7 @@
       </el-col>
 			<el-col :span='24'>
 				<el-col :span='4'>
-					<el-button size='small' type='primary' @click='handleAdd' >{{$t('customer.addCustomer')}}</el-button>
+					<el-button size='small' type='primary' @click='handleAdd' v-if='buttonVal.add' >{{$t('customer.addCustomer')}}</el-button>
 				</el-col>
 				<el-col :span='20' class='table-top'>
 					<el-button
@@ -40,6 +40,7 @@
             type="danger"
             @click="batchRemove(sels)"
             :disabled="this.sels.length===0"
+            v-if='buttonVal.del'
           >{{$t('tabOperation.batchDel')}}</el-button>
 					<el-dropdown size='small'  split-button type='success' @command="handleExport" >
 	        		{{$t('tabOperation.derived.tit')}}
@@ -126,16 +127,19 @@
               size='mini'
               @click='handleSta(scope.$index, scope.row)'
               class='cusSta'
+              v-if='buttonVal.run'
             >{{scope.row.usableBtnText}}</el-button>
             <el-button
               type='success'
               size='mini'
               @click='handleEdit(scope.$index, scope.row)'
+              v-if='buttonVal.edit'
             >{{$t('tabOperation.edit')}}</el-button>
             <el-button
               type='danger'
               size='mini'
               @click='handleDel(scope.$index, scope.row)'
+              v-if='buttonVal.del'
             >{{$t('tabOperation.delete')}}</el-button>
           </template>
         </el-table-column>
@@ -193,12 +197,23 @@ export default {
       currentPage: 1,
       pageNum: 1,
       pagecount: 5,
+      
+      buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏 "link@add_unknown_link"
+	  		add:this.codeVal(this.recursion( this.$store.state.aside ,"aside.tenantList").list,"tenant@add_tenant").show,//添加	
+	  		del:this.codeVal(this.recursion( this.$store.state.aside ,"aside.tenantList").list, "tenant@del_tenant").show,//单个删除和批量的删除是绑定在一起的  
+	  		edit:this.codeVal(this.recursion( this.$store.state.aside ,"aside.tenantList").list,"tenant@edit_tenant").show,//编辑的值
+	  		see:this.codeVal(this.recursion( this.$store.state.aside ,"aside.tenantList").list, "tenant@tenant_info").show,//查看详情
+	  		run:this.codeVal(this.recursion( this.$store.state.aside ,"aside.tenantList").list,"tenant@to_enable_tenant").show,//运行
+	  		stop:this.codeVal(this.recursion( this.$store.state.aside ,"aside.tenantList").list,"tenant@to_disable_tenant").show,//停止
+	  	}
 
     };
   },
   created() {
     this.token = sessionStorage.getItem("token");
     this.getUsers();
+
+    
   },
   methods: {
     //分页的选择页面显示个数和点击其他的分页的时候显示数据
@@ -319,13 +334,21 @@ export default {
       });
     },
     handleSee(index, row) {
-      //查看详情-传递id
-      this.$router.push({
-        path: "/customer/details/tenant",
-        query:{
-        	id:row.id
-        }
-      });
+      //查看详情-传递id v-if='buttonVal.add'
+      if(this.buttonVal.see){
+	      this.$router.push({
+	        path: "/customer/details/tenant",
+	        query:{
+	        	id:row.id
+	        }
+	      });
+      }else{
+      	this.$message({
+      		message:'暂无查看详情权限！',
+      		type:'warning'
+      	});
+      }
+      
     },
     handleEdit(index, row) {
       //编辑 -传递id

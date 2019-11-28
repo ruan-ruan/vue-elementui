@@ -18,10 +18,11 @@
 			
 			<el-col :span='24'>
 				<el-col :span='4'>
-					<el-button size='small' type='primary' @click='addUsers()'>+{{$t('aside.addRole')}}</el-button>
+					<el-button size='small' type='primary' @click='addUsers()' v-if='buttonVal.add' >+{{$t('aside.addRole')}}</el-button>
 				</el-col>
 				<el-col :span='20' class='table-top'>
-					<el-button size='small' type='danger'  @click='batchRemove(sels)' :disabled="this.sels.length===0">{{$t('tabOperation.batchDel')}}</el-button>
+					<el-button size='small' type='danger'  @click='batchRemove(sels)' :disabled="this.sels.length===0"
+						v-if='buttonVal.del'>{{$t('tabOperation.batchDel')}}</el-button>
 					<el-dropdown size='small' split-button type='success' @command="handleExport" >
 						{{$t('tabOperation.derived.tit')}}
 						<el-dropdown-menu slot='dropdown'>
@@ -52,10 +53,10 @@
 				<el-table-column  width='180' :label='$t("Public.operation")' align='center'>
 					<template slot-scope='scope'>
 						<!--下面的这个是对角色的启用和禁用的设置-->
-						<el-button size='mini'type='warning'  @click='handleSta(scope.$index, scope.row)' class='btnStatus'>{{scope.row.btnText}}</el-button>
-						<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>{{$t('tabOperation.info')}}</el-button>
-						<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'>{{$t('tabOperation.edit')}}</el-button>				
-						<el-button size='mini' type='danger' @click='handleDel(scope.$index, scope.row)'>{{$t('tabOperation.delete')}}</el-button>
+						<el-button size='mini'type='warning'  @click='handleSta(scope.$index, scope.row)' class='btnStatus'v-if='buttonVal.stop'>{{scope.row.btnText}}</el-button>
+						<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'v-if='buttonVal.see'>{{$t('tabOperation.info')}}</el-button>
+						<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)' v-if='buttonVal.edit'>{{$t('tabOperation.edit')}}</el-button>				
+						<el-button size='mini' type='danger' @click='handleDel(scope.$index, scope.row)'v-if='buttonVal.del'>{{$t('tabOperation.delete')}}</el-button>
 						
 					</template>
 				</el-table-column>
@@ -98,6 +99,14 @@
 			    currentPage: 1,
 			    pageNum: 1,
 			    pagecount: 5,
+			    buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏 "link@add_unknown_link"
+			  		add:this.codeVal(this.recursion( this.$store.state.aside ,"aside.peopleRole").list,"role@add_role").show,//添加	
+			  		del:this.codeVal(this.recursion( this.$store.state.aside ,"aside.peopleRole").list, "role@del_role").show,//单个删除和批量的删除是绑定在一起的  
+			  		edit:this.codeVal(this.recursion( this.$store.state.aside ,"aside.peopleRole").list,"role@edit_role").show,//编辑的值
+			  		see:this.codeVal(this.recursion( this.$store.state.aside ,"aside.peopleRole").list, "role@role_info").show,//查看详情
+			  		run:this.codeVal(this.recursion( this.$store.state.aside ,"aside.peopleRole").list,"role@to_enable_role").show,//运行
+			  		stop:this.codeVal(this.recursion( this.$store.state.aside ,"aside.peopleRole").list,"role@to_disable_role").show,//停止
+			  	}
 
 			}
 		},
@@ -105,7 +114,7 @@
 			//获取权限
 			this.token=sessionStorage.getItem('token');
 			this.getUsers();
-			
+
 		},
 		methods:{
 			reset(){

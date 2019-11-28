@@ -1,3 +1,100 @@
+/**
+ *
+ * @param  {Array} userRouter 后台返回的用户权限json
+ * @param  {Array} allRouter  前端配置好的所有动态路由的集合
+ * @return {Array} realRoutes 过滤后的路由
+ */
+export function recursionRouter(userRouter = [], allRouter = []) {
+    var realRoutes = []
+    allRouter.forEach((v, i) => {
+        userRouter.forEach((item, index) => {
+            if (item.name === v.name) {
+                if (item.list && item.list.length > 0) {
+                    v.children = recursionRouter(item.list, v.children)
+                }
+                realRoutes.push(v)
+            }
+        })
+    })
+    return realRoutes
+}
+
+export function fil(total=[],data){//根据name名字进行路由数据的查找   并将后台返回的show的字段的值取反  赋值给前端的路由的hidden   
+//	console.log(total)
+	if(data){
+		total.forEach(item => {
+			data.forEach(ele => {
+				if(ele.list && ele.component){
+					if(item.name === ele.name){
+						item.hidden = !ele.show;
+					}
+					fil(item.children,ele.list);
+				}
+			})
+		})
+	}
+	
+}
+
+export function recursion(data, name) {//这个是根据名称 获取的列表的权限集合  
+    let result;
+    if (!data) {
+        return;
+    }
+    for (var i = 0; i < data.length; i++) {
+        let item = data[i];
+        if (item.name === name) {
+          result = item;
+          break;
+        } else if (item.list && item.list.length > 0) {
+          result = recursion(item.list, name);
+          if(result) return result 
+        }
+    }
+    return result;
+}
+
+export function codeVal(data, code) {//这个是根据名称 获取的列表的权限集合  
+    let result;
+    if (!data) {
+        return;
+    }
+//  if(data.list){
+//  	data.list.find(item => {
+//  		return item.code === code;
+//  	})
+//  }
+	if(data.length > 0 && data){
+		for (var i = 0; i < data.length; i++) {
+	        let item = data[i];
+	        if(item.code){
+		        if (item.list && item.list.length > 0) {
+
+		          result = recursion(item.list, code);
+		          if(result) return result ;
+		          console.log(results)
+		        }else {
+		        	if(item.code === code) {
+//		        		console.log(item)
+			          result = item;
+			          break;
+			        }
+		        }
+	        }
+	    }
+	}
+    
+//  console.log(result);
+    return result;
+}
+
+export function exportCom(comp){//对返回的数据的组件的进行导入
+	return () => import(comp+'.vue');
+}
+export function exportIcon(icon){//对引入的icon进行导入
+	return require('@/assets/images/aside/'+icon+'.png');
+}
+
 //手机号的验证
 export function isvalidPhone(str){
 	const reg=/^1[3|4|5|7|8][0-9]\d{8}$/;
@@ -23,23 +120,12 @@ export function datedialogFormat(value){
 export function dealNull(str,property){
 //	console.log(str);
 	str.map( item => {
-
 		if( !item[property] && typeof(item[property]) && item[property] !=0){
 			item[property]=''
 		}else if(typeof item[property] == 'undefined'){
 			item[property]=''
 		}
 	})
-//	console.log(str)
-//	if( !property && typeof(property) !='undefined' && property !=0 ){
-//		return property=''
-//	}else if(property =='undefined'){
-//		return property=''
-//	}else if(property=''){
-//		return  property=''
-//	}else{
-//		return property
-//	}
 }
 export function getTime(value) {
     if (value == "") {
@@ -116,26 +202,26 @@ export var arrayPro={
 			for(var index = new Date(start).getTime()/1000; index < new Date(end).getTime()/1000 ; index +=60){
 				var obj={
 					d1:{
-						input_bytes: 0,
-						input_packages: 0,
-						mac_address: 0,
-						output_bytes: 0,
-						output_packages: 0,
-						total_input_bytes: 0,
-						total_input_packages: 0,
-						total_output_bytes: 0,
-						total_output_packages: 0,
+//						input_bytes: 0,
+//						input_packages: 0,
+//						mac_address: 0,
+//						output_bytes: 0,
+//						output_packages: 0,
+//						total_input_bytes: 0,
+//						total_input_packages: 0,
+//						total_output_bytes: 0,
+//						total_output_packages: 0,
 					},
 					d2:{
-						input_bytes: 0,
-						input_packages: 0,
-						mac_address: 0,
-						output_bytes: 0,
-						output_packages: 0,
-						total_input_bytes: 0,
-						total_input_packages: 0,
-						total_output_bytes: 0,
-						total_output_packages: 0,
+//						input_bytes: 0,
+//						input_packages: 0,
+//						mac_address: 0,
+//						output_bytes: 0,
+//						output_packages: 0,
+//						total_input_bytes: 0,
+//						total_input_packages: 0,
+//						total_output_bytes: 0,
+//						total_output_packages: 0,
 					},
 					time:datedialogFormat(index)
 				};
@@ -145,26 +231,17 @@ export var arrayPro={
 			for(var index = new Date(start).getTime()/1000+60; index < new Date(end).getTime()/1000 ; index +=60){//这个时候  是结束的时间没有找到   因为 所有的flow里面已经包含最后一个值，也就是造册假数据第一个值，冲突，所以需要加一个间隔
 				var obj={
 					d1:{
-						input_bytes: 0,
-						input_packages: 0,
-//						mac_address: 0,
-						output_bytes: 0,
-						output_packages: 0,
-//						total_input_bytes: 0,
-//						total_input_packages: 0,
-//						total_output_bytes: 0,
-//						total_output_packages: 0,
+//						input_bytes: 0,
+//						input_packages: 0,
+//						output_bytes: 0,
+//						output_packages: 0,
+
 					},
 					d2:{
-						input_bytes: 0,
-						input_packages: 0,
-//						mac_address: 0,
-						output_bytes: 0,
-						output_packages: 0,
-//						total_input_bytes: 0,
-//						total_input_packages: 0,
-//						total_output_bytes: 0,
-//						total_output_packages: 0,
+//						input_bytes: 0,
+//						input_packages: 0,
+//						output_bytes: 0,
+//						output_packages: 0,
 					},
 					time:datedialogFormat(index)
 				};
@@ -245,18 +322,16 @@ export var arrayPro={
 				}else{
 					childObj={
 						d1:{
-							input_bytes: 0,
-							input_packages: 0,
-//							mac_address: 0,
-							output_bytes: 0,
-							output_packages: 0,
+//							input_bytes: 0,
+//							input_packages: 0,
+//							output_bytes: 0,
+//							output_packages: 0,
 						},
 						d2:{
-							input_bytes: 0,
-							input_packages: 0,
-//							mac_address: 0,
-							output_bytes: 0,
-							output_packages: 0,
+//							input_bytes: 0,
+//							input_packages: 0,
+//							output_bytes: 0,
+//							output_packages: 0,
 						},
 						time:arrayPro.datedialogFormat( timeData[val] )
 					}
@@ -299,40 +374,46 @@ export var arrayPro={
 //		console.log(d2)
 		//首先判断   d1和d2 内的对象是否为空
 		
-		let avg=0,num=0,obj1={};
+		let avg=0,num=0,obj1={},i=0,newData1=[];
 		for (var index =0;index<d1.length;index ++) {
-			if(JSON.stringify( d1[index][property] ) == '{}'){
+			if(JSON.stringify( d1[index] ) == '{}'){
 				d1[index][property]={
-					min:0,avg:0,max:0
+					min:null,avg:null,max:null
 				}
-			}else {
+			}else if( !(!d1[index][property] && typeof(d1[index][property]) !='undefined' && d1[index][property] !=0 ) || typeof d1[index][property] !='undefined' || d1[index][property] != ''){
+				i++;
+				newData1.push(d1[index])
 				num+= eval(d1[index][property]);
 			}
 			
 		}
+//		avg=num/i;
 		avg=num/d1.length;
 		obj1={
-			min:Math.min.apply(Math, d1.map(function(o) {return o[property]})),
-			max:Math.max.apply(Math, d1.map(function(o) {return o[property]})),
+			min:Math.min.apply(Math, newData1.map(function(o) {return o[property]})),
+			max:Math.max.apply(Math, newData1.map(function(o) {return o[property]})),
 			avg:avg
 		}
 
-		let avg2=0,num2=0,obj2={};
+		let avg2=0,num2=0,obj2={},j=0,newData2=[];
 
 		for (var index =0;index<d2.length;index ++) {
-			if(JSON.stringify( d2[index][property] ) == '{}'){
+			if(JSON.stringify( d2[index]) == '{}'){
 				d2[index][property]={
-					min:0,avg:0,max:0
+					min:null,avg:null,max:null
 				}
-			}else {
+			}else if( !(!d2[index][property] && typeof(d2[index][property]) !='undefined' && d2[index][property] !=0 ) || d2[index][property] !='' || typeof d2[index][property] !='undefined' ){
+				j++;
+				newData2.push(d2[index])
 				num2+= eval(d2[index][property]);
 			}
 			
 		}
+//		avg2=num2/j;
 		avg2=num2/d2.length;
 		obj2={
-			min:Math.min.apply(Math, d2.map(function(o) {return o[property]})),
-			max:Math.max.apply(Math, d2.map(function(o) {return o[property]})),
+			min:Math.min.apply(Math, newData2.map(function(o) {return o[property]})),
+			max:Math.max.apply(Math, newData2.map(function(o) {return o[property]})),
 			avg:avg2
 		}
 
@@ -346,14 +427,21 @@ export var arrayPro={
 		return obj;//获取flow里面的属性的各个的值的集合
 	},
 	tim(data){//获取数组里面的数据的最大，最小，平均值，实时流量等
-//		console.log(data)
+
 		let num=0,avg=0;
-		let obj={};
+		let obj={},i=0;
 		if(data){
 			for(var index=0;index<data.length;index++){
-				num+= parseInt(data[index])	
+				if( (!data[index] && typeof(data[index]) !='undefined' && data[index] !=0  ) || data[index] =='' || typeof (data[index]) =='undefined' ){
+					//  当算平均值的时候   如果数据的null，undefined或者空字符串    这个时候相当于数值加0
+					num+=0;
+				}else {
+					i++
+					num+= parseInt(data[index])	
+				}
 			}
-			avg=num/data.length
+			avg=num/i;
+//			avg=num/data.length
 			obj={
 				min:Math.min.apply(Math, data.map(function(o) {return o})),
 				max:Math.max.apply(Math, data.map(function(o) {return o})),
@@ -385,14 +473,14 @@ export var arrayPro={
 			for(var item in str){
 				for (var val in str[item]){
 					for(var index in str[item][val]){
-						if( isNaN( str[item][val][index] )){
-							str[item][val][index]=0;
+						if( isNaN( str[item][val][index] ) || !isFinite( str[item][val][index] )){//当数据为NaN的时候 获取无穷大的时候  这个时候给一个空的字符
+							str[item][val][index]=null;
 						}
 					}
 				}
 			}
 		})
-
+//console.log(data)
 		let d1=[],d2=[];
 		for(var index=0;index<data.length;index++){
 			d1.push(data[index].d1)
@@ -422,23 +510,52 @@ export var arrayPro={
 			d1:d1Data,
 			d2:d2Data
 		}
-		
+//		console.log(obj)
 		return obj;
 	},
 
 	totalData(data1,data2){//两个数组进行相加  d1 与d2数据进行进行相加
-		if(isNaN(data1[0])  &&   !isNaN(  data2[0]) ){
-			return data2;
-		}else if(! isNaN(data1[0]) &&   isNaN(data2[0])){
-			return data1;
-		}else if(! isNaN(data1[0]) && !isNaN(  data2[0])){
+//		console.log(data1)
+		if(data1  && data2){
+			for(var i=0;i<data1.length;i++){
+				if(isNaN( data1[i] ) || ( !data1[i] && typeof(data1[i]) !='undefined' && data1[i] !=0 ) || data1[i] =='' ){
+					data1[i]=null;
+				}
+			}
+			for(var j=0;j<data2.length;j++){
+				if(isNaN( data2[j] ) || ( !data2[j] && typeof(data2[j]) !='undefined' && data2[j] !=0 ) || data2[i] =='' ){
+					data2[j]=null;
+				}
+			}
+			
 			return data1.map(function(item,index){
-
-				return item + data2[index]
+				if( (!item && typeof (item) !='undefined' && item !=0 ) && !( !data2[index] && typeof (data2[index]) !='undefined' && data2[index] !=0 ) ){
+					return data2[index];
+				}else if(  !(!item && typeof (item) !='undefined' && item !=0 ) && ( !data2[index] && typeof (data2[index]) !='undefined' && data2[index] !=0 ) ){
+					return item;
+				}else if( !(!item && typeof (item) !='undefined' && item !=0 ) && !( !data2[index] && typeof (data2[index]) !='undefined' && data2[index] !=0 )  ){
+					return item + data2[index]
+				}else {
+					return null;
+				}
+				
 			})
-		}else{
-			return false;
 		}
+		
+		
+		
+//		if(isNaN(data1[0])  &&   !isNaN(  data2[0]) ){
+//			return data2;
+//		}else if(! isNaN(data1[0]) &&   isNaN(data2[0])){
+//			return data1;
+//		}else if(! isNaN(data1[0]) && !isNaN(  data2[0])){
+//			return data1.map(function(item,index){
+//
+//				return item + data2[index]
+//			})
+//		}else{
+//			return false;
+//		}
 	
 	},
 };

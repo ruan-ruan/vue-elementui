@@ -3,8 +3,8 @@
 		<!--图表的数据共享部分-->
 		<el-row>
 			<el-col :span='24'>
-				<div style="width: 600px;height: 600px;" ref='chart' v-loading='chartLoading'></div>
-				<el-table :data='user' highlight-current-row style='width: 580px;' v-loading='chartLoading'>
+				<div style="width: 1000px;height:500px;" ref='chart' v-loading='chartLoading'></div>
+				<el-table :data='user' highlight-current-row style='margin-left: 15%;width: 600px;' v-loading='chartLoading'>
 				 	<el-table-column prop='name'width='140' align='center'></el-table-column>
 				 	<el-table-column prop='now'width='100'label='now' align='center'></el-table-column>
 				 	<el-table-column prop='min'width='110'label='min' align='center'></el-table-column>
@@ -57,7 +57,7 @@
 			this.user.map(item => {
 				item.avg=parseInt(item.avg)
 			})
-			console.log(this.data)
+//			console.log(this.data)
 		},
 		methods:{
 			getCharts(dataObj){
@@ -70,11 +70,12 @@
 					        subtext:'带宽'+this.unit,
 					        subtextStyle:{
 					        	fontSize:'13',
-					        	top:'14px'
 					        },
 					        textStyle:{
 								fontSize:'14',
-							}
+							},
+//							x:'5%',
+//							y:'5%'
 					    },
 					    tooltip: {
 					        trigger: 'axis',
@@ -112,20 +113,27 @@
 					        type: 'value',
 					        axisTick:true,
 					        scale:true,
-//					        axisLabel: {
-//					            margin: 2,
-//					            formatter: function (value, index) {
-//					                if (value >= 10000 && value < 10000000) {
-//					                    value = value / 10000 + "万";
-//					                } else if (value >= 10000000 && value <100000000) {
-//					                    value = value / 10000000 + "千万";
-//					                }else if(value>= 100000000) {
-//					                	value=value/100000000+'亿'
-//					                }
-//					                return value;
-//					            }
-//					        },
+					        axisLabel: {
+					            margin: 2,
+					            formatter: function (value, index) {
+					                if (value >= 1000 && value < 1000*1024) {
+					                    value = value / 1000 + "KB";
+					                } else if (value >= 1000*1024 && value <1024*1024) {
+					                    value = value / 1000*1024 + "MB";
+					                }else if(value>= 1024*1024 && value <1024*1024*1024) {
+					                	value=value/1024*1024+'GB';					                	
+					                }else if(value >= 1024*1024*1024){
+					                	value=value/1024*1024*1024+'TB'
+					                }
+					                return value;
+					            }
+					        },
 					    },
+					    grid: {
+					    	left:'13%',
+					    	right:'13%',
+				        },
+
 					    series: [
 					    {
 					        name: dataObj.dev_name1+'-'+dataObj.vlan+'(d1入)', //d1

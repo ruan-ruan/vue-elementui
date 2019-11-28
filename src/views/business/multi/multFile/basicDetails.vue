@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<el-form :model='basicForm' ref='basicForm' :rules='basicFormRules'  v-loading='basicLoading' label-width='145px' >
-			<el-form-item :label='$t("Public.bandwidth")+":"' prop='bandwidth'>
+		<el-form :model='basicForm' ref='basicForm' :rules='basicFormRules'  v-loading='basicLoading' label-width='160px' >
+			<el-form-item :label='$t("Public.bandwidth")+"："' prop='bandwidth'>
 				<el-input v-model='basicForm.bandwidth'class='ipt'  :disabled='typeof type != "undefined"'></el-input>
 			</el-form-item>
-			<el-form-item :label='$t("Public.chargModel")+":"' prop='changeModel'>
+			<el-form-item :label='$t("Public.chargModel")+"："' prop='changeModel'>
 				 <el-radio-group v-model="basicForm.changeModel" :disabled='typeof type != "undefined"'>
 				 	<el-radio-button border v-for='(item,index) in modelData'
 				 	:value='item.value'
@@ -13,7 +13,7 @@
 				 	></el-radio-button>
 				 </el-radio-group>
 			</el-form-item>
-			<el-form-item :label='$t("Public.billTime")+":"'prop='billing_time'>
+			<el-form-item :label='$t("Public.billTime")+"："'prop='billing_time'>
 				<el-date-picker :disabled='typeof type != "undefined"'
 	                v-model="basicForm.billing_time"  
 	                format="yyyy-MM-dd HH:mm:ss"
@@ -27,7 +27,7 @@
 	                >
 	            </el-date-picker>
 			</el-form-item>
-			<el-form-item :label='$t("Public.expTime")+":"' prop='overdue_time'>
+			<el-form-item :label='$t("Public.expTime")+"："' prop='overdue_time'>
 				<el-date-picker :disabled='typeof type != "undefined"'
 	                v-model="basicForm.overdue_time"  
 	                format="yyyy-MM-dd HH:mm:ss"
@@ -41,7 +41,7 @@
 	                >
 	            </el-date-picker>
 			</el-form-item>
-			<el-form-item :label='$t("Public.description")' prop='des'>
+			<el-form-item :label='$t("Public.description")+"："' prop='des'>
 				<el-input type='textarea'cols='4' v-model='basicForm.des' class='ipt':disabled='typeof type != "undefined"'></el-input>
 			</el-form-item>
 		</el-form>
@@ -95,6 +95,19 @@
 				handler(newVal,oldVal){		
 					console.log(newVal)
 					this.$emit('sendBasic',newVal)
+				},
+				deep:true,
+			},
+			basicObj:{
+				handler(newVal,oldVal){		
+					console.log(newVal)
+					this.basicForm={ 
+						bandwidth:newVal.bandwidth,
+						changeModel:newVal.charge_mode,
+						billing_time:newVal.charge_time==''? '' : new Date(datedialogFormat(newVal.charge_time)),
+						overdue_time:newVal.expiration_time ==''? '':   new Date(datedialogFormat(newVal.expiration_time)),
+						des:newVal.description
+					}
 				},
 				deep:true,
 			}

@@ -229,7 +229,7 @@
 								    			cancelButtonText:'继续开通',
 								    			confirmButtonText:'前往查看',
 											}).then(() => {
-												this.$router.push('/resource/virtualLine/pointTo')
+												this.$router.push('/resource/virtualLine/d2d')
 											}).catch(() => {})
 											
 										}

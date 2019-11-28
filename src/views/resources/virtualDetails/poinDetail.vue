@@ -7,7 +7,7 @@
 			<el-tab-pane :label=' $t("Public.detailed")' name='first'>
 				<virtualDetails :titData='pointID'></virtualDetails>
 			</el-tab-pane>
-			<el-tab-pane :label='$t("Public.chart")' name='second'>
+			<el-tab-pane :label='$t("Public.chart")' name='second' v-if='flow'>
 				<!--<virtual-chart :titData='pointID'></virtual-chart>-->
 				<mult-charts :titData='pointID'></mult-charts>
 			</el-tab-pane>
@@ -34,6 +34,8 @@
 			return{
 				activeName:'first',
 				pointID:this.$route.query.pointID,
+	  			flow:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list, "vll@get_vll_flow").show,//查看逻辑口的详情
+				
 			}
 		},
 		created(){

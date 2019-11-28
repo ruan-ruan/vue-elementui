@@ -3,14 +3,15 @@ import Vuex from 'vuex'
 import axios from 'axios'
 import {base} from '@/api/api'
 import *as types from '@/api/types'
-import getters from './getters'
+
 Vue.use(Vuex)
 
 
 
 const store = new Vuex.Store({
     state:{
-    	token:localStorage.getItem('token'),
+    	aside:JSON.parse( sessionStorage.getItem('asideList') ),
+    	token:sessionStorage.getItem('token'),
     	//用户的数据的密码和账号
     	user:{
     		name:'',
@@ -33,16 +34,21 @@ const store = new Vuex.Store({
         statusname:false,
     },
     mutations:{
+    	setAside(state,data){
+    		state.aside =data;
+//  		console.log(data)
+    	},
     	setRole(state,msg){
     		state.roles=msg
     	},
 		[types.LOGIN]: (state, data) => {
-//			localStorage.setItem('token',data)
-            localStorage.token = data;
+//			sessionStorage.setItem('token',data)
+            sessionStorage.token = data;
             state.token = data;
+            
         },
         [types.LOGOUT]: (state) => {
-            localStorage.removeItem('token');
+            sessionStorage.removeItem('token');
             state.token = null
         },
         [types.TITLE]: (state, data) => {
@@ -59,7 +65,6 @@ const store = new Vuex.Store({
     	setRoles({commit,state},msg){
     		commit('setRole',msg)
     	},
-
     },
 })
 

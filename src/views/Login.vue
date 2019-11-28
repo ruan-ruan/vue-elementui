@@ -33,27 +33,30 @@
 		<!--<section>
 			
 		</section>-->
-	  <el-form :model="ruleForm2"  :rules="rules2" ref="ruleForm2" label-position="left" label-width="55px" class="demo-ruleForm login-container"v-loading="logining">
+	  <el-form :model="ruleForm2"  :rules="rules2" ref="ruleForm2" label-position="left" label-width="55px" 
+	  	class="demo-ruleForm login-container"v-loading="logining">
 	    <h3 class="title">账户登录</h3>
 	    <el-form-item prop="account" label='账号:' >
 	      <el-input type="text" v-model="ruleForm2.account"  placeholder="账号"></el-input>
 	    </el-form-item>
-	    <el-form-item prop="checkPass" label='密码:'>
+	    <el-form-item prop="checkPass" label='密码:' >
 	      <el-input type="password" v-model="ruleForm2.checkPass"  placeholder="密码" @keydown.enter.native='handleSubmit2' show-password></el-input>
 	    </el-form-item>
 	    <!--<el-form-item>-->
 	    	<el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>
 	    <!--</el-form-item>-->
-	    <el-form-item style="width:100%;">
-	      <el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit2" >登录</el-button>
-	      <!--<el-button @click.native.prevent="handleReset2">重置</el-button>-->
+	    <el-form-item style="width:100%;text-align: center;">
+	      <el-button size='small' type="primary" @click.native.prevent="handleSubmit2" >登录</el-button>
+	      <el-button size='small' type="info" @click="handleReset2" style='margin-left: 40px;'>重置</el-button>
 	    </el-form-item>
 	  </el-form>
   </div>
 </template>
 
 <script>
+	import { fil} from'@/assets/js/index'
 	import *as types from '@/api/types'
+	var routers = []
   	export default {
 	    data() {
 	      	return {
@@ -85,7 +88,11 @@
 	    },
 	    methods: {
 	      	handleReset2() {
-	        	this.$refs.ruleForm2.resetFields();
+	      		this.ruleForm2={
+	    			account:localStorage.removeItem('user'),
+	    			checkPass:localStorage.removeItem('psd')
+	    		}
+	        	this.$refs['ruleForm2'].resetFields();
 	      	},
 	      	handleSubmit2(ev) {
 		        var _this = this;
@@ -117,9 +124,25 @@
 									sessionStorage.setItem('user',loginParams.name);
 									sessionStorage.setItem('psd',loginParams.password)
 									sessionStorage.setItem('token',res.data.data.token);
-									let redirect = decodeURIComponent('/message/unreadMessage' || this.$route.query.redirect);
-							        this.$router.push({
-							            path: redirect,
+									
+									this.$ajax.get('/public/get_menu'+'?token='+res.data.data.token)
+									.then(res => {
+										if(res.status == 200){
+											if(res.data.status ==0){
+												this.$store.commit('setAside',res.data.data);
+												sessionStorage.setItem('asideList',JSON.stringify(res.data.data));
+//												routerEach(routers,res.data.data);
+												fil(this.$router.options.routes ,res.data.data);
+//												let redirect = decodeURIComponent('/message/unreadMessage' || this.$route.query.redirect);
+//										        this.$router.push({
+//										            path: redirect,
+//										        })
+											}
+										}
+									}).catch(e => {console.log(e)})
+									
+									this.$router.push({
+							            path: '/message/unreadMessage',
 							        })
 								}
 							}

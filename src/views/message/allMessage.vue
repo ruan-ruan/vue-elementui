@@ -121,11 +121,11 @@
         <el-table-column
           type='selection'
           align='center'
-          width='50'
+          
         ></el-table-column>
         <el-table-column
           type='index'
-          width='80'
+          
           align='center'
           :label= "$t('mesModule.unMessage.table.serial')"
         >
@@ -137,7 +137,7 @@
           :label=" $t('mesModule.unMessage.table.title') "
           prop='title'
           align='left'
-          width="500"
+          
         >
           <template slot-scope="scope">
             <el-popover

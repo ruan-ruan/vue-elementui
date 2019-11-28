@@ -35,7 +35,7 @@
    	 	<el-row>
    	 		<el-col :span='24'>
    	 			<el-col :span='4'>
-   	 				<el-button size='small' type='primary' @click='addUsers' v-if=' !tit'>+{{$t('Public.creatLogic')}}</el-button>
+   	 				<el-button size='small' type='primary' @click='addUsers' v-if='buttonVal.add? !tit : buttonVal.add'>+{{$t('Public.creatLogic')}}</el-button>
    	 			</el-col>
    	 			<el-col :span='20' class='table-top'>
    	 				<el-dropdown size='small' split-button type='success'@command="handleExport">
@@ -77,9 +77,9 @@
    	 		<el-table-column prop='descriptionVal' :label='$t("Public.description")' min-width='100'align='center'></el-table-column>
    	 		<el-table-column  :label='$t("Public.operation")' width='120'  v-if=' !tit'align='center'>
    	 			<template slot-scope='scope'>
-   	 				<el-button size='mini' type='info' @click='handleStatus(scope.$index, scope.row)'>{{scope.row.btnStatus}}</el-button>
-	   	 			<el-button size='mini' type='success' @click='handleEdit(scope.$index,scope.row)'>{{$t('tabOperation.edit')}}</el-button>
-	   	 			<el-button size='mini' type='danger' @click='handleDel(scope.$index,scope.row)' v-if="scope.row.btnStatus== '启用' ">{{$t('tabOperation.delete')}}</el-button>
+   	 				<el-button size='mini' type='info' @click='handleStatus(scope.$index, scope.row)'v-if='buttonVal.stop'>{{scope.row.btnStatus}}</el-button>
+	   	 			<el-button size='mini' type='success' @click='handleEdit(scope.$index,scope.row)' v-if='buttonVal.edit'>{{$t('tabOperation.edit')}}</el-button>
+	   	 			<el-button size='mini' type='danger' @click='handleDel(scope.$index,scope.row)' v-if="buttonVal.del? scope.row.btnStatus== '启用' : buttonVal.del">{{$t('tabOperation.delete')}}</el-button>
    	 			</template>
    	 		</el-table-column>
    	 		
@@ -145,7 +145,16 @@
 				//用来控制删除按钮的显示和隐藏
 				statusDel:null,
 				tenantData:[],//租户数据
-				tit:''
+				tit:'',
+				buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏 "link@add_unknown_link"
+		  		add:this.codeVal(this.recursion( this.$store.state.aside ,"aside.logicManage").list, "port@add_logic_port").show,//添加	
+		  		del:this.codeVal(this.recursion( this.$store.state.aside ,"aside.logicManage").list, "port@del_logic_port").show,//单个删除和批量的删除是绑定在一起的  
+		  		edit:this.codeVal(this.recursion( this.$store.state.aside ,"aside.logicManage").list,"port@edit_logic_port").show,//编辑的值
+		  		see:this.codeVal(this.recursion( this.$store.state.aside ,"aside.logicManage").list, "port@logic_port_info" ).show,//查看详情
+		  		stop:this.codeVal(this.recursion( this.$store.state.aside ,"aside.logicManage").list, "port@to_disable_logic_port").show,//查看逻辑口的详情
+		  		run:this.codeVal(this.recursion( this.$store.state.aside ,"aside.logicManage").list, "port@to_enable_logic_port").show,//查看逻辑口的详情
+		  		
+		  	} 
 			}
 		},
 		watch:{
@@ -281,12 +290,20 @@
 			handleSee(index,row){
 				//查看信息详情
 //				console.log('进入详情的界面');
-				this.$router.push({
-					path:'/resource/see/logicalPort',
-					query:{
-						detailsID:row.id
-					}
-				})
+				if(this.buttonVal.see){
+					this.$router.push({
+						path:'/resource/see/logicalPort',
+						query:{
+							detailsID:row.id
+						}
+					})
+				}else{
+					this.$message({
+						message:'暂无查看详情的权限！',
+						type:'warning'
+					})
+				}
+				
 			},
 			handleStatus(index,row){
 				//设置端口的启用和禁用

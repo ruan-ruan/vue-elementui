@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<!--公有云部分-->
-		<el-form :model='editForm':rules='editFormRules' ref='editForm'label-width='145px' v-loading='editLoading'>
-			<el-form-item :label='$t("Public.shardCloud")+":"'prop='cloun'>
+		<el-form :model='editForm':rules='editFormRules' ref='editForm'label-width='160px' v-loading='editLoading'>
+			<el-form-item :label='$t("Public.shardCloud")+"："'prop='cloun'>
 				<el-select v-model='editForm.cloun' filterable  class='ipt'  @change='handleSelect(editForm.cloun)'>
 					<el-option v-for='(item ,index) in clounData'
 						:label='item'
@@ -11,7 +11,7 @@
 				</el-select>
 				<span class="cli_toTip" :title="$t('business.cloudTooltip')">?</span>
 			</el-form-item>
-			<el-form-item :label='$t("business.tarRegion")+":"' prop='targetRegion'>
+			<el-form-item :label='$t("business.tarRegion")+"："' prop='targetRegion'>
 				<el-select v-model='editForm.targetRegion' class='ipt' @change='selRegion(editForm.targetRegion)'>
 					<el-option v-for='(item ,index) in targetRegionData'
 						:label='item'
@@ -20,7 +20,7 @@
 				</el-select>
 				<span class="cli_toTip" :title="$t('business.cloudRouter')">?</span>
 			</el-form-item>
-			<el-form-item :label='$t("business.cloudDock")+":"' prop='clounDock'>
+			<el-form-item :label='$t("business.cloudDock")+"："' prop='clounDock'>
 				<el-select v-model='editForm.clounDock'class='ipt' >
 					<el-option v-for='(item ,index) in clounDockData'
 						:label='item.name'
@@ -32,27 +32,29 @@
 				</el-select>
 				<span class="cli_toTip" :title="$t('business.cloudPhyTooltip')">?</span>
 			</el-form-item>
-			<el-form-item :label='$t("business.linePro")+":"' v-if='JSON.stringify(copy) !="{}" '>
+			<el-form-item :label='$t("business.linePro")+"："' v-if='JSON.stringify(copy) !="{}" && editForm.clounDock !=="" '>
 				<el-input v-model='editForm.Dedicated' disabled class='ipt'></el-input>
 				<span style="cursor: pointer; color: orangered;" :title="tcTit">?</span>
 			</el-form-item>
-			<el-form-item :label='$t("business.lineID")+"："' v-if='JSON.stringify(copy) !="{}" '>
+			<el-form-item :label='$t("business.lineID")+"："' v-if='JSON.stringify(copy) !="{}" && editForm.clounDock !=="" '>
 				<el-input v-model='editForm.shardID' disabled class='ipt'></el-input>
 				<span style="cursor: pointer; color: orangered;" :title="tcTit">?</span>
-				
 			</el-form-item>
-			<el-form-item :label='$t("business.region")+":"' v-if='JSON.stringify(copy) !="{}" '>
+			<el-form-item :label='$t("business.region")+":"' v-if='JSON.stringify(copy) !="{}" && editForm.clounDock !=="" '>
 				<el-input v-model='editForm.area' disabled class='ipt'></el-input>
 				<span style="cursor: pointer; color: orangered;" :title="tcTit">?</span>
 			</el-form-item>
 			<el-form-item v-for='(item,index) in dockLinks' :label='item.show_name +":"':key='index' :prop='item.keyVal'
 				:rules="{required:true,message:item.keyVal+'不能为空',trigger:'blur'}" v-if='editForm.clounDock ==""? false :true  '>
 				<el-input v-model='item.keyVal':placeholder="'请输入'+item.show_name"class='ipt'
-					:disabled='editForm.cloun==="腾讯云"? (item.show_name == "专用通道id"? false:true ) :false' ></el-input>
-					<template v-if='editForm.cloun==="腾讯云"? true : false' v-for='(val ,index) in icoData'>
-						<span v-if='val.name == item.show_name '  :title="val.value"
-							style="cursor: pointer; color: orangered;" >{{val.label}}</span> <br />
-							<span v-if='val.name == "专用通道id"? true:false' style="cursor: pointer; color: orangered;" @click="tenRules"> {{$t('business.cliLine')}}</span>
+					:disabled='editForm.cloun==="腾讯云"? ( (item.show_name == "专用通道id" || item.show_name == "vlan" )? false:true ) :false' ></el-input>
+					<template v-if='editForm.cloun==="腾讯云"? true : false' v-for='(val ,index) in getLogo'>
+						<span v-if='val.name === item.show_name '  :title="val.value"
+							style="cursor: pointer; color: orangered;" >{{val.label}}</span>  
+							<span v-if='val.name == "专用通道id" && item.show_name == "专用通道id" ' style="cursor: pointer; color: orangered;" @click="tenRules"> 
+								{{$t('business.cliLine')}}</span>
+							<!--<span v-else-if='val.name == "vlan" && item.show_name == "vlan" ' style="cursor: pointer; color: orangered;">?</span>-->
+								
 					</template>
 
 			</el-form-item>
@@ -138,12 +140,13 @@
 			return{
 				tcTit:this.$t('business.tencentTit'),
 				icoData:[//腾讯云开通的时候  需要的数据的提示界面
+//					{
+//						name:'专用通道id',
+//						value:'腾讯云专心通道ID,即DirectConnectTunnelld',
+//						label:'?',
+//
+//					},
 					{
-						name:'专用通道id',
-						value:'腾讯云专心通道ID,即DirectConnectTunnelld',
-						label:'?',
-
-					},{
 						name:'专线提供方',
 						value:'此数据将用于创建腾讯云专线通道id时使用',
 						label:'?'
@@ -155,6 +158,25 @@
 						name:'地域',
 						value:'此数据将用于创建腾讯云专线通道id时使用',
 						label:'?'
+					},
+//					{
+//						name:'vlan',
+//						value:'选择的vlan号应该与创建专用通道ID所使用的额vlan号保持一致',
+//						label:'?'
+//					}
+				],
+				getLogo:[
+					
+					{
+						name:'vlan',
+						value:'选择的vlan号应该与创建专用通道ID所使用的额vlan号保持一致',
+						label:'?'
+					},
+					{
+						name:'专用通道id',
+						value:'腾讯云专心通道ID,即DirectConnectTunnelld',
+						label:'?',
+
 					}
 				],
 				tc1:require('../../../../assets/images/tc1.png'),
@@ -274,10 +296,10 @@
 			},
 			selectCloun(clounName){
 //				console.log(clounName)
-				var para={
-					name:clounName
-				}
-				this.$ajax.get('/vll/get_driver_frame/'+clounName+'?token='+this.token,para)
+//				var para={
+//					name:clounName
+//				}
+				this.$ajax.get('/vll/get_driver_frame/'+clounName+'?token='+this.token)
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
@@ -294,7 +316,7 @@
 
 			},
 			selCloud(type){//选择云对接
-//				console.log(type);
+				console.log(type);
 				this.copy={}
 				if(this.editForm.cloun == '腾讯云'){
 					this.$ajax.get('/vll/tc_params_to_tenant/'+type+'?token='+this.token)
@@ -404,7 +426,7 @@
 </script>
 
 <style>
-	.tc_img{
+	/*.tc_img{
 		width: 570px;
 	}
 	.span_toTip{
@@ -445,5 +467,5 @@
 	}
 	.span_tit_four{
 		background-color: #FF00FF;
-	}
+	}*/
 </style>

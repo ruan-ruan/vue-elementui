@@ -28,9 +28,6 @@
 				detailsID:this.$route.query.detailsID,
 			}
 		},
-		created(){
-
-		}
 	}
 </script>
 

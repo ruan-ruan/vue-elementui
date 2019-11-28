@@ -43,12 +43,12 @@
 				<el-col :span='24'>
 					<el-col :span='8'>
 						<template>
-							<el-button size='small' type='success'@click='handleAdd'>+{{$t('Public.addUnknownLink')}}</el-button>
+							<el-button size='small' type='success'@click='handleAdd'v-if='buttonVal.add'>+{{$t('Public.addUnknownLink')}}</el-button>
 							<el-button size='small' type='primary' @click='handleFound'>{{$t('Public.findLink')}}</el-button>
 						</template>	
 					</el-col>
 					<el-col :span='16' class='table-top'>
-						<el-button size='small' type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0">{{$t('tabOperation.batchDel')}}</el-button>						
+						<el-button size='small' type='danger'  @click='batchRemove(sels)':disabled="this.sels.length===0" v-if='buttonVal.del'>{{$t('tabOperation.batchDel')}}</el-button>						
 					</el-col>
 
 				</el-col>
@@ -89,10 +89,10 @@
 				</el-table-column>
 				<el-table-column  :label='$t("Public.operation")' align='center' width='180'>
 					<template slot-scope='scope'>
-						<el-button size='mini' type='primary' @click='handleStart(scope.$index, scope.row)'>{{$t('tabOperation.run')}}</el-button>
-						<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'>{{$t('tabOperation.info')}}</el-button>
-						<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'>{{$t('tabOperation.edit')}}</el-button>				
-						<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)"  >{{$t("tabOperation.delete")}}</el-button>
+						<el-button size='mini' type='primary' @click='handleStart(scope.$index, scope.row)' v-if='buttonVal.run'>{{$t('tabOperation.run')}}</el-button>
+						<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)' v-if='buttonVal.see'>{{$t('tabOperation.info')}}</el-button>
+						<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'v-if='buttonVal.edit'>{{$t('tabOperation.edit')}}</el-button>				
+						<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)"  v-if='buttonVal.del'>{{$t("tabOperation.delete")}}</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -377,7 +377,13 @@
 				detectionStatus:false,
 				seeStatus:false,	
 				seeStatusCreatime:true,
-				 
+				buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏 "link@add_unknown_link"
+			  		add:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unLink").list, "link@add_unknown_link").show,//添加	
+			  		del:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unLink").list, "link@del_unknown_link").show,//单个删除和批量的删除是绑定在一起的  
+			  		edit:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unLink").list,"link@edit_unknown_link").show,//编辑的值
+			  		see:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unLink").list, "link@unknown_link_info" ).show,//查看详情
+			  		run:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unLink").list,"link@run_link" ).show,//运行
+			  	} 
 			}
 		},
 		watch:{

@@ -70,7 +70,6 @@
 				<shard-chart :data='baseObjNet' :user='usersNet' :trafficData='trafficData' :unit='filters.unit':chartLoading='chartLoading' v-if='child'></shard-chart>
 			</el-col>
 			
-			
 		</el-row>
 		
 		
@@ -83,6 +82,7 @@
 <script>
 	
 	import shardChart from '@/components/shardChart'
+	
 	
 	
 	import {datedialogFormat,isChartTime,arrayPro} from '@/assets/js/index.js'   //arrayPro  数组的处理
@@ -252,14 +252,8 @@
 										//这个时候  name不是null   当为点到点的数据
 										if(item.name && typeof (item.name) != 'undefined' && item.name !=''){
 										//   分别找到对应的点到点的数据   根据时间的不同进行整合
-//											if(item.name == 'A端'){//获取A端的数据
-//												console.log(item);
-//											}else if(item.name == 'Z端'){//获取Z端的数据
-//												console.log(item)
-//											}
+
 											this.networkingStatus=false;//此时Wie点到点的数据   所以不需要显示
-											//  当item.name不为null的时候   这个时候分为两种情况，A端和Z端
-//											newData.push(item);//为点到点的数据
 										}
 										newData.push(item);
 									})
@@ -274,11 +268,6 @@
 										//这个时候  name不是null   当为点到点的数据
 										if(item.name && typeof (item.name) != 'undefined' && item.name !=''){
 										//   分别找到对应的点到点的数据   根据时间的不同进行整合
-//											if(item.name == 'A端'){//获取A端的数据
-//												console.log(item);
-//											}else if(item.name == 'Z端'){//获取Z端的数据
-//												console.log(item)
-//											}
 											//  当item.name不为null的时候   这个时候分为两种情况，A端和Z端
 											this.networkingStatus=false;
 //											newData.push(item);//为点到点的数据
@@ -296,11 +285,9 @@
 
 								this.selData=sortID;
 								let sliData=[]; //根据选择的开始和结束时间，对该新拼接的数组进行筛选
-//								console.log(flowType);
 								var start_time=this.trafficData[0];
 								var end_time=this.trafficData[this.trafficData.length-1];
-//								console.log(start_time);
-//								console.log(end_time)
+
 								//sortID   是要处理的数据    根据开始时间  start_time和结束时间end_time  并处理拿到的数据的流量的数据之间存在的断点情况
 								sliData=arrayPro.dealTime(sortID,start_time,end_time);
 
@@ -318,8 +305,6 @@
 									this.baseObjZ=this.getPartialData(sliData,'Z端').baseObjNet;
 									this.usersZ=this.getPartialData(sliData,'Z端').usersNet;
 								}else {//显示组网的数据  this.filters.logic_name   为筛选条件
-//									console.log( sliData )
-//									console.log(this.filters.logic_name )
 									if(this.filters.logic_name == ''){
 										this.usersNet=[];
 										this.baseObjNet={};
@@ -364,7 +349,6 @@
 					}
 				}
 				ZData=this.selectVal(logicZ,this.timeInterval).data
-
 				//Z端
 				let  objZ={//    这里面 的数据   是两个单位情况下显示的数据        所以根据单位的不同 进行判断
 					input_bytes_d1:this.dealData('input_bytes',arrayPro.testCharts(ZData,'input_bytes',this.valType).d1),
@@ -394,9 +378,9 @@
 				
 				if(JSON.stringify(logicZ) !='{}'){
 					let logicVlanZ=null,deviceZ={};
-					if(logicZ.logic_port.name <0){
+					if(logicZ.vlan <0){
 						logicVlanZ='透传';
-					}else if( logicZ.logic_port.name == 0){
+					}else if( logicZ.vlan == 0){
 						logicVlanZ='UNTAG';	
 					}else {
 						logicVlanZ=logicZ.vlan;
@@ -467,17 +451,22 @@
 			},
 
 			dealData(type,data){//根据不同的单位  进行数据处理
-
+//				console.log(data)
 				let newData=[]
 				data.map(ele => {
-					if(type === 'input_bytes' || type==='output_bytes'|| type =='total_input_bytes' || type == 'total_output_bytes'){
-						newData.push( parseInt(ele/(60*1024)*8  ))
-//						newData.push( parseInt(ele/(60*1024*8 ) ))
-//						newData.push(ele/(60*1024*8 ).toFixed(2))
-					}else if(type === 'input_packages' || type ==='output_packages'|| type == 'total_input_packages' || type=='total_output_packages'){
-//						newData.push( parseInt(ele/60) )
-						newData.push(ele/(60 ).toFixed(2))
+					if((!ele && typeof (ele) !== 'undefined' && ele !=0) || isNaN(ele) ||typeof ele =='undefined' ||ele==''){//如果数据是NaN或者null
+						newData.push('')
+					}else{
+						if(type === 'input_bytes' || type==='output_bytes'|| type =='total_input_bytes' || type == 'total_output_bytes'){
+							newData.push( parseInt(ele/60*8  ))
+	//						newData.push( parseInt(ele/(60*1024*8 ) ))
+	//						newData.push(ele/(60*1024*8 ).toFixed(2))
+						}else if(type === 'input_packages' || type ==='output_packages'|| type == 'total_input_packages' || type=='total_output_packages'){
+							newData.push( parseInt(ele/60) )
+	//						newData.push(ele/(60 ).toFixed(2))
+						}
 					}
+					
 				})
 
 				return newData;//不同的属性   换算是不一样的
@@ -494,7 +483,8 @@
 
 				return val;
 			},
-			selectVal(data , timeFew=5){//data  是数组     timeFew根据时间 的类型获取的时间间隔   也就是值的间隔      valType是值的类型
+			selectVal(data , timeFew){//data  是数组     timeFew根据时间 的类型获取的时间间隔   也就是值的间隔      valType是值的类型
+				timeFew=timeFew || 5
 				//console.log(data);//可根据传值的类型  具体情况而定   A端   Z端    组网
 				//需要获取  逻辑口       以及设备d1    d2的数据      分别是入 和出       所以   一个逻辑口 共有  六条数据
 				var sval=JSON.parse( JSON.stringify(data) );

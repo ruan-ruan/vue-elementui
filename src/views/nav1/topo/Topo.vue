@@ -5,7 +5,7 @@
 					<el-form>
 						<el-form-item>
 							<template>
-								<el-button @click='Save' >
+								<el-button @click='Save' v-if='buttonVal.save' >
 									<!--保存布局-->
 									{{$t('topology.topBtn.save')}}
 								</el-button>
@@ -75,12 +75,15 @@
 				networkStatus:false,//流量默认的时候是隐藏的
 				logoStatus:true,//标签默认是显示的
 				tagStatus:true,//默认的是显示的
-
-//				backupNode:[],
-//				backupLink:[],
+				buttonData:this.recursion( this.$store.state.aside , 'aside.topoView'),//获取区域内的所有的按钮的权限
+				buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏
+		      		save:this.codeVal(this.recursion( this.$store.state.aside , 'aside.topoView').list,"topology@edit_node_location").show,//保存布局
+		      	}
 			}
 		},
 		created(){
+			//aside.topoView
+			console.log(this.$store.state.aside)
 			this.token=sessionStorage.getItem('token');
 			this.getNodesData(this.selectForm);
 

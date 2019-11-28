@@ -42,12 +42,12 @@
 			<el-row>
 				<el-col :span='8'>
 					<template >
-						<el-button size='small' type="primary" @click="handleAdd">+{{$t('tooltipMes.addNode')}}</el-button>
+						<el-button size='small' type="primary" @click="handleAdd" v-if='buttonVal.add'>+{{$t('tooltipMes.addNode')}}</el-button>
 						<el-button size='small' type='success' @click='foundNode'>{{$t('tooltipMes.findNode')}}</el-button>
 					</template>
 				</el-col>
 				<el-col :span='16'	class="table-top">
-					<el-button size='small' type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0">{{$t('tabOperation.batchDel')}}</el-button>
+					<el-button size='small' type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0" v-if='buttonVal.del'>{{$t('tabOperation.batchDel')}}</el-button>
 					
 				</el-col>
 			</el-row>
@@ -88,16 +88,16 @@
 				<el-table-column prop='description' min-width='80' :label='$t("Public.description")' align='center'></el-table-column>
 				<el-table-column width='180' align='center':label='$t("Public.operation")'>
 					<template slot-scope='scope'>
-						<el-button type='primary':diasbled='RunStatus' size='mini' @click='run(scope.$index, scope.row)' class='run'>
+						<el-button type='primary':diasbled='RunStatus' size='mini' @click='run(scope.$index, scope.row)' class='run' v-if='buttonVal.run'>
 							<!--运行-->{{$t('tabOperation.run')}}
 						</el-button>
-						<el-button type='info' size='mini' @click='handleSee(scope.$index, scope.row)'>
+						<el-button type='info' size='mini' @click='handleSee(scope.$index, scope.row)'v-if='buttonVal.see'>
 							<!--详情-->{{$t('tabOperation.info')}}
 						</el-button>
-						<el-button type='success' size='mini' @click='handleEdit(scope.$index, scope.row)'>
+						<el-button type='success' size='mini' @click='handleEdit(scope.$index, scope.row)'v-if='buttonVal.edit'>
 							<!--编辑-->{{$t('tabOperation.edit')}}
 						</el-button>
-						<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)">
+						<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)"v-if='buttonVal.del'>
 							<!--删除-->{{$t('tabOperation.delete')}}
 						</el-button>
 					</template>
@@ -187,17 +187,23 @@
 				dialogFormVisible:false,
 				foundForm:{
 					parameter:''
-				}
-	 		}
-	    },
-	    watch:{
-	    	users:function(newVal,oldVal){
-//	    		this.getUsers()
-	    	}
-	    },
+				},
+				buttonData:this.recursion( this.$store.state.aside ,"Public.unNode"),//获取未知节点权限
+			  	buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏
+			  		del:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unNode").list, "node@del_unknown_node").show,//单个删除和批量的删除是绑定在一起的  
+			  		edit:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unNode").list, "node@edit_unknown_node").show,//编辑的值
+			  		add:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unNode").list, "node@add_unknown_node").show,//添加的值
+			  		see:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unNode").list, "node@unknown_node_info" ).show,//查看详情  
+			  		run:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unNode").list,  "node@run_node").show,//运行 "node@run_node"
+			  		
+			  	}
+	 		};
+	   },
 	    created(){
 	    	//获取用户的权限信息
 	    	this.token=sessionStorage.getItem('token');
+			console.log(this.$store.state.aside)
+	    	
 	    },
 	    methods:{
 	    	handleSizeChange(val){
