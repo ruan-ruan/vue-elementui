@@ -39,7 +39,7 @@
 						<span>{{scope.$index+(index-1)*size+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="node.creation" :label='$t("Public.creatime")' align='center'></el-table-column>
+				<el-table-column prop="creation" :label='$t("Public.creatime")' align='center'></el-table-column>
 				<el-table-column prop="node.name" :label='$t("Public.nodeName")' align='center'></el-table-column>
 				<el-table-column prop="statusName" :label='$t("Public.status")'  align='center'>
 					<template slot-scope='scope'>
@@ -206,18 +206,7 @@
       			pagecount:5,
 			}
 		},
-//		watch:{
-//			childForm:{
-//				handler(newVal,oldVal){
-////					console.log(newVal);
-//					this.dialogFormVisible=false;
-//					this.$nextTick(() => {
-//						this.dialogFormVisible=true;
-//					})
-//				},
-//				deep:true,
-//			}
-//		},
+
 		created(){
 			this.token=sessionStorage.getItem('token');
 			if(typeof this.id !=='undefined'){
@@ -292,35 +281,36 @@
 			clounSubmit(){//云列表的提交
 				
 				let that=this;
-				var str=[this.$refs['clounForm'].$refs['editForm'],this.$refs['basicForm'].$refs['basicForm']];
+				var str=[that.$refs['clounForm'].$refs['editForm'],that.$refs['basicForm'].$refs['basicForm']];
 				//				,this.$refs.clounForm.$refs.dockListObj
 				let obj={};
 				str.forEach(ele => {
 					
 					ele.validate(valid => {
 						if(valid) {
-							this.$confirm('确认要添加吗?',{})
+							that.$confirm('确认要添加吗?',{})
 							.then(() => {
-								this.editLoading=true;
+								that.editLoading=true;
 								var colun={
-									cloud_type:this.clounBasic.cloun,
-									region:this.clounBasic.targetRegion,
-									cloud_config_id:this.clounBasic.clounDock
+									cloud_type:that.clounBasic.cloun,
+									region:that.clounBasic.targetRegion,
+									cloud_config_id:that.clounBasic.clounDock
 								}
-								obj=Object.assign({},this.clounList,colun,this.basicObj);
-								this.$ajax.post('/vll/add_cloud_endpoint/'+this.id+'?token='+this.token,obj)
+								obj=Object.assign({},that.clounList,colun,that.basicObj);
+								that.$ajax.post('/vll/add_cloud_endpoint/'+that.id+'?token='+that.token,obj)
 								.then(res => {
 									this.editLoading=false;
 									if(res.status==200){
 										if(res.data.status==0){
-											this.$message({
-												message:this.$t('tooltipMes.addSuccess'),
+											that.$message({
+												message:that.$t('tooltipMes.addSuccess'),
 												type:'success'
 											})
-											this.$refs['clounForm'].$refs['editForm'].$refs['clounForm'].resetFields();
-											this.$refs['basicForm'].$refs['basicForm'].resetFields();
 											that.dialogFormVisible=false;
-											this.getDetails(this.id)
+											that.$refs['clounForm'].$refs['editForm'].$refs['clounForm'].resetFields();
+											that.$refs['basicForm'].$refs['basicForm'].resetFields();
+											
+											that.getDetails(that.id)
 										}
 									}
 								})
@@ -487,6 +477,7 @@
 									}else{
 										ele.expiration=datedialogFormat(ele.expiration_time)
 									}
+									ele.creation=datedialogFormat(ele.creation_time)
 									if(ele.status == 'success'){
 										if(ele.usable){
 											ele.statusName=this.$t('tooltipMes.creaSuccess')
@@ -518,7 +509,7 @@
 									ele.dataType='cloud_endpoints';//数据为云的数据
 									ele.typeName='公有云'
 									ele.logic_port=ele.cloud_config.logic_port;
-									ele.node={name:'',id:''};
+									ele.node=ele.ports[0].node;//默认显示ports的第一个节点
 									if(ele.vlan < 0){
 										ele.vlanName=this.$t('Public.passthrough');
 									}else if(ele.vlan == 0){
@@ -550,6 +541,7 @@
 									}else{
 										ele.expiration=datedialogFormat(ele.expiration_time)
 									}
+									ele.creation=datedialogFormat(ele.creation_time)
 									if(ele.status == 'success'){
 										if(ele.usable){
 											ele.statusName=this.$t('tooltipMes.creaSuccess')
@@ -572,6 +564,7 @@
 									this.users.push(ele);
 								})
 							}
+							console.log(this.users)
 							// 初始化数据
 						    this.tableCopyTableList = JSON.parse(JSON.stringify(this.users));
 						    this.users = this.paging(this.size, this.index);

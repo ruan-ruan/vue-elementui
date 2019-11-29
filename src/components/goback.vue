@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-button type='info' size='small' @click='goback'>
-			<i class="el-icon-d-arrow-left" aria-hidden="true"></i>返回</el-button>
+			<i class="el-icon-d-arrow-left" aria-hidden="true"></i>{{$t('Public.goback')}}</el-button>
 	</div>
 </template>
 

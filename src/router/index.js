@@ -155,7 +155,7 @@ var router = new Router({
 	            	{path:'/business/point/clounInter',component:() => import ('@/views/business/pointTo/clounsInterconnection'),name:'aside.cloudInter',leaf:true,meta:{ requireAuth:true, name:'云到云'},},
 	            	
 	            ] },
-	            { path: '/business/multipoint', component:() => import ('@/views/business/multi/multipoint') , name: 'aside.pointsMultiInter',leaf:true,meta:{ requireAuth:true, name:'点到多点'},},
+	            { path: '/business/multipoint', component:() => import ('@/views/business/multi/multiPoint') , name: 'aside.pointsMultiInter',leaf:true,meta:{ requireAuth:true, name:'点到多点'},},
 	            //点到多点的编辑
 	            { path: '/business/editMultipoint', component:() => import ('@/views/business/multi/multFile/editMultipoint') , name: 'aside.virtualNetEdit',leaf:true,hidden:true,meta:{ requireAuth:true, name:'点到多点编辑'},},
 	            { path: '/business/detailsMultipoint', component:() => import ('@/views/business/multi/multFile/detailsTab') , name: 'aside.virtualNetDeta',leaf:true,hidden:true,meta:{ requireAuth:true, name:'点到多点详情'},},     

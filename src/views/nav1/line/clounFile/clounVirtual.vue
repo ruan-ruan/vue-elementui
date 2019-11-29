@@ -1,18 +1,18 @@
 <template>
 	<div>
 <!--		虚拟组网专线-->
-		<multipoint :clounID='clounID'></multipoint>
+		<multiPoint :clounID='clounID'></multiPoint>
 	</div>
 </template>
 
 <script>
 	
-	import multipoint  from '@/views/business/multi/multipoint'
+	import multiPoint  from '@/views/business/multi/multiPoint'
 	export default{
 		name:'clounVirtual',
 		props:['clounId'],
 		components:{
-			multipoint
+			multiPoint
 		},
 		data(){
 			return{

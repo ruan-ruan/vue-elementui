@@ -3,9 +3,9 @@
 		<!--点到点的图表数据-->
 		<!--<goback></goback>-->
 		<el-button type='info' size='small' @click='goback' v-show='typeof topoId ==="undefined" ? false:true'>
-			<i class="el-icon-d-arrow-left" aria-hidden="true"></i>返回</el-button>
+			<i class="el-icon-d-arrow-left" aria-hidden="true"></i>{{$t("Public.goback")}}</el-button>
 		<el-form :model='filters' ref='filters' :inline='true' v-if='networkingStatus'>
-			<el-form-item label='请选择端点'>
+			<el-form-item :label='$t("Public.selecPort")'>
 				<el-select v-model='filters.type' class='sel_chart'>
 					<el-option v-for='(item,index) in  typeData'
 						:label='item.label'
@@ -18,7 +18,7 @@
 						:value='item.id'
 						:key='index'></el-option>
 				</el-select>
-				<el-button size='small' type='primary' @click='ChartData(strVal)'>查询</el-button>
+				<el-button size='small' type='primary' @click='ChartData(strVal)'>{{$t('topFilters.search')}}</el-button>
 			</el-form-item>
 		</el-form>
 		<el-form :model='filters' ref='filters' :inline='true'>
@@ -41,16 +41,17 @@
 						:value='item'
 						:key='index'></el-option>
 				</el-select>
-				<el-button type='primary' size='small'  @click='ChartData(strVal)'>搜索</el-button>
+				<el-button type='primary' size='small'  @click='ChartData(strVal)'>{{$t('topFilters.search')}}</el-button>
 				
 			</el-form-item>
-			<el-form-item v-if='filters.selTime==="自定义"'>
+			<!--自定义-->
+			<el-form-item v-if='filters.selTime===$t("Public.custom")'>
 				<el-date-picker
 			      	v-model="filters.time"
 			      	type="datetimerange"
-			      	range-separator="至"
-			      	start-placeholder="开始日期"
-			      	end-placeholder="结束日期" class='sel_chart'
+			      	:range-separator="$t('Public.to')"
+			      	:start-placeholder="$t('Public.start')"
+			      	:end-placeholder="$t('Public.end')" class='sel_chart'
 			      	>
 			    </el-date-picker>
 			</el-form-item>
@@ -100,25 +101,25 @@
 //				components:{ goback },
 				filters:{
 					unit:'Mbps',
-					selVal:'平均值',
-					selTime:'最近一天',	
+					selVal:this.$t('Public.avg'),
+					selTime:this.$t('Public.oneDay'),	
 					time:'',
 					type:'',
 					logic_name:''
 				},
 				typeData:[
 					{
-						label:'公有云',
+						label:this.$t('Public.shardCloud'),
 						value:'cloud'
 					},{
-						label:'数据中心',
+						label:this.$t('physicalPosition.tab.data'),
 						value:'dataCenter'
 					}
 				],
 				logicData:[],
 				unitData:['Mbps','PPS'],
-				valData:['平均值','最大值','最小值'],
-				timeData:['最近一小时','最近一天','最近一周','自定义'],
+				valData:[this.$t('Public.avg'),this.$t('Public.max'),this.$t('Public.min')],
+				timeData:[this.$t('Public.oneHour'),this.$t('Public.oneDay'),this.$t('Public.oneWeek'),this.$t('Public.custom')],
 				chartLoading:false,
 				chartsVal:[],//表格的数据
 				users:[],//图表下面的表格的数据
@@ -379,7 +380,7 @@
 				if(JSON.stringify(logicZ) !='{}'){
 					let logicVlanZ=null,deviceZ={};
 					if(logicZ.vlan <0){
-						logicVlanZ='透传';
+						logicVlanZ=this.$t('Public.passthrough');
 					}else if( logicZ.vlan == 0){
 						logicVlanZ='UNTAG';	
 					}else {
@@ -455,7 +456,7 @@
 				let newData=[]
 				data.map(ele => {
 					if((!ele && typeof (ele) !== 'undefined' && ele !=0) || isNaN(ele) ||typeof ele =='undefined' ||ele==''){//如果数据是NaN或者null
-						newData.push('')
+						newData.push(null);	
 					}else{
 						if(type === 'input_bytes' || type==='output_bytes'|| type =='total_input_bytes' || type == 'total_output_bytes'){
 							newData.push( parseInt(ele/60*8  ))
@@ -471,14 +472,14 @@
 
 				return newData;//不同的属性   换算是不一样的
 			},
-			seaVal:function(valType='平均值'){//根据值的不同的  获取   不同的类型的值的类型
+			seaVal:function(valType=this.$t('Public.avg')){//根据值的不同的  获取   不同的类型的值的类型
 				let  val='';
-				if(valType ==='最大值'){
+				if(valType ===this.$t('Public.max')){
 					val='max';
-				}else if(valType ==='最小值'){
-					val='avg';
-				}else if(valType === '平均值'){
-					val='min'
+				}else if(valType ===this.$t('Public.min')){
+					val='min';
+				}else if(valType === this.$t('Public.avg')){
+					val='avg'
 				}
 
 				return val;
@@ -566,16 +567,16 @@
 			},
 
 
-			getTimeData(type='最近一天'){   //获取时间的间隔所有的数据//时间轴的循环的是按照 秒计算的			
+			getTimeData(type=this.$t('Public.oneDay')){   //获取时间的间隔所有的数据//时间轴的循环的是按照 秒计算的			
 				let strTime=[];//用来保存的所选时间，的时间间隔 
 				let  end_time='';
 				let  start_time='';
 				let str=0;//用来保存时间的间隔的值
 				//根据所选的时间间不同获取不同的时间间隔的数据
-				if(type==='自定义'){
+				if(type===this.$t('Public.custom')){
 					if( (Number( this.filters.time[1])-Number(this.filters.time[0])) > 90 * 24 * 3600 * 1000 ){
 						this.$message({
-							message:'不能超过当前时间前的三个月！',
+							message:this.$t('tooltipMes.notThreeJun'),
 							type:'warning'
 						})
 						this.filters.time[1]=new Date();
@@ -604,18 +605,18 @@
 						str=60*1000;
 					}
 					start_time=this.filters.time[0];
-				}else if(type !=='自定义'){
+				}else if(type !==this.$t('Public.custom')){
 					end_time=new Date();
 					start_time=new Date();
-					if(type==='最近一小时'){//间隔每一分钟
+					if(type===this.$t('Public.oneHour')){//间隔每一分钟
 						start_time.setTime(start_time.getTime() - 3600 * 1000  );
 						str=60*1000;
-					}else if(type==='最近一天'){//间隔五分钟
+					}else if(type===this.$t('Public.oneDay')){//间隔五分钟
 						
 						start_time.setTime(start_time.getTime() - 3600 * 1000 * 24 );
 						
 						str=5*60*1000;
-					}else if(type ==='最近一周'){//间隔一个小时
+					}else if(type ===this.$t('Public.oneWeek')){//间隔一个小时
 						start_time.setTime(start_time.getTime() - 3600 * 1000 * 24 * 7 );
 						str=60*60*1000;
 					}

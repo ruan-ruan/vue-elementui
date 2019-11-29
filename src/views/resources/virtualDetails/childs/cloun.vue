@@ -17,16 +17,16 @@
 					<span>{{clounForm.logic_status}}</span>
 				</el-form-item>			
 			</el-form>
-			<h4>云端控制区</h4>
+			<h4>{{$t('Public.cloudArea')}}</h4>
 			<el-form label-width='200px' style='border:  1px solid #C0C4CC ; width: 400px;margin-bottom: 10px;'>
 				<el-form-item v-for='(item,index) in  cloudData' :key='index' :label='item.show_name+"："' :prop='item.name' >
 					<span>{{item.keyVal}}</span>
 				</el-form-item>
-				<el-form-item label='云端状态(非实时)：'>
+				<el-form-item :label='$t("Public.cloudStatus")+"："'>
 					 {{ clounForm.cloud_status}}<br />
-					<el-button size='mini' type='primary' @click='detection' v-if='type ==="edit"?false:true' >检测</el-button>
-					<el-button size='mini' type='success' @click='repair'  v-if='type ==="edit"?false:true' >修复</el-button>
-					<el-button size='mini' type='warning' @click='remove'   v-if='type ==="edit"?false:true'>清除</el-button>
+					<el-button size='mini' type='primary' @click='detection' v-if='type ==="edit"?false:true' >{{$t('Public.detection')}}</el-button>
+					<el-button size='mini' type='success' @click='repair'  v-if='type ==="edit"?false:true' >{{$t('Public.repair')}}</el-button>
+					<el-button size='mini' type='warning' @click='remove'   v-if='type ==="edit"?false:true'>{{$t('Public.remove')}}</el-button>
 				</el-form-item>
 			</el-form>
 			
@@ -43,8 +43,8 @@
 					</el-form-item>
 				</el-form>
 				<div style="text-align: center;">
-					<el-button size='small' @click='dialogFormVisible=false'>取消</el-button>
-					<el-button size='small' type='primary' @click='repairSubmit'>提交</el-button>
+					<el-button size='small' @click='dialogFormVisible=false'>{{$t('tabOperation.cancel')}}</el-button>
+					<el-button size='small' type='primary' @click='repairSubmit'>{{$t('tabOperation.Submit')}}</el-button>
 				</div>
 			</el-dialog>
 			
@@ -134,12 +134,12 @@
 				getLogo:[
 					{
 						name:'vlan',
-						value:'选择的vlan号应该与创建专用通道ID所使用的额vlan号保持一致',
+						value:this.$t('tooltipMes.vlanTooltip'),
 						label:'?'
 					},
 					{
 						name:'专用通道id',
-						value:'腾讯云专心通道ID,即DirectConnectTunnelld',
+						value:this.$t('tooltipMes.vlanTooltip'),
 						label:'?',
 
 					}
@@ -147,10 +147,10 @@
 				cloudData:[],
 				clounForm:{},//云的基本对象列表
 				textMap:{
-					repair:'修复',
-					remove:'清除',
-					deteation:'检测',
-					see:'如何获取腾讯专线通道ID',
+					repair:this.$t('Public.repair'),
+//					remove:'清除',
+//					deteation:'检测',
+					see:this.$t('business.seeTencent'),
 				},	
 				dialogStatus:'',
 				editLoading:false,
@@ -287,7 +287,7 @@
 				this.seeLoading=false;
 			},
 			detection(){
-				this.$confirm('确定要重新检测云端状态','检测',{
+				this.$confirm(this.$t('confirm.conDecetion'),this.$t('Public.detection'),{
 					type:'warning'
 				}).then( () =>{
 					this.$ajax.put('/vll/check_cloud_status/'+this.clounData.id+'?token='+this.token)
@@ -295,7 +295,7 @@
 						if(res.status ==200){
 							if(res.data.status ==0){
 								this.$message({
-									message:'正在检测',
+									message:this.$t('tooltipMes.detSuccess'),
 									type:'success'
 								})
 							}
@@ -305,14 +305,14 @@
 				.catch( () => {} )
 			},
 			remove(){
-				const confirmText=['确定要清除云端配置?','注意：此操作不一定能清除成功，详情见消息提醒!'];
+				const confirmText=[this.$t('confirm.conRemove'),this.$t('confirm.conTootip')];
 				const newDatas = [];
 				const h=this.$createElement;
 				for(const i in confirmText){
 					newDatas.push( h('p' ,null ,confirmText[i] ) )
 				}
-				this.$confirm('清除',{
-					title:'清除',
+				this.$confirm(this.$t('Public.remove'),{
+					title:this.$t('Public.remove'),
 					message:h('div',null,newDatas),
 					showCancelButton: true,
 					type:'warning'
@@ -322,7 +322,7 @@
 						if(res.status ==200){
 							if(res.data.status ==0){
 								this.$message({
-									message:'清除成功!',
+									message:this.$t('tooltipMes.removeSuccess'),
 									type:'success'
 								})
 							}

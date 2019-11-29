@@ -53,8 +53,7 @@
 							style="cursor: pointer; color: orangered;" >{{val.label}}</span>  
 							<span v-if='val.name == "专用通道id" && item.show_name == "专用通道id" ' style="cursor: pointer; color: orangered;" @click="tenRules"> 
 								{{$t('business.cliLine')}}</span>
-							<!--<span v-else-if='val.name == "vlan" && item.show_name == "vlan" ' style="cursor: pointer; color: orangered;">?</span>-->
-								
+
 					</template>
 
 			</el-form-item>
@@ -169,12 +168,12 @@
 					
 					{
 						name:'vlan',
-						value:'选择的vlan号应该与创建专用通道ID所使用的额vlan号保持一致',
+						value:this.$t('tooltipMes.vlanTooltip'),
 						label:'?'
 					},
 					{
 						name:'专用通道id',
-						value:'腾讯云专心通道ID,即DirectConnectTunnelld',
+						value:this.$t('tooltipMes.dedicID'),
 						label:'?',
 
 					}

@@ -4,26 +4,26 @@
 		<el-header class="header">
 			<el-row >
 				<el-col :span='24' class='size'>
-					<el-col :span='18'>
+					<el-col :span='15'>
 						<img :src="sysImg" alt="tianchiLogo" />
 					</el-col>
-					<el-col :span='2'>
-						<el-dropdown trigger="click">
-							<span class="el-dropdown-link userinfo-inner cur_poin" title="语言选择">语言</span>
+					<el-col :span='3'>
+						<el-dropdown trigger="click" @command="Change">
+							<span class="el-dropdown-link userinfo-inner cur_poin" :title="$t('nav.lanTooltip')">{{$t('nav.language')}}</span>
 							<el-dropdown-menu slot="dropdown">
-								<el-dropdown-item >中文</el-dropdown-item>
-								<el-dropdown-item >English</el-dropdown-item>
+								<el-dropdown-item command='cn'>中文</el-dropdown-item>
+								<el-dropdown-item command='en'>English</el-dropdown-item>
 							</el-dropdown-menu>
 						</el-dropdown>
 					</el-col>
-					<el-col :span='2'>
-						<span class=" cur_poin" title="操作指南下载">操作指南</span>
+					<el-col :span='3'>
+						<span class=" cur_poin" :title="$t('nav.guideDown')">{{$t('nav.guide')}}</span>
 					</el-col>
-					<el-col :span='2'>
+					<el-col :span='3'>
 						<el-dropdown trigger="click">
-							<span class="el-dropdown-link userinfo-inner cur_poin" title="联系电话">联系电话</span>
+							<span class="el-dropdown-link userinfo-inner cur_poin" :title="$t('nav.contactNumber')">{{$t('nav.contactNumber')}}</span>
 							<el-dropdown-menu slot="dropdown">
-								<el-dropdown-item >电话:010-5569850</el-dropdown-item>
+								<el-dropdown-item >{{$t('nav.telephone')}}:010-5569850</el-dropdown-item>
 							</el-dropdown-menu>
 						</el-dropdown>
 					</el-col>
@@ -33,23 +33,26 @@
 		<!--<section>
 			
 		</section>-->
-	  <el-form :model="ruleForm2"  :rules="rules2" ref="ruleForm2" label-position="left" label-width="55px" 
+	  <el-form :model="ruleForm2"  :rules="rules2"label-position='left' ref="ruleForm2"  label-width="80px" 
 	  	class="demo-ruleForm login-container"v-loading="logining">
-	    <h3 class="title">账户登录</h3>
-	    <el-form-item prop="account" label='账号:' >
-	      <el-input type="text" v-model="ruleForm2.account"  placeholder="账号"></el-input>
+	    <h3 class="title">{{$t('nav.accountLogin')}}</h3>
+	    <el-form-item prop="account" :label='$t("nav.accountNumber")' >
+	      <el-input type="text" v-model="ruleForm2.account"  :placeholder='$t("nav.accountNumber")'></el-input>
 	    </el-form-item>
-	    <el-form-item prop="checkPass" label='密码:' >
-	      <el-input type="password" v-model="ruleForm2.checkPass"  placeholder="密码" @keydown.enter.native='handleSubmit2' show-password></el-input>
+	    <el-form-item prop="checkPass" :label='$t("nav.pwd")' >
+	      <el-input type="password" v-model="ruleForm2.checkPass"  :placeholder='$t("nav.pwd")' @keydown.enter.native='handleSubmit2' show-password></el-input>
+	      <el-checkbox v-model="checked" checked class="remember">{{$t('nav.rememberPwd')}}</el-checkbox>
+	        <!--<el-button size='small' type="primary" @click.native.prevent="handleSubmit2" >{{$t('nav.entry')}}</el-button>
+	      <el-button size='small' type="info" @click="handleReset2" style='margin-left: 40px;'>{{$t('topFilters.reset')}}</el-button>-->
 	    </el-form-item>
-	    <!--<el-form-item>-->
-	    	<el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>
-	    <!--</el-form-item>-->
-	    <el-form-item style="width:100%;text-align: center;">
-	      <el-button size='small' type="primary" @click.native.prevent="handleSubmit2" >登录</el-button>
-	      <el-button size='small' type="info" @click="handleReset2" style='margin-left: 40px;'>重置</el-button>
+	    <el-form-item style="width:100%;text-align: center;margin-left: -40px;margin-top: -30px;">
+	      <el-button size='small' type="primary" @click.native.prevent="handleSubmit2"style='margin-right: 20px;'  >{{$t('nav.entry')}}</el-button>
+	      <el-button size='small' type="info" @click="handleReset2"style='margin-left: 20px;' >{{$t('topFilters.reset')}}</el-button>
 	    </el-form-item>
 	  </el-form>
+	  <div>
+	  	
+	  </div>
   </div>
 </template>
 
@@ -63,12 +66,12 @@
 		      	sysImg:require('../assets/images/tc-logo3-1.png'),
 		        logining: false,
 		        ruleForm2: {
-		          account: '',//admin
-		          checkPass: '',//123456
+		          account: '',
+		          checkPass: '',
 		        },
 		        rules2: {
-		          account: [{ required: true, message: '请输入账号', trigger: 'blur' }],
-		          checkPass: [{ required: true, message: '请输入密码', trigger: 'blur' }]
+		          account: [{ required: true, message: this.$t('nav.plAccount'), trigger: 'blur' }],
+		          checkPass: [{ required: true, message: this.$t('nav.plPwd'), trigger: 'blur' }]
 		        },
 		        checked: true
 	      	};
@@ -87,6 +90,11 @@
 	    	}
 	    },
 	    methods: {
+	    	Change(e , type) {
+		      	window.location.reload(); //实现项目的刷新
+		      	localStorage.setItem("language", e);
+		      	this.$i18n.locale = e;
+		    },
 	      	handleReset2() {
 	      		this.ruleForm2={
 	    			account:localStorage.removeItem('user'),
@@ -117,7 +125,7 @@
 										localStorage.setItem('psd','')
 									}
 									this.$message({
-										message:'登录成功!',
+										message:this.$t('nav.entrySuccess'),
 										type:'success'
 									});
 									this.$store.commit(types.LOGIN, res.data.data.token)
@@ -146,13 +154,7 @@
 							        })
 								}
 							}
-						})
-						.catch(e => {
-							console.log(e)
-						})
-		          	} else {
-			            console.log('error submit!!');
-			            return false;
+						}) .catch(e => { console.log(e) })
 		          	}
 		        });
 	      	}

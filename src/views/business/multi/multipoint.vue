@@ -25,7 +25,7 @@
 						</el-form-item>
 						<el-form-item >
 							<el-button  size='small'type='primary'  @click='getUsers'> {{$t('topFilters.search')}}</el-button>
-							<el-button size='small' @click='reset'> {{$t('topFilters.reset')}}</el-button>
+							<el-button size='small' type='info' @click='reset'> {{$t('topFilters.reset')}}</el-button>
 						</el-form-item>
 					</el-form>
 				</el-col>
@@ -73,7 +73,7 @@
 				<el-table-column prop='descriptionVal':label='$t("Public.description")' align='center'min-width='150' ></el-table-column>
 				<el-table-column :label='$t("Public.operation")' align='center' width='140'>
 					<template slot-scope='scope' v-if='scope.row.status == "creating" ? false : true ' >
-						<el-button size='mini' type='' @click='handleSta(scope.$index,scope.row)' v-if='buttonVal.run?  scope.row.status == "failure"? false : true :buttonVal.run'>{{scope.row.btnStatus}}</el-button>
+						<el-button size='mini' type='warning' @click='handleSta(scope.$index,scope.row)' v-if='buttonVal.run?  scope.row.status == "failure"? false : true :buttonVal.run'>{{scope.row.btnStatus}}</el-button>
 						<el-button size='mini' type='info' @click='handleDetails(scope.$index,scope.row)'v-if='buttonVal.see'>{{$t('tabOperation.info')}}</el-button>
 						 <el-button size='mini' type='primary' @click='handleEdit(scope.$index,scope.row)' v-if='buttonVal.edit?(typeof clounID !=="undefined"?false:scope.row.status == "failure"?false:true):buttonVal.edit'>
 							{{$t('tabOperation.edit')}}</el-button>
@@ -134,7 +134,7 @@
 	import {descriptionValue} from '@/assets/js/index.js'
 	
 	export default{
-		name:'multipoint',
+		name:"multiPoint",
 		props:['virTit','clounID','logicID','tenantID'],//虚拟组网专线  控制添加按钮的隐藏    clounID//节点里面的组网的详情     logicID逻辑口的详情里的id
 		data(){
 			return{

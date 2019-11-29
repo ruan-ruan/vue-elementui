@@ -48,8 +48,11 @@ const store = new Vuex.Store({
             
         },
         [types.LOGOUT]: (state) => {
-            sessionStorage.removeItem('token');
-            state.token = null
+        	sessionStorage.removeItem("user");
+          	sessionStorage.removeItem("asideList");
+            state.token = null;
+            state.aside=null;
+            
         },
         [types.TITLE]: (state, data) => {
             state.title = data;

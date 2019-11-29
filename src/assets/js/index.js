@@ -33,7 +33,6 @@ export function fil(total=[],data){//根据name名字进行路由数据的查找
 			})
 		})
 	}
-	
 }
 
 export function recursion(data, name) {//这个是根据名称 获取的列表的权限集合  
@@ -54,6 +53,11 @@ export function recursion(data, name) {//这个是根据名称 获取的列表�
     return result;
 }
 
+/**
+ *
+ * @param  {Array} data 数据
+ * @param  {string} code  对应的字段
+ */
 export function codeVal(data, code) {//这个是根据名称 获取的列表的权限集合  
     let result;
     if (!data) {
@@ -387,8 +391,13 @@ export var arrayPro={
 			}
 			
 		}
-//		avg=num/i;
-		avg=num/d1.length;
+		if(i==0 ){
+			avg=null
+		}else{
+		avg=num/i;
+//		avg=num/d1.length;
+		}
+
 		obj1={
 			min:Math.min.apply(Math, newData1.map(function(o) {return o[property]})),
 			max:Math.max.apply(Math, newData1.map(function(o) {return o[property]})),
@@ -409,8 +418,13 @@ export var arrayPro={
 			}
 			
 		}
-//		avg2=num2/j;
-		avg2=num2/d2.length;
+		if(j ==0){
+			avg2=null;
+		}else{
+			avg2=num2/j;
+//		avg2=num2/d2.length;
+		}
+
 		obj2={
 			min:Math.min.apply(Math, newData2.map(function(o) {return o[property]})),
 			max:Math.max.apply(Math, newData2.map(function(o) {return o[property]})),
@@ -434,7 +448,7 @@ export var arrayPro={
 			for(var index=0;index<data.length;index++){
 				if( (!data[index] && typeof(data[index]) !='undefined' && data[index] !=0  ) || data[index] =='' || typeof (data[index]) =='undefined' ){
 					//  当算平均值的时候   如果数据的null，undefined或者空字符串    这个时候相当于数值加0
-					num+=0;
+//					num+=0;
 				}else {
 					i++
 					num+= parseInt(data[index])	
@@ -480,7 +494,6 @@ export var arrayPro={
 				}
 			}
 		})
-//console.log(data)
 		let d1=[],d2=[];
 		for(var index=0;index<data.length;index++){
 			d1.push(data[index].d1)
@@ -490,6 +503,7 @@ export var arrayPro={
 		let d1Charts=[];
 		let d2Charts=[];
 		d1.map(ele => {
+//			console.log()
 			d1Charts.push(ele[property])
 		})
 		d2.map(ele => {
@@ -677,7 +691,7 @@ export 	function getPortStatus(arr){
 export function isPortStatus(arr){//针对于 单个逻辑口内的时候数据处理
 	let statusVal='';
 	if(arr.length>1){
-//		console.log('进入两个端口');
+
 		if(arr[0].port.status==='UP'&& arr[1].port.status==="UP"){
 			statusVal='UP';
 		}else if(arr[0].port.status==='DOWN'&& arr[1].port.status==="DOWN"){
@@ -686,7 +700,7 @@ export function isPortStatus(arr){//针对于 单个逻辑口内的时候数据�
 			statusVal='异常';
 		}
 	}else if(arr.length==1){
-//		console.log('进入一个端口')
+
 		if(arr[0].port.status==='UP'){
 			statusVal='UP';
 		}else if(arr[0].port.status==='DOWN'){

@@ -589,7 +589,6 @@ export default {
         search_node: typeof this.nodeID !== "undefined" ? this.nodeID : "",
         search_logic_port: typeof this.customer !== "undefined" ? this.customer : ""
       };
-      console.log(para);
       this.$ajax.get("/vll/p2p_vlls" + "?token=" + this.token, para)
         .then(res => {
           if (res.status == 200) {
@@ -617,9 +616,14 @@ export default {
 	            	}
 	            	
 	            	ele.creation_time=datedialogFormat(ele.creation_time);
-	            	if(ele.type ==='d2d'){
+	            	if(ele.type ==='d2d'){//d2d
 	            		ele.typeName = "DCI";
-	            		
+	            		var objA=ele.endpoints.find(item =>{
+	            			return item.name =='A端';
+	            		})
+	            		var objZ=ele.endpoints.find(item => {
+	            			return item.name =='Z端';
+	            		})
 	            		if (ele.status == "failure") {
 	                  ele.statusHTML = this.$t('Public.failure');
 	                  ele.statusColor = "creatFie";
@@ -640,75 +644,67 @@ export default {
 	                  ele.creat = true;
 	                  ele.btn=false;
 	                }else if (ele.status == "servicing"){
-//	                	var str=ele.endpoints;
-	                	var objA=ele.endpoints.find(item =>{
-		            			return item.name =='A端';
-		            		})
-		            		var objZ=ele.endpoints.find(item => {
-		            			return item.name =='Z端';
-		            		})
-	                	
-//	                	if(str.length == 2 ){//点到点的数据
-
-											if(getPortStatus(objA.ports) =='UP' || getPortStatus(objA.ports) =='异常' ){
-	
-		                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
-		                  		ele.statusHTML = this.$t('Public.servicing');
-		                  		ele.statusColor = "ServerVal";
-		                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
-		                  			ele.statusHTML = this.$t('Public.fau');
-		                  			ele.statusColor = "creatFie";
-		                  	}
-		                  	
-		                  }else if(getPortStatus(objA.ports)=='DOWN'){
-		                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
-		                  		ele.statusHTML = this.$t('Public.fau');
-		                  		ele.statusColor = "creatFie";
-		                  		
-		                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
-		                  			ele.statusHTML = this.$t('Public.fau');
-		                  			ele.statusColor = "creatFie";
-		                  			
-		                  	}
-		                  }
-//										}
-	                	
-	                	ele.statusValA = getPortStatus(objA.ports);
-	                  ele.statusValZ = getPortStatus(objZ.ports);
-	                  if(getPortStatus(objA.ports) ==='UP'){
-	                  	ele.colorA='colorGreen'
-	                  }else if(getPortStatus(objA.ports)==='DOWN'){
-	                  	ele.colorA='colorRed'
-	                  }else if(getPortStatus(objA.ports) ==='异常'){
-	                  	ele.colorA='colorWarning'
+										if(getPortStatus(objA.ports) =='UP' || getPortStatus(objA.ports) =='异常' ){
+	                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
+	                  		ele.statusHTML = this.$t('Public.servicing');
+	                  		ele.statusColor = "ServerVal";
+	                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
+	                  			ele.statusHTML = this.$t('Public.fau');
+	                  			ele.statusColor = "creatFie";
+	                  	}
+	                  }else if(getPortStatus(objA.ports)=='DOWN'){
+	                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
+	                  		ele.statusHTML = this.$t('Public.fau');
+	                  		ele.statusColor = "creatFie";
+	                  		
+	                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
+	                  			ele.statusHTML = this.$t('Public.fau');
+	                  			ele.statusColor = "creatFie";
+	                  	}
 	                  }
-	                  if(getPortStatus(objZ.ports) ==='UP'){
-	                  	ele.colorZ='colorGreen'
-	                  }else if(getPortStatus(objZ.ports)==='DOWN'){
-	                  	ele.colorZ='colorRed'
-	                  }else if(getPortStatus(objZ.ports) ==='异常'){
-	                  	ele.colorZ='colorWarning'
-	                  }
-	
-	                  ele.logicPortA = objA.logic_port.name;
-	                  ele.logicPortZ = objZ.logic_port.name;
-	                    if (objA.vlan == "-1") {
-	                      ele.vlanHTMLA = this.$t('Public.passthrough');//透传
-	                    } else if (objA.vlan == "0") {
-	                      ele.vlanHTMLA = "UNTAG";
-	                    } else {
-	                      ele.vlanHTMLA = 'vlan:' + objA.vlan;
-	                    }
-	                    if (objZ.vlan == "-1") {
-	                      ele.vlanHTMLZ = this.$t('Public.passthrough');
-	                    } else if (objZ.vlan == "0") {
-	                      ele.vlanHTMLZ = "UNTAG";
-	                    } else {
-	                      ele.vlanHTMLZ ='vlan:' + objZ.vlan;
-	                    }
 	                }
-	            	}else if(ele.type == "d2c"){
-	            			ele.typeName = this.$t('Public.cloudsTo');//云直连
+	                ele.statusValA = getPortStatus(objA.ports);
+                  ele.statusValZ = getPortStatus(objZ.ports);
+                  if(getPortStatus(objA.ports) ==='UP'){
+                  	ele.colorA='colorGreen'
+                  }else if(getPortStatus(objA.ports)==='DOWN'){
+                  	ele.colorA='colorRed'
+                  }else if(getPortStatus(objA.ports) ==='异常'){
+                  	ele.colorA='colorWarning'
+                  }
+                  if(getPortStatus(objZ.ports) ==='UP'){
+                  	ele.colorZ='colorGreen'
+                  }else if(getPortStatus(objZ.ports)==='DOWN'){
+                  	ele.colorZ='colorRed'
+                  }else if(getPortStatus(objZ.ports) ==='异常'){
+                  	ele.colorZ='colorWarning'
+                  }
+                  ele.logicPortA = objA.logic_port.name;
+                  ele.logicPortZ = objZ.logic_port.name;
+	                if (objA.vlan == "-1") {
+	                  ele.vlanHTMLA = this.$t('Public.passthrough');//透传
+	                } else if (objA.vlan == "0") {
+	                  ele.vlanHTMLA = "UNTAG";
+	                } else {
+	                  ele.vlanHTMLA = 'vlan:' + objA.vlan;
+	                }
+	                if (objZ.vlan == "-1") {
+	                  ele.vlanHTMLZ = this.$t('Public.passthrough');
+	                } else if (objZ.vlan == "0") {
+	                  ele.vlanHTMLZ = "UNTAG";
+	                } else {
+	                  ele.vlanHTMLZ ='vlan:' + objZ.vlan;
+	                }
+	            	}else if(ele.type == "d2c"){//d2c
+	            		
+	            		
+	            		var objA=ele.cloud_endpoints.find(item =>{
+	            			return item.name =='A端';
+	            		})
+	            		var objZ=ele.endpoints.find(item => {
+	            			return item.name =='Z端';
+	            		})
+	            		ele.typeName = this.$t('Public.cloudsTo');//云直连
 	            	
 	            		if (ele.status == "failure") {
 	                  ele.statusHTML = this.$t('Public.failure');
@@ -730,70 +726,69 @@ export default {
 	                  ele.creat = true;
 	                  ele.btn=false;
 	                }else if (ele.status == "servicing"){
-	                	var objA=ele.cloud_endpoints.find(item =>{
-		            			return item.name =='A端';
-		            		})
-		            		var objZ=ele.endpoints.find(item => {
-		            			return item.name =='Z端';
-		            		})
-	                	
-											if(getPortStatus(objA.ports) =='UP' || getPortStatus(objA.ports) =='异常' ){
-	
-		                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
-		                  		ele.statusHTML = this.$t('Public.servicing');
-		                  		ele.statusColor = "ServerVal";
-		                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
-		                  			ele.statusHTML = this.$t('Public.fau');
-		                  			ele.statusColor = "creatFie";
-		                  	}
-		                  	
-		                  }else if(getPortStatus(objA.ports)=='DOWN'){
-		                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
-		                  		ele.statusHTML = this.$t('Public.fau');
-		                  		ele.statusColor = "creatFie";
-		                  		
-		                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
-		                  			ele.statusHTML = this.$t('Public.fau');
-		                  			ele.statusColor = "creatFie";
-		                  			
-		                  	}
-		                  }
-	                	
-	                	ele.statusValA = getPortStatus(objA.ports);
-	                  ele.statusValZ = getPortStatus(objZ.ports);
-	                  if(getPortStatus(objA.ports) ==='UP'){
-	                  	ele.colorA='colorGreen'
-	                  }else if(getPortStatus(objA.ports)==='DOWN'){
-	                  	ele.colorA='colorRed'
-	                  }else if(getPortStatus(objA.ports) ==='异常'){
-	                  	ele.colorA='colorWarning'
+										if(getPortStatus(objA.ports) =='UP' || getPortStatus(objA.ports) =='异常' ){
+
+	                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
+	                  		ele.statusHTML = this.$t('Public.servicing');
+	                  		ele.statusColor = "ServerVal";
+	                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
+	                  			ele.statusHTML = this.$t('Public.fau');
+	                  			ele.statusColor = "creatFie";
+	                  	}
+	                  }else if(getPortStatus(objA.ports)=='DOWN'){
+	                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
+	                  		ele.statusHTML = this.$t('Public.fau');
+	                  		ele.statusColor = "creatFie";
+	                  		
+	                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
+	                  			ele.statusHTML = this.$t('Public.fau');
+	                  			ele.statusColor = "creatFie";
+	                  			
+	                  	}
 	                  }
-	                  if(getPortStatus(objZ.ports) ==='UP'){
-	                  	ele.colorZ='colorGreen'
-	                  }else if(getPortStatus(objZ.ports)==='DOWN'){
-	                  	ele.colorZ='colorRed'
-	                  }else if(getPortStatus(objZ.ports) ==='异常'){
-	                  	ele.colorZ='colorWarning'
-	                  }
-	
-	                  ele.logicPortA = objA.cloud_config.logic_port.name;
-	                  ele.logicPortZ = objZ.logic_port.name;
-	                    if (objA.vlan == "-1") {
-	                      ele.vlanHTMLA = this.$t('Public.passthrough');//透传
-	                    } else if (objA.vlan == "0") {
-	                      ele.vlanHTMLA = "UNTAG";
-	                    } else {
-	                      ele.vlanHTMLA = 'vlan:' + objA.vlan;
-	                    }
-	                    if (objZ.vlan == "-1") {
-	                      ele.vlanHTMLZ = this.$t('Public.passthrough');
-	                    } else if (objZ.vlan == "0") {
-	                      ele.vlanHTMLZ = "UNTAG";
-	                    } else {
-	                      ele.vlanHTMLZ ='vlan:' + objZ.vlan;
-	                    }
+	                }
+                	ele.statusValA = getPortStatus(objA.ports);
+                  ele.statusValZ = getPortStatus(objZ.ports);
+                  if(getPortStatus(objA.ports) ==='UP'){
+                  	ele.colorA='colorGreen'
+                  }else if(getPortStatus(objA.ports)==='DOWN'){
+                  	ele.colorA='colorRed'
+                  }else if(getPortStatus(objA.ports) ==='异常'){
+                  	ele.colorA='colorWarning'
+                  }
+                  if(getPortStatus(objZ.ports) ==='UP'){
+                  	ele.colorZ='colorGreen'
+                  }else if(getPortStatus(objZ.ports)==='DOWN'){
+                  	ele.colorZ='colorRed'
+                  }else if(getPortStatus(objZ.ports) ==='异常'){
+                  	ele.colorZ='colorWarning'
+                  }
+
+                  ele.logicPortA = objA.cloud_config.logic_port.name;
+                  ele.logicPortZ = objZ.logic_port.name;
+	                if (objA.vlan == "-1") {
+	                  ele.vlanHTMLA = this.$t('Public.passthrough');//透传
+	                } else if (objA.vlan == "0") {
+	                  ele.vlanHTMLA = "UNTAG";
+	                } else {
+	                  ele.vlanHTMLA = 'vlan:' + objA.vlan;
+	                }
+	                if (objZ.vlan == "-1") {
+	                  ele.vlanHTMLZ = this.$t('Public.passthrough');
+	                } else if (objZ.vlan == "0") {
+	                  ele.vlanHTMLZ = "UNTAG";
+	                } else {
+	                  ele.vlanHTMLZ ='vlan:' + objZ.vlan;
 	                }
 	            	}else if(ele.type == "c2c"){
+	            		
+	            		
+	            		var objA=ele.cloud_endpoints.find(item =>{
+	            			return item.name =='A端';
+	            		})
+	            		var objZ=ele.cloud_endpoints.find(item => {
+	            			return item.name =='Z端';
+	            		})
 	            		ele.typeName = this.$t('Public.cloudInter');//云互联
 	            		if (ele.status == "failure") {
 	                  ele.statusHTML = this.$t('Public.failure');
@@ -815,38 +810,27 @@ export default {
 	                  ele.creat = true;
 	                  ele.btn=false;
 	                }else if (ele.status == "servicing"){
-	                	var objA=ele.cloud_endpoints.find(item =>{
-		            			return item.name =='A端';
-		            		})
-		            		var objZ=ele.cloud_endpoints.find(item => {
-		            			return item.name =='Z端';
-		            		})
-	                	
-//	                	if(str.length == 2 ){//点到点的数据
+										if(getPortStatus(objA.ports) =='UP' || getPortStatus(objA.ports) =='异常' ){
 
-											if(getPortStatus(objA.ports) =='UP' || getPortStatus(objA.ports) =='异常' ){
-	
-		                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
-		                  		ele.statusHTML = this.$t('Public.servicing');
-		                  		ele.statusColor = "ServerVal";
-		                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
-		                  			ele.statusHTML = this.$t('Public.fau');
-		                  			ele.statusColor = "creatFie";
-		                  	}
-		                  	
-		                  }else if(getPortStatus(objA.ports)=='DOWN'){
-		                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
-		                  		ele.statusHTML = this.$t('Public.fau');
-		                  		ele.statusColor = "creatFie";
-		                  		
-		                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
-		                  			ele.statusHTML = this.$t('Public.fau');
-		                  			ele.statusColor = "creatFie";
-		                  			
-		                  	}
-		                  }
-//										}
-	                	
+	                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
+	                  		ele.statusHTML = this.$t('Public.servicing');
+	                  		ele.statusColor = "ServerVal";
+	                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
+	                  			ele.statusHTML = this.$t('Public.fau');
+	                  			ele.statusColor = "creatFie";
+	                  	}
+	                  	
+	                  }else if(getPortStatus(objA.ports)=='DOWN'){
+	                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
+	                  		ele.statusHTML = this.$t('Public.fau');
+	                  		ele.statusColor = "creatFie";
+	                  		
+	                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
+	                  			ele.statusHTML = this.$t('Public.fau');
+	                  			ele.statusColor = "creatFie";
+	                  	}
+	                  }
+	                }
 	                	ele.statusValA = getPortStatus(objA.ports);
 	                  ele.statusValZ = getPortStatus(objZ.ports);
 	                  if(getPortStatus(objA.ports) ==='UP'){
@@ -866,21 +850,20 @@ export default {
 	
 	                  ele.logicPortA = objA.cloud_config.logic_port.name;
 	                  ele.logicPortZ = objZ.cloud_config.logic_port.name;
-	                    if (objA.vlan == "-1") {
-	                      ele.vlanHTMLA = this.$t('Public.passthrough');//透传
-	                    } else if (objA.vlan == "0") {
-	                      ele.vlanHTMLA = "UNTAG";
-	                    } else {
-	                      ele.vlanHTMLA = 'vlan:' + objA.vlan;
-	                    }
-	                    if (objZ.vlan == "-1") {
-	                      ele.vlanHTMLZ = this.$t('Public.passthrough');
-	                    } else if (objZ.vlan == "0") {
-	                      ele.vlanHTMLZ = "UNTAG";
-	                    } else {
-	                      ele.vlanHTMLZ ='vlan:' + objZ.vlan;
-	                    }
-	                }
+                    if (objA.vlan == "-1") {
+                      ele.vlanHTMLA = this.$t('Public.passthrough');//透传
+                    } else if (objA.vlan == "0") {
+                      ele.vlanHTMLA = "UNTAG";
+                    } else {
+                      ele.vlanHTMLA = 'vlan:' + objA.vlan;
+                    }
+                    if (objZ.vlan == "-1") {
+                      ele.vlanHTMLZ = this.$t('Public.passthrough');
+                    } else if (objZ.vlan == "0") {
+                      ele.vlanHTMLZ = "UNTAG";
+                    } else {
+                      ele.vlanHTMLZ ='vlan:' + objZ.vlan;
+                    }
 	            	}
 
               });
@@ -917,44 +900,56 @@ export default {
       	})
       }
     },
-    handleSeeA(index, row) {
-    	console.log(row)
-      //查看A的详情
-      var obj={};
-      if(row.endpoints){
-	      obj=row.endpoints.find(item => {
+    handleSeeA(index, row) {//A端的详情
+
+    	var logic=new Object();
+    	if(row.type ==='d2d'){
+    		var obj=row.endpoints.find(item => {
 					return item.name == 'A端'
 				})
-      }
-			if(JSON.stringify(obj) !=='{}'){
+    		logic=obj.logic_port;
+    	}else if(row.type === 'd2c' || row.type ==='c2c'){//云直连
+    		var obj=row.cloud_endpoints.find(item => {
+					return item.name == 'A端'
+				})
+    		logic=obj.cloud_config.logic_port;
+    	}
+      //查看A的详情
+			if(JSON.stringify(logic) !=='{}'){
 				this.$router.push({
 	        path: "/resource/see/logicalPort",
 	        query: {
-	          detailsID: obj.logic_port.id
+	          detailsID: logic.id
 	        }
 	      });
-	      this.$emit('send',obj.logic_port.id)//改组件被引用的时候  向父组件传值更新
+	      this.$emit('send',logic.id)//改组件被引用的时候  向父组件传值更新
 			}
       
     },
     handleSeeZ(index, row) {
 //  	console.log(row)
       //查看Z端的详情
-//    console.log("进入Z端的详情");
-			var obj={};
-			if(row.endpoints){
-				obj=row.endpoints.find(item => {
+      var logic=new Object();
+    	if(row.type ==='d2d' || row.type === 'd2c'){
+    		var obj=row.endpoints.find(item => {
 					return item.name == 'Z端'
 				})
-			}
-			if(JSON.stringify( obj) !=='{}'){
+    		logic=obj.logic_port;
+    	}else if(row.type ==='c2c'){//云直连
+    		var obj=row.cloud_endpoints.find(item => {
+					return item.name == 'Z端'
+				})
+    		logic=obj.cloud_config.logic_port;
+    	}
+
+			if(JSON.stringify( logic) !=='{}'){
 				this.$router.push({
 	        path: "/resource/see/logicalPort",
 	        query: {
-	          detailsID: obj.logic_port.id
+	          detailsID: logic.id
 	        }
 	      });
-	      this.$emit('send',obj.logic_port.id)//改组件被引用的时候  向父组件传值更新
+	      this.$emit('send',logic.id)//改组件被引用的时候  向父组件传值更新
 			}
      
       
@@ -1033,7 +1028,7 @@ export default {
               if (res.status == 200) {
                 if (res.data.status == 0) {
                   this.$message({
-                    message: this.$t('tooltipMes.delSuccess'),
+                    message:this.$t('tooltipMes.delSucess'),
                     type: "success"
                   });
 

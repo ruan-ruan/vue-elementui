@@ -231,32 +231,6 @@
 								objZ=res.data.data.endpoints.find(item => {
 									return item.name == "Z端"
 								});
-								//A云
-//								this.clFormA.cloud_type=objA.cloud_type;
-//								this.clFormA.region=objA.region;
-								
-								
-//								if(objA.vlan < 0){
-//									avlan=this.$t('Public.passthrough');
-//								}else if(objA.vlan == 0){
-//									avlan='UNTAG'
-//								}else if(objA.vlan){
-//									avlan=objA.vlan;
-//								}
-//								this.clFormA.vlan=avlan;
-								//Z云
-								
-								
-//								if(objZ.vlan < 0){
-//									zvlan=this.$t('Public.passthrough');
-//								}else if(objZ.vlan == 0){
-//									zvlan='UNTAG'
-//								}else if(objZ.vlan){
-//									zvlan=objZ.vlan;
-//								}
-//								this.clFormZ.cloud_type=objZ.cloud_type;
-//								this.clFormZ.region=objZ.region;
-//								this.clFormZ.vlan=objZ;
 								this.clFormA=JSON.parse(JSON.stringify(objA));
 								this.clFormZ=JSON.parse(JSON.stringify(objZ));
 							}
@@ -268,17 +242,7 @@
 								objZ=res.data.data.endpoints.find(item => {
 									return item.name == "Z端"
 								})
-//								this.getCloudList(objA);
-								//A云
-//								this.clFormA.cloud_type=objA.cloud_type;
-//								this.clFormA.region=objA.region;
-//								if(objA.vlan < 0){
-//									avlan=this.$t('Public.passthrough');
-//								}else if(objA.vlan == 0){
-//									avlan='UNTAG'
-//								}else if(objA.vlan){
-//									avlan=objA.vlan;
-//								}
+
 								this.clFormA=JSON.parse(JSON.stringify(objA))
 //								this.clFormA.vlan=avlan;
 								this.dcFormZ=JSON.parse(JSON.stringify(objZ))

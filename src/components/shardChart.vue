@@ -33,6 +33,7 @@
 			data:{
 				handler(newVal,oldVal){
 //					console.log(newVal);
+					this.getCharts(newVal);
 				},
 				deep:true,
 				
@@ -50,14 +51,17 @@
 			}
 		},
 		mounted(){
+			var base=null;
 			if(JSON.stringify( this.data) !='{}'){//只有存在数据的时候  
 				this.getCharts(this.data);
 			}
-
 			this.user.map(item => {
-				item.avg=parseInt(item.avg)
+				if(isNaN(item.avg)){
+					item.avg=0
+				}else{
+					item.avg=parseInt(item.avg)
+				}
 			})
-//			console.log(this.data)
 		},
 		methods:{
 			getCharts(dataObj){
@@ -67,7 +71,7 @@
 				this.optionTra={
 					    title: {
 					        text: dataObj.logo_title,//title标志
-					        subtext:'带宽'+this.unit,
+					        subtext:this.$t('topology.footerBtn.bandwidth')+this.unit,
 					        subtextStyle:{
 					        	fontSize:'13',
 					        },
@@ -89,9 +93,10 @@
 					    },
 					    legend: {
 					        data:[
-					        dataObj.logic_port+'-'+dataObj.vlan+'(总入)',dataObj.logic_port+'-'+dataObj.vlan+'(总出)',
-					        dataObj.dev_name1+'-'+dataObj.vlan+'(d1入)', dataObj.dev_name1+'-'+dataObj.vlan+'(d1出)',
-					        dataObj.dev_name2+'-'+dataObj.vlan+'(d2入)',  dataObj.dev_name2+'-'+dataObj.vlan+'(d2出)',
+//					        '(d1入)' 
+					        dataObj.logic_port+'-'+dataObj.vlan+this.$t('Public.totalIn'),dataObj.logic_port+'-'+dataObj.vlan+this.$t('Public.totalOut'),
+					        dataObj.dev_name1+'-'+dataObj.vlan+'('+'d1'+this.$t("Public.enter")+')'  , dataObj.dev_name1+'-'+dataObj.vlan+'('+'d1'+this.$t("Public.out")+')' ,
+					        dataObj.dev_name2+'-'+dataObj.vlan+'('+'d2'+this.$t("Public.enter")+')',  dataObj.dev_name2+'-'+dataObj.vlan+'('+'d2'+this.$t("Public.out")+')',
 					        ],
 					        left:'100px'
 					    },
@@ -136,7 +141,7 @@
 
 					    series: [
 					    {
-					        name: dataObj.dev_name1+'-'+dataObj.vlan+'(d1入)', //d1
+					        name: dataObj.dev_name1+'-'+dataObj.vlan+'('+'d1'+this.$t("Public.enter")+')' , //d1入
 					        type: 'line',
 					        smooth: true,
 					        animation: false,
@@ -163,7 +168,7 @@
 					        data:dataObj.input_data_d1,
 					    },
 					    {
-					        name:dataObj.dev_name1+'-'+dataObj.vlan+'(d1出)',
+					        name:dataObj.dev_name1+'-'+dataObj.vlan+'('+'d1'+this.$t("Public.out")+')' ,//d1出
 					        type: 'line',
 					        smooth: true,
 					        animation: false,
@@ -190,7 +195,7 @@
 					        data:dataObj.output_data_d1,
 					    },
 					    {
-					        name: dataObj.dev_name2+'-'+dataObj.vlan+'(d2入)', //d2
+					        name: dataObj.dev_name2+'-'+dataObj.vlan+'('+'d2'+this.$t("Public.enter")+')', //d2入
 					        type: 'line',
 					        smooth: true,
 					        animation: false,
@@ -217,7 +222,7 @@
 					        data:dataObj.input_data_d2,
 					    },
 					    {
-					        name: dataObj.dev_name2+'-'+dataObj.vlan+'(d2出)',
+					        name: dataObj.dev_name2+'-'+dataObj.vlan+'('+'d2'+this.$t("Public.out")+')',//d2出
 					        type: 'line',
 					        smooth: true,
 					        animation: false,
@@ -243,7 +248,7 @@
 					        },
 					        data:dataObj.output_data_d2,
 					    },{
-					        name:dataObj.logic_port+'-'+dataObj.vlan+'(总入)',
+					        name:dataObj.logic_port+'-'+dataObj.vlan+this.$t('Public.totalIn'),
 					        type: 'line',
 					        smooth: true,
 					        animation: false,
@@ -270,7 +275,7 @@
 					        data:dataObj.input_data_total,//总的入
 					    },
 					    {
-					        name: dataObj.logic_port+'-'+dataObj.vlan+'(总出)',
+					        name: dataObj.logic_port+'-'+dataObj.vlan+this.$t('Public.totalOut'),
 					        type: 'line',
 					        smooth: true,
 					        animation: false,

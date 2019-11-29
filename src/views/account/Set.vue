@@ -342,7 +342,7 @@
 				
 				this.$ajax.get('/admin/admins'+'?token='+this.token,para)
 				.then(res => {
-					console.log(res)
+//					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
 							this.loading=false;
@@ -362,7 +362,7 @@
 							})
 							this.users=res.data.data.items;
 							this.total=res.data.data.page.total	;
-							console.log(res);
+//							console.log(res);
 						}
 					}
 				}).catch(e => {console.log(e)})
@@ -382,7 +382,6 @@
 			},
 			handleEdit(index,row){
 				//编辑
-				console.log(row);
 				//创建时间
 				this.staCreat=true;
 				//密码的隐藏
@@ -469,33 +468,32 @@
 				}
 			},
 			creatData:function(){
-
 				//添加
 				this.$refs['editForm'].validate(valid => {
 					if(valid){
-							let para={
-								name:this.editForm.name,
-								real_name:this.editForm.real_name,
-								password:this.editForm.password,
-								email:this.editForm.email,
-								mobile:this.editForm.mobile,
-								role_id:this.editForm.role_id,
-								usable:this.editForm.usable,
-								description:this.editForm.description,
-							}
-							this.$ajax.post('/admin/add_admin'+'?token='+this.token,para)
-							.then( res => {
-								if(res.status==200){
-									if(res.data.status==0){
-										this.$message({
-											message:this.$t('tooltipMes.addSuccess'),
-											type:'success'
-										})
-									}
-									this.$refs["editForm"].resetFields();
-									this.dialogFormVisible=false;
-									this.getUsers()
+						let para={
+							name:this.editForm.name,
+							real_name:this.editForm.real_name,
+							password:this.editForm.password,
+							email:this.editForm.email,
+							mobile:this.editForm.mobile,
+							role_id:this.editForm.role_id,
+							usable:this.editForm.usable,
+							description:this.editForm.description,
+						}
+						this.$ajax.post('/admin/add_admin'+'?token='+this.token,para)
+						.then( res => {
+							if(res.status==200){
+								if(res.data.status==0){
+									this.$message({
+										message:this.$t('tooltipMes.addSuccess'),
+										type:'success'
+									})
 								}
+								this.$refs["editForm"].resetFields();
+								this.dialogFormVisible=false;
+								this.getUsers()
+							}
 						}).catch(e => {console.log(e)})
 					}
 				})
@@ -511,7 +509,6 @@
 						type:'warning'
 					})
 					.then( () => {
-						
 						this.$ajax.put('/admin/to_disable_admin/'+row.id+'?token='+this.token)
 						.then( res => {
 							if(res.status=='200'){

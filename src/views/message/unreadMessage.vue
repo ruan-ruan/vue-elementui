@@ -273,7 +273,6 @@ export default {
       this.$ajax
         .get("/public/get_news" + "?token=" + this.token, para)
         .then(res => {
-          console.log(res);
           if (res.status == 200) {
             if (res.data.status == 0) {
               this.tableDatas = res.data.data.items?res.data.data.items.slice(0,5):[];
@@ -305,7 +304,6 @@ export default {
       for (let item of this.sels) {
         ids += item.id + ",";
       }
-      console.log(ids);
       if (!ids) {
         this.$message({
           message: "请选择你要标记的选项",
@@ -319,7 +317,6 @@ export default {
         })
           .then(() => {
             const id = ids.substring(0, ids.lastIndexOf(","));
-            console.log(id);
             this.readid = id.split(",");
             let para = { ids: this.readid };
             this.$ajax
@@ -348,16 +345,13 @@ export default {
     },
     handleSelectionChange(val) {
       this.sels = val;
-      console.log(this.sels);
     },
     // 删除消息
     delMes() {
-      console.log(111);
       let ids = "";
       for (let item of this.sels) {
         ids += item.id + ",";
       }
-      console.log(ids);
 
       if (!ids) {
         this.$message({
@@ -374,7 +368,6 @@ export default {
             const id = ids.substring(0, ids.lastIndexOf(","));
             this.isid = id.split(",");
             let para = { ids: this.isid };
-            console.log(para);
             this.$ajax
               .del("/public/del_news" + "?token=" + this.token, para)
               .then(res => {
@@ -425,11 +418,9 @@ export default {
         .get("/public/get_news" + "?token=" + this.token, para)
         .then(res => {
           _this.loading = false;
-          console.log(res);
           if (res.status == 200) {
             if (res.data.status == 0) {
               _this.tableData = res.data.data.items;
-              console.log(_this.tableData);
               _this.total = res.data.data.page.total;
               this.$store.state.message = _this.total;
             }

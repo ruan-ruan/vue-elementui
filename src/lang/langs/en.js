@@ -6,16 +6,38 @@ const en = {
             login:'Login',
             404:'404'
         },
-//      'hello': 'hello, world',
-//      'select':'please selected',
-//      'btn':'click'
     },
     nav:{
     	layout:'Log out',
     	changPsd:'Change password',
     	language:'Language',
-    	message:'Message'
-
+    	message:'Message',
+		lanTooltip:"Language choice ",
+		guide:'Operation guide ',
+    	contactNumber :'Contact number ',
+    	telephone:'Telephone  ' ,
+    	accountLogin:'Account login ',
+    	accountNumber:'Account ',
+    	pwd:'Password ',
+    	rememberPwd:'Remember password ',
+    	entry:'Entry',
+    	plAccount:'Please enter your account number',
+    	plPwd:'Please input a password ',
+    	entrySuccess:'Login successfully !',
+    	guideDown:'Operation Guide Download ',
+    	editPwd:'Are you sure you want to change the password ?',
+    	logout:'Are you sure to exit ?',
+    	oldPwd:'Old password ',
+    	newPwd:'New password ',
+    	conNewPwd:'Confirm new password ',
+    	plaOldPwd:'Please enter the old password ',
+    	plaRightOldPwd:'Please enter the correct old password ',
+    	plaNewPwd:"Please enter a new password ",
+    	plaNewPwdRules:'The new password must contain numbers, lowercase and uppercase letters ',
+    	againPwd:'Please enter the password again ',
+    	aginPwdNot:'The two passwords are inconsistent ',
+    	conEditPwd:"Are you sure you want to modify?",
+    	pwdSuccess:'Password modified successfully !',
     },
     aside:{
     	LinkCharts:'Link Charts',
@@ -136,8 +158,11 @@ const en = {
     	copySuccess:'Copy success!',
     	copyFail:'Copy failed ！',
     	creaSuccess:'Create success !',
-    	
-    	
+    	removeSuccess:'Remove success!',
+    	vlanTooltip:'The VLAN number selected should be consistent with the amount VLAN number used to create the dedicated channel ID ',
+		dedicID:'Tencent cloud concentration channel ID, i.e. directconnecttunnelld ',
+    	detSuccess:'Successful detection !',
+    	notThreeJun:'Cannot exceed three months before the current time !',
     },
     Public:{//公共部分
     	//table
@@ -378,6 +403,24 @@ const en = {
     	zPortDetails:'Z (DC) end configuration details ',
     	chargModel:'Charging mode ',
     	tarRegion:'Target Region ',
+    	cloudStatus:'Cloud State (non real time) ',
+    	detection:'Check',
+    	repair:'Repair ',
+    	remove:'Remove',
+    	cloudArea:'Cloud control area ',
+    	selecPort:'Please select an endpoint ',
+    	avg:'Average ',
+    	max:'Maximum ',
+    	min:'Minimum',
+    	now:'real time',
+    	oneDay:'Last day ',
+    	oneHour:'Last hour ',
+    	oneWeek:'Last week ',
+    	custom:'custom ',
+    	enter:'Enter',
+    	out:'Out',
+    	totalOut:'Total output',
+    	totalIn:'Total input'
     },
     confirm:{
     	tooltip:'Tooltip',
@@ -396,7 +439,9 @@ const en = {
     	conExportCur:'Are you sure you want to export the data of the current page ?',
     	conStop:'Are you sure you want to disable ?',
 		conRun:'Are you sure you want to enable ?',
-    	
+    	conDecetion:'Determine to re detect cloud state !',
+		conRemove:'Are you sure you want to clear the cloud configuration ?',
+		conTootip:'Note: this operation may not be successful. See the message reminder for details!'
 //  	cancel:'取消'
 		
     },

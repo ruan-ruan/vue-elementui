@@ -12,6 +12,36 @@ const cn = {
     	changPsd:'修改密码',
     	language:'语言',
     	message:'消息',
+    	lanTooltip:"语言选择",
+    	guide:'操作指南',
+    	guideDown:'操作指南下载',
+    	contactNumber :'联系电话',
+    	telephone:'电话 ' ,
+    	accountLogin:'账户登录',
+    	accountNumber:'账号',
+    	pwd:'密码',
+    	rememberPwd:'记住密码',
+    	entry:'登录',
+    	plAccount:'请输入账号',
+    	plPwd:'请输入密码',
+    	entrySuccess:'登录成功!',
+    	messageList:'站内消息通知列表',
+    	notMessage:'暂无消息',
+    	editPwd:'确认要修改密码吗?',
+    	logout:'确认退出吗?',
+    	oldPwd:'旧密码',
+    	newPwd:'新密码',
+    	conNewPwd:'确认新密码',
+    	plaOldPwd:'请输入旧密码',
+    	plaRightOldPwd:'请输入正确的旧密码',
+    	plaNewPwd:"请输入新密码",
+    	plaNewPwdRules:'新密码必须包含数字，小写、大写字母',
+    	againPwd:'请再次输入密码',
+    	aginPwdNot:'两次输入密码不一致',
+    	conEditPwd:"确认要修改吗?",
+    	pwdSuccess:'密码修改成功!',
+    	
+    	
     },
     aside:{//  侧边  导航栏
     	topoChartInfo:'链路图表',
@@ -317,7 +347,24 @@ const cn = {
     	zPortDetails:'Z(DC)端配置详情',
     	chargModel:'计费模式',
     	tarRegion:'目标Region',
-    	
+    	cloudStatus:'云端状态(非实时)',
+    	detection:'检测',
+    	repair:'修复',
+    	remove:'清除',
+    	cloudArea:'云端控制区',
+    	selecPort:'请选择端点',
+    	avg:'平均值',
+    	max:'最大值',
+    	min:'最小值',
+    	now:'实时',
+    	oneDay:'最近一天',
+    	oneHour:'最近一小时',
+    	oneWeek:'最近一周',
+    	custom:'自定义',
+    	enter:'入',
+    	out:'出',
+    	totalOut:'总出',
+    	totalIn:'总入'
     },
     
     business:{
@@ -512,7 +559,9 @@ const cn = {
     	conExportCur:'确定要导出当前页的数据吗?',
 		conStop:'确认要禁用吗?',
 		conRun:'确认要启用吗?',
-		
+		conDecetion:'确定要重新检测云端状态!',
+		conRemove:'确定要清除云端配置?',
+		conTootip:'注意：此操作不一定能清除成功，详情见消息提醒!'
 		
     },
     topFilters:{//单页面  搜索栏   
@@ -569,7 +618,11 @@ const cn = {
     	copySuccess:'复制成功!',
     	copyFail:'复制失败！',
     	creaSuccess:'创建成功!',
-
+		removeSuccess:'清除成功!',
+		vlanTooltip:'选择的vlan号应该与创建专用通道ID所使用的额vlan号保持一致',
+		dedicID:'腾讯云专心通道ID,即DirectConnectTunnelld',
+		detSuccess:'检测成功!',
+		notThreeJun:'不能超过当前时间前的三个月!',
     },
     
     

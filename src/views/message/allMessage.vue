@@ -328,7 +328,6 @@ export default {
     },
     selsChange(val) {
       this.sels = val;
-      console.log(this.sels);
     },
     // 标记已读
     markTap() {
@@ -336,7 +335,6 @@ export default {
       for (let item of this.sels) {
         ids += item.id + ",";
       }
-      console.log(ids);
       if (!ids) {
         this.$message({
           message: "请选择你要标记的选项",
@@ -351,7 +349,6 @@ export default {
           .then(() => {
             const id = ids.substring(0, ids.lastIndexOf(","));
             this.readid = id.split(",");
-            console.log(this.readid);
             let para = { ids: this.readid };
             this.$ajax
               .put("/public/read_news" + "?token=" + this.token, para)
@@ -443,7 +440,6 @@ export default {
         .get("/public/get_news" + "?token=" + this.token, para)
         .then(res => {
           _this.loading = false;
-          console.log(res);
           if (res.status == 200) {
             if (res.data.status == 0) {
               _this.tableData = res.data.data.items;

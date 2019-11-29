@@ -6,7 +6,7 @@
 </template>
 
 <script>
-	import virNetwork  from '@/views/business/multi/multipoint'
+	import virNetwork  from '@/views/business/multi/multiPoint'
 	export default{
 		name:'virtualNetwork',
 		props:['clounId'],

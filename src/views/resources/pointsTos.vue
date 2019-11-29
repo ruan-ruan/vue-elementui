@@ -1,16 +1,16 @@
 <template>
 	<div >
-		<multipoint :virTit='virTit'></multipoint>
+		<multiPoint :virTit='virTit'></multiPoint>
 		
 	</div>
 </template>
 
 <script>
-	import multipoint from '@/views/business/multi/multipoint'
+	import multiPoint from '@/views/business/multi/multiPoint'
 	export default{
-		name:'虚拟组网专线',
+		name:'pointsTos',
 		components:{
-			multipoint
+			multiPoint
 		},
 		data(){
 			return{
