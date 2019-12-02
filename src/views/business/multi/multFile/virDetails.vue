@@ -6,7 +6,7 @@
 		<span>{{type}}</span>-->
 		<dc :dcData='detailsForm' ref='detailsForm' v-if='basicObj.dataType==="endpoints"'></dc>
 		<!--云的数据-->
-		<cloun :clounData='detailsForm' ref='detailsForm' v-if="basicObj.dataType==='cloud_endpoints'" :type='typeVal' ></cloun>
+		<cloun :clounData='detailsForm' ref='detailsForm' v-if="basicObj.dataType==='cloud_endpoints'" :type='typeVal'  ></cloun>
 	</div>
 </template>
 
@@ -25,6 +25,7 @@
 				detaLoading:false,
 				dockCloun:[],//根据云对接的时候获取不同的数据
 				typeVal:'',
+				diaVals:null,
 			}
 		},
 		watch:{
@@ -46,6 +47,7 @@
 		mounted(){
 			this.typeVal=this.type;
 		},
+
 	}
 </script>
 

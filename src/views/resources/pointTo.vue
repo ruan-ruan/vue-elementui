@@ -1204,9 +1204,7 @@ export default {
 </script>
 
 <style scoped>
-.ipts {
-  width: 80px;
-}
+
 .stopVal {
   color: #f56c6c;
 }

@@ -45,9 +45,9 @@
 	        <!--<el-button size='small' type="primary" @click.native.prevent="handleSubmit2" >{{$t('nav.entry')}}</el-button>
 	      <el-button size='small' type="info" @click="handleReset2" style='margin-left: 40px;'>{{$t('topFilters.reset')}}</el-button>-->
 	    </el-form-item>
-	    <el-form-item style="width:100%;text-align: center;margin-left: -40px;margin-top: -30px;">
-	      <el-button size='small' type="primary" @click.native.prevent="handleSubmit2"style='margin-right: 20px;'  >{{$t('nav.entry')}}</el-button>
-	      <el-button size='small' type="info" @click="handleReset2"style='margin-left: 20px;' >{{$t('topFilters.reset')}}</el-button>
+	    <el-form-item style="width:100%;text-align: center;margin-left: -40px;">
+	      <el-button  type="primary" @click.native.prevent="handleSubmit2"style='margin-right: 20px;'  >{{$t('nav.entry')}}</el-button>
+	      <el-button  type="info" @click="handleReset2"style='margin-left: 20px;' >{{$t('topFilters.reset')}}</el-button>
 	    </el-form-item>
 	  </el-form>
 	  <div>

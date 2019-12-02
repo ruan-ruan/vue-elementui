@@ -255,7 +255,6 @@
 
 								if(JSON.stringify(obj1) !='{}' && typeof obj1 !='undefined'){
 									
-									console.log('untage')
 									this.$message({
 										message:this.$t('business.plaUntag'),
 										type:'warning'
@@ -363,7 +362,6 @@
 			    .then(res => {
 			      	if(res.status==200){
 			      		if(res.data.status==0){
-			      			console.log(res)
 			      			var str=res.data.data.items;
 			      			str.forEach(ele => {
 			      				ele.endpoints.forEach(item => { //用statusVal   来判断   该逻辑口的状态
@@ -371,7 +369,6 @@
 			      					this.pointData.push(item.logic_port);
 			      				})
 			      			})
-			      			console.log(this.pointData)
 			      		}
 			      	}
 			    }) .catch(e => { console.log(e) })
@@ -380,7 +377,7 @@
 			    .then(res => {
 			    	if(res.status==200){
 			    		if(res.data.status==0){
-			    			console.log(res)
+
 			    			var str=res.data.data.items;
 			    			if(str.length !=0){
 				    			str.forEach(ele => {
@@ -420,7 +417,6 @@
 				}
 				this.$ajax.get('/port/logic_ports'+'?token='+this.token,para)
 				.then(res => {
-//					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
 							res.data.data.items.map(ele => {
@@ -631,6 +627,7 @@
 	.activeCla{
 		background: #45BAFD !important;
 	}
+	/*控制vlan的选择的日志对话框*/
 	.v-modal{
 		z-index: 2000 !important;
 	}

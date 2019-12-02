@@ -87,7 +87,7 @@
 				</el-table-column>
 				<el-table-column prop='port.status':label='$t("Public.portStatus")' align='center'>					
 				</el-table-column>
-				<el-table-column prop='dc_name':label='$t("public.dataCen")'  align='center'>					
+				<el-table-column prop='dc_name':label='$t("Public.dataCen")'  align='center'>					
 				</el-table-column>
 				<el-table-column prop='rack':label='$t("Public.cabNnumber")'  align='center' v-if='seePortDetails'>					
 				</el-table-column>
@@ -134,7 +134,7 @@
 						</el-select>
 					</el-form-item>
 					<el-form-item :label='$t("Public.NnetworkPort")'prop='port_id'>
-						<el-select v-model='editForm.port_id' :disabled='disabeldSee'class='ipt' @change='selectPort(editForm.port_id)'>
+						<el-select v-model='editForm.port_id' :disabled='disabeldSee' class='ipt' @change='selectPort(editForm.port_id)'>
 							<el-option v-for='(item,index) in netwotkPortData'
 								:value='item.id'
 								:label='item.port_no'
@@ -337,15 +337,16 @@
 		created(){
 			this.token=sessionStorage.getItem('token');
 			
-
-			if(this.addLogicalPort==='新建逻辑端口'&&(typeof this.editLogicalPort =='undefined' && typeof this.title=='undefined')){
+			
+			if(this.addLogicalPort==='新建逻辑端口'){
 				//新建逻辑端口界面
 				this.getTenantData();
 				this.addPortStatus=false;
 				//控制标题的操作
 				this.seePortDetails=false;
 				this.createStatus=true;
-			}else if (typeof this.editLogicalPort !='undefined'&&(this.addLogicalPort!='新建逻辑端口'&& typeof this.title=='undefined')){
+			}
+			if (typeof this.editLogicalPort !='undefined'){
 				//逻辑端口的编辑界面
 				this.getTenantData();
 				this.addPortStatus=true;
@@ -353,7 +354,8 @@
 				this.seePortDetails=false;
 				this.createStatus=false;
 				this.getUsers(this.editLogicalPort)
-			}else if(typeof this.title!='undefined'&&(typeof this.editLogicalPort =='undefined'&&this.addLogicalPort!='新建逻辑端口' )){
+			}
+			if(typeof this.title!='undefined'){
 				//进入详情的界面
 
 				this.seePortDetails=true;
@@ -391,6 +393,9 @@
 	            }
 	        },
 			getTenantData(){
+				this.backNodes=[];
+				this.tenantLogo=[];
+				this.newtworkBasePortP=[];
 				//获取租户标识的数据
 				
 				this.$ajax.get('/tenant/tenants'+'?token='+this.token+'&&search_usable='+'true',)
@@ -410,7 +415,7 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-//							console.log(res)
+							console.log(res)
 							this.backNodes=res.data.data.items;
 						}
 					}
@@ -419,7 +424,6 @@
 				//对列表内所有的端口已经使用过的  不能再使用的排除  newtworkBasePortP
 				this.$ajax.get('/port/logic_ports'+'?token='+this.token)
 				.then(res => {
-//					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
 							var str=res.data.data.items;

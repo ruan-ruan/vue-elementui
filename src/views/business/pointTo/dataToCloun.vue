@@ -104,8 +104,7 @@
 		},
 		methods:{
 			getDcPort(msg){
-				console.log(msg)
-				
+
 				this.dcForm={
 					name:'Z端',
 					nodeName:msg.nodeName,
@@ -114,11 +113,9 @@
 				}
 			},
 			getClounList(msg){
-				console.log(msg)
 				this.clounList=Object.assign({},msg)
 			},
 			getSharedCloun(msg){
-				console.log(msg);
 
 				this.clounForm={
 					sharedCloun:msg.cloun,

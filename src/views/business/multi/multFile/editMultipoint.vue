@@ -723,7 +723,10 @@
 	}
 </script>
 
-<style scoped>
+<style >
+	
+	
+	
 	.suc{
 		color: #67C23A;
 	}

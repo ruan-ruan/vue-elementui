@@ -315,7 +315,6 @@
 
 			},
 			selCloud(type){//选择云对接
-				console.log(type);
 				this.copy={}
 				if(this.editForm.cloun == '腾讯云'){
 					this.$ajax.get('/vll/tc_params_to_tenant/'+type+'?token='+this.token)
@@ -388,10 +387,8 @@
 		    	
 		    	this.$ajax.get('/link/cloud_links'+'?token='+this.token,para)
 				.then(res => {
-					console.log(res);
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
 							this.clounDockData=res.data.data.items;
 							this.clounDockData.unshift({interface_driver:'自动分配',name:'自动分配',id:'Automatically',logic_port:{name:''}})
 
@@ -406,7 +403,7 @@
 				//获取公有云的列表
 				this.$ajax.get('/vll/get_public_cloud'+'?token='+this.token)
 				.then(res => {
-					console.log(res);
+
 					if(res.status==200){
 						if(res.data.status==0){
 							this.clounData=res.data.data;

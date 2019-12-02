@@ -17,8 +17,10 @@
 					<span>{{clounForm.logic_status}}</span>
 				</el-form-item>			
 			</el-form>
-			<h4>{{$t('Public.cloudArea')}}</h4>
-			<el-form label-width='200px' style='border:  1px solid #C0C4CC ; width: 400px;margin-bottom: 10px;'>
+
+			<el-form label-width='200px'class='cloud_cls'>
+			<h4 class="cloud_tit">{{$t('Public.cloudArea')}}</h4>
+				
 				<el-form-item v-for='(item,index) in  cloudData' :key='index' :label='item.show_name+"："' :prop='item.name' >
 					<span>{{item.keyVal}}</span>
 				</el-form-item>
@@ -31,7 +33,7 @@
 			</el-form>
 			
 			
-			<el-dialog  :title='textMap[dialogStatus]':visible.sync="dialogFormVisible" :close-on-click-modal="false" >
+			<el-dialog  :title='textMap[dialogStatus]':visible.sync="dialogFormVisible" :close-on-click-modal="false" class='myMulti' >
 				<el-form  label-width='200px'>
 					<el-form-item v-for='(item,index) in  cloudData' :key='index' :label='item.show_name+"："' :prop='item.name'>
 						<el-input v-model='item.keyVal' class='ipt_sels'></el-input>
@@ -246,7 +248,6 @@
 			repair(){
 				this.dialogStatus='repair',
 				this.dialogFormVisible=true;
-
 			},
 			repairSubmit(){
 
@@ -255,14 +256,16 @@
 					para[item.name] =item.keyVal;
 				})
 
-				this.$ajax.put('/vall/repair_cloud/'+this.clounData.id+'?token='+this.token,para)
+				this.$ajax.put('/vll/repair_cloud/'+this.clounData.id+'?token='+this.token,para)
 				.then(res => {
+					this.dialogFormVisible=false;
 					if(res.status ==200){
 						if(res.data.status ==0){
 							this.$message({
 								message:res.data.message,
 								type:'success'
 							})
+							this.cloudData=[];
 						}
 					}
 				}).catch(e => {console.log(e)})
@@ -317,7 +320,7 @@
 					showCancelButton: true,
 					type:'warning'
 				}).then(() => {
-					this.$ajax.delete('/vll/clear_cloud/'+this.clounData.id+'?token='+this.token)
+					this.$ajax.del('/vll/clear_cloud/'+this.clounData.id+'?token='+this.token)
 					.then(res => {
 						if(res.status ==200){
 							if(res.data.status ==0){
@@ -328,8 +331,7 @@
 							}
 						}
 					}).catch(e => {console.log(e)})
-				})
-				.catch(() => {})
+				}).catch(() => {})
 			},
 			selCloud(type){//选择云对接
 
@@ -361,10 +363,25 @@
 </script>
 
 <style >
+	
 	.el-dialog__wrapper{
-		z-index:2100 !important ;
+		z-index:2007 !important ;
 	}
 	.el-message-box__wrapper{
-		z-index: 2200 !important;
+		z-index: 2020 !important;
+	}
+	.cloud_cls{
+		border:  1px solid #C0C4CC ;
+		border-radius:5px ;
+		margin-bottom: 10px;
+	}
+	.cloud_tit{
+		position:relative;
+		background: #FFFFFF;
+		text-align: center;
+		width: 100px;
+		bottom:10px ;
+		left:50%;
+		margin-left: -50px;
 	}
 </style>
