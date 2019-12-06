@@ -25,19 +25,12 @@
 							<el-form-item :label='$t("Public.cloudName")'prop='name'>
 								<el-input v-model='editForm.name'class='ipt' :disabled='!clounStatus'></el-input>
 							</el-form-item>
-<!--<<<<<<< HEAD-->
 							<el-form-item :label='$t("Public.region")' prop='region'>
 								<el-input v-model='editForm.region'class='ipt':disabled='!clounStatus'></el-input>
 							</el-form-item>
 							<el-form-item :label='$t("Public.accessPoint")' prop='access_point'>
 								<el-input v-model='editForm.access_point'class='ipt':disabled='!clounStatus'></el-input>
-<!--=======
-							<el-form-item label='区域' prop='region'>
-								<el-input v-model='editForm.region'class='ipt':disabled='!clounStatus'></el-input>
-							</el-form-item>
-							<el-form-item label='接入点' prop='access_point'>
-								<el-input v-model='editForm.access_point'class='ipt':disabled='!clounStatus'></el-input>
->>>>>>> af27a7ee67fd85c23aa099e541c5aaed37e60620-->
+
 							</el-form-item>
 							<el-form-item :label='$t("Public.bandwid")' prop='bandwidth'>
 								<el-input v-model='editForm.bandwidth'class='ipt':disabled='!clounStatus'></el-input> Gbps
@@ -91,6 +84,7 @@
 							</el-form-item>
 							<el-form-item :label='$t("Public.par")'prop='extension'v-if='clounStatus'>
 								<el-input type='textarea' v-model='editForm.extension'class='ipt':disabled='!clounStatus'></el-input>
+								<span class="span_toTip" :title="params">?</span>
 							</el-form-item>
 						<!--</el-col>-->
 						<!--<el-col :span='12'></el-col>-->
@@ -127,6 +121,7 @@
 				}
 			}
 			return{
+				params:'参数的形式必须是{"key":"value"}',
 				token:'',
 				nameAdd:this.$route.query.name,
 				nameEdit:this.$route.query.id,
@@ -156,7 +151,7 @@
 				driveData:[],//接口驱动的数据
 				editFormRules:{
 					bandwidth:[{  required: true, validator: isvalidNumber, trigger: 'blur' }],
-//<<<<<<< HEAD
+
 					type:[ { required: true, message: this.$t('Public.plpublicClo'), trigger: 'change' }],
 					name:[ { required: true, message: this.$t('Public.plblueclo'), trigger: 'blur' }],
 					region:[ { required: true, message: this.$t('Public.plRegion'), trigger: 'blur' }],
@@ -164,15 +159,7 @@
 					node_id:[ { required: true, message: this.$t('Public.plChNode'), trigger: 'blur' }],
 					logic_port_id:[ { required: true, message: this.$t('Public.plChLogic'), trigger: 'blur' }],
 					interface_driver:[ { required: true, message: this.$t('Public.plChInter'), trigger: 'blur' }],
-//=======
-//					type:[ { required: true, message: '请选择公有云类型', trigger: 'change' }],
-//					name:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
-//					region:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
-//					access_point:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
-//					node_id:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
-//					logic_port_id:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
-//					interface_driver:[ { required: true, message: '请输入云链路名称', trigger: 'blur' }],
-//>>>>>>> af27a7ee67fd85c23aa099e541c5aaed37e60620
+
 				},
 				btnStatus:true,
 				bakcUpData:{},
@@ -232,19 +219,31 @@
 				this.$ajax.get('/vll/p2p_vlls'+'?token='+this.token)
 				.then(res => {//点到点数据
 					res.data.data.items.map(ele => {
-						ele.endpoints.forEach(item => {
-							this.pointLogic.push(item.logic_port)
-						})
+						if(ele.endpoints){
+							ele.endpoints.forEach(item => {
+								this.pointLogic.push(item.logic_port)
+							})
+						}else if(ele.cloud_endpoints){
+							ele.cloud_endpoints.map(item => {
+								this.pointLogic.push(item.cloud_config.logic_port)
+							})
+						}
+						
 					})
-//					sliceLogic
 				}).catch(e => {console.log(e)})
 				this.$ajax.get('/vll/multi_vlls'+'?token='+this.token)
 				.then(res => {//获取点到多点的里面所有的逻辑口
-					console.log(res);
 					res.data.data.items.map(ele => {
-						ele.endpoints.forEach(item => {
-							this.pointLogic.push(item.logic_port)
-						})
+						if(ele.endpoints){
+							ele.endpoints.forEach(item => {
+								this.pointLogic.push(item.logic_port)
+							})
+						}else if(ele.cloud_endpoints){
+							ele.cloud_endpoints.map(item => {
+								this.pointLogic.push(item.cloud_config.logic_port)
+							})
+						}
+						
 					})
 				}).catch(e =>{console.log(e)})
 			},
@@ -255,8 +254,7 @@
 					search_usable:true,
 				};
 				var obj={};
-//				console.log(this.multiLogic);
-//				console.log(this.pointLogic);
+
 				var logic=[];//保存  去重后的数据
 				
 				let res = []
@@ -268,10 +266,10 @@
 				    objSet[arr[i].id] = true
 				  }
 				}
-				console.log(logic)
+
 				this.$ajax.get('/port/logic_ports'+'?token='+this.token,para)
 				.then(res => {
-					console.log(res);
+
 					if(res.status==200){
 						if(res.data.status==0){
 //							this.logicData=res.data.data.items;
@@ -307,7 +305,7 @@
 				.then(res => {
 					if(res.status==200){	
 						if(res.data.status==0){
-							console.log(res)
+
 							this.editLoading=false;
 							let str=res.data.data;
 							this.backUpData=Object.assign({},str);
@@ -374,12 +372,9 @@
 				})
 			},
 			handleEdit(){
-//				console.log(this.editForm)
-//				console.log('进入编辑');
+
 				this.$refs.editForm.validate(valid => {
 					if(valid) {
-
-//<<<<<<< HEAD
 						this.editLoading=true;
 						let obj={
 							node_id:'',
@@ -412,7 +407,7 @@
 							extension:this.editForm.extension,
 							get_speed_key:this.editForm.get_speed_key,
 						}
-						console.log(para)
+
 						this.$ajax.put('/link/edit_cloud_link/'+this.editForm.id+'?token='+this.token,para)
 						.then(res => {
 							this.editLoading=false;

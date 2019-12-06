@@ -149,7 +149,6 @@
 				handler(newVal,oldVal){
 					if(newVal.selTime){//存在新的时间时候
 						this.trafficData=this.getTimeData(newVal.selTime);//根据选择类型来获取对应的时间轴的区间
-//						console.log(this.trafficData)
 					}
 					if(newVal.selVal){//根据所选的时间的类型，然后获取数据，在根据值的类型对数据进行处理
 						this.valType=this.seaVal(newVal.selVal)   // 返回值的值的类型   对应的字段
@@ -160,7 +159,6 @@
 			},
 			baseObjA:{
 				handler(newVal,oldVal){
-//					console.log(newVal);	
 					this.child=false;
 					this.$nextTick(() => {
 						this.child=true;
@@ -193,7 +191,6 @@
 			this.token=sessionStorage.getItem('token');
 			this.valType=this.seaVal();
 			this.trafficData=this.getTimeData();
-//			console.log( this.trafficData )
 			if(typeof this.titData !=='undefined'){
 				this.strVal=this.titData;
 			}
@@ -233,7 +230,7 @@
 					.then(res => {
 						if(res.status==200){
 							if(res.data.status==0){
-//								console.log(res);
+
 								var endObj={};
 								var endData=[];
 								//下面对业务类型处理    点到点    和云的额业务     以及组网的数据处理
@@ -452,7 +449,7 @@
 			},
 
 			dealData(type,data){//根据不同的单位  进行数据处理
-//				console.log(data)
+
 				let newData=[]
 				data.map(ele => {
 					if((!ele && typeof (ele) !== 'undefined' && ele !=0) || isNaN(ele) ||typeof ele =='undefined' ||ele==''){//如果数据是NaN或者null
@@ -486,7 +483,7 @@
 			},
 			selectVal(data , timeFew){//data  是数组     timeFew根据时间 的类型获取的时间间隔   也就是值的间隔      valType是值的类型
 				timeFew=timeFew || 5
-				//console.log(data);//可根据传值的类型  具体情况而定   A端   Z端    组网
+//可根据传值的类型  具体情况而定   A端   Z端    组网
 				//需要获取  逻辑口       以及设备d1    d2的数据      分别是入 和出       所以   一个逻辑口 共有  六条数据
 				var sval=JSON.parse( JSON.stringify(data) );
 				let strObj={};
@@ -500,69 +497,46 @@
 					vlan:sval.vlan,
 					flow:dataVal
 				}
-//				for(var i=0;i<data.length;i++){
-//					  //里面包含a端和z端
-//					var dataVal=[];  
-//					var setData=data[i].flow;
-//
-//					 //将数组进行切割  并求出里面的各个值的类型
-//					for( var index=0; index<data[i].flow.length; index+=timeFew ){
-//						dataVal.push(data[i].flow.slice(index,index+timeFew))
-//					}
-////					console.log(dataVal)
-//					strObj={
-//						name:data[i].name,
-//						vlan:data[i].vlan,
-//						flow:dataVal
-//					}
-//					strData.push(strObj)
-//				};
 
-				
-//				let chartsData=[];
-//				strData.map(ele => {
-					let str=[];	
-					strObj.flow.map((item,index) => {		
-						let obj={}
-							obj={
-						 	d1:{
+				let str=[];	
+				strObj.flow.map((item,index) => {		
+					let obj={}
+						obj={
+					 	d1:{
 //						 		ifname:item[0].d1.ifname,
-						 		//里面包含 最大 	最小	  平均值	总和
-						 		//bps   单位   入
-						 		input_bytes:arrayPro.flowObj(item,'input_bytes').d1,	
-						 		//pps单位   入
-						 		input_packages:arrayPro.flowObj(item,'input_packages').d1,
-						 		//bps   出
-						 		output_bytes:arrayPro.flowObj(item,'output_bytes').d1,
-						 		//pps      出
-						 		output_packages:arrayPro.flowObj(item,'output_packages').d1,
+					 		//里面包含 最大 	最小	  平均值	总和
+					 		//bps   单位   入
+					 		input_bytes:arrayPro.flowObj(item,'input_bytes').d1,	
+					 		//pps单位   入
+					 		input_packages:arrayPro.flowObj(item,'input_packages').d1,
+					 		//bps   出
+					 		output_bytes:arrayPro.flowObj(item,'output_bytes').d1,
+					 		//pps      出
+					 		output_packages:arrayPro.flowObj(item,'output_packages').d1,
 
-						 	},
-						 	d2:{
+					 	},
+					 	d2:{
 //						 		ifname:item[0].d2.ifname,
-						 		//里面包含 最大 	最小	  平均值	总和
-						 		//bps   单位   入
-						 		input_bytes:arrayPro.flowObj(item,'input_bytes').d2,	
-						 		//pps单位   入
-						 		input_packages:arrayPro.flowObj(item,'input_packages').d2,
-						 		//bps   出
-						 		output_bytes:arrayPro.flowObj(item,'output_bytes').d2,
-						 		//pps      出
-						 		output_packages:arrayPro.flowObj(item,'output_packages').d2,
+					 		//里面包含 最大 	最小	  平均值	总和
+					 		//bps   单位   入
+					 		input_bytes:arrayPro.flowObj(item,'input_bytes').d2,	
+					 		//pps单位   入
+					 		input_packages:arrayPro.flowObj(item,'input_packages').d2,
+					 		//bps   出
+					 		output_bytes:arrayPro.flowObj(item,'output_bytes').d2,
+					 		//pps      出
+					 		output_packages:arrayPro.flowObj(item,'output_packages').d2,
 
-						 	}
-						 }
-							str.push(obj)
-					})
-					let chartObj={
-						name:strObj.name,
-						vlan:strObj.vlan,
-						data:str,
-					}
-//					
-//					chartsData.push(chartObj)
-//				})
-//				console.log(chartsData)
+					 	}
+					 }
+						str.push(obj)
+				})
+				let chartObj={
+					name:strObj.name,
+					vlan:strObj.vlan,
+					data:str,
+				}
+
 				return chartObj;//   返回的是  处理完成以后的数组里面的对象    a端和z端所有的数据       下一步是对每一个属性进行  最大值  和最小值进行遍历
 			},
 
@@ -626,10 +600,9 @@
 				//遍历  获取所有的时间的日期  用来获取数据
 				var timeVal=arrayPro.unique(this.getTimeVal(Number(start_time),Number(end_time),str).send).sort(arrayPro.sortNum);
 				this.sendType=timeVal;
-//				console.log(timeVal)
+
 				this.timeInterval=str/(60*1000);
-				
-				//console.log(this.timeInterval);//获取时间间隔  用来处理数据    单位是分钟
+//获取时间间隔  用来处理数据    单位是分钟
 				
 				return strTime;
 			},
@@ -645,7 +618,7 @@
 					arr.push( isChartTime(item/1000) );
 				}
 				timeObj.send=arr.map(Number);
-//				console.log(timeObj)
+
 				return timeObj;//数组
 			},
 		}

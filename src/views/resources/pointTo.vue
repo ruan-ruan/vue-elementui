@@ -262,23 +262,23 @@
               align='center'
               v-if='parentStatus'
             >
-              <template slot-scope='scope' v-if='scope.row.creat'>
+              <template slot-scope='scope' v-if='scope.row.status == "creating"?false:true '>
                 <el-button
                   size='mini'
-									v-if='buttonVal.stop? !scope.row.btn:buttonVal.stop'
+									v-if='buttonVal.stop? scope.row.status !=="failure"?true:false  : buttonVal.stop'
                   @click='handleStatus(scope.$index,scope.row)'
                 >{{scope.row.specialName}}</el-button>
                 <el-button
                   size='mini'
                   type='primary'
                   @click='handleEdit(scope.$index,scope.row)'
-                  v-if='buttonVal.edit? !scope.row.btn:buttonVal.edit'
+                  v-if='buttonVal.edit ? scope.row.status !=="failure"?true:false :buttonVal.edit'
                 >{{$t('tabOperation.edit')}}</el-button>
                 <el-button
                   size='mini'
                   type='danger'
                   @click='handleDel(scope.$index,scope.row)'
-                  v-if='buttonVal.del? scope.row.btn : buttonVal.del'
+                  v-if='buttonVal.del ? scope.row.status=="failure"?true:false : buttonVal.del'
                 >{{$t('tabOperation.delete')}}</el-button>
               </template>
             </el-table-column>
@@ -557,7 +557,7 @@ export default {
     },
     //改变的时候
     handleSizeChange(val) {
-      console.log(`每页${val}条`);
+
       this.pagesize = val;
       this.getUsers();
     },
@@ -565,7 +565,6 @@ export default {
     handleCurrentChange(val) {
       let _this = this;
       _this.currentPage = val;
-      console.log(`当前页:${val}`);
       this.getUsers();
     },
     getUsers() {
@@ -593,7 +592,7 @@ export default {
         .then(res => {
           if (res.status == 200) {
             if (res.data.status == 0) {
-            	console.log(res);
+
             	this.getLoading=false;
               // this.users=res.data.data.items;
               this.total=res.data.data.page.total;
@@ -602,7 +601,6 @@ export default {
 							dealNull(res.data.data.items,'charge_time')
 							
               res.data.data.items.map(ele => {
-              	console.log(ele)
               	//设置   a端  z端数据  datedialogFormat
 								if((!ele.charge_time && typeof(ele.charge_time) !='undefined' && ele.charge_time !=0) || ele.charge_time==''|| typeof ele.charge_time =='undefined'){
 	            		ele.charge_time=''
@@ -628,22 +626,23 @@ export default {
 	                  ele.statusHTML = this.$t('Public.failure');
 	                  ele.statusColor = "creatFie";
 	                  //creat   控制操作部分   btn控制  删除按钮和其他按钮的互斥
-	                  ele.creat = true;
-	                  ele.btn=true;
+
 	                } else if (ele.status == "creating") {
 	                  ele.statusHTML = this.$t('Public.creating');
 	                  ele.statusColor = "creating";
-	                  ele.creat = false;
-	                  ele.btn=true;
+
 	                } else if (ele.status == "stopping") {
 	                	
 	                  ele.statusHTML = this.$t('Public.stopping');
 	
 	                  ele.specialName = this.$t('tabOperation.run');
 	                  ele.statusColor = "stopVal";
-	                  ele.creat = true;
-	                  ele.btn=false;
+
 	                }else if (ele.status == "servicing"){
+	                	
+	                	ele.specialName = this.$t('tabOperation.stop');
+	                	
+	                	
 										if(getPortStatus(objA.ports) =='UP' || getPortStatus(objA.ports) =='异常' ){
 	                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
 	                  		ele.statusHTML = this.$t('Public.servicing');
@@ -709,23 +708,20 @@ export default {
 	            		if (ele.status == "failure") {
 	                  ele.statusHTML = this.$t('Public.failure');
 	                  ele.statusColor = "creatFie";
-	                  //creat   控制操作部分   btn控制  删除按钮和其他按钮的互斥
-	                  ele.creat = true;
-	                  ele.btn=true;
+
 	                } else if (ele.status == "creating") {
 	                  ele.statusHTML = this.$t('Public.creating');
 	                  ele.statusColor = "creating";
-	                  ele.creat = false;
-	                  ele.btn=true;
+
 	                } else if (ele.status == "stopping") {
 	                	
 	                  ele.statusHTML = this.$t('Public.stopping');
 	
 	                  ele.specialName = this.$t('tabOperation.run');
 	                  ele.statusColor = "stopVal";
-	                  ele.creat = true;
-	                  ele.btn=false;
+
 	                }else if (ele.status == "servicing"){
+	                	ele.specialName = this.$t('tabOperation.stop');
 										if(getPortStatus(objA.ports) =='UP' || getPortStatus(objA.ports) =='异常' ){
 
 	                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
@@ -794,22 +790,20 @@ export default {
 	                  ele.statusHTML = this.$t('Public.failure');
 	                  ele.statusColor = "creatFie";
 	                  //creat   控制操作部分   btn控制  删除按钮和其他按钮的互斥
-	                  ele.creat = true;
-	                  ele.btn=true;
+
 	                } else if (ele.status == "creating") {
 	                  ele.statusHTML = this.$t('Public.creating');
 	                  ele.statusColor = "creating";
-	                  ele.creat = false;
-	                  ele.btn=true;
+
 	                } else if (ele.status == "stopping") {
 	                	
 	                  ele.statusHTML = this.$t('Public.stopping');
 	
 	                  ele.specialName = this.$t('tabOperation.run');
 	                  ele.statusColor = "stopVal";
-	                  ele.creat = true;
-	                  ele.btn=false;
+
 	                }else if (ele.status == "servicing"){
+	                	ele.specialName = this.$t('tabOperation.stop');
 										if(getPortStatus(objA.ports) =='UP' || getPortStatus(objA.ports) =='异常' ){
 
 	                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
@@ -883,9 +877,8 @@ export default {
       this.sels = sels;
     },
     handleSeePoint(index, row) {
-      console.log(row);
+
       //专线的详情的
-      //		    	console.log('进入专线详情');
       if(this.buttonVal.see){
       	this.$router.push({
 	        path: "/resource/virtualLine/pointdetails",
@@ -927,7 +920,6 @@ export default {
       
     },
     handleSeeZ(index, row) {
-//  	console.log(row)
       //查看Z端的详情
       var logic=new Object();
     	if(row.type ==='d2d' || row.type === 'd2c'){
@@ -955,7 +947,6 @@ export default {
       
     },
     handleEdit(index, row) {
-    	console.log(row)
       //编辑
       this.dialogStatus = "update";
       this.dialogFormVisible = true;
@@ -986,35 +977,34 @@ export default {
       //编辑保存按钮
       this.$refs.editForm.validate(valid => {
         if (valid) {
-							let para={
-								name:this.editForm.name,
-								charge_mode:this.editForm.charge_mode,
-								bandwidth:this.editForm.bandwidth,
-								charge_time:this.editForm.charge_time=='Invalid Date'?null: Number(this.editForm.charge_time)/1000,
-								expiration_time:this.editForm.expiration_time=='Invalid Date'?null: Number(this.editForm.expiration_time)/1000,
-								description:this.editForm.description
-							}
-							console.log(para);
-//							debug
-              this.$ajax.put(
-                  "/vll/edit_p2p_vll/" + this.editForm.id + "?token=" +  this.token,  para  )
-                .then(res => {
-                  if (res.status == 200) {
-                    if (res.data.status == 0) {
-                      this.$message({
-                        message: this.$t('tooltipMes.editSuccess'),
-                        type: "success"
-                      });
-                      
-                    }
-                    this.$refs["editForm"].resetFields();
-                  	this.dialogFormVisible = false;
-                  	this.getUsers();
-                  }
-                })
-                .catch(e => {
-                  console.log(e);
-                });
+			let para={
+				name:this.editForm.name,
+				charge_mode:this.editForm.charge_mode,
+				bandwidth:this.editForm.bandwidth,
+				charge_time:this.editForm.charge_time=='Invalid Date'?null: Number(this.editForm.charge_time)/1000,
+				expiration_time:this.editForm.expiration_time=='Invalid Date'?null: Number(this.editForm.expiration_time)/1000,
+				description:this.editForm.description
+			}
+
+          	this.$ajax.put(
+              	"/vll/edit_p2p_vll/" + this.editForm.id + "?token=" +  this.token,  para  )
+            .then(res => {
+              if (res.status == 200) {
+                if (res.data.status == 0) {
+                  this.$message({
+                    message: this.$t('tooltipMes.editSuccess'),
+                    type: "success"
+                  });
+                  
+                }
+                this.$refs["editForm"].resetFields();
+              	this.dialogFormVisible = false;
+              	this.getUsers();
+              }
+            })
+            .catch(e => {
+              console.log(e);
+            });
         } 
       });
     },
@@ -1028,7 +1018,7 @@ export default {
               if (res.status == 200) {
                 if (res.data.status == 0) {
                   this.$message({
-                    message:this.$t('tooltipMes.delSucess'),
+                    message:this.$t('tooltipMes.delSuccess'),
                     type: "success"
                   });
 
@@ -1049,7 +1039,6 @@ export default {
       for (let item of this.sels) {
         ids += item.id + ",";
       }
-      console.log(ids);
       this.$confirm(this.$t('confirm.titles'),this.$t('confirm.tooltip'), {type:'warning'})
         .then(() => {
           const id = ids.substring(0, ids.lastIndexOf(","));
@@ -1075,7 +1064,6 @@ export default {
         .catch(() => {});
     },
     handleStatus(index, row) {
-    	console.log(row);
     	if(row.specialName=== this.$t('tabOperation.stop') ){
     		this.$ajax.put('/vll/to_stop_vll/'+row.id+'?token='+this.token)
     		.then(res => {

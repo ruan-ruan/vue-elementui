@@ -33,10 +33,10 @@
 			</el-form>
 			
 			
-			<el-dialog  :title='textMap[dialogStatus]':visible.sync="dialogFormVisible" :close-on-click-modal="false" class='myMulti' >
+			<el-dialog  :title='textMap[dialogStatus]':visible.sync="dialogFormVisible" :close-on-click-modal="false"   >
 				<el-form  label-width='200px'>
 					<el-form-item v-for='(item,index) in  cloudData' :key='index' :label='item.show_name+"："' :prop='item.name'>
-						<el-input v-model='item.keyVal' class='ipt_sels'></el-input>
+						<el-input v-model='item.keyVal' class='ipt_sels' :disabled='item.show_name === "vlan"'></el-input>
 						<template v-for='( i,j ) in getLogo'>
 							<span v-if=' i.name == item.show_name ' :title="i.value" style="cursor: pointer; color: orangered;">{{i.label}}</span>
 							<span v-if='i.name == "专用通道id" && item.show_name == "专用通道id" ' style="cursor: pointer; color: orangered;" @click="tenRules"> 
@@ -171,7 +171,6 @@
 		watch:{
 			clounData:{
 				handler:function(newVal,oldVal){
-					console.log(newVal);
 					var zvlan='';
 					if(newVal.vlan < 0){
 						zvlan=this.$t('Public.passthrough');
@@ -191,16 +190,15 @@
 						cloudID:newVal.cloud_config.id,//云链路的id
 						cloud_type:newVal.cloud_type,
 					}
-					this.selCloud(newVal.cloudID)
+					
+					this.selCloud(newVal);
+					this.getCloudList( newVal );
 				},
 				deep:true,
 			}
 		},
 		created(){
-			this.token=sessionStorage.getItem('token')
-
-			this.getCloudList( this.clounData );
-
+			this.token=sessionStorage.getItem('token');
 		},
 		mounted(){
 			var zvlan='';
@@ -222,13 +220,15 @@
 				cloudID:this.clounData.cloud_config.id,//云链路的id
 				cloud_type:this.clounData.cloud_type,
 			}
-			this.selCloud(this.clounForm.cloudID)
+			this.selCloud(this.clounData );
+			this.getCloudList( this.clounData );
 		},
 		methods:{
 			getCloudList(obj){
 				//this.cloudData
 				this.$ajax.get('/vll/get_driver_frame/'+obj.cloud_config.interface_driver+'?token='+this.token)
 				.then(res => {
+
 					if(res.status == 200){
 						if(res.data.status ==0){
 							res.data.data.forEach(ele => {
@@ -250,7 +250,6 @@
 				this.dialogFormVisible=true;
 			},
 			repairSubmit(){
-
 				var para={}
 				this.cloudData.map(item => {
 					para[item.name] =item.keyVal;
@@ -267,6 +266,7 @@
 							})
 							this.cloudData=[];
 						}
+						this.$emit('sendRepair',false)
 					}
 				}).catch(e => {console.log(e)})
 			},
@@ -301,6 +301,7 @@
 									message:this.$t('tooltipMes.detSuccess'),
 									type:'success'
 								})
+								this.$emit('sendRepair',false)
 							}
 						}
 					}).catch(e => {console.log(e)})
@@ -328,18 +329,17 @@
 									message:this.$t('tooltipMes.removeSuccess'),
 									type:'success'
 								})
+								this.$emit('sendRepair',false)
 							}
 						}
 					}).catch(e => {console.log(e)})
 				}).catch(() => {})
 			},
-			selCloud(type){//选择云对接
-
+			selCloud(obj){//选择云对接
 				this.copy={}
-				if(this.clounForm.cloud_type == '腾讯云'){
-					this.$ajax.get('/vll/tc_params_to_tenant/'+type+'?token='+this.token)
+				if(obj.cloud_type == '腾讯云'){
+					this.$ajax.get('/vll/tc_params_to_tenant/'+obj.cloud_config.id+'?token='+this.token)
 					.then(res => {
-
 						if(res.status == 200){
 							if(res.data.status ==0){
 								var str=res.data.data;
@@ -349,9 +349,7 @@
 									shardID:str.api_uuid,
 									area:str.region_name,
 								}
-//								this.editForm.Dedicated=this.copy.Dedicated;
-//								this.editForm.shardID=this.copy.shardID;
-//								this.editForm.area=this.copy.area;
+
 							}
 						}
 					}).catch(e => {console.log(e)})
@@ -362,14 +360,12 @@
 	}
 </script>
 
-<style >
+<style scoped>
 	
-	.el-dialog__wrapper{
+	/*.el-dialog__wrapper[]{
 		z-index:2007 !important ;
-	}
-	.el-message-box__wrapper{
-		z-index: 2020 !important;
-	}
+	}*/
+
 	.cloud_cls{
 		border:  1px solid #C0C4CC ;
 		border-radius:5px ;

@@ -210,7 +210,7 @@
 			this.token=sessionStorage.getItem('token');
 			this.getCitys();
 			this.getArea();
-			console.log( this.buttonData )
+
 		  },
 		  methods: {
 		  	reset(){
@@ -269,7 +269,7 @@
 			          	if(res.status==200){
 			          		if(res.data.status==0){
 					            this.$message({
-					              message: this.$t('tooltipMes.delSucess'),
+					              message: this.$t('tooltipMes.delSuccess'),
 					              type: "success"
 					            });
 					            this.getCitys();
@@ -400,7 +400,7 @@
 		          	if(res.status=='200'){
 		          		if(res.data.status=='0'){
 				            this.$message({
-				                message:this.$t('tooltipMes.delSucess'),
+				                message:this.$t('tooltipMes.delSuccess'),
 				                type: "success"
 				            });
 		          		}

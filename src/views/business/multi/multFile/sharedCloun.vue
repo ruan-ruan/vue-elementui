@@ -258,7 +258,6 @@
 			},
 			sendForm:{
 				handler(newVal,oldval){
-					console.log(newVal);
 					this.$emit('sendClounbasic',newVal)//发送基本的云选择的列表
 					this.$emit('sendClounbasic_a',newVal)
 					this.$emit('sendClounbasic_z',newVal)
@@ -284,7 +283,7 @@
 
 		methods:{
 			selectDriver(ids){//根据选择的interface_driver  从数组里面获取该对象数据
-//				console.log(ids)
+
 				let str=''
 				var findDriver=this.clounDockData.find(function(obj){
 					return obj.id===ids
@@ -294,10 +293,6 @@
 				return str;
 			},
 			selectCloun(clounName){
-//				console.log(clounName)
-//				var para={
-//					name:clounName
-//				}
 				this.$ajax.get('/vll/get_driver_frame/'+clounName+'?token='+this.token)
 				.then(res => {
 					if(res.status==200){
@@ -316,10 +311,11 @@
 			},
 			selCloud(type){//选择云对接
 				this.copy={}
+
 				if(this.editForm.cloun == '腾讯云'){
 					this.$ajax.get('/vll/tc_params_to_tenant/'+type+'?token='+this.token)
 					.then(res => {
-						console.log(res);
+
 						if(res.status == 200){
 							if(res.data.status ==0){
 								var str=res.data.data;
@@ -421,47 +417,3 @@
 	}
 </script>
 
-<style>
-	/*.tc_img{
-		width: 570px;
-	}
-	.span_toTip{
-		display: inline-block;
-		color:#FD042B;
-		margin: 0 5px;
-	}
-	.cur_span{
-		font-size: 12px;
-		display: inline-block;
-		background-color: #67C23A;
-		cursor: pointer;
-		border-radius: 6px;
-		width: 40px;
-		height: 24px;
-		line-height: 24px;
-		text-align: center;
-	}
-	.span_left_tit{
-		display: inline-block;
-		width: 20px;
-		height: 20px;
-		line-height: 20px;
-		text-align: center;
-		border: 1px solid ;
-		border-radius:10px ;
-		color: #000000;
-		font-weight: 300;
-	}
-	.span_tit_one{
-		background-color: #009DD9;
-	}
-	.span_tit_two{
-		background-color: #FFFF00;
-	}
-	.span_tit_three{
-		background-color: #66FF00;
-	}
-	.span_tit_four{
-		background-color: #FF00FF;
-	}*/
-</style>

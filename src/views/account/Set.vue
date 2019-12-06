@@ -101,7 +101,7 @@
 			
 			
 			<!--编辑，添加，详情的部分-->
-			<el-dialog :title='textMap[dialogStatus]' :visible.sync='dialogFormVisible' :close-on-click-modal="false" v-loading='loading'>
+			<el-dialog :title='textMap[dialogStatus]' :visible.sync='dialogFormVisible' :close-on-click-modal="false" v-loading='loading' >
 				<el-form :model='editForm' label-width='200px' :rules='editFormRules' ref='editForm'>
 					<el-form-item :label='$t("Public.creation")'  v-show='staCreat'>
 						<el-input v-model='editForm.creation_time' class='ipt' disabled ></el-input>
@@ -315,18 +315,15 @@
 		},
 		created(){
 			this.token=sessionStorage.getItem('token');
-//			  	console.log(this.$store.state.aside)
 			
 		},
 		methods:{
 			
 			handleSizeChange(val){
-//				console.log(`每页${val}条`);
 				this.pagesize=val;
 				this.getUsers()
 			},
 			handleCurrentChange(val){
-//				console.log(`当前页数是:${val}`)
 				this.currentPage=val;
 				this.getUsers()
 			},
@@ -342,13 +339,11 @@
 				
 				this.$ajax.get('/admin/admins'+'?token='+this.token,para)
 				.then(res => {
-//					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
 							this.loading=false;
 							descriptionValue(res.data.data.items)
 							res.data.data.items.forEach(ele => {
-//								console.log(ele.usable)
 								if(!ele.usable){
 									ele.color='colorRed'
 									ele.roleStatus=this.$t('Public.Prohibit');
@@ -362,7 +357,6 @@
 							})
 							this.users=res.data.data.items;
 							this.total=res.data.data.page.total	;
-//							console.log(res);
 						}
 					}
 				}).catch(e => {console.log(e)})
@@ -551,7 +545,6 @@
 
 			handleSee(index,row){
 				//查看详情
-//				console.log(row);
 				this.dialogStatus='see';
 				this.psd=false;
 				//创建时间隐藏
@@ -566,7 +559,6 @@
 					
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res.data.data)
 							var str=res.data.data;
 							this.editForm={
 								creation_time:datedialogFormat(str.creation_time),
@@ -601,7 +593,6 @@
 				.then( () => {
 					this.$ajax.del('/admin/del_admin/'+row.id+'?token='+this.token)
 					.then(res => {
-//						console.log(res);
 						if(res.status=='200'){
 							if(res.data.status=='0'){
 								this.$message({
@@ -651,13 +642,11 @@
 				//选择当初当前页还是所有页
 				var _this=this;
 				if(_this.users.length==0){
-//					console.log('数据为空不能执行')
 					this.$message({
 						message:this.$t('confirm.dataEmt'),
 						type:'warning'
 					})
 				}else{
-//					console.log('数据不是空可以执行')
 					if(command=='all'){
 						this.$confirm(this.$t('confirm.conExportAll'),this.$t('confirm.tooltip'),{
 							type:'warning'
@@ -684,8 +673,6 @@
 			exportData:function(params){
 				this.$ajax.get('/admin/admins'+'?token='+this.token,params)
 				.then(res => {
-					console.log(res);
-					//creation_time
 					res.data.data.items.map(item => {
 						item.creation_time=datedialogFormat(item.creation_time)
 					})
@@ -738,4 +725,5 @@
 		right: 30px;
 		cursor: pointer;
 	}
+	
 </style>

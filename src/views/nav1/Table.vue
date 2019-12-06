@@ -36,9 +36,7 @@ export default {
 		}
 		
 	},
-	created(){
-		console.log( this.$store.state.aside )
-	},
+
 	methods:{
 		handleClick(tab) {
 			this.activeName=tab.name;

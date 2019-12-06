@@ -246,11 +246,7 @@
 				
 			}
 		},
-		watch:{
-			'seeForm.port_section0':function(newVal,oldVal){
-//				console.log(newVal)
-			}
-		},
+
 		created(){
 			this.token=sessionStorage.getItem('token');
 
@@ -269,7 +265,7 @@
 				this.getDataCenter()
 			}
 			if(typeof this.title !='undefined'){
-//				console.log('进入详情的界面')
+//				('进入详情的界面')
 				this.getUsers(this.title)
 				this.backstatus=true;
 				//此处是节点的详情的界面
@@ -341,7 +337,7 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.itemData=res.data.data.items;
-							console.log(this.itemData)
+					
 						}
 					}
 				})
@@ -373,7 +369,7 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
+							
 							this.loading=false
 							var strData=res.data.data;
 							this.baseData=res.data.data
@@ -411,7 +407,7 @@
 								}
 								
 							}else if(strData.devices.length==2){
-								console.log('进入设别2')
+								
 								this.equStatusTwo=true;
 								str=Object.assign([],strData.devices);
 								var d1=str.find((item) => {
@@ -453,7 +449,7 @@
 							}
 							
 							this.seeForm=Object.assign({},setObj);
-							console.log(this.seeForm)
+							
 						}
 					}
 				})
@@ -462,9 +458,7 @@
 				})
 			},
 			editForm(){
-				console.log('节点的编辑')
-//				console.log(this.seeForm)
-//				console.log(this.baseData)
+
 				var  para={};
 				
 				if(this.baseData.devices.length ==1){
@@ -507,10 +501,7 @@
 						]
 					}
 				}
-				
-				
-				
-				console.log(para)
+
 				//节点界面的 编辑部分的提交的数据
 				this.$refs.seeForm.validate(valid => {					
 					if(valid){
@@ -518,7 +509,7 @@
 						.then(() => {
 							this.$ajax.put('/node/edit_node/'+this.seeForm.id+'?token='+this.token,para)
 							.then(res => {
-								console.log(res);
+							
 								if(res.status==200){
 									if(res.data.status==0){
 										this.$message({
@@ -538,7 +529,7 @@
 				
 			},
 			creatForm(){
-				console.log('未知节点的添加')
+				
 				//未知节点的添加的时候进来的界面
 				var para;
 				if(!this.equStatusTwo){
@@ -598,7 +589,7 @@
 						],
 					}
 				}
-				console.log(para)
+			
 				this.$refs.seeForm.validate(valid => {
 					if(valid){
 						this.$confirm('确认要提交吗?','提示',{})
@@ -626,12 +617,10 @@
 			unknownEditForm(){
 				//未知节点的额编辑
 				//this.addEquipStatus=true;
-//				console.log(this.addEquipStatus);
-//				console.log(this.equStatusTwo)
+
 				//当this.equStatusTwo   为true的时候    显示两个设备    this.equStatusTwo为false的时候显示一个设备
 				var para;
-//				console.log(this.seeForm);
-//				console.log(this.unknown_editFormData);
+
 //				debug;
 				var str=this.unknown_editFormData.devices;
 				let obj={
@@ -644,7 +633,7 @@
 						id:''
 					}
 				}else if( typeof(this.unknown_editFormData.dc) === "undefined" ){
-					console.log(this.unknown_editFormData.dc)
+					
 					obj={
 						name:'',
 						id:''
@@ -715,7 +704,7 @@
 						]
 					}
 				}
-				console.log(para);
+				
 
 				this.$refs.seeForm.validate(valid => {
 					if(valid){
@@ -754,7 +743,7 @@
 					this.loading=false;
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res);
+							
 							
 							this.unknown_editFormData=Object.assign({},res.data.data)
 							var unknownSee;
@@ -835,16 +824,13 @@
 				})
 			},
 			goback(){
-				console.log('kkk')
+				
 				this.$store.state.statusname=false;
 				this.$router.push('/location/backbone')
 				
 			},
 			unknowgoback(){
-//				this.$store.state.statusname=true;
-//				this.$router.push('/location/backbone')
-				console.log('lll')
-////				this.$router.go(-1)
+
 				if(this.backstatus==true) {
 					this.$store.state.statusname=false;
 					this.$router.push('/location/backbone')

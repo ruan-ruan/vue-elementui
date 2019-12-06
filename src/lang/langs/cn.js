@@ -364,7 +364,20 @@ const cn = {
     	enter:'入',
     	out:'出',
     	totalOut:'总出',
-    	totalIn:'总入'
+    	totalIn:'总入',
+    	physics1:'物理端口1',
+    	physics2:'物理端口2',
+    	logic1:'逻辑端口1',
+    	logic2:'逻辑端口2',
+    	portName:'端口名称',
+    	poerStatus:'端口状态',
+    	speed:'速率',
+    	macAddress:'Mac地址',
+    	yesNoPort:'是否为业务端口',
+    	yes:'是',
+    	no:'否',
+    	information:'描述信息',
+    	
     },
     
     business:{
@@ -602,7 +615,7 @@ const cn = {
     	city:'城市',
     	editSuccess:'修改成功!',
     	addSuccess:'添加成功!',
-    	delSucess:'删除成功!',
+    	delSuccess:'删除成功!',
     	dataNull:'数据为空，不能执行导出操作!',
     	exportDataAll:'确定要导出所有的数据吗?',
     	exportDataCurr:'确定要导出当前页的数据吗?',

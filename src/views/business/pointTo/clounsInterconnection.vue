@@ -183,7 +183,6 @@
 					expiration_time:this.editForm.expiration_time,
 					cloud_endpoints:cloud_endpoint	
 				}
-				console.log(para)
 				let str=[this.$refs.editForm_a.$refs.editForm,this.$refs.editForm_z.$refs.editForm,this.$refs.newForm.$refs.editForm]
 				
 				str.forEach(ele => {
@@ -221,7 +220,6 @@
 			},
 			getVal(data){
 				//获取基本的信息配置    topForm组件内的信息
-				console.log(data);
 				this.creatFormDetails.tenant_name=data.tenant_name;
 				this.creatFormDetails.bandwidth=data.bandwidth;
 				
@@ -235,7 +233,6 @@
 			},
 
 			getTimeVal(val){
-				console.log(val)
 				//获取子组件传过来的时间
 				this.editForm.charge_time=val.billing_time/1000;
 				this.editForm.expiration_time=val.overdue_time/1000;

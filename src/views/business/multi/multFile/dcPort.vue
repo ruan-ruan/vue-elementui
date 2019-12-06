@@ -64,7 +64,7 @@
 						<span>{{logicDetails.portStatus}}</span>
 					</template>
 					<template>
-						<el-input v-model='portVlan.vlanName'  :placeholder='$t("business.plaVlan")'class='details'></el-input>
+						<el-input v-model='portVlan.vlanName'  :placeholder='$t("business.plaVlan")'class='ipt_sels2'></el-input>
 						<el-button size='small' type='primary' @click='getVlan'>{{$t('topFilters.search')}}</el-button>
 					</template>
 					<template>
@@ -156,7 +156,7 @@
 				},
 				portType:[{label:'透传',value:'-1'},{label:'trunk',value:'0'}],//逻辑口的类型
 				textMap:{
-					title:this.$t('tabOperation.add')
+					title:this.$t('tabOperation.add')+"vlan"
 				},
 				dialogStatus:'',
 				dialogFormVisible:false,
@@ -203,12 +203,6 @@
 				this.tableCopyTableList = JSON.parse(JSON.stringify(this.disVlan));
 				this.disVlan = this.paging(this.size, this.index);
 
-			},
-			baseObj:{
-				handler(newVal,oldVal){
-					console.log(newVal)
-				},
-				deep:true
 			},
 			editForm:{
 				handler(newVal,oldVal){	
@@ -377,17 +371,24 @@
 			    .then(res => {
 			    	if(res.status==200){
 			    		if(res.data.status==0){
-
 			    			var str=res.data.data.items;
 			    			if(str.length !=0){
 				    			str.forEach(ele => {
-				    				ele.endpoints.forEach( item => {
-				    					item.logic_port.statusVal=item.vlan;
-				      					this.pointData.push(item.logic_port);
-				    				})
+				    				if(ele.endpoints){
+				    					ele.endpoints.forEach( item => {
+					    					item.logic_port.statusVal=item.vlan;
+					      					this.pointData.push(item.logic_port);
+					    				})
+				    				}
+				    				//云的vlan部分
+//				    				else if(ele.cloud_endpoints){
+//				    					ele.cloud_endpoints.map(item => {
+//				    						item.cloud_config.logic_port.statusVal=item.vlan;
+//				    						this.pointData.push(item.cloud_config.logic_port);
+//				    					})
+//				    				}
 				    			})	
 			    			}
-			    			
 			    		}
 			    	}
 			    }).catch(e => {console.log(e)})
@@ -397,7 +398,6 @@
 			    //获取云对接链路里面的数据  cloudLogic
 			    this.$ajax.get('/link/cloud_links'+'?token='+this.token)
 			    .then(res => {
-//			    	console.log(res);
 			    	res.data.data.items.forEach(ele =>{
 			    		obj={
 			    			name:ele.logic_port.name,
@@ -445,13 +445,12 @@
 								}
 								this.logicPort.push(portObj)
 							})
-//							console.log(this.logicPort)
+
 							this.logicPort= this.logicPort.filter(item => {//将云对接的所有的列表内的逻辑口用过的删除
 							     let idList= this.cloudLogic.map(v => v.id)
 							     return !idList.includes(item.id)
 							})
-							
-//							console.log(this.pointData)
+
 							for(var item1 of this.logicPort){
 								for(var item2 of this.pointData){
 									if(item1.id == item2.id){
@@ -489,7 +488,6 @@
 				if(typeof obj1 !='undefined'){
 					this.baseObj=obj1;
 				}
-
 				//获取逻辑口下的vlan的信息
 				this.$ajax.get('/vll/get_disable_vlan/'+ids+'?token='+this.token)
 				.then(res => {
@@ -501,8 +499,7 @@
 							this.disVlan = this.paging(this.size, this.index);
 						}
 					}
-				})
-				.catch(e =>{
+				}).catch(e =>{
 					console.log(e)
 				})
 				
@@ -511,7 +508,6 @@
 				this.dialogStatus='title'
 				this.dialogFormVisible=true;	
 
-//				this.goPaseSize(1,100)
 			},
 			getData(start,end){
 				//获取选择的vlan的区间的时候转换为数据
@@ -558,12 +554,7 @@
 							this.portVlan.selVlanVal=str[index];
 						}
 					}
-//					console.log(this.vlanData)
-//					this.vlanData.filter( item => {
-//						return item == this.portVlan.vlanName;
-//					})
-//					
-//					console.log(this.portVlan.selVlanVal)	
+
 				}else if(parseInt(this.portVlan.vlanName)<1||parseInt(this.portVlan.vlanName)>4094){
 					this.$message({
 						message:this.$t('business.numIsNot'),
@@ -627,10 +618,7 @@
 	.activeCla{
 		background: #45BAFD !important;
 	}
-	/*控制vlan的选择的日志对话框*/
-	.v-modal{
-		z-index: 2000 !important;
-	}
+	
 	#barcon{
 		text-align: center;
 	}

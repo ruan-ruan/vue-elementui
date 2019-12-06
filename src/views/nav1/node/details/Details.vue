@@ -47,7 +47,7 @@
 			}
 		},
 		created(){
-			console.log(this.id)
+			
 			this.token =sessionStorage.getItem('token');
 
 		},

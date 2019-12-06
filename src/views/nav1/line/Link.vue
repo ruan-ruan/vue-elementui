@@ -20,7 +20,7 @@
 					<el-form-item :label='$t("Public.creation")'  prop='timeVal'>	
 						<el-date-picker
 					      v-model="filters.timeVal"
-					      type="daterange"
+					      type="datetimerange"
 					      :range-separator="$t('Public.to')"
 						  @change="timeValSearchBtn"
 					      :start-placeholder="$t('Public.start')"
@@ -380,17 +380,17 @@
 		created(){
 			//获取用户的权限
 			this.token =sessionStorage.getItem('token');
-			console.log( this.$store.state.aside )
+
 			
 		},
 		methods:{
 			handleSizeChange(val){
-//				console.log(`每页${val}条`);
+
 				this.pagesize=val;
 				this.getUsers()
 			},
 			handleCurrentChange(val){
-//				console.log(`当前页数是:${val}`)
+
 				this.currentPage=val;
 				this.getUsers()
 			},
@@ -420,12 +420,10 @@
 					search_start_time:getTime(this.filters.start_time),
 					search_end_time:getTime(this.filters.end_time),
 				}
-				console.log(para)
 				this.$ajax.get('/link/links'+'?token='+this.token,para)
 				.then( res => {
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
 						this.loading=false;
 						descriptionValue(res.data.data.items)
 						_this.users=res.data.data.items;
@@ -504,12 +502,12 @@
 				
 				this.$ajax.del('/link/del_links'+'?token='+this.token,para)
 		        .then(res => {
-//		          	console.log(res);
+
 		          	if( res.status==200){
 						if(res.data.status==0){
 							this.listLoading = false;
 							this.$message({
-								message:this.$t('tooltipMes.delSucess'),
+								message:this.$t('tooltipMes.delSuccess'),
 								type:'success'
 							})
 
@@ -528,7 +526,7 @@
 			//开启维护
 			handleStatus(index,row){
 				var _this=this;
-				console.log(row)
+
 				if(row.maintenanceBtn ===  this.$t('Public.openMain') ){
 					this.$confirm(this.$t('confirm.linkOpen'),this.$t('confirm.tooltip'),{
 						type:'success'
@@ -537,7 +535,7 @@
 						
 						this.$ajax.put('/link/open_maintenance_link/'+row.id+'?token='+this.token)
 						.then(res => {
-							console.log(res);
+
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
@@ -556,7 +554,7 @@
 					.then( () => {
 						this.$ajax.put('/link/close_maintenance_link/'+row.id+'?token='+this.token)
 						.then(res => {
-							console.log(res)
+
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
@@ -574,7 +572,7 @@
 			},
 			//节点a的点击详情
 			handleNode_a(index,row){
-				console.log(row)
+
 				this.$router.push({path:'/location/index/unknown/nodedetails',
 				query:{
 					detailsID:row.a_node.id
@@ -599,7 +597,7 @@
 
 				this.$ajax.get('/link/link_info/'+row.id+'?token='+this.token)
 				.then(res => {	
-					console.log(res);
+
 					if(res.status==200){
 						if(res.data.status==0){
 							this.editLoading=false;
@@ -618,7 +616,7 @@
 			},
 			//编辑
 			handleEdit(index,row){
-				console.log(row)
+			
 				this.dialogStatus='update';
 				this.dialogFormVisible=true;
 				this.editFormStatue=false;
@@ -656,7 +654,7 @@
 							};
 							this.$ajax.put('/link/edit_link/'+this.editForm.id+'?token='+this.token,para)
 							.then( res => {
-								console.log(res)
+								
 								if(res.status==200){
 									
 									this.editLoading=false;
@@ -690,7 +688,7 @@
 						if(res.status==200){
 							if(res.data.status==0){
 								this.$message({
-									message:this.$t('tooltipMes.delSucess'),
+									message:this.$t('tooltipMes.delSuccess'),
 									type:'success'
 								})
 								this.getUsers()

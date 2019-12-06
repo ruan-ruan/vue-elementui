@@ -137,7 +137,6 @@ import {dateTableFormat} from '@/assets/js/index.js';
 				}
 			},
 			handleSizeChange(val){
-				console.log(`每页${val}条`);
 				this.pagesize=val;
 				this.getUsers();
 			},
@@ -145,7 +144,6 @@ import {dateTableFormat} from '@/assets/js/index.js';
 		    handleCurrentChange(val) {
 		    	let _this=this;
 		    	_this.currentPage=val
-		    	console.log(`当前页:${val}`)  
 		      this.getUsers();
 		    }, 
 			getUsers(){

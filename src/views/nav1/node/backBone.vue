@@ -326,7 +326,7 @@ export default {
       this.sels = sels;
     },
     timeValSearchBtn(value) {
-//  	console.log(value)
+
     	if( (!value   && typeof (value) !='undefined' && value !=0) || typeof value =='undefined' ){
     		return 
     		this.filters.start_time='';
@@ -341,7 +341,7 @@ export default {
     getUsers() {
       var _this = this;
       this.loading = true;
-//    console.log(this.filters.timeVal )
+
       var str=this.filters.timeVal;
       if(   ! str &&  typeof(str) !='undefined' && str!=0 ){
       	this.filters.start_time='';
@@ -365,12 +365,11 @@ export default {
           _this.loading = false;
           if (res.status == 200) {
             if (res.data.status == 0) {
-//          	console.log(res)
             	descriptionValue(res.data.data.items)
               let params = res.data.data.items;
 
               params.forEach((ele, index) => {
-//            	console.log(ele)
+
                 //将数据的状态保
                 //根据状态对删除的按钮的显示是否渲染到模板做处理
                 if (ele.status == "运行中") {
@@ -379,61 +378,56 @@ export default {
                   _this.diStatus = true;
                 }
                 
-                
-                
-                
-                
                 if(ele.devices.length ==1){
-			    					var str1=ele.devices.find(item => {
-				    					return item['sign'] == 'd1' 
-				    				})
-			    					console.log(str1)
-				    				ele.devices_name1=str1.hostname
-				    				ele.devices_ip1=str1.ip;
-				    				ele.devices_sn1=str1.sn;
-				    				
-				    				ele.devices_name2='';
-				    				ele.devices_ip2='';
-				    				ele.devices_sn2='';
-				    				
-				    				if(str1.exist_status == "normal"){
-				    					ele.nodeStatus = this.$t('Public.SingleRun');
-				    				}else{
-				    						ele.nodeStatus= this.$t('Public.leave');
-				    				}
-				    				
-				    				
-				    				
-			    				}else if(ele.devices.length ==2){
-			    					var str1=ele.devices.find(item => {
-				    					return item.sign == 'd1' 
-				    				})
-			    					
-			    					var str2=ele.devices.find(item => {
-				    					return item.sign =='d2' 
-				    				})
-	    							
-	    							if(str1.exist_status == "normal" && str2.exist_status == "normal"){
-				    					ele.nodeStatus= this.$t('Public.run');
-				    				}else if( (str1.exist_status == "normal" && str2.exist_status == "found") || (str2.exist_status == "normal" && str1.exist_status == "found") ){
-				    					ele.nodeStatus= this.$t('Public.SingleRun');
-				    				}else{
-				    						ele.nodeStatus= this.$t('Public.leave');
-				    				}
-	    							
-	    							
-	    							
-				    				ele.devices_name1=str1.hostname
-				    				ele.devices_ip1=str1.ip;
-				    				ele.devices_sn1=str1.sn;
-				    				
-				    				ele.devices_name2=str2.hostname
-				    				ele.devices_ip2=str2.ip;
-				    				ele.devices_sn2=str2.sn;
-			    				}
+					var str1=ele.devices.find(item => {
+    					return item['sign'] == 'd1' 
+    				})
+    				ele.devices_name1=str1.hostname
+    				ele.devices_ip1=str1.ip;
+    				ele.devices_sn1=str1.sn;
+    				
+    				ele.devices_name2='';
+    				ele.devices_ip2='';
+    				ele.devices_sn2='';
+    				
+    				if(str1.exist_status == "normal"){
+    					ele.nodeStatus = this.$t('Public.SingleRun');
+    				}else{
+    						ele.nodeStatus= this.$t('Public.leave');
+    				}
+    				
+    				
+    				
+				}else if(ele.devices.length ==2){
+					var str1=ele.devices.find(item => {
+    					return item.sign == 'd1' 
+    				})
+					
+					var str2=ele.devices.find(item => {
+    					return item.sign =='d2' 
+    				})
+					
+					if(str1.exist_status == "normal" && str2.exist_status == "normal"){
+    					ele.nodeStatus= this.$t('Public.run');
+    				}else if( (str1.exist_status == "normal" && str2.exist_status == "found") || (str2.exist_status == "normal" && str1.exist_status == "found") ){
+    					ele.nodeStatus= this.$t('Public.SingleRun');
+    				}else{
+    						ele.nodeStatus= this.$t('Public.leave');
+    				}
+					
+					
+					
+    				ele.devices_name1=str1.hostname
+    				ele.devices_ip1=str1.ip;
+    				ele.devices_sn1=str1.sn;
+    				
+    				ele.devices_name2=str2.hostname
+    				ele.devices_ip2=str2.ip;
+    				ele.devices_sn2=str2.sn;
+				}
                 
                 
-              });
+              	});
 
                _this.users = res.data.data.items;
               _this.total = res.data.data.page.total;

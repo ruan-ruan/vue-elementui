@@ -34,8 +34,8 @@
    	 	
    	 	<el-row>
    	 		<el-col :span='24'>
-   	 			<el-col :span='4'>
-   	 				<el-button size='small' type='primary' @click='addUsers' v-if='buttonVal.add? !tit : buttonVal.add'>+{{$t('Public.creatLogic')}}</el-button>
+   	 			<el-col :span='4'>																																<!--v-show='buttonVal.add' 此处使用class属性    是为保持占位-->		
+   	 				<el-button size='small' type='primary' @click='addUsers'   :class='buttonVal.add ? !tit ? "":"visHidden":"visHidden" '>+{{$t('Public.creatLogic')}}</el-button>
    	 			</el-col>
    	 			<el-col :span='20' class='table-top'>
    	 				<el-dropdown size='small' split-button type='success'@command="handleExport">
@@ -159,28 +159,23 @@
 		},
 		watch:{
 			'titleOne':function(newVal,oldVal){
-				console.log(newVal)
+
 				this.tit=newVal;
 				this.getUsers()
 			},
 			'titleTwo':function(newVal,oldVal){
-				console.log(newVal);
+
 				this.tit=newVal;
 				this.getUsers()
 			},
-			'tenantID':function(newVal,oldVal){
-				console.log(newVal)
-			}
 		},
 		created(){
 			//获取token
 			this.token=sessionStorage.getItem('token');
-//			console.log(this.titleOne)
-//			console.log(this.titleTwo)
-			
+
 			this.getUsers();
 			this.getTenantData();
-			console.log(this.tenantID)
+
 			
 		},
 		methods:{
@@ -196,12 +191,11 @@
 				})
 			},
 			handleSizeChange(val){
-//				console.log(`每页${val}条`);
+
 				this.pagesize=val;
 				this.getUsers()
 			},
 			handleCurrentChange(val){
-//				console.log(`当前页数是:${val}`)
 				this.currentPage=val;
 				this.getUsers();
 
@@ -221,7 +215,6 @@
 					this.loading=false;
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
 							descriptionValue(res.data.data.items)
 							this.total=res.data.data.page.total;
 
@@ -269,7 +262,6 @@
 			},
 			addUsers(){
 				//添加  逻辑端口
-//				console.log('进入逻辑端口的创建')
 				this.$router.push({
 					path:'/resource/add/logicalPort',
 					query:{
@@ -279,7 +271,6 @@
 			},
 			handleEdit(index,row){
 				//编辑逻辑端口部分
-//				console.log('进入逻辑端口的编辑部分')
 				this.$router.push({
 					path:'/resource/edit/logicalPort',
 					query:{
@@ -289,7 +280,6 @@
 			},
 			handleSee(index,row){
 				//查看信息详情
-//				console.log('进入详情的界面');
 				if(this.buttonVal.see){
 					this.$router.push({
 						path:'/resource/see/logicalPort',
@@ -450,4 +440,8 @@
 		color:#E6A23C;
 		
 	}*/
+	
+	.visHidden{
+		visibility: hidden;
+	}
 </style>

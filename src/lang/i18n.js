@@ -7,8 +7,8 @@ Vue.use(VueI18n)
 var language = localStorage.getItem('language');
 // 获取浏览器语言
 var systemLg = navigator.language.split("-").pop().toLowerCase();
-console.log(messages[systemLg]);
-console.log(language)
+//console.log(messages[systemLg]);
+//console.log(language)
 const i18n = new VueI18n({
     locale: language || systemLg || 'cn',
     messages,

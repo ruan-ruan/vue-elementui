@@ -43,11 +43,11 @@
 					<el-col :span='24'v-if='seeForm.type=="c2c"'><!--云互联-->
 						<el-col :span='12' >
 							<h3 class="marB15">{{$t('Public.cloudAport')}}</h3>						
-							<cloun :clounData='clFormA'></cloun>
+							<cloun :clounData='clFormA'  @sendRepair='getMsg' v-if='emitCloudStatus'></cloun>
 						</el-col>
 						<el-col :span='12' >
 							<h3 class="marB15">{{$t('Public.cloudZport')}}</h3>	
-							<cloun :clounData='clFormZ'></cloun>
+							<cloun :clounData='clFormZ'  @sendRepair='getMsg' v-if='emitCloudStatus'></cloun>
 						</el-col>
 					</el-col>
 					
@@ -56,7 +56,7 @@
 					<el-col :span='24' v-if='seeForm.type=="d2c"'><!--数据中心到云-->
 						<el-col :span='12' >
 							<h3 class="marB15">{{$t('Public.cloudAport')}}</h3>	
-							<cloun :clounData='clFormA'   ></cloun>
+							<cloun :clounData='clFormA' @sendRepair='getMsg' v-if='emitCloudStatus' ></cloun>
 		
 						</el-col>
 						<el-col :span='12'>
@@ -139,7 +139,7 @@
 				clFormZ:{},
 				endpointsData:[],
 				seeLoading:false,
-
+				emitCloudStatus:true,
 			}
 		},
 		created(){
@@ -152,6 +152,14 @@
 			
 		},
 		methods:{
+			getMsg(msg){
+				this.emitCloudStatus=false;
+				this.$nextTick(() => {
+					this.emitCloudStatus=true;
+				})
+				this.getPointDetails(this.titData);
+				
+			},
 			getPointDetails(ids){
 				//获取点到点的详细信息
 				this.seeLoading=true;
@@ -159,6 +167,7 @@
 				.then(res =>{
 					if(res.status==200){
 						if(res.data.status==0){
+
 							this.seeLoading=false;
 							var  str=res.data.data;
 							let statusVal='';

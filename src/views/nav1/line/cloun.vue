@@ -185,12 +185,10 @@
 				})
 			},
 			handleSizeChange(val){
-//				console.log(`每页${val}条`);
 				this.pagesize=val;
 				this.getUser()
 			},
 			handleCurrentChange(val){
-//				console.log(`当前页数是:${val}`)
 				this.currentPage=val;
 				this.getUser()
 			},
@@ -210,11 +208,9 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.loading=false;
-							console.log(res)
 							//datedialogFormat
 							descriptionValue(res.data.data.items)
 							res.data.data.items.map(ele => {
-
 								ele.portStatus=getPortStatus(ele.logic_port.physical_port)
 								if(getPortStatus(ele.logic_port.physical_port) === 'UP'){
 									ele.color='colorGreen'
@@ -224,7 +220,6 @@
 									ele.color='colorWarning'	
 								}
 							})
-							console.log(res)
 							this.users=res.data.data.items;
 							this.total=res.data.data.page.total;
 						}

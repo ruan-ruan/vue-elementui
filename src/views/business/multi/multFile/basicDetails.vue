@@ -93,14 +93,12 @@
 		watch:{
 			basicForm:{
 				handler(newVal,oldVal){		
-					console.log(newVal)
 					this.$emit('sendBasic',newVal)
 				},
 				deep:true,
 			},
 			basicObj:{
 				handler(newVal,oldVal){		
-					console.log(newVal)
 					this.basicForm={ 
 						bandwidth:newVal.bandwidth,
 						changeModel:newVal.charge_mode,
@@ -113,9 +111,6 @@
 			}
 		},
 		created(){
-			console.log(this.basicObj);
-			console.log(this.type);
-			console.log(this.basicForm.changeModel)
 			if(typeof this.basicObj!=='undefined'){  //详情的时候展示
 				this.basicForm={ 
 					bandwidth:this.basicObj.bandwidth,
@@ -126,7 +121,6 @@
 				}
 //				this.DataStatus=true;//不可编辑
 			}
-			console.log(this.basicForm)
 		},
 		methods:{
 			//计费时间和结束时间

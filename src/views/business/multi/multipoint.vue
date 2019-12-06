@@ -215,7 +215,7 @@
 				if(row.status == 'servicing'){
 					this.$ajax.put('/vll/to_stop_vll/'+row.id+'?token='+this.token)
 					.then(res => {
-						console.log(res);
+
 						if(res.status == 200){
 							if(res.data.status ==0){
 								this.$message({
@@ -230,7 +230,7 @@
 				}else if(row.status =='stopping'){
 					this.$ajax.put('/vll/to_serve_vll/'+row.id+'?token='+this.token)
 					.then(res => {
-						console.log(res);
+
 						if(res.status == 200){
 							if(res.data.status ==0){
 								this.$message({
@@ -284,13 +284,11 @@
 			        search_logic_port:(typeof this.logicID !=='undefined' ?this.logicID:''),
 			        search_status:this.filters.status
 				}
-				console.log(para)
 				this.$ajax.get('/vll/multi_vlls'+'?token='+this.token,para)
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
 							this.loading=false
-							console.log(res)
 							descriptionValue(res.data.data.items);
 							res.data.data.items.map(item => {
 								if(item.status == 'servicing'){
@@ -335,7 +333,6 @@
 							}
 							this.$ajax.post('/vll/add_virtual_host'+'?token='+this.token,para)
 							.then(res => {
-								console.log(res)
 								if(res.status==200){
 									if(res.data.status==0){
 										this.$message({
@@ -353,7 +350,6 @@
 				})
 			},
 			handleDetails(index,row){    //组网详情
-				console.log(row)
 				this.$router.push({
 					path:'/business/detailsMultipoint',
 					query:{
@@ -383,7 +379,6 @@
 				.then(() => {
 					this.$ajax.del('/vll/del_vll/'+row.id+'?token='+this.token)
 					.then(res => {
-						console.log(res);
 						if(res.status==200){
 							if(res.data.status==0){
 								this.$message({

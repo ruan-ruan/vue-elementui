@@ -236,9 +236,7 @@
 		watch:{
 			filters:{//对拓扑图下面的按钮的变化的时候金婷监听
 				handler(newVal,oldVal){
-					console.log(oldVal);
-					console.log(newVal);
-//					this.$store.commit('sendFilters',newVal)
+
 					this.bus.$emit('sendType',newVal);
 				},
 				deep:true,

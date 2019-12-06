@@ -415,7 +415,7 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
+						
 							this.backNodes=res.data.data.items;
 						}
 					}
@@ -443,7 +443,6 @@
 				this.editForm.device_id='';
 				this.editForm.port_id='';
 				let items=ids;
-				console.log(this.backNodes)
 				var findVal=this.backNodes.find(function(obj){
 					return obj.id===items;
 				})
@@ -474,7 +473,6 @@
 				this.editForm.port_id=''
 				//筛选  选择对应的id的name
 				let items=ids;
-				console.log(this.equipmentData)
 				var findVal=this.equipmentData.find(function(obj){
 					return obj.id===items;
 				})
@@ -508,7 +506,6 @@
 				//获取设备的端口的下选择的id  并且获取对应的name
 				//筛选  选择对应的id的name
 				let items=ids;
-				console.log(this.netwotkPortData)
 				var findVal=this.netwotkPortData.find(function(obj){
 					return obj.id===items;
 				})
@@ -523,8 +520,6 @@
 			createData(){
 				let self=this;
 				//添加保存按钮
-//				console.log('执行添加');
-//				console.log(this.filters);
 				if(this.physical_ports.length===0){
 					this.$message({
 						message:this.$t('Public.basicPhy'),
@@ -559,7 +554,6 @@
 							access_type:this.filters.access_type,
 							physical_ports:str
 						}
-						console.log(para);
 //						debug
 						if(valid){
 							this.$ajax.post('/port/add_logic_port'+'?token='+this.token,para)
@@ -585,7 +579,6 @@
 			updateData(){
 				//编辑保存按钮
 				//编辑逻辑端口
-				console.log('执行编辑');
 				if(this.physical_ports.length===0){
 					this.$message({
 						message:this.$t('Public.basicPhy'),
@@ -594,8 +587,6 @@
 				}else if(this.physical_ports.length>0){
 					this.$refs.filters.validate(valid => {
 						if(valid){
-//							console.log(this.filters);
-//							console.log(this.physical_ports)
 							let obj={};
 							let str=[]
 							this.physical_ports.map(ele => {
@@ -613,8 +604,6 @@
 
 								str.push(ele.para)
 							})
-
-//								console.log(str)
 							let para={
 								name:this.filters.name,
 								tenant_id:this.filters.tenant.id,
@@ -652,7 +641,6 @@
 				.then(res =>{
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
 							this.filters=Object.assign({},res.data.data);
 							if(res.data.data.usable){
 								this.filters.status=this.$t('Public.enable');//启用
@@ -683,8 +671,6 @@
 				})
 			},
 			contantCreatedData:function(){
-//				console.log('新建的时候执行添加')
-//				console.log(this.editForm);
 				//关联-添加保存按钮
 				this.$refs.editForm.validate(valid => {
 					if(valid){
@@ -713,7 +699,6 @@
 							rack:this.editForm.rack,
 							dc_name:this.editForm.dc_name,
 						};
-						console.log(paraData);
 						this.physical_ports.push(paraData);
 						this.$refs["editForm"].resetFields();
 						this.dialogFormVisible=false;
@@ -721,8 +706,6 @@
 				})
 			},
 			handleEdit(index,row){
-				console.log(row);
-				console.log(index)
 				//关联-编辑
 				this.dialogStatus='update';
 				this.dialogFormVisible=true;
@@ -750,7 +733,6 @@
 			
 			},
 			contantUpdateData:function(){
-//				console.log('执行编辑保存')
 				//关联-编辑保存按钮
 				this.$refs.editForm.validate(valid => {
 					if(valid){
@@ -805,8 +787,6 @@
 				}
 			},
 			handleDel:function(index,row){
-				console.log(index);
-				console.log(row)
 				let _this=this;
 				//删除
 				this.$confirm(this.$t('confirm.delPhy'),this.$t('confirm.tooltip'),{type:'warning'})

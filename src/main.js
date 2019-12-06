@@ -59,15 +59,9 @@ if(window.sessionStorage.getItem('asideList')){
 router.beforeEach( (to,from,next) => {
 	let data = JSON.parse( window.sessionStorage.getItem('asideList'))
 	fil(router.options.routes ,data);
-//	console.log(data)
+
 	var token=sessionStorage.getItem('token');
 	var Users=sessionStorage.getItem('user');
-//	if(token && to.path === '/login'){
-//		window.sessionStorage.removeItem('token');
-//  	window.sessionStorage.removeItem('user');
-//  	window.sessionStorage.removeItem('asideList');
-//	}
-
 	if (to.matched.some(r => r.meta.requireAuth)) {//需要权限  路由拦截 的界面
         if( store.state.token){
 			if( to.path === '/login' ){

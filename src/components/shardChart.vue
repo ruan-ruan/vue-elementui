@@ -32,7 +32,7 @@
 		watch:{
 			data:{
 				handler(newVal,oldVal){
-//					console.log(newVal);
+
 					this.getCharts(newVal);
 				},
 				deep:true,
@@ -40,7 +40,7 @@
 			},
 			user:{
 				handler(newVal,oldVal){
-//					console.log(newVal);
+
 					newVal.map(item => {
 						item.avg=parseInt(item.avg);
 
@@ -65,7 +65,7 @@
 		},
 		methods:{
 			getCharts(dataObj){
-//				console.log(dataObj);
+
 				let that=this;
 				let chartsData=this.$echarts.init(this.$refs.chart);
 				this.optionTra={
@@ -90,6 +90,28 @@
 					                backgroundColor: '#505765'
 					            }
 					        },
+
+					        formatter:function(data){
+					        	var str='';
+					        	data.map(item => {
+					        		if(typeof item.value  ==='undefined'){
+					        			item.value=''
+					        		}else {
+					        			if (item.value >= 1000 && item.value < 1000*1024) {
+						                    item.value =  Math.round( item.value / 1000  )  + "KB";
+						                } else if (item.value >= 1000*1024 && item.value <1000*1024*1024) {
+						                    item.value = Math.round( item.value / (1000*1024) )  + "MB";
+						                }else if(item.value>= 1000*1024*1024 && value <1000*1024*1024*1024) {
+						                	item.value= Math.round( item.value/(1000*1024*1024) ) +'GB';					                	
+						                } else if(item.value >= 1000*1024*1024*1024){
+						                	item.value= Math.round( item.value/(1000*1024*1024*1024) ) +'TB'
+						                }
+					        		}
+					        		str+=item.seriesName+':'+item.value+'<br/>'
+					        	})
+					        	return data[0].axisValueLabel+'<br/>'+ str;
+
+					       	}
 					    },
 					    legend: {
 					        data:[
@@ -122,13 +144,13 @@
 					            margin: 2,
 					            formatter: function (value, index) {
 					                if (value >= 1000 && value < 1000*1024) {
-					                    value = value / 1000 + "KB";
-					                } else if (value >= 1000*1024 && value <1024*1024) {
-					                    value = value / 1000*1024 + "MB";
-					                }else if(value>= 1024*1024 && value <1024*1024*1024) {
-					                	value=value/1024*1024+'GB';					                	
-					                }else if(value >= 1024*1024*1024){
-					                	value=value/1024*1024*1024+'TB'
+					                    value =  Math.round( value / 1000  )  + "KB";
+					                } else if (value >= 1000*1024 && value <1000*1024*1024) {
+					                    value = Math.round( value / (1000*1024) )  + "MB";
+					                }else if(value>= 1000*1024*1024 && value <1000*1024*1024*1024) {
+					                	value= Math.round( value/(1000*1024*1024) ) +'GB';					                	
+					                } else if(value >= 1000*1024*1024*1024){
+					                	value= Math.round( value/(1000*1024*1024*1024) ) +'TB'
 					                }
 					                return value;
 					            }

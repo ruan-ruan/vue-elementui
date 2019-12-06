@@ -52,6 +52,16 @@
 .ipts{
 	width: 80px;
 }
+/*控制vlan的选择的日志对话框*/
+.v-modal{
+	z-index: 1 !important;
+}
+/*.el-message-box__wrapper{
+	z-index: 4000 !important;
+}*/
+/*.el-dialog__wrapper[data-v-3fe5fb58]{
+		z-index: 2003 !important;
+	}*/
 /*日志里input的宽度*/
 .ipt_sels2{
 	width: 150px;

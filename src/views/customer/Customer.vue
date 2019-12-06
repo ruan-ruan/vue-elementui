@@ -218,14 +218,13 @@ export default {
   methods: {
     //分页的选择页面显示个数和点击其他的分页的时候显示数据
     handleSizeChange(val) {
-      //				console.log(`每页${val}条`);
+
       this.pagesize = val;
       this.getUsers();
     },
     handleCurrentChange(val) {
       //				let _this=this;
       this.currentPage = val;
-      //				console.log(`当前页数是:${val}`)
       this.getUsers();
     },
     getUsers() {
@@ -254,7 +253,6 @@ export default {
       this.$ajax
         .get("/tenant/tenants" + "?token=" + this.token, para)
         .then(res => {
-          console.log(res);
           if (res.status == 200) {
             if (res.data.status == 0) {
               this.loading = false;
@@ -284,7 +282,6 @@ export default {
     },
     handleSta(index, row) {
       //禁用和启用切换
-      console.log(row);
       if(row.usable){//状态是启用的     点击  禁用
       	this.$confirm(this.$t('customer.plaStop'), this.$t('confirm.tooltip'), {
           type: "warning"
@@ -324,7 +321,7 @@ export default {
       }
     },
     handleAdd() {
-//    console.log("添加租户");
+
       //添加
       this.$router.push({
         path: "/customer/addCus",
@@ -352,7 +349,6 @@ export default {
     },
     handleEdit(index, row) {
       //编辑 -传递id
-//    console.log("这一步执行编辑的部分的传值id");
       this.$router.push({
         path: "/customer/editCus",
         query: {
@@ -402,7 +398,6 @@ export default {
           this.$ajax
             .del("/tenant/del_tenants" + "?token=" + this.token, para)
             .then(res => {
-              console.log(res);
               if (res.status == "200") {
                 if (res.data.status == "0") {
                   this.$message({
@@ -423,14 +418,12 @@ export default {
     handleExport(command) {
       var _this = this;
       if (_this.users.length == 0) {
-        console.log(_this.users);
         this.$message({
           message: "数据为空，不能执行导出操作!",
           type: "warning"
         });
       } else {
         //			console.log('数据不是空');
-        console.log(_this.users);
         if (command == "all") {
           //导出所有的数据
           this.$confirm("确定要导出所有的数据吗?", "提示", {
@@ -500,7 +493,6 @@ export default {
         const data = that.formatJson(filterVal, list);
         export_json_to_excel(tHeader, data, "下载数据excel");
       });
-      //		console.log(this.creation_time)
     },
     formatJson(filterVal, jsonData) {
       return jsonData.map(v => filterVal.map(j => v[j]));

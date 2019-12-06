@@ -51,7 +51,7 @@
 		watch:{
 			see:{
 				handler(newVal,oldVal){
-					console.log(newVal)
+		
 					this.seeForm={
 						time:newVal.time,
 						name:newVal.name,
@@ -62,40 +62,15 @@
 				},
 				deep:true
 			}
-//			nodeID:function(newVal){
-//				console.log(newVal)
-//				this.getData(newVal)
-//			}
+
 		},
 		created(){
-			this.seeForm=Object.assign({},this.see)
+//			this.seeForm=Object.assign({},this.see)
 		},
 		mounted(){
 			this.seeForm=Object.assign({},this.see)
 		},
 		methods:{
-//			getData(ids){
-//				this.seeLoading=true;
-//				this.$ajax.get('/node/node_info/'+ids+'?token='+this.token)
-//				.then(res => {
-//					console.log(res)
-////					if(res.status==200){
-////						if(res.data.status==0){
-////							this.seeLoading=false;
-////							console.log(res)
-////							let str=res.data.data;
-//////							this.seeForm=Object.assign({},res.data.data);
-////							this.seeForm={
-////								time:datedialogFormat(str.creation_time),
-////								name:str.name,
-//////								status:str.status,
-////								vtep:str.vtep,
-//////								data:str.dc.name
-////							}
-////						}
-////					}
-//				}).catch(e => {console.log(e)})
-//			},
 			seedetails(){
 				this.$router.push(  {
 					path:'/location/index/unknown/nodedetails',

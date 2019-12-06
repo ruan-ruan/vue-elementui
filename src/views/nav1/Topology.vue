@@ -56,15 +56,12 @@
 			this.token=sessionStorage.getItem('token');
 			this.getLinksData();
 			this.getNodesData()
-			console.log(this.nodesData)
+
 		},
-		updated(){
-			console.log(this.nodesData)
-			
-		},
+
 		methods:{
 			getLink(data){
-				console.log(data);
+
 				this.linkData={
 					id:data.id,
 					type:data.type
@@ -76,7 +73,7 @@
 				this.nodeStatus=data;
 			},
 			setLink(data){
-				console.log(data)
+
 				this.monStatus=!data;//关闭监听数据
 				this.nodeStatus=!data;//关闭节点的详情
 				this.linkStatus=data;
@@ -102,11 +99,9 @@
 					this.topoLoading=false;
 					if(res.status==200){
 						if(res.data.status==0){
-//							console.log(res)
+
 							this.nodesData=res.data.data;
-//							this.backupNode=res.data.data;
-//							sawedata=res.data.data;
-//							this.getLinksData(this.nodesData);
+
 						}
 					}
 				}).catch(e => {console.log(e)})			
@@ -117,8 +112,7 @@
 				this.$ajax.get('/topology/links'+'?token='+this.token)
 				.then(res => {
 					if(res.status==200 && res.data.status==0){
-//							console.log(res)
-							
+
 							that.linksData=res.data.data;	
 //							that.backupLink=res.data.data;
 //							this.dealForm(that.selectForm,nodesData,that.linksData)
@@ -130,7 +124,7 @@
 //						let node=this.dealForm(that.selectForm,nodesData,that.linksData).nodeData;
 //						let link=this.dealForm(that.selectForm,nodesData,that.linksData).linkData
 //						this.setTopo(node,link)
-						console.log('hello')
+
 					}
 				}).catch(e => {console.log(e)})
 			},

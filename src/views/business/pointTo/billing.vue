@@ -53,7 +53,6 @@
 		watch:{
 			editForm:{
 				handler(newVal,oldVal){
-					console.log(newVal)
 					this.$emit('sendTime',newVal)
 				},
 				deep:true,

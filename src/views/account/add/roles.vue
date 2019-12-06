@@ -117,7 +117,7 @@
 			//获取token
 			this.token=sessionStorage.getItem('token');
 			var str=null;
-			if(typeof this.id !='undefined' && typeof this.roleID =='undefined'){
+			if(typeof this.id !='undefined' ){
 				str=false;
 //				this.isOk=true;
 				this.disUp=true;
@@ -126,9 +126,8 @@
 				this.getRoleDetails(this.id);
 			}
 			
-			if(typeof this.roleID !='undefined' &&  typeof this.id =='undefined'){
+			if(typeof this.roleID !=='undefined' ){
 				str=true
-//				console.log('执行角色的编辑的界面');
 				//获取编辑的按钮
 				this.roleBtnStatus=false;
 				this.getEditRole(this.roleID);				
@@ -148,14 +147,14 @@
 				.then( res => {
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
+
 							var str=res.data.data;
 							if(val){
 								deepClone(str);
 							}else{
 								Clone(str);
 							}
-							console.log(str)
+	
 							this.organizationData=str;
 							this.backUpdata=JSON.parse(JSON.stringify(str))
 							
@@ -183,7 +182,7 @@
 						}
 						this.$ajax.post('/role/add_role'+"?token="+this.token,para)
 						.then(res => {
-							console.log(res)
+
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
@@ -207,13 +206,13 @@
 				this.$ajax.get('/role/role_info/'+row+'?token='+this.token)
 				.then(res => {
 					this.Loading=false;
-					console.log(res);
+
 					if(res.status==200){
 						if(res.data.status==0){
 							this.basicData=res.data.data;
 
 							if(res.data.data.rights==='all'){
-								console.log(this.organizationData)
+
 								this.getALl()//当时超级管理员的时候   这个时候直接获取所有的底层的数据既可
 							}else{
 								if (!res.data.data.rights && typeof(res.data.data.rights)!="undefined" && res.data.data.rights!=0){
@@ -266,9 +265,6 @@
 				})
 			},
 			handleEdit(){//编辑的保存界面
-//				console.log(this.editForm);
-//				Debug
-
 				var str=''
 				if (!this.editForm.rights && typeof(this.editForm.rights)!="undefined" && this.editForm.rights!=0){
 					this.editForm.rights='';
@@ -287,10 +283,9 @@
 							usable:this.editForm.usable ,
 							description:this.editForm.description
 						}
-						console.log(para)
+
 						this.$ajax.put('/role/edit_role/'+this.editForm.id+'?token='+this.token,para)
 						.then(res => {
-							console.log(res)
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
@@ -307,13 +302,11 @@
 				})
 			},
 			getRoleDetails(rows){  //详情的界面
-//				console.log('详情部分数据')
 				this.Loading=true;
 				//详情的界面的进来的时候显示
 				this.$ajax.get('/role/role_info/'+rows+'?token='+this.token)
 				.then(res => {
 					this.Loading=false;
-					console.log(res);
 					if(res.status==200){
 						if(res.data.status==0){
 							
@@ -337,8 +330,6 @@
 				})
 			},
 			setrole(data,checked){
-//				console.log(data);
-//				console.log(checked);
 				this.editForm.rights=[];
 				var str=[];
 				checked.checkedKeys.map(ele => {

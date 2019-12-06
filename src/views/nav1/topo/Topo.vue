@@ -83,7 +83,7 @@
 		},
 		created(){
 			//aside.topoView
-			console.log(this.$store.state.aside)
+
 			this.token=sessionStorage.getItem('token');
 			this.getNodesData(this.selectForm);
 
@@ -92,7 +92,7 @@
 			
 			let that=this;
 			this.bus.$on('sendType',(msg) => {
-				console.log(msg)
+
 				that.selectForm=msg;
 				that.getNodesData(msg);
 			})
@@ -106,7 +106,7 @@
 				}
 				this.$ajax.put('/topology/edit_node_location'+'?token='+this.token,para)
 				.then(res => {
-					console.log(res)
+
 					if(res.status==200){
 						if(res.data.status==0){
 							this.$message({
@@ -128,11 +128,11 @@
 				let newLink=JSON.parse(JSON.stringify(linkVals))  //上面的这两 用来保存  
 				let nodesData=JSON.parse(JSON.stringify(nodeVals))
 				let linksData=JSON.parse(JSON.stringify(linkVals))
-				console.log(linkVals)
+
 				var nodeVal=new Array();
 				var linkVal=new Array();
 				for(let item in obj){
-//					console.log(item);
+
 					if(item ==='checkboxGroup1'){//进入隐藏标签和隐藏流量的控制部分   
 						let str=obj['checkboxGroup1'];//用来查找对应的值
 						
@@ -157,7 +157,6 @@
 									}
 									
 								})
-								console.log(linksData)
 								linkVal=linksData
 							}
 							
@@ -235,7 +234,7 @@
 									return item.type!=='cloun';
 								})
 							}else if(arr.indexOf(this.$t('topology.footerBtn.shwoNet.showBackboneLink')  ) === -1){
-								console.log(linksData)
+
 								linkVal=linksData.filter(item => {
 									return item.type !=='link';
 								})
@@ -255,7 +254,7 @@
 					nodeData:nodeVal,
 					linkData:linkVal
 				}
-				console.log(setObj);
+
 				this.setTopo(nodeVal,linkVal)
 			},
 			getNodesData:function(obj){//获取topo的节点的数据集合
@@ -287,8 +286,7 @@
 				}).catch(e => {console.log(e)})
 			},
 			setTopo:function(nodesData,linksData){//设置拓扑图的展示
-				console.log(nodesData);
-				console.log(linksData)
+
 				d3.select('svg').select('g').remove()
 				var width = 890,
 				  height = 470;
@@ -309,8 +307,7 @@
 			   });
 				
 				let that=this
-				var linkForce=d3.forceLink(linksData)
-				.id(function(d){})
+				var linkForce=d3.forceLink(linksData).id(function(d){})
 				
 				let simulation = d3.forceSimulation()
 				.nodes(nodesData)
@@ -321,8 +318,8 @@
 				
 				simulation
 				.force('chargeForce', chargeForce)
-		      	.force('centerForce', centerForce)
-		      	.force('links', linkForce)
+//		      	.force('centerForce', centerForce)
+//		      	.force('links', linkForce)
 
 				simulation.on('tick', tickActions)
 				
@@ -359,7 +356,7 @@
 			    .style('stroke-width', linkWidth)
 			    .style('stroke', linkColour)
 			    .attr('class',function(d){//对数据进行处理
-			    	console.log(d);
+
 			    	if(typeof d.speedColor =='undefined'){   //流量的显示不存在的时候   这个时候关闭   返回默认的颜色
 			    		return linkColour;
 			    	}else {  //当存在  流量的时候    显示流量
@@ -395,7 +392,7 @@
 	            function linkColour(d){//链路     链路和云对接链路
 	            	
 	            	if(d.maintain_type){//开启维护
-	            		console.log(d)
+
 	            		return '#9254DE';
 	            	}else{
 	            		if(d.status=='UP'){

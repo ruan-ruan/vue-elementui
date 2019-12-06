@@ -172,7 +172,7 @@
 		created(){
 			this.token=sessionStorage.getItem('token');
 			if(typeof this.tit ==='string'){
-//				console.log('执行详情的界面');
+//				('执行详情的界面');
 				//设置成不可以编辑
 				this.btnStatus=false;
 				//传入对应的实参
@@ -180,14 +180,14 @@
 				this.getCusDetails(this.tit)
 			}
 			if(this.addCustome ==='add'){
-//				console.log('进入可以添加的界面');
+//				('进入可以添加的界面');
 				this.btnStatus=true;
 				this.addOpera=true;
 				this.editOpera=false;
 //				this.getTenant()
 			}
 			if(typeof this.cusEditID ==='string'){
-//				console.log('进入编辑的界面');
+//				('进入编辑的界面');
 				this.btnStatus=true;
 				this.addOpera=false;
 				this.editOpera=true;
@@ -198,10 +198,7 @@
 		},
 		methods:{
 			addressChange(arr) {
-		        console.log(arr);
 		        //获取城市区号
-
-		        console.log(this.selectedOptions)
 		    },
 			goback(){
 				this.$router.go(-1);
@@ -225,7 +222,7 @@
 				
 				this.$ajax.post('/tenant/add_tenant'+"?token="+this.token,para)
 				.then(res => {
-					console.log(res);
+
 					if(res.status==200){
 						if(res.data.status==0){
 							this.$message({
@@ -240,7 +237,7 @@
 			},
 			handleEdit(){
 				//租户编辑的时候保存按钮
-//				console.log('执行编辑保存按钮');
+
 				this.$refs.customer.validate(valid => {
 					if(valid){
 
@@ -261,7 +258,6 @@
 						
 						this.$ajax.put('/tenant/edit_tenant/'+this.customer.id+'?token='+this.token,para)
 						.then(res => {
-							console.log(res);
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
@@ -284,11 +280,10 @@
 				this.editLoading=true;
 				this.$ajax.get('/tenant/tenant_info/'+row+'?token='+this.token)
 				.then(res => {
-					console.log(res);
+
 					if(res.status==200){
 						if(res.data.status==0){
 							this.editLoading=false;
-							console.log(res)
 							//datedialogFormat
 							res.data.data.creation_time=datedialogFormat(res.data.data.creation_time);
 							this.customer=res.data.data;

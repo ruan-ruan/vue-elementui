@@ -234,7 +234,6 @@
 		created(){
 			this.token=sessionStorage.getItem('token');	
 			this.getData();
-			console.log(this.buttonData);
 		},
 		mounted() {
 		    this.getDatas();
@@ -325,7 +324,7 @@
 						if(res.status=='200'){
 							if(res.data.status=='0'){
 								this.$message({
-									message:this.$t('tooltipMes.delSucess'),
+									message:this.$t('tooltipMes.delSuccess'),
 									type:'success'
 								})
 				                this.getDatas();
@@ -469,7 +468,7 @@
 			          	if( res.status=='200'){
 							if(res.data.status=='0'){
 								this.$message({
-									message:this.$t('tooltipMes.delSucess'),
+									message:this.$t('tooltipMes.delSuccess'),
 									type:'success'
 								})
 							}

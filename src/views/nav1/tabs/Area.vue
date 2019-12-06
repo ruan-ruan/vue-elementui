@@ -201,11 +201,11 @@
 		methods: { 	
 			reset(){
 				this.$refs['filters'].resetFields();
-				console.log(this.$router.options.routes)
+				
 			},
 		//改变的时候
 			handleSizeChange(val){
-				console.log(`每页${val}条`);
+			
 				this.pagesize=val;
 				this.getUsers();
 			},
@@ -213,7 +213,7 @@
 		    handleCurrentChange(val) {
 		    	let _this=this;
 		    	_this.currentPage=val
-		    	console.log(`当前页:${val}`)  
+		    	
 		      this.getUsers();
 		    }, 
 		    getUsers() {
@@ -287,7 +287,7 @@
 		        .then(res => {
 		        	if(res.status ==200){
 		        		if(res.data.status ==0){
-		        			console.log(res);
+
 		        			//将时间戳转化为时间格式
 							this.Time=datedialogFormat(res.data.data.creation_time)
 				            this.editLoading = false;
@@ -384,7 +384,7 @@
 		          	let para = { ids: ids };
 					this.$ajax.del('/location/del_regions'+'?token='+this.token,para)
 		          	.then(res => {
-		          		console.log(res)
+
 			          	if(res.status=='200'){
 			          		if(res.data.status=='0'){			
 					            this.$message({

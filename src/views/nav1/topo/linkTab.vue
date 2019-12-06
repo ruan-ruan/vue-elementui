@@ -39,9 +39,9 @@
 		methods:{
 			linksData(obj){
 				if(obj.type==='link'){
-					console.log(执行链路的详情)
+//					console.log(执行链路的详情)
 				}else{
-					console.log('执行云的详情')
+//					console.log('执行云的详情')
 				}
 			},
 			goback(){

@@ -81,10 +81,10 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-//							console.log(res)
+
 							if(res.data.data.items.length > 7){
 								this.tit=this.$t('topology.details.notDatatip');
-//								this.status=true;
+
 //								this.tit='更多数据请到信息列表中查看';
 							}else if(res.data.data.items.length<7 && res.data.data.items.length>0){
 //								this.status=false;

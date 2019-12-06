@@ -202,18 +202,18 @@
 	    created(){
 	    	//获取用户的权限信息
 	    	this.token=sessionStorage.getItem('token');
-			console.log(this.$store.state.aside)
+		
 	    	
 	    },
 	    methods:{
 	    	handleSizeChange(val){
-	    		console.log(`每页${val}条`);
+	    	
 	    		this.pagesize=val;
 	    		this.getUsers()
 	    	},
 	    	handleCurrentChange(val){
 	    		this.currentPage=val;
-	    		console.log(`当前页 数是${val}`);
+	    		
 	    		this.getUsers()
 	    	},
 	    	//查询方法
@@ -235,8 +235,7 @@
 	    			if(res.status==200){
 	    				if(res.data.status==0){
 	    					this.loading=false;
-	    					console.log(res)
-//			    			console.log(res); creation_time datedialogFormat
+
 			    			res.data.data.items.map(ele => {
 								
 			    				if(ele.devices.length ==1){
@@ -307,7 +306,7 @@
 	    			if(valid){
 	    					this.$ajax.post('/node/find_node'+'?token='+this.token)
 	    					.then(res => {
-	    						console.log(res);
+	    						
 	    						if(res.status==200){
 	    							if(res.data.status==0){
 	    								this.$message({
@@ -325,7 +324,7 @@
 	    	},
 	    	//查看详情
 	    	handleSee(index,row){
-	    		console.log(row)
+	    		
 				this.$router.push({
 					path:'/location/index/unknown_details',
 					query:{
@@ -345,7 +344,7 @@
 	    	},
 	    	//运行
 	    	run(index,row){
-	    		console.log(row);
+	    		
 	    		var data=[row.dc,row.devices_sn1,row.devices_name1,row.devices_ip1,row.vtep,row.name];//将设备一的必填项里面是否存在null或者''或者undefined这个时候都是需要重新配置
 	    		
 //	    		debug;
@@ -356,7 +355,7 @@
 	    			.then(() => {
 	    				this.$ajax.put('/node/run_node/'+row.id+'?token='+this.token)
 	    				.then(res => {
-	    					console.log(res);
+	    					
 	    					if(res.status==200){
 	    						if(res.data.status==0){
 	    							this.$message({
@@ -381,7 +380,7 @@
 			    			.then(() => {
 			    				this.$ajax.put('/node/run_node/'+row.id+'?token='+this.token)
 			    				.then(res => {
-			    					console.log(res);
+			    					
 			    					if(res.status==200){
 			    						if(res.data.status==0){
 			    							this.$message({
@@ -403,7 +402,7 @@
 	    	},
 	    	//删除
 		    handleDel(index, row) {
-		    	console.log(row)
+		    	
 		      	this.$confirm(this.$t('confirm.title'), this.$t('confirm.tooltip'), {
 		       		type: "warning"
 		      	})

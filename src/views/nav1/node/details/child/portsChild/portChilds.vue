@@ -2,40 +2,40 @@
 	<div>
 		<!--端口的子组件的公用-->
 		<section>
-			<el-form  label='80px'>
-				<el-form-item label='设备名称:'>
+			<el-form  label='200px'>
+				<el-form-item :label='$t("Public.deviceName")+"："'>
 					<span v-text='title.name'></span>
 				</el-form-item>
-				<el-form-item label='管理IP:'>
+				<el-form-item :label='$t("Public.manageIP")+"："'>
 					<span v-text='title.ip'></span>
 				</el-form-item>
 			</el-form>
 			<el-table :data='users' highlight-current-row  style="width: 100%;">
-				<el-table-column type='index' width='70' align='center'label='序号' >
+				<el-table-column type='index' align='center':label='$t("Public.index")' >
 					<template slot-scope='scope'>
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='name' width='100' align='center'label='端口名称' >					
+				<el-table-column prop='name'  align='center':label='$t("Public.portName")' >					
 				</el-table-column>
-				<el-table-column prop='status' width='100' align='center'label='端口状态' >					
+				<el-table-column prop='status'  align='center':label='$t("Public.poerStatus")' >					
 				</el-table-column>
-				<el-table-column prop='max_speed' width='80' align='center'label='速率(Mbps)' >					
+				<el-table-column prop='max_speed'  align='center':label='$t("Public.speed")+"(Mbps)"' >					
 				</el-table-column>
-				<el-table-column prop='mac' width='80' align='center'label='Mac地址' >					
+				<el-table-column prop='mac'  align='center':label='$t("Public.macAddress")' >					
 				</el-table-column>
-				<el-table-column width='80' align='center'label='是否为业务端口' >	
+				<el-table-column  align='center':label='$t("Public.yesNoPort")' >	
 					<template slot-scope='scope'>
-						{{ scope.row.available ? '是' : '否'}}
+						{{ scope.row.available ? $t("Public.yes") : $t("Public.no")}}
 					</template>
 				</el-table-column>
-				<el-table-column prop='description' width='100' align='center'label='描述信息' >					
+				<el-table-column prop='description' align='center':label='$t("Public.information")' >					
 				</el-table-column>
-				<el-table-column prop='note' width='160' align='center'label='备注' >					
+				<el-table-column prop='note' align='center':label='$t("Public.description")' >					
 				</el-table-column>
-				<el-table-column  width='100' align='center'label='操作' >
+				<el-table-column  align='center':label='$t("Public.operation")' >
 					<template slot-scope='scope'>
-						<el-button size='small' type='primary'@click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+						<el-button size='mini' type='primary'@click="handleEdit(scope.$index, scope.row)">{{$t('tabOperation.edit')}}</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -51,8 +51,7 @@
 			     	:current-page.sync="currentPage"  
 			     	:page-count='pageNum'
 			     	:pager-count="pagecount"
-			     	:prev-text='prev'
-			     	:next-text='next'>					
+			     	>					
 				</el-pagination>
 			</el-col>
 			<!--编辑部分-->
@@ -63,8 +62,8 @@
 					</el-form-item>
 				</el-form>
 				<div slot='footer' class="dialog-footer">
-					<el-button @click.native='dialogFormVisible=false' >取消</el-button>
-					<el-button @click='updateData' type='primary'>保存</el-button>
+					<el-button @click.native='dialogFormVisible=false' >{{$t('tabOperation.cancel')}}</el-button>
+					<el-button @click='updateData' type='primary'>{{$t('tabOperation.save')}}</el-button>
 				</div>
 			</el-dialog>
 		</section>
@@ -87,12 +86,10 @@
 				currentPage:1,
 				pageNum:1,
 				pagecount:5,
-				next:'下一页',
-				prev:'上一页',
 				//编辑部分的参数
 				dialogFormVisible:false,
 				textMap:{
-					update:'编辑'
+					update:this.$t('tabOperation.edit')
 				},
 				dialogStatus:'',				
 				editForm:{
@@ -111,7 +108,7 @@
 		watch:{
 			titleOne:{
 				handler:function (newVal){
-					console.log(newVal)
+
 					this.getList(newVal.id)
 					this.title.id=newVal.id;
 					this.title.name=newVal.hostname;
@@ -123,7 +120,7 @@
 			
 			titleTwo:{
 				handler(newVal,oldVal){
-					console.log(newVal)
+
 					this.getList(newVal.id)
 					this.title.id=newVal.id;
 					this.title.name=newVal.hostname;
@@ -135,8 +132,7 @@
 		},
 		created(){
 			this.token=sessionStorage.getItem('token');
-			console.log(this.titleTwo);
-			console.log(this.titleOne)
+
 			if(typeof this.titleTwo   !=='undefined'){
 				this.getList(this.titleTwo.id);
 				this.title.id=this.titleTwo.id;
@@ -154,12 +150,12 @@
 
 		methods:{
 			handleSizeChange(val){
-				console.log(`每页:${val}条`);
+
 				this.pagesize=val;
 				this.getList(this.title.id)
 			},
 			handleCurrentChange(val){
-				console.log(`当前是第${val}页`)
+
 				this.currentPage=val;
 				this.getList(this.title.id)
 			},
@@ -171,7 +167,7 @@
 				}
 				this.$ajax.get('/node/device_info/'+ids+'/ports'+'?token='+this.token,para)
 				.then(res => {
-					console.log(res)
+	
 					if(res.status==200){
 						if(res.data.status==0){
 							this.users=res.data.data.items;
@@ -186,11 +182,11 @@
 				
 			},
 			handleEdit(index,row){
-				console.log(row)
+	
 				this.dialogStatus='update';
 				this.dialogFormVisible=true;
 				this.editForm=Object.assign({} ,row);
-//				console.log(this.editForm);
+
 			},
 			
 			updateData(){
@@ -204,7 +200,7 @@
 								if(res.status==200){
 									if(res.data.status==0){
 										this.$message({
-											message:'修改成功',
+											message:this.$t('tooltipMes.editSuccess'),
 											type:'success'
 										})
 										this.$refs['editForm'].resetFields();

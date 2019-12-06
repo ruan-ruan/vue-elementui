@@ -140,7 +140,7 @@
 					<el-form-item :label='$t("Public.a_des")+"："' prop='a_desc'>
 						<el-input v-model='editForm.a_desc' :disabled='seeStatus' class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item :label='$t("Public.zPortNode")+"："' prop='z_node_id'>
+					<el-form-item :label='$t("Public.z_PortNode")+"："' prop='z_node_id'>
 						<el-select v-model='editForm.z_node_id'filterable :disabled='seeStatus'  class='ipt'>
 							<el-option
 								v-for='(item,index) in nodeData'
@@ -229,7 +229,7 @@
 <script>
 
 	
-	import {datedialogFormat , descriptionValue,getTime ,isValidNumber} from '@/assets/js/index.js'
+	import {datedialogFormat , descriptionValue,getTime ,isJust} from '@/assets/js/index.js'
 
 
 	export default{
@@ -238,7 +238,7 @@
 			var isNumber= (rule,value,callback) => {
 				if(!value){
 					callback(new Error(this.$t('Public.notEmity')))
-				}else if(! isValidNumber(value)){
+				}else if(! isJust(value)){
 					 callback(new Error(this.$t('Public.placeRight')))
 				}else{
 					callback()
@@ -389,8 +389,7 @@
 		watch:{
 			//检测editForm里面的额monitoring的变化
 			'editForm.monitoring':function(newVal,oldVal){
-				console.log(typeof oldVal);
-				console.log(newVal)
+
 				if(newVal){
 
 					this.detectionStatus=true;
@@ -404,19 +403,19 @@
 		created(){
 			//获取用户的权限
 			this.token=sessionStorage.getItem('token');
-			console.log(this.token);
+
 			this.getUsers();
 			this.getNodeData();
 			
 		},
 		methods:{
 			handleSizeChange(val){
-//				console.log(`每页${val}条`);
+
 				this.pagesize=val;
 				this.getUsers()
 			},
 			handleCurrentChange(val){
-//				console.log(`当前页数是:${val}`)
+
 				this.currentPage=val;
 				this.getUsers()
 			},
@@ -446,7 +445,7 @@
 				}
 				this.$ajax.get('/link/unknown_links'+'?token='+this.token,para)
 				.then(res => {
-					console.log(res);
+
 					if(res.status==200){
 						if(res.data.status==0){
 							this.loading=false;
@@ -477,7 +476,7 @@
 				//获取节点的数据
 				this.$ajax.get('/node/nodes'+'?token='+this.token)
 				.then(res => {
-					console.log(res);					
+				
 					if(res.status==200){
 						if(res.data.status==0){
 							this.nodeData=res.data.data.items;
@@ -526,8 +525,7 @@
 
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-//							let para=Object.assign({},this.editForm);
-							console.log(this.editForm)
+
 							let para={
 								a_node_id:this.editForm.a_node_id,
 								a_ip:this.editForm.a_ip,
@@ -550,7 +548,7 @@
 							
 							this.$ajax.post('/link/add_unknown_link'+'?token='+this.token,para)
 							.then( res => {
-								console.log(res);
+
 								if(res.status==200){
 									if(res.data.status==0){
 										this.$message({
@@ -595,15 +593,14 @@
 				})
 			},
 			handleEdit(index,row){
-				console.log(row);
+
 				//编辑
 				this.dialogStatus='update';
 				this.dialogFormVisible=true;
 				this.seeStatus=false;
 				//显示时间
 				this.editFormStatus=true;
-				
-//				console.log(typeof row.monitoring)
+
 				this.editForm={
 					id:row.id,
 					a_node_id:row.a_node.id,
@@ -657,7 +654,7 @@
 							}
 							this.$ajax.put('/link/edit_unknown_link/'+this.editForm.id+'?token='+this.token,para)
 							.then( res => {
-								console.log(res);
+
 								if(res.status==200){
 									if(res.data.status==0){
 										this.editLoading=false;
@@ -703,7 +700,7 @@
 				.catch(( ) => {})
 			},
 			handelSee_aNode(index,row){
-				console.log(row);
+
 				//查看a的节点的详细的信息
 				this.$router.push({path:'/location/index/unknown/nodedetails',
 				query:{

@@ -156,7 +156,6 @@
 					endpoint:endpoint,
 					cloud_endpoint:a_cloun
 				}
-				console.log(para)
 				//验证两个form表单同时验证通过的时候
 				let str=[this.$refs.editForm.$refs.editForm,this.$refs.dcPort.$refs.editForm,this.$refs.basicForm.$refs.editForm];
 
@@ -209,7 +208,7 @@
 				this.editForm.expiration_time=val.overdue_time/1000
 			},
 			getTimeVal(val){
-				console.log(val)
+
 				//获取子组件传过来的时间
 				this.editForm.charge_time=val.billing_time/1000;
 				this.editForm.expiration_time=val.overdue_time/1000;

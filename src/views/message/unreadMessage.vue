@@ -467,7 +467,6 @@ export default {
     },
     // 消息详情-弹窗
     handleClick(index, row) {
-    	console.log(row);
       this.mesdetail.dialogVisible = true;
       this.mesdetail.header = row.title;
       this.mesdetail.title = row.type == "notice" ? this.$t('mesModule.sea.mesTypeList.product'): this.$t('mesModule.sea.mesTypeList.police');

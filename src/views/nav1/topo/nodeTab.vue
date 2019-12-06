@@ -45,22 +45,18 @@
 		created(){
 			this.token=sessionStorage.getItem('token');
 			this.bus.$on('sendNodeID',(data) =>{
-				console.log(data)
+
 				this.nodeId=data;
 				this.getData(data)
 			})
 			this.getData(this.$store.state.node_id);
 			
 		},
-		mounted(){
-			console.log(this.$store.state.node_id)
-			console.log(this.$store.state.nodeID)
-			
-		},
+
 		methods:{
 
 			goback(){
-				console.log('关闭')
+
 				this.$emit('goback',false)
 			},
 			getData(ids){
@@ -69,11 +65,11 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
+
 							this.seeLoading=false;
-//							console.log(res)
+
 							let str=res.data.data;
-//							this.seeForm=Object.assign({},res.data.data);
+
 							let dc_name=''
 							if(!str.dc && typeof(str.dc)!='undefined' && str.dc!=0){
 								dc_name=''
@@ -88,7 +84,7 @@
 								data:dc_name,
 								id:str.id
 							}
-							console.log(this.seeForm)
+
 						}
 					}
 				}).catch(e => {console.log(e)})

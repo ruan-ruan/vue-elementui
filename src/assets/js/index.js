@@ -664,6 +664,10 @@ export function isValidNumber(str){
 	return reg.test(str);
 };
 
+export function isJust(str){
+	const reg=/^[0-9]\d*$/g;
+	return reg.test(str);
+}
 
 //逻辑口的状态的判断
 export 	function getPortStatus(arr){

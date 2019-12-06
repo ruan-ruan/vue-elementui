@@ -143,7 +143,6 @@
 				}
 				this.$ajax.get('/role/roles'+'?token='+this.token,para)
 				.then(res => {
-					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
 							this.loading=false;
@@ -184,7 +183,7 @@
 				})
 			},
 			handleEdit(index,row){
-//				console.log(row);
+
 				//编辑
 				this.$router.push({
 					path:'/account/roles/editForm',
@@ -194,18 +193,15 @@
 				})
 				//将该数据的保存的仓库里面的，以便于在编辑额的界面的使用
 				this.$store.state.editRoel=row;
-				console.log(row);
 			},
 			handleSta(index,row){
 				//角色的禁用和启用
-				console.log(row)
 				if(row.usable){//状态为可用   点击  为禁用
 					this.$confirm(this.$t('roles.plaDis'),this.$t('confirm.tooltip'),{type:'warning'})
 					.then(() => {
 						
 						this.$ajax.put('/role/to_disable_role/'+row.id+"?token="+this.token)
 						.then(res => {
-							console.log(res);
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
@@ -223,7 +219,6 @@
 						
 						this.$ajax.put('/role/to_enable_role/'+row.id+'?token='+this.token)
 						.then(res => {
-							console.log(res);
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
@@ -269,7 +264,6 @@
 				this.sels=sels
 			},
 			batchRemove:function(rows){
-//				console.log(rows)
 				//批量删除
 				var ids=[];
 				rows.forEach(ele => {
@@ -305,7 +299,6 @@
 				//选择当初当前页还是所有页
 				var _this=this;
 				if(_this.users.length == 0){
-//					console.log('数据为空不能执行')
 					this.$message({
 						message:this.$t('confirm.dataEmt'),
 						type:'warning'
@@ -339,7 +332,6 @@
 			exportData:function(params){
 				this.$ajax.get('/admin/admins'+'?token='+this.token,params)
 				.then(res => {
-					console.log(res);
 					res.data.data.items.map(item => {
 						item.creation_time=datedialogFormat(item.creation_time)
 					})

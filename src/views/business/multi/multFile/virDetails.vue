@@ -6,7 +6,7 @@
 		<span>{{type}}</span>-->
 		<dc :dcData='detailsForm' ref='detailsForm' v-if='basicObj.dataType==="endpoints"'></dc>
 		<!--云的数据-->
-		<cloun :clounData='detailsForm' ref='detailsForm' v-if="basicObj.dataType==='cloud_endpoints'" :type='typeVal'  ></cloun>
+		<cloun :clounData='detailsForm' ref='detailsForm' v-if="basicObj.dataType==='cloud_endpoints'"   @sendRepair='getMsg'  :type='typeVal'  ></cloun>
 	</div>
 </template>
 
@@ -47,6 +47,11 @@
 		mounted(){
 			this.typeVal=this.type;
 		},
+		methods:{
+			getMsg(msg){
+				this.$emit('sendrepair',false);
+			}
+		}
 
 	}
 </script>

@@ -104,14 +104,6 @@
 
 			}
 		},
-		watch:{
-			editForm:{
-				handler(newVal,oldVal){
-					console.log(newVal)
-				},
-				deep:true
-			}
-		},
 		created(){
 			this.token=sessionStorage.getItem('token');
 			
@@ -119,17 +111,14 @@
 		methods:{
 
 			getFormData_a(msg){
-				console.log(msg)
-					
+
 				this.editForm.nodeName_a=msg.nodeName
 				this.editForm.endpoints_logic_port_id_a=msg.logic
 				this.editForm.vlan_a=msg.vlan
 
 			},
 			getFormData_z(msg){
-				console.log(msg)
-				
-				
+
 				this.editForm.nodeName_z=msg.nodeName
 				this.editForm.endpoints_logic_port_id_z=msg.logic
 				this.editForm.vlan_z=msg.vlan
@@ -137,7 +126,7 @@
 			},
 			getVal(data){
 				//获取基本的信息配置    topForm组件内的信息
-				console.log(data);
+
 				this.creatFormDetails.tenant_name=data.tenant_name;
 				this.creatFormDetails.bandwidth=data.bandwidth;
 				
@@ -148,10 +137,10 @@
 					bandwidth:data.bandwidth,
 					description:data.describe,
 				};
-				console.log(this.basic)
+
 			},
 			getTimeVal(val){
-				console.log(val)
+
 				//获取子组件传过来的时间
 				this.editForm.charge_time=val.billing_time/1000;
 				this.editForm.expiration_time=val.overdue_time/1000;
@@ -184,8 +173,7 @@
 						if(valid){
 							this.$confirm('确定要提交吗?','提示',{})
 							.then(() => {
-								console.log(this.editForm);
-								console.log(this.basic)
+
 								if(this.editForm.endpoints_logic_port_id_a == this.editForm.endpoints_logic_port_id_z){
 									this.$message({
 										message:'两端不能选择相同的逻辑口，请重新选择!',
@@ -215,7 +203,7 @@
 										}
 									]
 								}
-								console.log(para)
+
 								this.$ajax.post('/vll/add_d2d_vll'+'?token='+this.token,para)
 								.then(res => {
 									if(res.status==200){

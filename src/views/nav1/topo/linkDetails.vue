@@ -102,7 +102,7 @@
 		watch:{
 			seeDetails:{
 				handler(newVal,oldVal){
-					console.log(newVal)
+				
 					this.linksData(newVal)
 				},
 				deep:true
@@ -118,10 +118,10 @@
 				if(obj.type==='link'){
 					this.formStatus=true;
 					this.linkLoading=true;
-					console.log('执行link')
+
 					this.$ajax.get('/link/link_info/'+obj.id+'?token='+this.token)
 					.then(res => {
-						console.log(res);
+
 						if(res.status==200){
 							if(res.data.status==0){
 								this.linkLoading=false;
@@ -149,19 +149,19 @@
 									zDesc:str.z_desc,
 									description:str.description,
 								};
-								console.log(this.filters)
+	
 							}
 						}
 					}).catch(e => {console.log(e)})
 				}else{
 					this.formStatus=false;
 					this.linkLoading=true;
-					console.log('执行云');
+
 					this.$ajax.get('/link/cloud_link_info/'+obj.id+'?token='+this.token)
 					.then(res => {
 						if(res.status==200){
 							if(res.data.status==0){
-								console.log(res)
+
 								this.linkLoading=false;
 								let str=res.data.data;
 								let obj={}
@@ -196,7 +196,7 @@
 				}
 			},
 			charts(ids){
-//				console.log(ids);//跳转到流量监控的界面
+//跳转到流量监控的界面
 				this.$ajax.get('/vll/get_vll_flow/'+ids+'?token='+this.token)
 					.then(res => {
 						if(res.status==200){

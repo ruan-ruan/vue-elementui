@@ -8,7 +8,6 @@
 				<virtualDetails :titData='pointID'></virtualDetails>
 			</el-tab-pane>
 			<el-tab-pane :label='$t("Public.chart")' name='second' v-if='flow'>
-				<!--<virtual-chart :titData='pointID'></virtual-chart>-->
 				<mult-charts :titData='pointID'></mult-charts>
 			</el-tab-pane>
 		</el-tabs>
@@ -18,9 +17,7 @@
 <script>
 	import goback from '@/components/goback';
 	import virtualDetails from '@/views/resources/virtualDetails/pointsDetails/virtualDetails'
-//	import virtualChart from '@/views/resources/virtualDetails/pointsDetails/virtualChart'
 	import multCharts from '@/components/multCharts'
-//	import sharedCharts from '@/components/sharedCharts'
 	
 	export default{
 		name:'poinDetail',
@@ -38,9 +35,7 @@
 				
 			}
 		},
-		created(){
-			console.log(this.pointID)
-		},
+
 		methods:{
 			goback(){
 				this.$router.go(-1)

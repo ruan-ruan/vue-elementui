@@ -39,7 +39,7 @@
 						<span>{{scope.$index+(index-1)*size+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="creation" :label='$t("Public.creatime")' align='center'></el-table-column>
+				<el-table-column prop="creation" :label='$t("Public.creatime")' align='center'width="80"></el-table-column>
 				<el-table-column prop="node.name" :label='$t("Public.nodeName")' align='center'></el-table-column>
 				<el-table-column prop="statusName" :label='$t("Public.status")'  align='center'>
 					<template slot-scope='scope'>
@@ -61,17 +61,16 @@
 				<el-table-column prop="typeName" :label='$t("business.logicType")'  align='center'></el-table-column>
 				<el-table-column prop="charge_mode" :label='$t("Public.chargModel")'  align='center'></el-table-column>
 				
-				<el-table-column prop="charge":label='$t("Public.billTime")' width="95" align='center'>					
+				<el-table-column prop="charge":label='$t("Public.billTime")' width="80" align='center'>					
 				</el-table-column>
-				<el-table-column prop="expiration":label='$t("Public.expTime")'width="95" align='center'>			
+				<el-table-column prop="expiration":label='$t("Public.expTime")'width="80" align='center'>			
 				</el-table-column>
-				
 				<el-table-column prop="description":label='$t("Public.description")' align='center'></el-table-column>
-				<el-table-column :label='$t("Public.operation")' width="160" align='center' v-if=" typeof id !=='undefined'">
-					<template slot-scope='scope'v-if='scope.row.status == "creating"? false : true '>
+				<el-table-column :label='$t("Public.operation")' width="160" align='center' v-if=" typeof id !=='undefined' ">
+					<template slot-scope='scope' v-if='scope.row.status == "creating"? false : true '>
+						<el-button size='mini' type='info' @click='handleDetails(scope.$index,scope.row)'>{{$t('tabOperation.info')}}</el-button>
 						<el-button size='mini' v-if='scope.row.status == "success" ' @click='handleTabStatus(scope.$index,scope.row)'>{{scope.row.changeBtn}}</el-button>
 						<el-button size='mini'type='primary'v-if='scope.row.status == "success" ' @click='handleEdit(scope.$index,scope.row)'>{{$t('tabOperation.edit')}}</el-button>
-						<el-button size='mini' type='info' @click='handleDetails(scope.$index,scope.row)'>{{$t('tabOperation.info')}}</el-button>
 						<el-button size='mini' type='danger' @click='handleDel(scope.$index,scope.row)'>{{$t('tabOperation.delete')}}</el-button>
 					</template>
 				</el-table-column>
@@ -112,7 +111,7 @@
 				</el-tabs>
 			</div>
 			<div v-if='dialogStatus=="see"'>
-				<virDetails :basicObj='childForm'></virDetails>  <!--根据不同的内容云和dc显示不同的文本     详情文本-->
+				<virDetails :basicObj='childForm' ref='virForm' @sendrepair='getMsg'></virDetails>  <!--根据不同的内容云和dc显示不同的文本     详情文本-->
 				<basic-details ref='basicForm' :basicObj='childForm' :type='dialogStatus'></basic-details>
 				<div class="toolbar"style="text-align: center;">
 					<el-button size='small' @click='dialogFormVisible=false'>{{$t('tabOperation.cancel')}}</el-button>
@@ -206,7 +205,6 @@
       			pagecount:5,
 			}
 		},
-
 		created(){
 			this.token=sessionStorage.getItem('token');
 			if(typeof this.id !=='undefined'){
@@ -219,6 +217,12 @@
 
 		},
 		methods:{
+			getMsg(msg){
+				if(typeof this.id !=='undefined'){
+					this.dialogFormVisible=false;
+					this.getDetails(this.id);
+				};
+			},
 			// 页数改变事件
 		    handleSizeChange(size) {
 		      	this.size = size;
@@ -247,9 +251,6 @@
 				}else if(this.childForm.dataType == "cloud_endpoints"){
 					str='cloud'
 				}
-//				var para={
-//					charge_mode:this.basicObj.charge_mode
-//				}
 				var para=Object.assign({},this.basicObj);
 				this.$ajax.put('/vll/edit_endpoint/'+str+'/'+this.editForm.id+'/'+this.childForm.id+'?token='+this.token,para)
 				.then(res => {
@@ -260,7 +261,8 @@
 								type:"success"
 							})
 							this.dialogFormVisible=false;
-							this.$refs['virForm'].$refs['detailsForm'].resetFields();
+							this.$refs['virForm'].$refs['detailsForm'].$$refs['dcForm'].resetFields();
+							this.$refs['virForm'].$refs['detailsForm'].$$refs['clounForm'].resetFields();
 							this.$refs['basicForm'].$refs['basicForm'].resetFields();
 //							this.getDetails(this.editForm.id);
 							this.getDetails(this.id);
@@ -307,9 +309,12 @@
 												type:'success'
 											})
 											that.dialogFormVisible=false;
-											that.$refs['clounForm'].$refs['editForm'].$refs['clounForm'].resetFields();
+											that.$refs['clounForm'].$refs['editForm'].resetFields();
 											that.$refs['basicForm'].$refs['basicForm'].resetFields();
-											
+											that.componentStatus=false;
+											that.$nextTick(() => {
+												that.componentStatus=true;
+											})
 											that.getDetails(that.id)
 										}
 									}
@@ -353,14 +358,13 @@
 									this.editLoading=false;
 									if(res.status==200){
 										if(res.data.status==0){
-											console.log(res)
 											this.$message({
 												message:res.data.message,
 												type:'success'
 											})
 											
 											that.dialogFormVisible=false;
-											this.$refs['editForm'].$refs['editForm'].$refs['dcForm'].resetFields();  
+											this.$refs['editForm'].$refs['editForm'].resetFields();  
 											this.$refs['basicForm'].$refs['basicForm'].resetFields();
 											that.componentStatus=false;
 											that.$nextTick(() => {
@@ -564,7 +568,6 @@
 									this.users.push(ele);
 								})
 							}
-							console.log(this.users)
 							// 初始化数据
 						    this.tableCopyTableList = JSON.parse(JSON.stringify(this.users));
 						    this.users = this.paging(this.size, this.index);
@@ -683,7 +686,6 @@
 
 			},
 			handleDetails(index,row){//详情
-				console.log(row);
 				this.childForm={};
 				this.dialogStatus='see';
 				this.dialogFormVisible=true;
