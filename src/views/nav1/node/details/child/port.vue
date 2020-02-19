@@ -9,10 +9,10 @@
 			<el-tab-pane :label='$t("Public.physics2")' v-if='equipStatue'>
 				<portChilds :titleTwo='base2'></portChilds>
 			</el-tab-pane>
-			<el-tab-pane :label='$t("Public.logic1")'>
+			<el-tab-pane :label='$t("Public.logic1")' v-if='port'>
 				<logicalPort :titleOne='base1ID'></logicalPort>
 			</el-tab-pane>
-			<el-tab-pane :label='$t("Public.logic2")' v-if='equipStatue'>
+			<el-tab-pane :label='$t("Public.logic2")' v-if='port && equipStatue'>
 				<logicalPort :titleTwo='base2ID'></logicalPort>
 			</el-tab-pane>
 		</el-tabs>
@@ -32,6 +32,11 @@
 		components:{
 			portChilds,logicalPort
 		},
+		computed:{
+			port(){
+				return this.recursion( this.$store.state.aside ,"aside.logicManage").show;
+			}
+		},
 		data(){
 			return{
 				idOne:[],
@@ -50,7 +55,8 @@
 		created(){
 			
 			this.token=sessionStorage.getItem('token');
-			this.getUsers(this.title)
+			this.getUsers(this.title);
+//			console.log( this.recursion( this.$store.state.aside ,"aside.logicManage") )
 		},
 		watch:{
 			base1:{

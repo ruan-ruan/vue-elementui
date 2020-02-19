@@ -218,6 +218,9 @@
             		<span v-text='scope.row.statusValZ' :class="scope.row.colorZ"></span>
             	</template>
             </el-table-column>
+            <!--<el-table-column label='默认路径'align='center' min-width='40'>
+            yes/no
+            </el-table-column>-->
             <el-table-column
               prop='creation_time'
               :label='$t("Public.creation")'
@@ -265,6 +268,7 @@
               <template slot-scope='scope' v-if='scope.row.status == "creating"?false:true '>
                 <el-button
                   size='mini'
+                  type='warning'
 									v-if='buttonVal.stop? scope.row.status !=="failure"?true:false  : buttonVal.stop'
                   @click='handleStatus(scope.$index,scope.row)'
                 >{{scope.row.specialName}}</el-button>
@@ -280,6 +284,15 @@
                   @click='handleDel(scope.$index,scope.row)'
                   v-if='buttonVal.del ? scope.row.status=="failure"?true:false : buttonVal.del'
                 >{{$t('tabOperation.delete')}}</el-button>
+                
+                <el-dropdown  size='mini' v-if='scope.row.status !=="failure" '>
+								  <el-button size='mini' type="info" >
+								    更多
+								  </el-button>
+								  <el-dropdown-menu size='mini' slot="dropdown">
+								    <el-dropdown-item  command='路径调整' @click.native='handlePath(scope.$index,scope.row)'>路径调整</el-dropdown-item>
+								  </el-dropdown-menu>
+								</el-dropdown>
               </template>
             </el-table-column>
           </el-table>
@@ -514,10 +527,12 @@ export default {
 	  		see:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list, "vll@p2p_vll_info" ).show,//查看详情
 	  		stop:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list, "vll@to_stop_vll").show,//查看逻辑口的详情
 	  		run:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list, "vll@to_serve_vll").show,//查看逻辑口的详情
-	  		
-	  	}
+	  		seePort:this.codeVal(this.recursion( this.$store.state.aside ,"aside.logicManage").list, "port@logic_port_info" ).show
+	  	},
+	  	
     };
   },
+  
   created() {
 
     this.token = sessionStorage.getItem("token");
@@ -532,8 +547,22 @@ export default {
       this.parentStatus = true;
     }
     this.getUsers();
+//  console.log( this.$store.state.aside )
+    //aside.logicManage  port@logic_port_info
+    
+    
   },
   methods: {
+  	handlePath(index,row){
+  		//执行路径调整函数
+//		console.log('执行路径调整')
+			this.$router.push({
+				path:'/resource/seletPath',
+				query:{
+					selectId:row.id
+				}
+			})
+  	},
     getFiltersData() {
     	
       //获取租户标识的数据
@@ -895,56 +924,72 @@ export default {
     },
     handleSeeA(index, row) {//A端的详情
 
-    	var logic=new Object();
-    	if(row.type ==='d2d'){
-    		var obj=row.endpoints.find(item => {
-					return item.name == 'A端'
+			if( this.buttonVal.seePort  ){
+				var logic=new Object();
+	    	if(row.type ==='d2d'){
+	    		var obj=row.endpoints.find(item => {
+						return item.name == 'A端'
+					})
+	    		logic=obj.logic_port;
+	    	}else if(row.type === 'd2c' || row.type ==='c2c'){//云直连
+	    		var obj=row.cloud_endpoints.find(item => {
+						return item.name == 'A端'
+					})
+	    		logic=obj.cloud_config.logic_port;
+	    	}
+	      //查看A的详情
+				if(JSON.stringify(logic) !=='{}'){
+					this.$router.push({
+		        path: "/resource/see/logicalPort",
+		        query: {
+		          detailsID: logic.id
+		        }
+		      });
+		      this.$emit('send',logic.id)//改组件被引用的时候  向父组件传值更新
+				}
+			}else{
+				this.$message({
+					message:'暂无查看权限!',
+					type:'warning'
 				})
-    		logic=obj.logic_port;
-    	}else if(row.type === 'd2c' || row.type ==='c2c'){//云直连
-    		var obj=row.cloud_endpoints.find(item => {
-					return item.name == 'A端'
-				})
-    		logic=obj.cloud_config.logic_port;
-    	}
-      //查看A的详情
-			if(JSON.stringify(logic) !=='{}'){
-				this.$router.push({
-	        path: "/resource/see/logicalPort",
-	        query: {
-	          detailsID: logic.id
-	        }
-	      });
-	      this.$emit('send',logic.id)//改组件被引用的时候  向父组件传值更新
 			}
+			
+			
+    	
       
     },
     handleSeeZ(index, row) {
       //查看Z端的详情
-      var logic=new Object();
-    	if(row.type ==='d2d' || row.type === 'd2c'){
-    		var obj=row.endpoints.find(item => {
-					return item.name == 'Z端'
-				})
-    		logic=obj.logic_port;
-    	}else if(row.type ==='c2c'){//云直连
-    		var obj=row.cloud_endpoints.find(item => {
-					return item.name == 'Z端'
-				})
-    		logic=obj.cloud_config.logic_port;
-    	}
+      if( this.buttonVal.seePort ){
+      	var logic=new Object();
+	    	if(row.type ==='d2d' || row.type === 'd2c'){
+	    		var obj=row.endpoints.find(item => {
+						return item.name == 'Z端'
+					})
+	    		logic=obj.logic_port;
+	    	}else if(row.type ==='c2c'){//云直连
+	    		var obj=row.cloud_endpoints.find(item => {
+						return item.name == 'Z端'
+					})
+	    		logic=obj.cloud_config.logic_port;
+	    	}
+	
+				if(JSON.stringify( logic) !=='{}'){
+					this.$router.push({
+		        path: "/resource/see/logicalPort",
+		        query: {
+		          detailsID: logic.id
+		        }
+		      });
+		      this.$emit('send',logic.id)//改组件被引用的时候  向父组件传值更新
+				}
+      }else{
+      	this.$message({
+      		message:'暂无查看权限',
+      		type:'warning'
+      	})
+      }
 
-			if(JSON.stringify( logic) !=='{}'){
-				this.$router.push({
-	        path: "/resource/see/logicalPort",
-	        query: {
-	          detailsID: logic.id
-	        }
-	      });
-	      this.$emit('send',logic.id)//改组件被引用的时候  向父组件传值更新
-			}
-     
-      
     },
     handleEdit(index, row) {
       //编辑

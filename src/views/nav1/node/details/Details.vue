@@ -8,11 +8,11 @@
 			<el-tab-pane :label='$t("Public.portInfo")' name='second'>
 				<Port :title='id'></Port>
 			</el-tab-pane>
-			<el-tab-pane  :label='$t("Public.pointLine")' name='thired'>
+			<el-tab-pane  :label='$t("Public.pointLine")' name='thired' v-if='pointSpecial'>
 				<!--<Port ></Port>-->
 				<points-to :nodeID='id'></points-to>
 			</el-tab-pane>
-			<el-tab-pane :label='$t("Public.virtualLine")' name='fourth'>
+			<el-tab-pane :label='$t("Public.virtualLine")' name='fourth' v-if='virtualSpecial'>
 				<virtualNetwork :clounId='id'></virtualNetwork>
 			</el-tab-pane>
 		</el-tabs>
@@ -50,6 +50,14 @@
 			
 			this.token =sessionStorage.getItem('token');
 
+		},
+		computed:{
+			pointSpecial(){
+				return this.recursion( this.$store.state.aside ,"aside.pointSpecial").show;
+			},
+			virtualSpecial(){
+				return this.recursion( this.$store.state.aside ,"aside.virtualSpecial").show;
+			}
 		},
 		methods:{
 			goBack(){

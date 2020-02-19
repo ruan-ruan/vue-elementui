@@ -437,7 +437,6 @@
 									id:ele.id,
 									name:ele.name,
 
-
 									status:isPortStatus(ele.physical_ports),
 
 									statusColor:strVal.statusColor,
@@ -445,7 +444,6 @@
 								}
 								this.logicPort.push(portObj)
 							})
-
 							this.logicPort= this.logicPort.filter(item => {//将云对接的所有的列表内的逻辑口用过的删除
 							     let idList= this.cloudLogic.map(v => v.id)
 							     return !idList.includes(item.id)

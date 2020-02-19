@@ -57,6 +57,7 @@
 </template>
 
 <script>
+//	import md5 from 'js-md5';
 	import { fil} from'@/assets/js/index'
 	import *as types from '@/api/types'
 	var routers = []
@@ -130,7 +131,7 @@
 									});
 									this.$store.commit(types.LOGIN, res.data.data.token)
 									sessionStorage.setItem('user',loginParams.name);
-									sessionStorage.setItem('psd',loginParams.password)
+									sessionStorage.setItem('psd', loginParams.password)
 									sessionStorage.setItem('token',res.data.data.token);
 									
 									this.$ajax.get('/public/get_menu'+'?token='+res.data.data.token)

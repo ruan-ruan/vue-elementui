@@ -374,6 +374,8 @@
 			  		see:this.codeVal(this.recursion( this.$store.state.aside ,"Public.backLink").list, "link@link_info" ).show,//查看详情
 			  		open:this.codeVal(this.recursion( this.$store.state.aside ,"Public.backLink").list,"link@open_maintenance_link" ).show,//开启
 			  		close:this.codeVal(this.recursion( this.$store.state.aside ,"Public.backLink").list, "link@close_maintenance_link" ).show,//关闭
+	  				nodeSee:this.codeVal(this.recursion( this.$store.state.aside ,"Public.backboneNode").list, "node@node_info" ).show,//节点查看详情
+			  		
 			  	}
 			}
 		},
@@ -572,20 +574,38 @@
 			},
 			//节点a的点击详情
 			handleNode_a(index,row){
-
-				this.$router.push({path:'/location/index/unknown/nodedetails',
-				query:{
-					detailsID:row.a_node.id
+				if(this.buttonVal.nodeSee){
+					this.$router.push({
+						path:'/location/index/unknown/nodedetails',
+						query:{
+							detailsID:row.a_node.id
+						}
+					});
+				}else{
+					this.$message({
+						message:'暂无查看详情',
+						type:'warning'
+					})
 				}
-				});
+				
 			},
 			//节点z的详情
 			handleNode_z(index,row){
-				this.$router.push({path:'/location/index/unknown/nodedetails',
-				query:{
-					detailsID:row.z_node.id
+				
+				if(this.buttonVal.nodeSee){
+					this.$router.push({
+						path:'/location/index/unknown/nodedetails',
+						query:{
+							detailsID:row.z_node.id
+						}
+					});
+				}else{
+					this.$message({
+						message:'暂无查看详情',
+						type:'warning'
+					})
 				}
-				});
+				
 			},
 			//详情
 			handleSee(index,row){

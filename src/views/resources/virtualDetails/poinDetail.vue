@@ -10,6 +10,9 @@
 			<el-tab-pane :label='$t("Public.chart")' name='second' v-if='flow'>
 				<mult-charts :titData='pointID'></mult-charts>
 			</el-tab-pane>
+			<!--<el-tab-pane label='路径详情' name='three'>
+				<selectPath :titData='pointID'></selectPath>
+			</el-tab-pane>-->
 		</el-tabs>
 	</div>
 </template>
@@ -18,14 +21,14 @@
 	import goback from '@/components/goback';
 	import virtualDetails from '@/views/resources/virtualDetails/pointsDetails/virtualDetails'
 	import multCharts from '@/components/multCharts'
-	
+	import selectPath from '@/views/resources/virtualDetails/pointsDetails/selectPath'
 	export default{
 		name:'poinDetail',
 		components:{
 			goback,
 			virtualDetails,
 			multCharts,
-
+			selectPath
 		},
 		data(){
 			return{

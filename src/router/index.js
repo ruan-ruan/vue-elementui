@@ -121,6 +121,7 @@ var router = new Router({
 	        	name:'资源管理'
 	        },
 	        children: [
+
 				{ path: '/resource/port', component: () => import ('@/views/resources/port.vue'), name: 'aside.logicManage',leaf:true, meta:{ requireAuth:true, name:'逻辑口管理'},},
 				//逻辑端口的创建
 				{ path: '/resource/add/logicalPort', component: () => import ('@/views/resources/details/logicalPort.vue'), name: 'aside.creatLogic',leaf:true,hidden:true,meta:{ requireAuth:true, name:'创建逻辑口'},},
@@ -134,7 +135,8 @@ var router = new Router({
 					{path:'/resource/virtualLine/pointsTos',component: () => import ('@/views/resources/pointsTos'), name: 'aside.virtualSpecial',leaf:true,meta:{ requireAuth:true, name:'虚拟组网'},},
 				]},
 				{path:'/resource/virtualLine/pointdetails',component: () => import ('@/views/resources/virtualDetails/poinDetail'), name: 'aside.pointSpecialDeta',leaf:true,hidden:true,meta:{ requireAuth:true, name:'点到点详情'},},
-				
+				//路径调整
+				{path:'/resource/seletPath',component: () => import ( '@/views/resources/virtualDetails/pointsDetails/selectPath') ,name :'路径调整',leaf:true,hidden:true, }
 	        ]
 	    },
 	    {

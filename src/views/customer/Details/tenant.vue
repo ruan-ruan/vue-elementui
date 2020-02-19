@@ -5,13 +5,13 @@
 			<el-tab-pane :label='$t("aside.detaTenant")'name='first'>
 				<cusDetails :tit='cusSeeID'></cusDetails>
 			</el-tab-pane>
-			<el-tab-pane :label='$t("customer.logicList")'name='second'>
+			<el-tab-pane :label='$t("customer.logicList")'name='second' v-if='port'>
 				<logicPort :tenantID='cusSeeID'></logicPort>
 			</el-tab-pane>
-			<el-tab-pane :label='$t("Public.pointLine")'name='three'>
+			<el-tab-pane :label='$t("Public.pointLine")'name='three' v-if='pointSpecial'>
 				<points-to :customerID='cusSeeID'></points-to>  <!--向子组件传id即可    根据id在子组件内进行判断-->
 			</el-tab-pane>
-			<el-tab-pane :label='$t("Public.virtualLine")'name='four'>
+			<el-tab-pane :label='$t("Public.virtualLine")'name='four' v-if='virtualSpecial'>
 				<virtualNetwork :customerID='cusSeeID'></virtualNetwork>
 			</el-tab-pane>
 		</el-tabs>
@@ -35,12 +35,15 @@
 			goback,
 			virtualNetwork,
 		},
+
 		data(){
 			return{
 				token:'',
 				cusSeeID:this.$route.query.id,
 				activeName:'first',
-
+				pointSpecial:this.recursion( this.$store.state.aside ,"aside.pointSpecial").show,//点的专线
+				virtualSpecial:this.recursion( this.$store.state.aside ,"aside.virtualSpecial").show,//组网
+				port:this.recursion( this.$store.state.aside ,"aside.logicManage").show,//逻辑口
 			}
 		},
 	

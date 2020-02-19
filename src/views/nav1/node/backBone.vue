@@ -281,7 +281,8 @@ export default {
 
     this.selectData();
     this.getUsers();
-
+//  console.log( this.$store.state.aside )
+//		console.log(  this.recursion( this.$store.state.aside ,"aside.pointSpecial")  )
     
   },
   methods: {
@@ -476,7 +477,7 @@ export default {
     },
     //显示编辑的界面
     handleEdit(index, row) {
-      this.$router.push({ path: "/location/index/editForm/" + row.id });
+//    this.$router.push({ path: "/location/index/editForm/" + row.id });
       this.$router.push({
         path: "/location/index/editForm",
         query: {
