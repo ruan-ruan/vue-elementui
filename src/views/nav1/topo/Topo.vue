@@ -89,10 +89,8 @@
 
 		},
 		mounted(){
-			
 			let that=this;
 			this.bus.$on('sendType',(msg) => {
-
 				that.selectForm=msg;
 				that.getNodesData(msg);
 			})
@@ -266,7 +264,6 @@
 						if(res.data.status==0){
 
 							this.nodesData=res.data.data;
-//							this.backupNode=res.data.data;
 							this.getLinksData(this.nodesData,obj);
 						}
 					}
@@ -279,14 +276,24 @@
 				.then(res => {
 					if(res.status==200 && res.data.status==0){
 							that.linksData=res.data.data;	
-//							that.backupLink=res.data.data;
 
 						this.dealForm(obj,nodesData,that.linksData)
 					}
 				}).catch(e => {console.log(e)})
 			},
 			setTopo:function(nodesData,linksData){//设置拓扑图的展示
-
+				//对数据的里面的匹配进行处理
+				linksData.some(function(v, i) {
+			        nodesData.some(function(w, j) {
+			            if (v.source_node === w.node.id) {
+			                v.source_val= w;
+			            }
+			            if (v.target_node === w.node.id) {
+			                v.target_val= w;
+			            }
+			        });
+			        v.index = ++i;
+			   });
 				d3.select('svg').select('g').remove()
 				var width = 890,
 				  height = 470;
@@ -294,20 +301,10 @@
 				var text_dy = 20;
 				var img_w=16,img_h=16;
 				var radius=16;
-				linksData.some(function(v, i) {
-			        nodesData.some(function(w, j) {
-			            if (v.source_node == w.node.id) {
-			                v.source_val= w;
-			            }
-			            if (v.target_node == w.node.id) {
-			                v.target_val= w;
-			            }
-			        });
-			        v.index = ++i;
-			   });
+				
 				
 				let that=this
-				var linkForce=d3.forceLink(linksData).id(function(d){})
+				var linkForce=d3.forceLink(linksData).id(function(d){ })
 				
 				let simulation = d3.forceSimulation()
 				.nodes(nodesData)
@@ -318,15 +315,14 @@
 				
 				simulation
 				.force('chargeForce', chargeForce)
-//		      	.force('centerForce', centerForce)
-//		      	.force('links', linkForce)
+				.force("center", centerForce)
+		      	.force('links', linkForce)
 
 				simulation.on('tick', tickActions)
 				
 				var  svg = d3.select('svg')
 	            .attr('width',width)
 	            .attr('height',height)
-//	            
 	            var g = svg.append('g');
 
 	            var nodes_text = g.selectAll('.node_text')
@@ -344,8 +340,7 @@
 	            .attr('class','links_text')
 				.text(function(d){
 					return d.bandwidth
-	          })
-//			    .attr('class', 'link')
+	         })
 				
 	        let link = g.append('g') 
 	        	.attr('class', 'link')
@@ -356,7 +351,6 @@
 			    .style('stroke-width', linkWidth)
 			    .style('stroke', linkColour)
 			    .attr('class',function(d){//对数据进行处理
-
 			    	if(typeof d.speedColor =='undefined'){   //流量的显示不存在的时候   这个时候关闭   返回默认的颜色
 			    		return linkColour;
 			    	}else {  //当存在  流量的时候    显示流量
@@ -432,7 +426,6 @@
 			    dragHandler(node)  
 			    
 		        node.on('click',function(d){
-
 					that.$store.commit('newAuthor',d.node.id)  //向数据仓库传值
 //		        	//向父节点传值
 		        	that.$emit('parentDelta',true)
@@ -458,7 +451,6 @@
 					zoomHandler.scaleBy(svg, 0.9); // 执行该方法后 会触发zoomHandler事件
             		let tran = d3.zoomTransform(svg.node());
 				})
-//				let newData=[];//用来保存拖拽后的所有的节点
 				let newObj={};//保存拖拽后的每个节点数据
 				function tickActions () {
 		            node.attr("x", function(d) { return d.x-img_w/2; })
@@ -468,37 +460,37 @@
 //						d.y=d.y - img_h/2 < 0? img_h/2 : d.y;
 //					});
 					link.attr("x1", function(d) {
-						if(d.source_val){
-							return d.source_val.x;
-						}
-					})
+							if(d.source_val){
+								return d.source_val.x;
+							}
+						})
 		                .attr("y1", function(d) {
 		                	if(d.source_val){
 		                		return d.source_val.y;
 		                	}
-		                	 })
+		                })
 		                .attr("x2", function(d) {
 		                	if(d.target_val){
 		                		return d.target_val.x;
 		                	}
-		                	 })
+		                })
 		                .attr("y2", function(d) {
 		                	if(d.target_val){
 		                		return d.target_val.y;
 		                	}
-		                	})
-				   nodes_text.attr('x',function(d){d.fx=d.x;return d.x-12})
+		                })
+				   	nodes_text.attr('x',function(d){d.fx=d.x;return d.x-12})
 				            .attr("y", function(d) { d.fy=d.y;return d.y-12 });
-		           links_text.attr("x", function(d) { 
-		           	if(d.source_val && d.target_val){
-		           		return (d.source_val.x+d.target_val.x)/2;
-		           	}
-		           	 })
+		           	links_text.attr("x", function(d) { 
+				           	if(d.source_val && d.target_val){
+				           		return (d.source_val.x+d.target_val.x)/2;
+				           	}
+			           	})
 		                .attr("y", function(d) {
 		                	if(d.source_val && d.target_val){
 		                		return (d.source_val.y+d.target_val.y)/2;
 		                	}
-		                	 })
+		                })
 			   	}
 				function nodeTypeImage(nodes){
 					if(nodes.type==='node'){

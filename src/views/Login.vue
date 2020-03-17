@@ -114,6 +114,7 @@
 			            };
 			            this.$ajax.post('/login/admin_login',loginParams)
 						.then(res => {
+							console.log(res)
 							this.logining=false;
 							
 							if(res.status==200){

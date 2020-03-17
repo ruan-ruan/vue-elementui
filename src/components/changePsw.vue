@@ -102,6 +102,7 @@
 											message:this.$t('nav.pwdSuccess'),
 											type:'success'
 										})
+										this.$store.commit(types.LOGOUT);
 										this.$router.push({path:'/login'})
 									}
 								}

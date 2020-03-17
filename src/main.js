@@ -47,7 +47,7 @@ Vue.prototype.$ajax=ajax;  //对axios的数据请求的二次封装
 
 
 Vue.config.productionTip = false;
-
+//界面刷新的时候  重新赋值
 if (window.sessionStorage.getItem('token')) {
     store.commit(types.LOGIN, window.sessionStorage.getItem('token'))
 }
@@ -63,14 +63,8 @@ router.beforeEach( (to,from,next) => {
 	var token=sessionStorage.getItem('token');
 	var Users=sessionStorage.getItem('user');
 	if (to.matched.some(r => r.meta.requireAuth)) {//需要权限  路由拦截 的界面
-        if( store.state.token){
-			if( to.path === '/login' ){
-				window.sessionStorage.removeItem('token');
-		    	window.sessionStorage.removeItem('user');
-		    	window.sessionStorage.removeItem('asideList');
-			}else {
-				next();
-			}
+        if(store.state.token){
+        	next();
 		}else{
             next({
                 path: '/login',

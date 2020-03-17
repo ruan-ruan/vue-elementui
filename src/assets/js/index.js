@@ -92,6 +92,9 @@ export function codeVal(data, code) {//这个是根据名称 获取的列表的�
     return result;
 }
 
+
+
+
 export function exportCom(comp){//对返回的数据的组件的进行导入
 	return () => import(comp+'.vue');
 }
@@ -752,6 +755,35 @@ export function deepClone(data){  //设置权限的时候  给按钮添加控制
 			}
 		}
 	})
+}
+export function cloneTopo(data,obj,index,vals,links){
+	var sel=[];
+	if(data){
+		data.map(item =>{
+			if(item.node.id === obj.node.id){
+				data=[];
+				sel.push(obj);
+				vals[index].style.width=50;
+				vals[index].style.height=50;
+				links.map(w => {
+					data.push(w.target_val)
+				})
+				data=unique(data);
+
+			}else {
+				return ;
+			}
+		})
+		
+		cloneTopo(data,obj,index,vals,links)
+		
+	}
+	return sel;
+}
+
+ function unique(arr1) {
+  	const res = new Map();
+  	return arr1.filter((a) => !res.has(a.node.id) && res.set(a.node.id, 1))
 }
 
 export function Clone(data){  //角色的详情部分   所有的数据都是不可以点击的

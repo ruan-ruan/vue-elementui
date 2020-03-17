@@ -168,7 +168,7 @@
             </el-table-column>
             <el-table-column
               :label='$t("Public.specialType")'
-              min-width='60'
+              min-width='55'
               align='center'
             >
               <template slot-scope='scope'>
@@ -177,7 +177,7 @@
             </el-table-column>
             <el-table-column
               :label='$t("Public.aPort")'
-              min-width='60'
+              min-width='55'
               align='center'
             >
               <template slot-scope='scope'>
@@ -191,7 +191,7 @@
                 <span>{{scope.row.vlanHTMLA}}</span>
               </template>
             </el-table-column>
-            <el-table-column :label='$t("Public.aLogicStatus")' min-width='70'  align='center'  >
+            <el-table-column :label='$t("Public.aLogicStatus")' min-width='50'  align='center'  >
               <template slot-scope='scope'>
                 <span  :class="scope.row.colorA" v-text="scope.row.statusValA"> </span>
               </template>
@@ -213,14 +213,16 @@
                 <span>{{scope.row.vlanHTMLZ}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop='endpoints.ports.status' :label='$t("Public.zLogicStatus")'  min-width='75' align='center' >
+            <el-table-column prop='endpoints.ports.status' :label='$t("Public.zLogicStatus")'  min-width='55' align='center' >
             	<template slot-scope='scope'>
             		<span v-text='scope.row.statusValZ' :class="scope.row.colorZ"></span>
             	</template>
             </el-table-column>
-            <!--<el-table-column label='默认路径'align='center' min-width='40'>
-            yes/no
-            </el-table-column>-->
+            <el-table-column label='默认路径'align='center' min-width='40'>
+            	<template slot-scope='scope'>{{scope.row.is_default_path?"是":'否'}}
+            		<!--is_default_path-->
+            	</template>
+            </el-table-column>
             <el-table-column
               prop='creation_time'
               :label='$t("Public.creation")'
@@ -619,6 +621,7 @@ export default {
       };
       this.$ajax.get("/vll/p2p_vlls" + "?token=" + this.token, para)
         .then(res => {
+        	console.log(res)
           if (res.status == 200) {
             if (res.data.status == 0) {
 

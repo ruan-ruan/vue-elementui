@@ -2,23 +2,28 @@ import axios from 'axios'
 import store from '@/store/index'
 import router from '@/router/index'
 import * as types from '@/api/types';
-import {Message} from'element-ui'
+import {Message,Loading} from'element-ui'
 // axios 配置
+// 超时时间
+axios.defaults.timeout = 10000
 axios.defaults.baseURL='http://api.tianchi.com'
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+//axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+// post请求头
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 // http request 拦截器
 axios.interceptors.request.use(
-config => {
-    if (store.state.token) {
-      	config.headers.Authorization = `token ${store.state.token}`
-//    axios.defaults.headers.common['Authentication-Token'] = `${store.state.token}`
-    }
-    return config
-},
-err => {
+	config => {
+	//  if (store.state.token) {
+	//    	config.headers.Authorization = `token ${store.state.token}`
+	//  }
+		const token = store.state.token;        
+	    token && (config.headers.Authorization = token);   
+	    return config
+	},
+	err => {
 	
-    return Promise.error(err)
-},
+	    return Promise.reject(err)
+	},
 )
 
 // http response 响应拦截器

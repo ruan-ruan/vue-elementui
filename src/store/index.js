@@ -6,12 +6,10 @@ import *as types from '@/api/types'
 
 Vue.use(Vuex)
 
-
-
 const store = new Vuex.Store({
     state:{
-    	aside:JSON.parse( sessionStorage.getItem('asideList') ),
-    	token:sessionStorage.getItem('token'),
+    	aside:null,
+    	token:null,
     	//用户的数据的密码和账号
     	user:{
     		name:'',
@@ -35,21 +33,23 @@ const store = new Vuex.Store({
     },
     mutations:{
     	setAside(state,data){
+    		sessionStorage.setItem('asideList',JSON.stringify(data));
     		state.aside =data;
-//  		console.log(data)
     	},
     	setRole(state,msg){
     		state.roles=msg
     	},
 		[types.LOGIN]: (state, data) => {
 //			sessionStorage.setItem('token',data)
-            sessionStorage.token = data;
+//          sessionStorage.token = data;
+            sessionStorage.setItem('token',data)
             state.token = data;
             
         },
         [types.LOGOUT]: (state) => {
         	sessionStorage.removeItem("user");
-          	sessionStorage.removeItem("asideList");
+        	sessionStorage.removeItem('token');
+        	sessionStorage.removeItem('aside')
             state.token = null;
             state.aside=null;
             

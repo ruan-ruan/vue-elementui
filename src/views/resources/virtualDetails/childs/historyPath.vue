@@ -3,38 +3,76 @@
 	<div>
 		<section>
 			<el-row class='history'>
-				<el-col :span='2'align='center' >历史路径</el-col>
-				<el-col :span='22'>
-					<el-pagination 
-						@size-change="handleSizeChange" 
-						@current-change="handleCurrentChange" 
-						:current-page="index" 							
-						:page-size="size" 
-						:page-sizes="[10,20,30,50]"
-						layout="total, sizes, prev, pager, next, jumper" 
-						:total="tableCopyTableList.length"
-						style='padding-top: 6px;'>
-		    		</el-pagination>
+				<el-col :span='2'align='center' >
+					历史路径
+				</el-col>
+				
+				<el-col :span='7'>
+					<!--<el-pagination
+						style='margin-top:5px'
+			            :total="total"
+			            @size-change="handleSizeChange"
+			            @current-change="handleCurrentChange"
+			            layout="total, sizes, prev, pager, next, jumper"
+			            :page-sizes="[5, 10, 20,30]"
+			            :current-page.sync="currentPage"
+			            :page-count='pageNum'
+			            :pager-count="pagecount"
+			        ></el-pagination>-->
+				</el-col>
+				<el-col :span='15'>
+					日期时间:
+					<el-date-picker
+						v-model='time'
+				      	type="datetimerange"
+				      	range-separator="至"
+				      	start-placeholder="开始日期"
+				      	end-placeholder="结束日期">
+				    </el-date-picker>
 				</el-col>
 				<el-col :span='24'>
 					<ul class="marT10 dashed_top" >
-						<li v-for='(item ,index ) in  historyData ' :key='index' >
+						<li v-for='(item ,index ) in  list ' :key='index' >
 							<el-row class="dashed_bom">
 								<el-col :span='24' >
-									<el-col :span='8'>
+									<el-col :span='10'>
 										<ul>
-											<li>默认路径:{{item.name}}</li>
-											<li>路径更新于:{{item.age}}</li>
-											<li>切换原因:{{item.work}}</li>
+											<li>状态:{{item.status_type}}</li>
+											<li>路径更新于:{{item.time}}</li>
+											<li>切换原因:{{item.reason}}</li>
 										</ul>
 									</el-col>
-									<el-col :span='16'>
-										<el-button size='mini' type='primary' style='margin-top: 50px;' @click='seePath(index,item)'> 查看路径(共使用{{item.num}}次)</el-button>
+									<el-col :span='14'>
+										<el-button 
+											size='mini'
+											:disabled=' default_val.id === item.id?true:false '
+											:type='default_val.id === item.id?"info":"primary"'
+											style='margin-top: 50px;' 
+											@click='seePath(index,item)'
+											v-if='(item.status_type =="创建失败" || item.status_type =="删除成功") ?false:true '
+											>
+											{{default_val.id === item.id?'路径使用中':'查看路径'}}
+										</el-button>
 									</el-col>
 								</el-col>
 							</el-row>
 						</li>
+						
 					</ul>
+				</el-col>
+				<el-col :span='24'	>
+					<el-pagination
+						style='margin-top:5px'
+			            :total="total"
+			            @size-change="handleSizeChange"
+			            @current-change="handleCurrentChange"
+			            layout="total, sizes, prev, pager, next, jumper"
+			            :page-sizes="[5, 10, 20,30]"
+			            :page-size="pagesize"
+			            :current-page.sync="currentPage"
+			            :page-count='pageNum'
+			            :pager-count="pagecount"
+			        ></el-pagination>
 				</el-col>
 			</el-row>
 			
@@ -43,15 +81,36 @@
 				:visible.sync='dialogFormVisible'
 				:close-on-click-modal='false'
 				v-loading='seeLoading'
-				background-color='green'>
-				
-				<path-detail></path-detail>
+				background-color='green'
+				@open="open()"
+				@close='close'
+				>
+
+				<el-row>
+					<el-col :span='24'>
+						<ul>
+							<li>默认路径:{{info.action ==='delete'?'是':'否'}}</li>
+							<li>路径更新于:{{info.time}}</li>
+							<li>切换原因:{{info.reason}}</li>
+						</ul>
+					</el-col>
+				</el-row>
 				<el-row class='marT10'>
 					<el-col :span='16'>
-						<path-chart></path-chart>
+						<charts ref='chart_svg' :currentData='currentData' @sendNode='getNode' :id='id' :detail='id' v-if='bool'></charts>
 					</el-col>
 					<el-col :span='8'>
-						<path-list></path-list>
+						<h3 >路径节点排列表:
+						</h3>
+						<el-table :data='Nodes' width='100%'>
+							<el-table-column type='index' label='跳数'align='center' min-width='40'>
+							</el-table-column>
+							<el-table-column prop='node.name' label='节点名称'align='center'min-width='60'></el-table-column>
+							<el-table-column prop='def_val' label='类型'align='center'min-width='40'></el-table-column>
+						</el-table>
+						<span class="path_spa marT10" v-if='JSON.stringify(info)!=="{}"? info.action === "create" ? false:true:true'>
+							当前系统默认路径
+						</span>
 					</el-col>
 					<el-col :span='24'align='center'>
 						<el-button size='small' type='primary' @click='redeployment '>重新部署</el-button>
@@ -60,84 +119,211 @@
 				</el-row>
 				
 			</el-dialog>
+
 			
+			<el-dialog 
+				:title='textMap[dialogAgain]'
+				:visible.sync='dialogForm'
+				:close-on-click-modal='false'
+				:modal-append-to-body='false'
+				v-loading='seeLoading'
+				background-color='green'>
+
+				<el-form :model='form':rules="formRules" ref='form'label-width='100px'>
+					<el-form-item label='切换原因' prop='why'>
+						<el-input type='textarea' v-model='form.why':rows='4':cols='4'></el-input>
+					</el-form-item>
+				</el-form>
+				<div slot='footer' class="dialog-footer">
+					<el-button size='small' @click.native='dialogForm=false'>取消</el-button>
+					<el-button size='small'  type="primary"  @click='save'>确认</el-button>
+				</div>
+				
+			</el-dialog>
+
 		</section>
 	</div>
 </template>
 
 <script>
-	import pathDetail from '@/views/resources/virtualDetails/childs/pathDetail'
-	import pathList from '@/views/resources/virtualDetails/childs/pathList'
-	import pathChart from '@/views/resources/virtualDetails/childs/pathChart'
+	import * as d3 from'd3';
+	import {datedialogFormat} from '@/assets/js/index.js'
+
+	import charts from '@/views/resources/virtualDetails/childs/charts'
 	export default{
 		name:'history',
+		props:['id','default'],//default  当前界面的使用的路径的id
 		data(){
 			return {
+				token:'',
 				historyData:[],//处理后的数据
-				//自定义分页
-				index: 1,
-      			size: 10,
-      			tableCopyTableList: [
-      				{
-						name:'1',
-						age:'1',
-						work:'1',
-						num:1
-					},{
-						name:'2',
-						age:'2',
-						work:'2',
-						num:2
-					},{
-						name:'3',
-						age:'3',
-						work:'3',
-						num:3
-					}
-      			],//数据copy  所有的数据
+				//分页所需要的参数
+		      	total: 0,
+		      	pagesize: 5,
+		      	currentPage: 1,
+		      	pageNum: 1,
+		     	pagecount: 5,
       			textMap:{
       				see:'路径详情',
+      				again:'重新部署路径'
       			},
+      			dialogAgain:'',
+      			dialogForm:false,
       			dialogStatus:'',
       			dialogFormVisible:false,
       			seeLoading:false,
+      			list:[],
+      			info:{},
+      			form:{
+      				why:'',
+      			},
+      			formRules:{
+      				why: [{ required: true, message:'请填写原因' , trigger: "blur" }]
+      			},
+      			time:null,//时间
+      			bool:true,
+      			currentData:{},//当前路径的对象
+      			Nodes:[],
+//    			index:0
 			};
 		},
-		components:{ pathDetail ,pathList , pathChart },
+		components:{ charts },
 		created(){
-			this.historyData = this.paging(this.size, this.index);
+			this.token=sessionStorage.getItem('token');
+
+			this.getUsers();
+		},
+		watch:{
+			'time':{
+				handler:function(newVal,oldVal){
+					this.getUsers()
+				},
+				deep:true
+			}
+		},
+		computed:{
+			default_val(){
+				return this.default;
+			}
 		},
 		methods:{
+			close(){
+				this.$emit('sendChild',false)
+			},
+			getNode(msg){
+				this.Nodes=JSON.parse(JSON.stringify(msg));
+			},
+			open(){
+				this.bool=false;
+				d3.select('svg').remove()
+				setTimeout(() => {
+					this.bool=true;
+//					console.log(this.$refs.chart_svg)
+					this.$refs.chart_svg.nodes()
+					this.$emit('sendChild',false)
+				},100)
+			},
 			// 页数改变事件
-		    handleSizeChange(size) {
-		      	this.size = size;
-		      	this.historyData = this.paging(size, this.index);
+		    handleSizeChange(val) {
+		      	this.pagesize = val;
+		      	this.getUsers();
 		    },
-		    // 页码改变事件
-		    handleCurrentChange(current) {
-		      	this.index = current;
-		      	this.historyData = this.paging(this.size, current);
+		    handleCurrentChange(val) {
+		      	this.currentPage = val;
+		      	this.getUsers();
 		    },
-			// 本地分页的方法
-		    paging(size, current) {
-		      	const tableList = JSON.parse(JSON.stringify(this.tableCopyTableList));
-		      	const tablePush = [];
-		      	tableList.forEach((item, index) => {
-		        	if (size * (current - 1) <= index && index <= size * current - 1) {
-		          		tablePush.push(item);
-		        	}
-		      	});
-		      	return tablePush;
-		    },
-		    seePath(index,row){
-		    	console.log(row);
-		    	console.log(index);
+			getUsers(){
+				var para;
+				if( !this.time && typeof(this.time ) !='undefined'&& this.time !=0){
+					para={
+						page: this.currentPage,
+	        			per_page: this.pagesize,	
+					}
+				}else {
+					para={
+						page: this.currentPage,
+	        			per_page: this.pagesize,
+	        			search_start_time:new Date(this.time[0]).getTime()/1000,
+	        			search_end_time:new Date(this.time[1]).getTime()/1000,
+					}
+				}
+
+				this.$ajax.get('/vll/paths/'+this.id+'?token='+this.token,para)
+				.then(res => {
+					if(res.status === 200 ){
+						if(res.data.status ===0){
+
+							res.data.data.items.map(item => {
+								item.time =datedialogFormat(item.creation_time);
+								if(item.action ==='delete'){
+									if(item.status ==='success'){
+										item.status_type='删除成功'
+									}
+									if(item.status === 'failure '){
+										item.status_type='删除失败'
+									}
+								}
+								if(item.action ==='create'){
+									if(item.status ==='success'){
+										item.status_type='创建成功'
+									}
+									if(item.status === 'failure '){
+										item.status_type='创建失败'
+									}
+								}
+							})
+							this.list=res.data.data.items;
+							this.total = res.data.data.page.total;
+							this.$emit('path_info',res.data.data.items[0] );//  向父组件当前第一条数据  就是要展示的 数据
+							this.$emit('sendChild',false)
+						}
+					}
+				})
+				.catch(err => {console.log(err)})
+			},
+		    seePath(index,row){//redeployment
+//				this.bool=true;
 		    	this.dialogStatus='see';
 		    	this.dialogFormVisible=true;
-		    	
+		    	row.time=datedialogFormat(row.creation_time)
+		    	this.info=JSON.parse(JSON.stringify(row));
+		    	this.currentData=row;
 		    },
 		    redeployment(){
 		    	//重新部署
+		    	this.dialogAgain='again';
+		    	this.dialogForm = true;
+		    },
+		    save(){
+		    	this.$refs.form.validate(valid => {
+		    		if(valid){
+		    			var slice=[];
+				    	if(this.Nodes){
+				    		this.Nodes.map(item =>{
+				    			slice.push(item.id)
+				    		})
+				    	}
+				    	var params={
+							reason:this.form.why,
+							node_ids:slice
+						}
+						this.$axios.put('/vll/change_path/'+this.id+'?token='+this.token,params)
+						.then(res => {
+							if(res.status ===200){
+								if(res.data.status ===0){
+									this.dialogForm=false;
+									this.dialogFormVisible=false;
+									this.getUsers();
+									this.$emit('reduction');//调用父组件内方法
+//									this.$parent.reduction()
+								}
+								
+							}
+						})
+						.catch(err => {console.log(err)})
+		    		}
+		    	})
+		    	
 		    }
 		}
 	}
