@@ -68,7 +68,10 @@
 						<a href="#" @click='handleSeeLink(scope.$index,scope.row)'style="text-decoration: none;">{{scope.row.name}}</a>
 					</template>
 				</el-table-column>
-				<el-table-column prop='status'  :label='$t("Public.linkState")' min-width='80' align='center'>
+				<el-table-column   :label='$t("Public.linkState")' width='80' align='center'>
+					<template slot-scope='scope'> <!--prop='status'-->
+						<span :class='scope.row.color' >{{scope.row.portStatus}}</span>
+					</template>
 				</el-table-column>
 				<el-table-column prop='type'  :label='$t("Public.shardCloud")' min-width='80' align='center'>
 				</el-table-column>
@@ -83,7 +86,7 @@
 						<a href="#" @click="handleSeeLogic(scope.$index,scope.row)"style="text-decoration: none;">{{scope.row.logic_port.name}}</a>
 					</template>
 				</el-table-column>
-				<el-table-column   :label='$t("Public.logicStatus")' min-width='80' align='center'>
+				<el-table-column   :label='$t("Public.logicStatus")' width='80' align='center'>
 					<template slot-scope='scope'>
 						<span :class='scope.row.color' v-text="scope.row.portStatus"></span>
 					</template>
@@ -212,16 +215,25 @@
 							descriptionValue(res.data.data.items)
 							res.data.data.items.map(ele => {
 								ele.portStatus=getPortStatus(ele.logic_port.physical_port)
-								if(getPortStatus(ele.logic_port.physical_port) === 'UP'){
-									ele.color='colorGreen'
-								}else if(getPortStatus(ele.logic_port.physical_port) === 'DOWN'){
-									ele.color='colorRed'
-								}else if(getPortStatus(ele.logic_port.physical_port) === '异常'){
-									ele.color='colorWarning'	
+								switch( getPortStatus(ele.logic_port.physical_port) ){
+									case 'UP':
+										ele.color='backRun';
+										break;
+									default:
+										ele.color='backWarn';
+										break;
 								}
+//								if(getPortStatus(ele.logic_port.physical_port) === 'UP'){
+//									ele.color='backRun'
+//								}else if(getPortStatus(ele.logic_port.physical_port) === 'DOWN'){
+//									ele.color='backWarn'
+//								}else if(getPortStatus(ele.logic_port.physical_port) === '异常'){
+//									ele.color='backWarn'	
+//								}
 							})
 							this.users=res.data.data.items;
 							this.total=res.data.data.page.total;
+							console.log(this.users)
 						}
 					}
 				}).catch(e => {console.log(e)})

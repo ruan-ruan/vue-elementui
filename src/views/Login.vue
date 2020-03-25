@@ -78,6 +78,7 @@
 	      	};
 	    },
 	    created(){
+
 	    	if(this.checked){
 	    		this.ruleForm2={
 	    			account:localStorage.getItem('user'),
@@ -88,7 +89,11 @@
 	    			account:'',
 	    			checkPass:''
 	    		}
-	    	}
+	    	};
+	    	
+	    },
+	    mounted(){
+//	    		window.location.reload();
 	    },
 	    methods: {
 	    	Change(e , type) {

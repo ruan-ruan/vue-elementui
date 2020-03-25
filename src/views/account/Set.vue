@@ -58,7 +58,7 @@
 				</el-table-column>
 				<el-table-column prop='real_name' min-width='100' :label='$t("Public.name")' align='center'>
 				</el-table-column>
-				<el-table-column  min-width='100' :label='$t("roles.personStatus")' align='center'>
+				<el-table-column  width='80' :label='$t("roles.personStatus")' align='center'>
 					<template slot-scope='scope'>
 						<span :class="scope.row.color" v-text="scope.row.roleStatus"></span>
 					</template>
@@ -345,11 +345,11 @@
 							descriptionValue(res.data.data.items)
 							res.data.data.items.forEach(ele => {
 								if(!ele.usable){
-									ele.color='colorRed'
+									ele.color='backWarn'
 									ele.roleStatus=this.$t('Public.Prohibit');
 									ele.btnText=this.$t('Public.enable')
 								}else{
-									ele.color='colorGreen'
+									ele.color='backRun'
 									
 									ele.roleStatus=this.$t('Public.enable')
 									ele.btnText=this.$t('Public.Prohibit');
@@ -375,6 +375,7 @@
 				})
 			},
 			handleEdit(index,row){
+				console.log(row)
 				//编辑
 				//创建时间
 				this.staCreat=true;
@@ -392,8 +393,7 @@
 					real_name:row.real_name,
 					email:row.email,
 					mobile:row.mobile,
-					role_id:row.role.name,
-					roleID:row.role.id,
+					role_id:row.role.id,
 //					usable:row.roleStatus,
 					description:row.description
 				}
@@ -403,21 +403,16 @@
 				//编辑
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-//						if(this.editForm.usable=='禁用'){
-//							this.editForm.usable='false';
-//						}else{
-//							this.editForm.usable='true';
-//						}
 						let para={
 							id:this.editForm.id,
 							name:this.editForm.name,
 							real_name:this.editForm.real_name,
 							email:this.editForm.email,
 							mobile:this.editForm.mobile,
-							role_id:this.editForm.roleID,
+							role_id:this.editForm.role_id,
 							description:this.editForm.description,
-//							usable:this.editForm.usable
 						}
+//						console.log(para)
 						this.$ajax.put('/admin/edit_admin/'+para.id+'?token='+this.token,para)
 						.then( res => {
 

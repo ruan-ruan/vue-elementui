@@ -1,7 +1,6 @@
 <template>
 	<div >
 		<multiPoint :virTit='virTit'></multiPoint>
-		
 	</div>
 </template>
 

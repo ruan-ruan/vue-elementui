@@ -71,7 +71,8 @@ router.beforeEach( (to,from,next) => {
 //              query:{
 //              	redirect:to.fullPath
 //              }
-            })
+           })
+            window.location.reload();
         }
     }else {
         next();

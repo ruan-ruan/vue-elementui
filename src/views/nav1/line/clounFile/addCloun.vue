@@ -50,9 +50,18 @@
 							<el-form-item :label='$t("Public.dockLogic")' prop='logic_port_id'>
 								<el-select v-model='editForm.logic_port_id'class='ipt':disabled='!clounStatus'>
 									<el-option v-for='(item,index) in logicData'
-										:label='item.name'
 										:value='item.id'
-										:key='index'></el-option>
+										:key='index'
+										:label='item.name'>
+										<template>
+											<span>
+												{{item.name}}
+											</span>
+											<span :class='item.logic_color'> 
+												{{item.logic_status}}
+											</span>
+										</template>
+									</el-option>
 								</el-select>
 							</el-form-item>
 							<h3 class="tit_h3" v-if='clounStatus'>{{$t('Public.clParams')}}</h3>
@@ -103,7 +112,7 @@
 
 <script>
 	import goback from '@/components/goback'
-	import {isValidinteger} from '@/assets/js/index'
+	import {isValidinteger,isPortStatus} from '@/assets/js/index'
 	export default{
 		name:'addCloun',
 		components:{goback},
@@ -272,12 +281,26 @@
 
 					if(res.status==200){
 						if(res.data.status==0){
-//							this.logicData=res.data.data.items;
 
 							this.logicData=res.data.data.items.filter( item => {//根据id删除业务开通的额时候  占用 逻辑口
+								item.logic_status=isPortStatus(item.physical_ports)
+								switch( isPortStatus(item.physical_ports) ){
+									case 'DOWN':
+										item.logic_color='statusDOWN';
+										break;
+									case 'UP':
+										item.logic_color='statusUP';
+										break;
+//									case '异常':
+									default:
+										item.logic_color='statusAbno';
+										break;
+								}
 								let idList=logic.map(v => v.id);
 								return  !idList.includes(item.id)
 							})
+							
+//							console.log(this.logicData)
 						}
 					}
 				}).catch(e => {console.log(e)})

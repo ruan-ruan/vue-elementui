@@ -85,8 +85,11 @@
             <el-table-column   prop='creation_time'
               :formatter='dateFormat'   width='80'  :label='$t("Public.creation")'   align='center'  ></el-table-column>
             <el-table-column   prop='name'  min-width='80'  :label='$t("Public.nodeName")'   align='center' ></el-table-column>
-            <el-table-column   prop='nodeStatus'   min-width='80'  :label='$t("Public.nodeStatus")'  align='center' >
-            
+            <el-table-column    width='80'  :label='$t("Public.nodeStatus")'  align='center' >
+            	<template slot-scope='scope'>
+            		<!--prop='nodeStatus'--> 
+            		<span :class="scope.row.color">{{scope.row.nodeStatus}}</span>
+            	</template>
             </el-table-column>
             <el-table-column   min-width='80'  :label='$t("Public.deviceName")'   align='center'  >
               <template slot-scope="scope">
@@ -97,14 +100,14 @@
             </el-table-column>
             <el-table-column
               prop='exist_status'
-              min-width='80'
+              width='80'
 
               :label='$t("Public.deviceStatus")' 
               align='center'
             >
               <template slot-scope="scope">
-                <ul v-for='item in scope.row.devices'>
-                  <li>{{item.exist_status=='normal'?$t('Public.run') : $t('Public.leave') }}</li>
+                <ul v-for='(item,index) in scope.row.devices' :key='index'>
+                  <li :class="item.exist_status=='normal'? 'backRun':'backStop' ">{{item.exist_status=='normal'?$t('Public.run') : $t('Public.leave') }}</li>
                 </ul>
               </template>
             </el-table-column>
@@ -380,58 +383,56 @@ export default {
                 }
                 
                 if(ele.devices.length ==1){
-					var str1=ele.devices.find(item => {
-    					return item['sign'] == 'd1' 
-    				})
-    				ele.devices_name1=str1.hostname
-    				ele.devices_ip1=str1.ip;
-    				ele.devices_sn1=str1.sn;
-    				
-    				ele.devices_name2='';
-    				ele.devices_ip2='';
-    				ele.devices_sn2='';
-    				
-    				if(str1.exist_status == "normal"){
-    					ele.nodeStatus = this.$t('Public.SingleRun');
-    				}else{
-    						ele.nodeStatus= this.$t('Public.leave');
-    				}
-    				
-    				
-    				
-				}else if(ele.devices.length ==2){
-					var str1=ele.devices.find(item => {
-    					return item.sign == 'd1' 
-    				})
-					
-					var str2=ele.devices.find(item => {
-    					return item.sign =='d2' 
-    				})
-					
-					if(str1.exist_status == "normal" && str2.exist_status == "normal"){
-    					ele.nodeStatus= this.$t('Public.run');
-    				}else if( (str1.exist_status == "normal" && str2.exist_status == "found") || (str2.exist_status == "normal" && str1.exist_status == "found") ){
-    					ele.nodeStatus= this.$t('Public.SingleRun');
-    				}else{
-    						ele.nodeStatus= this.$t('Public.leave');
-    				}
-					
-					
-					
-    				ele.devices_name1=str1.hostname
-    				ele.devices_ip1=str1.ip;
-    				ele.devices_sn1=str1.sn;
-    				
-    				ele.devices_name2=str2.hostname
-    				ele.devices_ip2=str2.ip;
-    				ele.devices_sn2=str2.sn;
-				}
-                
-                
+									var str1=ele.devices.find(item => {
+				    					return item['sign'] == 'd1' 
+				    				})
+				    				ele.devices_name1=str1.hostname
+				    				ele.devices_ip1=str1.ip;
+				    				ele.devices_sn1=str1.sn;
+				    				
+				    				ele.devices_name2='';
+				    				ele.devices_ip2='';
+				    				ele.devices_sn2='';
+				    				
+				    				if(str1.exist_status == "normal"){
+				    					ele.nodeStatus = this.$t('Public.SingleRun');
+				    					ele.color='backRun'
+				    				}else{
+				    						ele.nodeStatus= this.$t('Public.leave');
+				    						ele.color='backStop'
+				    				}
+								}else if(ele.devices.length ==2){
+									var str1=ele.devices.find(item => {
+				    					return item.sign == 'd1' 
+				    				})
+									
+									var str2=ele.devices.find(item => {
+				    					return item.sign =='d2' 
+				    				})
+									
+									if(str1.exist_status == "normal" && str2.exist_status == "normal"){
+				    					ele.nodeStatus= this.$t('Public.run');
+				    					ele.color='backRun'
+				    				}else if( (str1.exist_status == "normal" && str2.exist_status == "found") || (str2.exist_status == "normal" && str1.exist_status == "found") ){
+				    					ele.nodeStatus= this.$t('Public.SingleRun');
+				    					ele.color='backRun'
+				    				}else{
+				    						ele.nodeStatus= this.$t('Public.leave');
+				    					ele.color='backStop'
+				    				}
+				    				ele.devices_name1=str1.hostname
+				    				ele.devices_ip1=str1.ip;
+				    				ele.devices_sn1=str1.sn;
+				    				
+				    				ele.devices_name2=str2.hostname
+				    				ele.devices_ip2=str2.ip;
+				    				ele.devices_sn2=str2.sn;
+									}
               	});
-
+								
                _this.users = res.data.data.items;
               _this.total = res.data.data.page.total;
+              console.log(_this.users)
             }
           }
         })

@@ -65,7 +65,7 @@
    	 			</template>
    	 		</el-table-column>
    	 		<el-table-column prop='tenant.name' :label='$t("Public.tenant")' min-width='100'align='center'></el-table-column>
-   	 		<el-table-column  :label='$t("Public.logicStatus")' min-width='100'align='center'>
+   	 		<el-table-column  :label='$t("Public.logicStatus")' width='80'align='center'>
    	 			<template slot-scope='scope'>
    	 				<span :class='scope.row.usableTextColor'>{{scope.row.usableText}}</span>
    	 			</template>
@@ -227,18 +227,18 @@
 									ele.usableText=isPortStatus(ele.physical_ports);
 									//根据不同的value设置不同的css
 										if(ele.usableText==='UP'){
-											ele.usableTextColor='colorGreen'
+											ele.usableTextColor='backRun'
 										}else if(ele.usableText==='DOWN'){
-											ele.usableTextColor='colorRed'
+											ele.usableTextColor='backWarn'
 										}else if(ele.usableText=== '异常'){
 											ele.usableText==='DOWN'
-											ele.usableTextColor='colorWarning'
+											ele.usableTextColor='backWarn'
 										}	
 									ele.btnStatus=this.$t('Public.Prohibit')
 								}else{
 									ele.usableText='禁用';
 									ele.btnStatus=this.$t('Public.enable');
-									ele.usableTextColor='portAbnor'
+									ele.usableTextColor='backStop'
 								}
 							})
 								//对数据状态的遍历  
@@ -430,17 +430,7 @@
 </script>
 
 <style >
-	/*.portUP{
-		color: #409EFF;
-	}
-	.portDOWN{
-		color:#F56C6C ;
-	}
-	.portAbnor{
-		color:#E6A23C;
-		
-	}*/
-	
+
 	.visHidden{
 		visibility: hidden;
 	}

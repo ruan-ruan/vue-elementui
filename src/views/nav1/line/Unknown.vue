@@ -229,7 +229,7 @@
 <script>
 
 	
-	import {datedialogFormat , descriptionValue,getTime ,isJust} from '@/assets/js/index.js'
+	import {datedialogFormat , descriptionValue,getTime ,isJust ,isValidIP} from '@/assets/js/index.js'
 
 
 	export default{
@@ -240,6 +240,24 @@
 					callback(new Error(this.$t('Public.notEmity')))
 				}else if(! isJust(value)){
 					 callback(new Error(this.$t('Public.placeRight')))
+				}else{
+					callback()
+				}
+			};
+			var aIsIp= (rule , value , callback) => {
+				if(!value){
+					callback( new Error(this.$t('Public.placeaIp')))
+				}else if ( ! isValidIP(value)){
+					callback(new Error('请输入正确的a端ip地址'))
+				}else{
+					callback()
+				}
+			};
+			var zIsIp= (rule , value , callback) => {
+				if(!value){
+					callback( new Error(this.$t('Public.placezIp')))
+				}else if ( ! isValidIP(value)){
+					callback(new Error('请输入正确的z端ip地址'))
 				}else{
 					callback()
 				}
@@ -308,11 +326,11 @@
 				//添加的时候校验规则
 				editFormRules:{
 					a_node_id:[{ required: true, message: this.$t('Public.placeaNode'), trigger: 'change' }],
-					a_ip:[{ required: true, message: this.$t('Public.placeaIp'), trigger: 'blur' }],
+					a_ip:[{ required: true, validator: aIsIp, trigger: 'blur' }],
 					a_vlan:[{ required: true, validator:isNumber, trigger: 'blur' }],
 					a_desc:[{required:true, message:this.$t('Public.placeaDes'),trigger:'blur'}],
 					z_node_id:[{ required:true, message:this.$t('Public.placezNode'),trigger:'change'}],
-					z_ip:[{required:true , message:this.$t('Public.placezIp'), trigger:'blur'}],
+					z_ip:[{required:true , validator:zIsIp, trigger:'blur'}],
 					z_vlan:[{ required:true , validator:isNumber,trigger:'blur'}],
 					z_desc:[{ required:true , message:this.$t('Public.placezDes'),trigger:'blur'}],
 					physical_bandwidth:[{ required:true ,validator:isNumber,trigger:'blur'}],
@@ -525,7 +543,12 @@
 
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-
+						if(this.editForm.a_ip == this.editForm.z_ip){
+							this.$message({
+								message:"A,Z两端IP不能相同,请重新输入",
+								type:'warning'
+							})
+						}else{
 							let para={
 								a_node_id:this.editForm.a_node_id,
 								a_ip:this.editForm.a_ip,
@@ -544,8 +567,7 @@
 								description:this.editForm.description,	
 								get_speed_key:this.editForm.get_speed_key,
 							}
-							
-							
+
 							this.$ajax.post('/link/add_unknown_link'+'?token='+this.token,para)
 							.then( res => {
 
@@ -563,6 +585,8 @@
 							}).catch(e => {
 								console.log(e)
 							})
+						}
+							
 					}
 				})
 			},

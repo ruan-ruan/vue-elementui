@@ -7,9 +7,9 @@ import {Message,Loading} from'element-ui'
 // 超时时间
 axios.defaults.timeout = 10000
 axios.defaults.baseURL='http://api.tianchi.com'
-//axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 // post请求头
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+//axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 // http request 拦截器
 axios.interceptors.request.use(
 	config => {
@@ -38,6 +38,8 @@ axios.interceptors.response.use(
 				path: '/login',
 //				query: { redirect: router.currentRoute.path },
 			})
+			console.log('执行跳出 刷新')
+//			window.location.reload();
 		}
 		Message.warning({
 			message:response.data.message

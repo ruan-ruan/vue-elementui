@@ -87,7 +87,7 @@
             <span>{{scope.row.company_name}}</span>
           </template>
         </el-table-column>
-        <el-table-column    min-width='100'  align='center' :label='$t("customer.tenantStatus")' >
+        <el-table-column    width='80'  align='center' :label='$t("customer.tenantStatus")' >
         	<template slot-scope='scope'>
         		<span :class='scope.row.color' v-text="scope.row.usableText"></span>
         	</template>
@@ -261,11 +261,11 @@ export default {
               this.total = res.data.data.page.total;
               this.users.forEach(ele => {
                 if (ele.usable) {
-                	ele.color='colorGreen'
+                	ele.color='backRun'
                   ele.usableText = this.$t('Public.enable');
                   ele.usableBtnText = this.$t('Public.Prohibit');
                 } else {
-                	ele.color='colorRed'
+                	ele.color='backWarn'
                   ele.usableText = this.$t('Public.Prohibit');
                   ele.usableBtnText = this.$t('Public.enable');
                 }

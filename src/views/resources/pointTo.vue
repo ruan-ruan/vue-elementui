@@ -292,7 +292,7 @@
 								    更多
 								  </el-button>
 								  <el-dropdown-menu size='mini' slot="dropdown">
-								    <el-dropdown-item  command='路径调整' @click.native='handlePath(scope.$index,scope.row)'>路径调整</el-dropdown-item>
+								    <el-dropdown-item v-if='buttonVal.pathChange'  command='路径调整' @click.native='handlePath(scope.$index,scope.row)'>路径调整</el-dropdown-item>
 								  </el-dropdown-menu>
 								</el-dropdown>
               </template>
@@ -529,8 +529,9 @@ export default {
 	  		see:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list, "vll@p2p_vll_info" ).show,//查看详情
 	  		stop:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list, "vll@to_stop_vll").show,//查看逻辑口的详情
 	  		run:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list, "vll@to_serve_vll").show,//查看逻辑口的详情
-	  		seePort:this.codeVal(this.recursion( this.$store.state.aside ,"aside.logicManage").list, "port@logic_port_info" ).show
-	  	},
+	  		seePort:this.codeVal(this.recursion( this.$store.state.aside ,"aside.logicManage").list, "port@logic_port_info" ).show,
+	  		pathChange:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list, "vll@change_path" ).show,//路径调整
+      },
 	  	
     };
   },
@@ -549,10 +550,7 @@ export default {
       this.parentStatus = true;
     }
     this.getUsers();
-//  console.log( this.$store.state.aside )
-    //aside.logicManage  port@logic_port_info
-    
-    
+    console.log( this.$store.state.aside )
   },
   methods: {
   	handlePath(index,row){
@@ -621,7 +619,6 @@ export default {
       };
       this.$ajax.get("/vll/p2p_vlls" + "?token=" + this.token, para)
         .then(res => {
-        	console.log(res)
           if (res.status == 200) {
             if (res.data.status == 0) {
 
@@ -656,19 +653,19 @@ export default {
 	            		})
 	            		if (ele.status == "failure") {
 	                  ele.statusHTML = this.$t('Public.failure');
-	                  ele.statusColor = "creatFie";
+	                  ele.statusColor = "backWarn";
 	                  //creat   控制操作部分   btn控制  删除按钮和其他按钮的互斥
 
 	                } else if (ele.status == "creating") {
 	                  ele.statusHTML = this.$t('Public.creating');
-	                  ele.statusColor = "creating";
+	                  ele.statusColor = "backCreat";
 
 	                } else if (ele.status == "stopping") {
 	                	
 	                  ele.statusHTML = this.$t('Public.stopping');
 	
 	                  ele.specialName = this.$t('tabOperation.run');
-	                  ele.statusColor = "stopVal";
+	                  ele.statusColor = "backStop";
 
 	                }else if (ele.status == "servicing"){
 	                	
@@ -678,37 +675,37 @@ export default {
 										if(getPortStatus(objA.ports) =='UP' || getPortStatus(objA.ports) =='异常' ){
 	                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
 	                  		ele.statusHTML = this.$t('Public.servicing');
-	                  		ele.statusColor = "ServerVal";
+	                  		ele.statusColor = "backRun";
 	                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
 	                  			ele.statusHTML = this.$t('Public.fau');
-	                  			ele.statusColor = "creatFie";
+	                  			ele.statusColor = "backWarn";
 	                  	}
 	                  }else if(getPortStatus(objA.ports)=='DOWN'){
 	                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
 	                  		ele.statusHTML = this.$t('Public.fau');
-	                  		ele.statusColor = "creatFie";
+	                  		ele.statusColor = "backWarn";
 	                  		
 	                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
 	                  			ele.statusHTML = this.$t('Public.fau');
-	                  			ele.statusColor = "creatFie";
+	                  			ele.statusColor = "backWarn";
 	                  	}
 	                  }
 	                }
 	                ele.statusValA = getPortStatus(objA.ports);
                   ele.statusValZ = getPortStatus(objZ.ports);
                   if(getPortStatus(objA.ports) ==='UP'){
-                  	ele.colorA='colorGreen'
+                  	ele.colorA='backRun'
                   }else if(getPortStatus(objA.ports)==='DOWN'){
-                  	ele.colorA='colorRed'
+                  	ele.colorA='backWarn'
                   }else if(getPortStatus(objA.ports) ==='异常'){
-                  	ele.colorA='colorWarning'
+                  	ele.colorA='backWarn'
                   }
                   if(getPortStatus(objZ.ports) ==='UP'){
-                  	ele.colorZ='colorGreen'
+                  	ele.colorZ='backRun'
                   }else if(getPortStatus(objZ.ports)==='DOWN'){
-                  	ele.colorZ='colorRed'
+                  	ele.colorZ='backWarn'
                   }else if(getPortStatus(objZ.ports) ==='异常'){
-                  	ele.colorZ='colorWarning'
+                  	ele.colorZ='backWarn'
                   }
                   ele.logicPortA = objA.logic_port.name;
                   ele.logicPortZ = objZ.logic_port.name;
@@ -739,18 +736,18 @@ export default {
 	            	
 	            		if (ele.status == "failure") {
 	                  ele.statusHTML = this.$t('Public.failure');
-	                  ele.statusColor = "creatFie";
+	                  ele.statusColor = "backWarn";
 
 	                } else if (ele.status == "creating") {
 	                  ele.statusHTML = this.$t('Public.creating');
-	                  ele.statusColor = "creating";
+	                  ele.statusColor = "backCreat";
 
 	                } else if (ele.status == "stopping") {
 	                	
 	                  ele.statusHTML = this.$t('Public.stopping');
 	
 	                  ele.specialName = this.$t('tabOperation.run');
-	                  ele.statusColor = "stopVal";
+	                  ele.statusColor = "backStop";
 
 	                }else if (ele.status == "servicing"){
 	                	ele.specialName = this.$t('tabOperation.stop');
@@ -758,19 +755,19 @@ export default {
 
 	                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
 	                  		ele.statusHTML = this.$t('Public.servicing');
-	                  		ele.statusColor = "ServerVal";
+	                  		ele.statusColor = "backRun";
 	                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
 	                  			ele.statusHTML = this.$t('Public.fau');
-	                  			ele.statusColor = "creatFie";
+	                  			ele.statusColor = "backWarn";
 	                  	}
 	                  }else if(getPortStatus(objA.ports)=='DOWN'){
 	                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
 	                  		ele.statusHTML = this.$t('Public.fau');
-	                  		ele.statusColor = "creatFie";
+	                  		ele.statusColor = "backWarn";
 	                  		
 	                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
 	                  			ele.statusHTML = this.$t('Public.fau');
-	                  			ele.statusColor = "creatFie";
+	                  			ele.statusColor = "backWarn";
 	                  			
 	                  	}
 	                  }
@@ -778,18 +775,18 @@ export default {
                 	ele.statusValA = getPortStatus(objA.ports);
                   ele.statusValZ = getPortStatus(objZ.ports);
                   if(getPortStatus(objA.ports) ==='UP'){
-                  	ele.colorA='colorGreen'
+                  	ele.colorA='backRun'
                   }else if(getPortStatus(objA.ports)==='DOWN'){
-                  	ele.colorA='colorRed'
+                  	ele.colorA='backWarn'
                   }else if(getPortStatus(objA.ports) ==='异常'){
-                  	ele.colorA='colorWarning'
+                  	ele.colorA='backWarn'
                   }
                   if(getPortStatus(objZ.ports) ==='UP'){
-                  	ele.colorZ='colorGreen'
+                  	ele.colorZ='backRun'
                   }else if(getPortStatus(objZ.ports)==='DOWN'){
-                  	ele.colorZ='colorRed'
+                  	ele.colorZ='backWarn'
                   }else if(getPortStatus(objZ.ports) ==='异常'){
-                  	ele.colorZ='colorWarning'
+                  	ele.colorZ='backWarn'
                   }
 
                   ele.logicPortA = objA.cloud_config.logic_port.name;
@@ -820,19 +817,19 @@ export default {
 	            		ele.typeName = this.$t('Public.cloudInter');//云互联
 	            		if (ele.status == "failure") {
 	                  ele.statusHTML = this.$t('Public.failure');
-	                  ele.statusColor = "creatFie";
+	                  ele.statusColor = "backWarn";
 	                  //creat   控制操作部分   btn控制  删除按钮和其他按钮的互斥
 
 	                } else if (ele.status == "creating") {
 	                  ele.statusHTML = this.$t('Public.creating');
-	                  ele.statusColor = "creating";
+	                  ele.statusColor = "backCreat";
 
 	                } else if (ele.status == "stopping") {
 	                	
 	                  ele.statusHTML = this.$t('Public.stopping');
 	
 	                  ele.specialName = this.$t('tabOperation.run');
-	                  ele.statusColor = "stopVal";
+	                  ele.statusColor = "backStop";
 
 	                }else if (ele.status == "servicing"){
 	                	ele.specialName = this.$t('tabOperation.stop');
@@ -840,38 +837,38 @@ export default {
 
 	                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
 	                  		ele.statusHTML = this.$t('Public.servicing');
-	                  		ele.statusColor = "ServerVal";
+	                  		ele.statusColor = "backRun";
 	                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
 	                  			ele.statusHTML = this.$t('Public.fau');
-	                  			ele.statusColor = "creatFie";
+	                  			ele.statusColor = "backWarn";
 	                  	}
 	                  	
 	                  }else if(getPortStatus(objA.ports)=='DOWN'){
 	                  	if(getPortStatus(objZ.ports) =='UP' || getPortStatus(objZ.ports) =='异常'){
 	                  		ele.statusHTML = this.$t('Public.fau');
-	                  		ele.statusColor = "creatFie";
+	                  		ele.statusColor = "backWarn";
 	                  		
 	                  	}else if(getPortStatus(objZ.ports)=='DOWN'){
 	                  			ele.statusHTML = this.$t('Public.fau');
-	                  			ele.statusColor = "creatFie";
+	                  			ele.statusColor = "backWarn";
 	                  	}
 	                  }
 	                }
 	                	ele.statusValA = getPortStatus(objA.ports);
 	                  ele.statusValZ = getPortStatus(objZ.ports);
 	                  if(getPortStatus(objA.ports) ==='UP'){
-	                  	ele.colorA='colorGreen'
+	                  	ele.colorA='backRun'
 	                  }else if(getPortStatus(objA.ports)==='DOWN'){
-	                  	ele.colorA='colorRed'
+	                  	ele.colorA='backWarn'
 	                  }else if(getPortStatus(objA.ports) ==='异常'){
-	                  	ele.colorA='colorWarning'
+	                  	ele.colorA='backWarn'
 	                  }
 	                  if(getPortStatus(objZ.ports) ==='UP'){
-	                  	ele.colorZ='colorGreen'
+	                  	ele.colorZ='backRun'
 	                  }else if(getPortStatus(objZ.ports)==='DOWN'){
-	                  	ele.colorZ='colorRed'
+	                  	ele.colorZ='backWarn'
 	                  }else if(getPortStatus(objZ.ports) ==='异常'){
-	                  	ele.colorZ='colorWarning'
+	                  	ele.colorZ='backWarn'
 	                  }
 	
 	                  ele.logicPortA = objA.cloud_config.logic_port.name;
@@ -1239,18 +1236,9 @@ export default {
 };
 </script>
 
-<style scoped>
+<style >
 
-.stopVal {
-  color: #f56c6c;
-}
-.ServerVal {
-  color: #20a0ff;
-}
-.creating {
-  color: #67c23a;
-}
-.creatFie {
-  color: #e6a23c;
-}
+
+
+
 </style>

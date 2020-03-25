@@ -43,7 +43,7 @@
 				</el-table-column>
 				<el-table-column prop='name' :label='$t("roles.roleName")' align='center'>
 				</el-table-column>
-				<el-table-column   :label='$t("roles.roleStatus")' align='center'>
+				<el-table-column width='80'  :label='$t("roles.roleStatus")' align='center'>
 					<template slot-scope='scope'>
 						<span :class='scope.row.color' v-text="scope.row.usableText"></span>
 					</template>
@@ -81,7 +81,7 @@
 
 <script>
 
-		import {descriptionValue,datedialogFormat} from '@/assets/js/index.js'
+	import {descriptionValue,datedialogFormat} from '@/assets/js/index.js'
 	export default{
 		name:'Role',
 		data(){
@@ -114,7 +114,6 @@
 			//获取权限
 			this.token=sessionStorage.getItem('token');
 			this.getUsers();
-
 		},
 		methods:{
 			reset(){
@@ -151,12 +150,12 @@
 							
 							res.data.data.items.forEach(ele => {
 								if(ele.usable){
-									ele.color='colorGreen'
+									ele.color='backRun'
 									ele.usableText=this.$t('Public.enable');
 
 									ele.btnText=this.$t('Public.Prohibit');
 								}else if(!ele.usable){
-									ele.color='colorRed'
+									ele.color='backWarn'
 									ele.usableText=this.$t('Public.Prohibit');
 
 									ele.btnText=this.$t('Public.enable');

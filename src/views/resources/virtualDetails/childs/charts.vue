@@ -55,28 +55,39 @@
 			nodes(){
 				//获取节点的数据
 				let that=this;
+				that.linksData=[];
+				that.nodesData=[];
 				that.Loading=true;
 				that.$ajax.get('/topology/node_location_list'+'?token='+that.token)
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
 							that.nodesData=res.data.data;
-							that.links(res.data.data);//传参到链路的数据里面
+							// that.links(res.data.data);//传参到链路的数据里面
+							return that.$ajax.get('/topology/links'+'?token='+that.token)
 						}
 					}
-				}).catch(e => {console.log(e)})		
-			},
-			links( nodes ){
-				let that=this;
-				that.linksData=[];
-				that.$ajax.get('/topology/links'+'?token='+that.token)
+				})
 				.then(res => {
-					if(res.status==200 && res.data.status==0){
-						that.linksData=res.data.data;	
-						that.def(nodes , res.data.data );//下面的调用直接传参
+					if(res.status == 200){
+						if(res.data.status ==0){
+							that.def(that.nodesData , res.data.data )
+						}
 					}
-				}).catch(e => {console.log(e)})
+				})
+				.catch(err => console.log(err))
 			},
+//			links( nodes ){
+//				let that=this;
+//				that.linksData=[];
+//				that.$ajax.get('/topology/links'+'?token='+that.token)
+//				.then(res => {
+//					if(res.status==200 && res.data.status==0){
+//						that.linksData=res.data.data;	
+//						that.def(nodes , res.data.data );//下面的调用直接传参
+//					}
+//				}).catch(e => {console.log(e)})
+//			},
 			def( nodes , links ){
 				//获取默认的时候的节点的信息   起点  ，终点  在拓扑上显示出来
 				//因为  一个画布内只能存在一个svg矢量图   所以需要在获取起点和终点的信息，并进一步处理数据，然后在渲染
@@ -403,8 +414,8 @@
 		            .attr('opacity',0.5);
 		        	            
 	            var isFirst=false;
-	            var times=1;
-	            var startData=[];//选取起点相关的数据
+	            var times=0;
+
 	            var sel=[];//选取对的节点信息
 		        //定义节点的信息：
 		        let node = g
@@ -427,117 +438,70 @@
 				      	.on('end', dragEnd)
 		        	)
 		        	.on('click',function(d,i){
-		            	
+		            	var cls=document.getElementById(d.id);
 		            	if(!that.detail){ //  当详情的参数不存在的时候  进入的路径调整的组件    是可以操控的
-							var cls=document.getElementById(d.id);
-			            	if(isFirst){
-			            		times++;
-			            		cls.style.width=40;
-								cls.style.height=40;
-								sel.push(d);
-								
-//			            		set(startData , d , cls , linksData )
-//			            		var result=getNames(unique(startData),[],d,cls,linksData);
-//			            		console.log(result)
-//			            		var vals=set(startData , d , cls , linksData );
-//			            		console.log(vals)
-			            	}else {
-			            		isFirst =true;
+		            		if(isFirst){
+								times++;
+
+								//始终获取数据的里面最后一个值，用来和点前的单击的值  进行对比  
+								var str=unique(sel)[unique(sel).length-1];
+
+								linksData.some(function (v,j){
+									if( str.node.id === v.target_val.node.id  || str.node.id === v.source_val.node.id  ){
+										//找到上一个点相关的数据
+//										if(v.status === 'DOWN'){ 
+//											//如果上个的点选取后  该链路的状态该是dowm的情况下  该点是不可以选择的
+////											if(d.node.id === v.target_val.node.id  ){
+////											//第一次点击的点  是起点   只要有连线  就可以添加到数组里面
+////												cls.style.width=40;
+////												cls.style.height=40;
+////												sel.push(d);
+////											}
+//										}
+										if( v.status !== 'DOWN' ) {
+											if(d.node.id === v.source_val.node.id || d.node.id === v.target_val.node.id  ){
+//												console.log(v)
+												cls.style.width=40;
+												cls.style.height=40;
+												sel.push(d);
+											}
+										}
+//										else{
+//											if(d.node.id === v.source_val.node.id || d.node.id === v.target_val.node.id  ){
+//												alert('当前链路状态DOWN，不可选择')
+//											}
+//										}
+									}
+									
+//									if( str.node.id !== v.target_val.node.id  || str.node.id !== v.source_val.node.id  ){
+//										if(d.node.id === v.source_val.node.id || d.node.id === v.target_val.node.id  ){
+//												alert('只能选择当前相关联的点')
+//										}
+//									}
+								})
+		            		}else {//这个是起点  所以不需要  点击的时候  进行遍历
+		            			isFirst=true;
 			            		if(d.def_val === '起点'){//判断第一次点击的时候是否为起点   是的时候选中   否则  将不选择
 			            			cls.style.width=40;
 									cls.style.height=40;
-									linksData.some(function (v,j){
-										if(d.node.id === v.source_val.node.id || d.node.id === v.target_val.node.id  ){
-											//第一次点击的点  是起点   只要有连线  就可以添加到数组里面
-											sel.push(d);
-											startData.push(v.target_val);
-											startData.push(v.source_val);
-										}
-									})
+									sel.push(d);
+//									linksData.some(function (v,j){
+//										if(d.node.id === v.source_val.node.id || d.node.id === v.target_val.node.id  ){
+//											//第一次点击的点  是起点   只要有连线  就可以添加到数组里面
+//											startData.push(v.target_val);
+//											startData.push(v.source_val);
+//										}
+//									})
 			            		}
-			            	}
+		            		}
+//		            		console.log('执行完毕')
 			            	//发送数据到父组件
 			            	that.selectNode=unique(sel)
 			            	that.$emit('sendNode',that.selectNode);
 			            	that.$emit('sendStatus',false);//控制右侧的部分的 下表兰的显示与隐藏
 		            	}
 		            })
-		        
-		        function getNames(array,childs,obj,val,linksData){
-				    for(var i=0;i<array.length;i++){
-//				        var item=array[i];
-
-				        if( array[i].node.id === obj.node.id ){
-
-				        	if( array[i].def_val ==='终点' ){
-				        		val.style.width=40;
-					        	val.style.height=40;
-					        	childs.push(obj);
-				        		return childs;
-				        	}else if(array[i].def_val !=='终点' && array[i].def_val !=='起点'){
-				        		array=[];
-				        		val.style.width=40;
-					        	val.style.height=40;
-					        	childs.push(obj);
-					        	linksData.some(function(v,j){
-            						if(v.target_val.node.id === obj.node.id || v.source_val.node.id === obj.node.id){
-            							array.push( v.source_val );
-            							array.push( v.target_val );
-            						}
-            					})
-					        	var rs=getNames(array,childs,obj,val,linksData);
-					        	if(rs){
-					        		console.log('3')
-					        		return rs;
-					        	}else {
-					        		console.log('4')
-					        		childs.remove(obj);
-					        	}
-				        	}
-				        }else{
-				        	console.log('执行出来')
-				        	return childs;
-				        }
-				    }
-				    return false;
-				}
-		        
-		        //递归函数  处理点击两次以上的数据
-		        function set(data,obj,val,linksData){
-//		        	console.log(data)
-	            	/**
-	            	 * data 数组 链路的集合  点击起点以后保存下来的数据   里面会包含途径与终点，点击的不是终点的时候才会调用该函数，否则返回
-	            	 * obj  需要进行校验的数据(判断点击的点是否是  相关联的)
-	            	 * val  文本集合
-	            	 * */
-	            	var selectData=[];//所选择的数组的集合
-	            	if(data.length !==0){//如何data存在的时候   这个时候再求遍历数据   data是拿到所有跟起点相关的数据
-	            		data.map(item => {
-	            			if(obj.node.id === item.node.id){
-	            				//当前点击的点  是这个集合里面的部分
-		            			val.style.width=40;
-								val.style.height=40;
-
-	            				if( item.def_val !== '终点' ){
-	            					//点击的不是终点的时候  还可以继续筛选
-	            					data=[];
-	            					linksData.some(function(v,j){
-	            						if(v.target_val.node.id === obj.node.id || v.source_val.node.id === obj.node.id){
-	            							data.push( v.source_val );
-	            							data.push( v.target_val );
-	            						}
-	            					})
-	            					
-	            				}
-	            				selectData.push(obj);
-	            				
-	            			}
-	            			return 
-	            		})
-	            		
-	            	}
-	            	
-	            }
+				//  上面  根据选择的节点的信息的数据 进行去重
 	            function unique(arr1) {
 				  	const res = new Map();
 				  	return arr1.filter((a) => !res.has(a.node.id) && res.set(a.node.id, 1))

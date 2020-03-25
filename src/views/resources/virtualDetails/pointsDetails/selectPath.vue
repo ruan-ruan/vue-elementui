@@ -14,19 +14,22 @@
 					</ul>
 				</el-col>
 				<el-col :span='10'align='left'>
-					<div v-if='selectId'>
-						<el-button size='mini' type='primary' @click.native='handlePath' 
-							v-if='JSON.stringify(info) !=="{}" ? info.action ==="delete"?false:true :false'
-							>
-							{{btn }}
-						</el-button>
+					<div v-if='buttonVal.pathCancel'>
+						<div v-if='selectId'>
+							<el-button size='mini' type='primary' @click.native='handlePath' 
+								v-if='JSON.stringify(info) !=="{}" ? info.action ==="delete"?false:true :false'
+								>
+								{{btn }}
+							</el-button>
+						</div>
+						<div v-else>
+							<!--进入详情的界面的时候存在的按钮文本-->
+							<el-button size='mini' type='primary' @click.native='selectPath' >
+								{{btn}}
+							</el-button>
+						</div>
 					</div>
-					<div v-else>
-						<!--进入详情的界面的时候存在的按钮文本-->
-						<el-button size='mini' type='primary' @click.native='selectPath' >
-							{{btn}}
-						</el-button>
-					</div>
+					
 				</el-col>
 			</el-row>
 			<el-row class='marT10'>
@@ -129,6 +132,9 @@
 				basicList:[],//备份列表
 				currentData:{},
 				selectStatus:true,
+				buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏 "link@add_unknown_link"
+			  		pathCancel:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list, "vll@return_path" ).show,//路径调整
+		      	},
 			};
 		},
 		props:['titData'],//进入详情的界面

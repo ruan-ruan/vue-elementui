@@ -257,30 +257,40 @@
 			},
 			getNodesData:function(obj){//获取topo的节点的数据集合
 				this.topoLoading=true;
+				//先获取  节点的数据信息  在获取 链路的数据
 				this.$ajax.get('/topology/node_location_list'+'?token='+this.token)
 				.then(res => {
 					this.topoLoading=false;
 					if(res.status==200){
 						if(res.data.status==0){
-
 							this.nodesData=res.data.data;
-							this.getLinksData(this.nodesData,obj);
+//							this.getLinksData(this.nodesData,obj);
+							return this.$ajax.get('/topology/links'+'?token='+this.token)
 						}
 					}
-				}).catch(e => {console.log(e)})			
-			},
-			getLinksData:function(nodesData,obj ){   //获取链路的信息数据集合
-				this.linksData=[];
-				let that=this;
-				this.$ajax.get('/topology/links'+'?token='+this.token)
-				.then(res => {
-					if(res.status==200 && res.data.status==0){
-							that.linksData=res.data.data;	
-
-						this.dealForm(obj,nodesData,that.linksData)
+				})
+				.then( response => {
+					//获取链路的数据
+					if(response.status == 200){
+						if(response.data.status ==0){
+							this.dealForm(obj,this.nodesData,response.data.data)
+						}
 					}
-				}).catch(e => {console.log(e)})
+				})
+				.catch(err => console.log(err))
 			},
+//			getLinksData:function(nodesData,obj ){   //获取链路的信息数据集合
+//				this.linksData=[];
+//				let that=this;
+//				this.$ajax.get('/topology/links'+'?token='+this.token)
+//				.then(res => {
+//					if(res.status==200 && res.data.status==0){
+//							that.linksData=res.data.data;	
+//
+//						this.dealForm(obj,nodesData,that.linksData)
+//					}
+//				}).catch(e => {console.log(e)})
+//			},
 			setTopo:function(nodesData,linksData){//设置拓扑图的展示
 				//对数据的里面的匹配进行处理
 				linksData.some(function(v, i) {
@@ -304,7 +314,8 @@
 				
 				
 				let that=this
-				var linkForce=d3.forceLink(linksData).id(function(d){ })
+				
+				var linkForce=d3.forceLink(linksData).id(function(d){})
 				
 				let simulation = d3.forceSimulation()
 				.nodes(nodesData)
@@ -315,10 +326,11 @@
 				
 				simulation
 				.force('chargeForce', chargeForce)
-				.force("center", centerForce)
+//		      	.force('centerForce', centerForce)
 		      	.force('links', linkForce)
 
 				simulation.on('tick', tickActions)
+
 				
 				var  svg = d3.select('svg')
 	            .attr('width',width)

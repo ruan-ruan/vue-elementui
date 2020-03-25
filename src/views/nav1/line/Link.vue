@@ -445,7 +445,7 @@
 //									ele.monitorHTML='开启';
 								}
 								if(ele.status=='UP'){
-									ele.color='colorGreen';
+									ele.color='backRun';
 									if(ele.maintain_type){
 										ele.maintenance_value=='';
 										ele.maintenanceBtn=this.$t('Public.openMain');										
@@ -457,7 +457,7 @@
 //										ele.maintenanceBtn='开启维护';
 									}
 								}else if(ele.status=='DOWN'){
-									ele.color='colorRed'
+									ele.color='backWarn'
 									if(!ele.maintain_type){
 										ele.maintenanceBtn=this.$t('Public.maintain');										
 										ele.maintenanceBtn=this.$t('Public.closeMain');	

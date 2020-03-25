@@ -613,7 +613,10 @@ export var isTopo={
 //	const reg=/^[a-zA-Z]*$/g;
 //	return reg.test(str);
 //}
-
+export function isValidIP(ip) {
+    var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+    return reg.test(ip);
+}
 export function isNumberInteger(str){//正整数
 	const reg=/^[1-9]\d/g;
 	return reg.test(str);

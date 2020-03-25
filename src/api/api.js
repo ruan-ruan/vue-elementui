@@ -1,8 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
 import { Message } from 'element-ui';
-axios.defaults.baseURL='http://api.tianchi.com'
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 const ajax={
     post:function(url,data ={}){

@@ -20,7 +20,8 @@
 								<el-option v-for='(item,index) in virStatus'
 									:label='item.name'
 									:value='item.value'
-									:key='index'></el-option>
+									:key='index'>
+								</el-option>
 							</el-select>
 						</el-form-item>
 						<el-form-item >
@@ -51,17 +52,18 @@
 			<el-table :data='users' highlight-current-row @selection-change="selsChange"style='width: 100%;' 
 				v-loading='loading' >
 				<el-table-column type='selection' width='60' v-if='(typeof clounID !=="undefined"?false:true)'></el-table-column>
-				<el-table-column type='index' width='80' :label='$t("Public.index")'>
+				<el-table-column type='index' width='90' :label='$t("Public.index")'>
 					<template slot-scope='scope'>
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
 				<el-table-column prop="creation_time"  :label="$t('Public.creation')" align='center' width='80' :formatter='dateFormat' >
 				</el-table-column>
-				<el-table-column prop='name':label='$t("multi.multiName")' align='center'min-width='100' ></el-table-column>
-				<el-table-column :label='$t("multi.multiStatus")' align='center'min-width='150' >
+				<el-table-column prop='name':label='$t("multi.multiName")' align='center'min-width='130' ></el-table-column>
+				<el-table-column :label='$t("multi.multiStatus")' align='center'width='80' >
 					<template slot-scope='scope'>
-						<span :class="scope.row.color">{{scope.row.statusName}}</span>
+						<!--:class="scope.row.color"-->
+						<span  :class="scope.row.color">{{scope.row.statusName}}</span>
 					</template>
 				</el-table-column>
 				<el-table-column prop='len':label='$t("multi.assPoints")' align='center'min-width='150' >
@@ -208,7 +210,6 @@
 				this.getUsers();//加上 this.clounID
 			}
 
-			
 		},
 		methods:{
 			handleSta(index,row){
@@ -294,22 +295,24 @@
 								if(item.status == 'servicing'){
 									item.statusName=this.$t('Public.servicing');
 									item.btnStatus=this.$t('tabOperation.stop');
-									item.color='colorGreen';
+									item.color='backRun';
+									//colorGreen  backRun colorRed colorWarning
 								}else if(item.status == 'stopping'){
 									item.statusName=this.$t('Public.stopping');
 									item.btnStatus=this.$t('tabOperation.run');
-									item.color='colorRed';
+									item.color='backStop';
 								}else if(item.status == 'creating'){
 									item.statusName=this.$t('Public.creating');
-									item.color='colorGreen';
+									item.color='backCreat';
 								}else if(item.status == 'failure'){
 									item.statusName=this.$t('Public.failure');
-									item.color='colorWarning'
+									item.color='backWarn'
 
 								}
 							})
 							this.users=res.data.data.items;
-							this.total=res.data.data.page.total
+							this.total=res.data.data.page.total;
+//							console.log(this.users)
 						}
 					}
 				}).catch(e => {console.log(e)})

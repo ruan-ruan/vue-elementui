@@ -25,7 +25,7 @@
 				<h3  class="toolbar text_c">{{$t('roles.extentList')}}</h3>
 				<el-form-item :label='$t("roles.extentChange")' prop='rights' v-model='editForm.rights'>	
 					<el-tree v-model='editForm.rights'
-						ref='organizationData'
+						ref='organization'
 						:data='organizationData'
 						:props="defaultProps"
 						node-key="code"
@@ -34,6 +34,7 @@
 						:expand-on-click-node="false"
 						:default-checked-keys="roleDetails"
 						@check='setrole'
+						:render-content='renderContent'
 						>
 					</el-tree>
 					<!--@check-change="handleCheckChange"-->
@@ -139,25 +140,54 @@
 				this.roleBtnStatus=true;
 			}
 			this.getRoles(str);
-			
 		},
 		methods:{
+			renderContent(h, { node, data }){
+				let className = ''
+				if(!data.list && data.code){
+					//找到最底层的数据  加上样式
+					className = 'especially'
+				}
+				return (
+		        // 在需要做横向排列的模块做标记			
+			        <div class={className}>
+			          	{data.name}
+			        </div>
+		        )
+			},
+			// 改变tree节点样式
+		    changeTreeClass() {
+		      // 找到之前做标记的class
+		      var classDomList = document.getElementsByClassName('especially')
+		
+		      	// 改变这几个样式
+				setTimeout(function(){
+					for (var i = 0; i < classDomList.length; i++) {
+			
+				        classDomList[i].parentNode.style.cssText = 'float: left'
+				
+				        classDomList[i].parentNode.className = 'el-tree-node__content option-wrapper'
+				
+				        classDomList[i].parentNode.parentNode.parentNode.style.marginLeft = '70px'
+			      	}
+	
+				},100)
+		    },
 			getRoles(val){   //获取权限的列表，分别区分为可点击或不可点击
 				this.$ajax.get('/role/permissions'+'?token='+this.token)
 				.then( res => {
 					if(res.status==200){
 						if(res.data.status==0){
-
+							console.log(res)
 							var str=res.data.data;
 							if(val){
 								deepClone(str);
 							}else{
 								Clone(str);
 							}
-	
 							this.organizationData=str;
 							this.backUpdata=JSON.parse(JSON.stringify(str))
-							
+							this.changeTreeClass()
 						}
 					}
 				}).catch(e => {
@@ -209,6 +239,7 @@
 
 					if(res.status==200){
 						if(res.data.status==0){
+							console.log(res)
 							this.basicData=res.data.data;
 
 							if(res.data.data.rights==='all'){
@@ -219,7 +250,9 @@
 									return ;
 								}else{
 									this.roleDetails=res.data.data.rights.split(',');//将字符串转换为数组
-									this.$refs.organizationData.setCheckedNodes(this.roleDetails);
+//									this.$refs.organization.setCheckedNodes(this.roleDetails);
+//									setCheckedKeys
+									this.$refs.organization.setCheckedKeys(this.roleDetails);
 								}
 								
 							}
@@ -232,6 +265,7 @@
 								rights:this.roleDetails,
 								usableStatus:res.data.data.usable
 							}
+//							 this.changeTreeClass()
 						}
 					}
 				}).catch(e => {
@@ -315,7 +349,9 @@
 								
 							}else{
 								this.roleDetails=res.data.data.rights.split(',');
-								this.$refs.organizationData.setCheckedNodes(this.roleDetails);
+//								this.$refs.organization.setCheckedNodes(this.roleDetails);
+//								setCheckedKeys
+								this.$refs.organization.setCheckedKeys(this.roleDetails);
 							}
 							 this.editForm={
 								name:res.data.data.name,
@@ -330,6 +366,7 @@
 				})
 			},
 			setrole(data,checked){
+				console.log(checked)
 				this.editForm.rights=[];
 				var str=[];
 				checked.checkedKeys.map(ele => {
@@ -339,8 +376,6 @@
 					}
 				})
 				this.editForm.dataCen=str;
-
-
 			},
 
 		}
@@ -349,20 +384,9 @@
 </script>
 
 <style >
-	.el-table__empty-block{
-		/*display: none !important;*/
-		display: none  !important;
-	}
-	/*.sel{
-		width: 300px;
-	}*/
-	.el-tree-node__children{
-		overflow: hidden;
-	}
-	.is-expanded{
-		float: left;
-	}
+
 	.text_c{
 		text-align: center;
 	}
+	.option-wrapper { padding: 0 !important; } 
 </style>
