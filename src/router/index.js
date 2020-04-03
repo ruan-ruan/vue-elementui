@@ -66,7 +66,8 @@ var router = new Router({
 				children:[
 					{path:'/message/unreadMessage',component: () => import ('@/views/message/unreadMessage'), name: 'aside.unMessage',leaf:true,meta:{requireAuth:true,name:'未知消息'}},
 					{path:'/message/allMessage',component: () => import ('@/views/message/allMessage'), name: 'aside.allMessage',leaf:true,meta:{requireAuth:true,name:'全部消息'} },   
-				]}
+				]},
+				{path:'/personal',component: () =>import ('@/views/message/personal'),name:'aside.personal',leaf:true ,meta:{requireAuth:true,name:'个人资料'}}
 			] 
 		},
 		{

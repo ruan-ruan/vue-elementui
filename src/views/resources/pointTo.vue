@@ -103,8 +103,8 @@
           </el-form>
         </el-col>
       </el-row>
-				<div class="table-top">
-          <el-button size='small' type="danger"  @click="batchRemove()" :disabled="this.sels.length===0" v-if='buttonVal.del? parentStatus :buttonVal.del'  >
+				<div class="table-top" v-if='filProps'>
+          <el-button size='small' type="danger"  @click="batchRemove()" :disabled="this.sels.length===0" v-if='buttonVal.del'  >
              	{{$t('tabOperation.delete')}}</el-button>   	
            <el-dropdown size='small' split-button type='success' @command="handleExport"  >
              	 {{$t('tabOperation.derived.tit')}}
@@ -126,7 +126,7 @@
               type='selection'
               min-width='30'
               align='center'
-              v-if='parentStatus'
+              v-if='filProps'
             ></el-table-column>
             <el-table-column
               type='index'
@@ -152,7 +152,7 @@
             </el-table-column>
             <el-table-column
               :label='$t("Public.specialStatus")'
-              min-width='50'
+              min-width='60'
               align='center'
             >
               <template slot-scope='scope'>
@@ -162,13 +162,13 @@
             <el-table-column
               prop='bandwidth'
               :label='$t("Public.bandwidth")'
-              min-width='60'
+              min-width='50'
               align='center'
             >
             </el-table-column>
             <el-table-column
               :label='$t("Public.specialType")'
-              min-width='55'
+              min-width='50'
               align='center'
             >
               <template slot-scope='scope'>
@@ -265,7 +265,7 @@
               :label='$t("Public.operation")'
               width='140'
               align='center'
-              v-if='parentStatus'
+              v-if='filProps'
             >
               <template slot-scope='scope' v-if='scope.row.status == "creating"?false:true '>
                 <el-button
@@ -299,7 +299,7 @@
             </el-table-column>
           </el-table>
       
-      <el-row v-if='parentStatus' class='toolbar'>
+      <el-row v-if='filProps' class='toolbar'>
         	<el-col :span='24'>
           <el-pagination
             :total="total"
@@ -412,7 +412,11 @@ import {
 } from "@/assets/js/index";
 export default {
   name: "pointsTo",
-  props: ["customer", "nodeID", "customerID"], // customer 逻辑口的id   nodeID节点的id
+  /**customer  详情界面逻辑口的id
+   * nodeID    详情界面节点的id
+   * customerID  租户里面id
+   * */
+  props: ["customer", "nodeID", "customerID"], 
   data() {
     let isValidNumber = (rule, value, callback) => {
       if (!value) {
@@ -539,19 +543,21 @@ export default {
   created() {
 
     this.token = sessionStorage.getItem("token");
-    this.getFiltersData();
-    if (
-      typeof this.customer !== "undefined" ||
-      typeof this.nodeID !== "undefined" ||
-      typeof this.customerID !== "undefined"
-    ) {
-      this.parentStatus = false;
-    } else {
-      this.parentStatus = true;
-    }
+
     this.getUsers();
-    console.log( this.$store.state.aside )
   },
+	mounted(){
+		this.getFiltersData();
+	},
+	computed:{
+		filProps(){
+  		if( this.nodeID || this.customer ||this.customerID ){
+  			return false;
+  		}else{
+  			return true;
+  		}
+  	}
+	},
   methods: {
   	handlePath(index,row){
   		//执行路径调整函数
@@ -1110,24 +1116,32 @@ export default {
     },
     handleStatus(index, row) {
     	if(row.specialName=== this.$t('tabOperation.stop') ){
-    		this.$ajax.put('/vll/to_stop_vll/'+row.id+'?token='+this.token)
-    		.then(res => {
-    			if(res.status==200){
-    				if(res.data.status==0){
-    					this.$message({
-    						message:this.$t('tooltipMes.stopSuccess'),
-    						type:'success'
-    					})
-
-    				}
-    					this.getUsers()
-    				
-    			}
-    		})
-    		.catch(e => {console.log(e)})
+    		this.$confirm(this.$t('confirm.conStop'),this.$t('confirm.tooltip'),{
+    			 type: "warning"
+    		}).then(() => {
+    			return this.$ajax.put('/vll/to_stop_vll/'+row.id+'?token='+this.token)
+    	}).then(res => {
+	    			if(res.status==200){
+	    				if(res.data.status==0){
+	    					this.$message({
+	    						message:this.$t('tooltipMes.stopSuccess'),
+	    						type:'success'
+	    					})
+	
+	    				}
+	    					this.getUsers()
+	    				
+	    			}
+	    		})
+    		.catch((e) => { console.log(e)})
+    		
+    		
     	}else if(row.specialName===this.$t('tabOperation.run')){
-    		this.$ajax.put('/vll/to_serve_vll/'+row.id+'?token='+this.token)
-    		.then(res => {
+    		this.$confirm(this.$t('confirm.conRun'),this.$t('confirm.tooltip'),{
+    			type:'success'
+    		}).then( () => {
+    			return 	this.$ajax.put('/vll/to_serve_vll/'+row.id+'?token='+this.token)
+    		}).then(res => {
     			if(res.status==200){
     				if(res.data.status==0){
     					this.$message({
@@ -1137,9 +1151,9 @@ export default {
 
     				}
               this.getUsers()
-    				
     			}
     		})
+    		.catch( e => {console.log(e)})
     	} 
     },
     handleExport(command) {

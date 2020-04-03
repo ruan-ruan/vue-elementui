@@ -50,6 +50,7 @@ const cn = {
     	standLetter:'站内信',
     	unMessage:'未读消息',
     	allMessage:'全部消息',
+    	personal:'个人资料',
     	backManage:'骨干管理',
     	topoView:'拓扑视图',
     	physicalLocation:'物理位置',
@@ -154,9 +155,8 @@ const cn = {
 		findDevice:'发现设备参数设置',
 		runSuccess:'运行成功，请在骨干节点中查看!',
 		runDevice:'确定要运行该设备吗?',
-		
-		
-		
+		vlanNum:'请输入vlan',
+		vlanRulestip:'请输入正确的vlan',
 	    PortNum:'请输入端口号',
 	    portRulestip:'请输入正确的端口号:详情规则请点击右侧！',
 		portRules:'格式:填写1~54内的正整数;"-"代表端口区间并取两边的数值;","代表单个端口隔离 ,例:1-23,25,26-48代表除去24口的所有端口',
@@ -168,6 +168,7 @@ const cn = {
 	    backboneStatus:'骨干状态',
 	    backboneName:'骨干名称',
 	    dataCen:'数据中心',
+	    userVlan:'可用vlan区间',
 	    backboneNode:'骨干节点',
 	    unNode:'未知节点',
 	    //拓扑图的线的详情里面  使用
@@ -377,7 +378,8 @@ const cn = {
     	yes:'是',
     	no:'否',
     	information:'描述信息',
-    	
+    	plaChangModel:'请选择计费模式',
+    	plaDeviceID:'请输入设备ID',
     },
     
     business:{
@@ -574,8 +576,11 @@ const cn = {
 		conRun:'确认要启用吗?',
 		conDecetion:'确定要重新检测云端状态!',
 		conRemove:'确定要清除云端配置?',
-		conTootip:'注意：此操作不一定能清除成功，详情见消息提醒!'
-		
+		conTootip:'注意：此操作不一定能清除成功，详情见消息提醒!',
+		conAdd:'确认要提交吗?',
+		conDel:'确定要删除',
+		areaMes:'区域信息?',
+		war:'注意：删除后该信息将不可找回!'
     },
     topFilters:{//单页面  搜索栏   
     	search:'搜索',

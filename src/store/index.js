@@ -52,7 +52,8 @@ const store = new Vuex.Store({
         	sessionStorage.removeItem('aside')
             state.token = null;
             state.aside=null;
-            
+//          console.log(state.token);
+//          console.log( sessionStorage.getItem('token') )
         },
         [types.TITLE]: (state, data) => {
             state.title = data;

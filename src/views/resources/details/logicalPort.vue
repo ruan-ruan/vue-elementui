@@ -85,7 +85,10 @@
 				</el-table-column>
 				<el-table-column prop='port.port_no' :label='$t("Public.devPort")'  align='center'>					
 				</el-table-column>
-				<el-table-column prop='port.status':label='$t("Public.portStatus")' align='center'>					
+				<el-table-column :label='$t("Public.portStatus")' align='center'width='80'>					
+					<template slot-scope='scope'>
+						<span :class="scope.row.port.status == 'UP'?'backRun':'backWarn'">{{scope.row.port.status}}</span>
+					</template>
 				</el-table-column>
 				<el-table-column prop='dc_name':label='$t("Public.dataCen")'  align='center'>					
 				</el-table-column>
@@ -327,7 +330,7 @@
 			physical_ports:{
 				handler(newVal,oldVal){
 					this.physicalData=[];
-					this.physicalData=JSON.parse(JSON.stringify(newVal))
+					this.physicalData=JSON.parse(JSON.stringify(newVal));
 				},
 				deep:true,
 			},
@@ -338,7 +341,7 @@
 			this.token=sessionStorage.getItem('token');
 			
 			
-			if(this.addLogicalPort==='新建逻辑端口'){
+			if(this.addLogicalPort==='addLogicPort'){
 				//新建逻辑端口界面
 				this.getTenantData();
 				this.addPortStatus=false;

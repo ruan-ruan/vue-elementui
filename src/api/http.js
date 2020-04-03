@@ -5,8 +5,10 @@ import * as types from '@/api/types';
 import {Message,Loading} from'element-ui'
 // axios 配置
 // 超时时间
-axios.defaults.timeout = 10000
-axios.defaults.baseURL='http://api.tianchi.com'
+axios.defaults.timeout = 10000;
+//http://api.tianchi.com   
+//http://demoapi.tianchic.com
+axios.defaults.baseURL='http://api.tianchi.com';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 // post请求头
 //axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
@@ -39,7 +41,7 @@ axios.interceptors.response.use(
 //				query: { redirect: router.currentRoute.path },
 			})
 			console.log('执行跳出 刷新')
-//			window.location.reload();
+			window.location.reload();
 		}
 		Message.warning({
 			message:response.data.message

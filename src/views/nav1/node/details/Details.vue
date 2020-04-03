@@ -6,14 +6,14 @@
 				<Node :title='id' :physicalPort='physicalValue' :physicalData='physicalData'></Node>
 			</el-tab-pane>
 			<el-tab-pane :label='$t("Public.portInfo")' name='second'>
-				<Port :title='id'></Port>
+				<Port :title='id'v-if='id'></Port>
 			</el-tab-pane>
 			<el-tab-pane  :label='$t("Public.pointLine")' name='thired' v-if='pointSpecial'>
 				<!--<Port ></Port>-->
-				<points-to :nodeID='id'></points-to>
+				<points-to :nodeID='id' v-if='id'></points-to>
 			</el-tab-pane>
 			<el-tab-pane :label='$t("Public.virtualLine")' name='fourth' v-if='virtualSpecial'>
-				<virtualNetwork :clounId='id'></virtualNetwork>
+				<virtualNetwork :clounId='id' v-if='id'></virtualNetwork>
 			</el-tab-pane>
 		</el-tabs>
 	</div>

@@ -32,10 +32,10 @@
    	 		</el-col>
    	 	</el-row>
    	 	
-   	 	<el-row>
+   	 	<el-row v-if='filProps'>
    	 		<el-col :span='24'>
    	 			<el-col :span='4'>																																<!--v-show='buttonVal.add' 此处使用class属性    是为保持占位-->		
-   	 				<el-button size='small' type='primary' @click='addUsers'   :class='buttonVal.add ? !tit ? "":"visHidden":"visHidden" '>+{{$t('Public.creatLogic')}}</el-button>
+   	 				<el-button size='small' type='primary' @click='addUsers'   :class='buttonVal.add ?  "":"visHidden" '>+{{$t('Public.creatLogic')}}</el-button>
    	 			</el-col>
    	 			<el-col :span='20' class='table-top'>
    	 				<el-dropdown size='small' split-button type='success'@command="handleExport">
@@ -75,8 +75,8 @@
    	 		<el-table-column prop='start_time' :label='$t("Public.conStart")' :formatter='dateFormat' width='80'align='center'></el-table-column>
    	 		<el-table-column prop='end_time' :label='$t("Public.conEnd")' :formatter='dateFormat' width='80'align='center'></el-table-column>
    	 		<el-table-column prop='descriptionVal' :label='$t("Public.description")' min-width='100'align='center'></el-table-column>
-   	 		<el-table-column  :label='$t("Public.operation")' width='120'  v-if=' !tit'align='center'>
-   	 			<template slot-scope='scope'>
+   	 		<el-table-column  :label='$t("Public.operation")' width='120'  align='center'v-if='filProps'>
+   	 			<template slot-scope='scope' >
    	 				<el-button size='mini' type='info' @click='handleStatus(scope.$index, scope.row)'v-if='buttonVal.stop'>{{scope.row.btnStatus}}</el-button>
 	   	 			<el-button size='mini' type='success' @click='handleEdit(scope.$index,scope.row)' v-if='buttonVal.edit'>{{$t('tabOperation.edit')}}</el-button>
 	   	 			<el-button size='mini' type='danger' @click='handleDel(scope.$index,scope.row)' v-if="buttonVal.del? scope.row.btnStatus== '启用' : buttonVal.del">{{$t('tabOperation.delete')}}</el-button>
@@ -106,6 +106,10 @@
 	import {getPortStatus,isPortStatus,descriptionValue,datedialogFormat,dealNull} from '@/assets/js/index'
 	export default{
 		name:'port',
+		/**titleOne ， titleTwo  节点里面设备的的详情的id的数据
+		 * nodeID   节点信息里面的id
+		 * tenantID   租户信息的id
+		 * */
 		props:['titleOne','titleTwo','LogicTitle','tenantID'],//来判断进入的界面的，控制添加和操作按钮显示
 		data(){
 			return{			
@@ -145,7 +149,7 @@
 				//用来控制删除按钮的显示和隐藏
 				statusDel:null,
 				tenantData:[],//租户数据
-				tit:'',
+				tit:null,
 				buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏 "link@add_unknown_link"
 		  		add:this.codeVal(this.recursion( this.$store.state.aside ,"aside.logicManage").list, "port@add_logic_port").show,//添加	
 		  		del:this.codeVal(this.recursion( this.$store.state.aside ,"aside.logicManage").list, "port@del_logic_port").show,//单个删除和批量的删除是绑定在一起的  
@@ -154,29 +158,37 @@
 		  		stop:this.codeVal(this.recursion( this.$store.state.aside ,"aside.logicManage").list, "port@to_disable_logic_port").show,//查看逻辑口的详情
 		  		run:this.codeVal(this.recursion( this.$store.state.aside ,"aside.logicManage").list, "port@to_enable_logic_port").show,//查看逻辑口的详情
 		  		
-		  	} 
+		  	},
+		  	
 			}
 		},
-		watch:{
-			'titleOne':function(newVal,oldVal){
 
-				this.tit=newVal;
-				this.getUsers()
-			},
-			'titleTwo':function(newVal,oldVal){
-
-				this.tit=newVal;
-				this.getUsers()
-			},
-		},
 		created(){
 			//获取token
 			this.token=sessionStorage.getItem('token');
 
 			this.getUsers();
-			this.getTenantData();
-
-			
+			this.getTenantData();			
+		},
+		computed:{
+			filNode(){
+				if(this.titleOne){
+					return this.titleOne
+				}
+				if(this.titleTwo){
+					return this.titleTwo
+				}
+			},
+			filProps(){
+				if(this.titleOne || this.titleTwo || this.tenantID || this.nodeID){
+					return false;
+				}else{
+					return true;
+				}
+			}
+		},
+		mounted(){
+			console.log(this.filNode)
 		},
 		methods:{
 			getTenantData(){
@@ -207,8 +219,8 @@
 					per_page:this.pagesize,
 					search_name:this.filters.name,
 					search_tenant:typeof this.tenantID !='undefined'? this.tenantID:  this.filters.nameLogo,
-					search_device: typeof this.tit !=='undefined' ?this.tit:''
-//					search_usable:this.filters.status,
+					search_device: typeof this.filNode !=='undefined' ?this.filNode:'',
+					search_node:typeof this.nodeID !=='undefined'?this.nodeID:''
 				}
 				this.$ajax.get('/port/logic_ports'+'?token='+this.token,para)
 				.then(res => {
@@ -265,7 +277,7 @@
 				this.$router.push({
 					path:'/resource/add/logicalPort',
 					query:{
-						name:'新建逻辑端口'
+						name:'addLogicPort'
 					}
 				})
 			},

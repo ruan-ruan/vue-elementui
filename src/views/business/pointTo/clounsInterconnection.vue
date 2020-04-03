@@ -188,7 +188,7 @@
 				str.forEach(ele => {
 					ele.validate(valid => {
 						if(valid){
-							this.$confirm('确认要添加吗?',{})
+							this.$confirm(this.$t('confirm.conAdd'),this.$t('confirm.tooltip'),{})
 							.then(() => {
 								this.$ajax.post('/vll/add_c2c_vll'+'?token='+this.token,para)
 								.then(res => {

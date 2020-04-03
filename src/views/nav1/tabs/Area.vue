@@ -244,7 +244,7 @@
 		    },
 		    //删除
 		    handleDel: function(index, row) {
-		    	const confirmText=['确定要删除'+row.name+'区域信息?','注意：删除后该信息将不可找回!'];
+		    	const confirmText=[this.$t('confirm.conDel')+row.name+this.$t('confirm.areaMes'),this.$t('confirm.war')];
 		    	const newDatas = [];
         		const h = this.$createElement;
         		 for (const i in confirmText) {
@@ -254,8 +254,6 @@
 		    		title: this.$t('confirm.tooltip'),
 		    		message: h('div', null, newDatas),
 		    		showCancelButton: true,
-//		    		confirmButtonText: this.$t('confirm.confi'),
-//		            cancelButtonText: this.$t('tabOperation.cancel'),
 		            type: 'warning'
 		    	})
 		    	.then(()=> {
@@ -265,7 +263,7 @@
 		    			if(res.status==200){
 		    				if(res.data.status==0){
 		    					this.$message({
-		    						message:'删除成功!',
+		    						message:this.$t('tooltipMes.delSuccess'),
 		    						type:'success'
 		    					})
 		    					this.getUsers()
@@ -324,7 +322,7 @@
 		              	if(res.status=='200'){
 		              		if(res.data.status=='0'){
 				                this.$message({
-				                  message: "修改成功",
+				                  message: this.$t('tooltipMes.editSuccess'),
 				                  type: "success"
 				                });
 				                this.$refs["editForm"].resetFields();
@@ -350,7 +348,7 @@
 						if(res.status=='200'){
 							if(res.data.status=='0'){
 								this.$message({
-					                message: "添加成功",
+					                message: this.$t('tooltipMes.addSuccess'),
 					                type: "success"
 				                });
 				                this.$refs["editForm"].resetFields();
@@ -376,7 +374,7 @@
 				rows.forEach(element =>{
 					ids.push(element.id);
 				})
-			    this.$confirm("确认删除选中记录吗？", "提示", {
+			    this.$confirm(this.$t('confirm.titles'), this.$t('confirm.tooltip'), {
 			        type: "warning"
 			    })
 		        .then(() => {
@@ -387,7 +385,7 @@
 			          	if(res.status=='200'){
 			          		if(res.data.status=='0'){			
 					            this.$message({
-					              message: "批量删除成功",
+					              message: this.$t('tooltipMes.delSuccess'),
 					              type: "success"
 					            });
 			          		}
@@ -400,9 +398,9 @@
 				var _this=this
 				if(command=='current'){//当前页的数据
 		    		//导出所有的数据
-		    		this.$confirm('确定要导出当前页的数据吗?','提示',{
-		    			confirmButtonText:'确定',
-		    			cancelButtonText:'取消',
+		    		this.$confirm(this.$t('tooltipMes.exportDataCurr'),this.$t('confirm.tooltip'),{
+//		    			confirmButtonText:'确定',
+//		    			cancelButtonText:'取消',
 		    			type:'warning'
 		    		}).then(() => {
 		    			var para={
@@ -415,9 +413,9 @@
 		    		})
 		    	}else if(command=='all'){
 		    		//导出当前
-		    		this.$confirm('确定要导出所有页数据吗?','提示',{
-		    			confirmButtonText:'确定',
-		    			cancelButtonText:'取消',
+		    		this.$confirm(this.$t('tooltipMes.exportDataAll'),this.$t('confirm.tooltip'),{
+//		    			confirmButtonText:'确定',
+//		    			cancelButtonText:'取消',
 		    			type:'warning'
 		    		}).then(() => {
 		    			this.exportData()
@@ -452,7 +450,7 @@
 					const filterVal=['id','name','description','creation_time'];
 					const list=that.excelData;
 					const data=that.formatJson(filterVal,list);
-					export_json_to_excel(tHeader,data,'下载数据excel')
+					export_json_to_excel(tHeader,data,this.$t('tooltipMes.download')+'excel')
 				})
 			},
 			formatJson(filterVal,jsonData){

@@ -8,10 +8,10 @@
 				<logical-port :title='id' ></logical-port>
 			</el-tab-pane>
 			<el-tab-pane label='点到点专线' name='second' v-if='pointSpecial'>
-				<points-to :customer='id' @send='getVal'></points-to>
+				<points-to :customer='id' v-if='id' @send='getVal'></points-to>
 			</el-tab-pane>
 			<el-tab-pane label='虚拟组网专线' name='third' v-if='virtualSpecial'>
-				<virtual-network :clounId='id'></virtual-network>
+				<virtual-network :clounId='id' v-if='id'></virtual-network>
 			</el-tab-pane>
 		</el-tabs>
 	</div>
@@ -36,7 +36,9 @@
 				virtualSpecial:this.recursion( this.$store.state.aside ,"aside.virtualSpecial").show,//组网
 			}
 		},
-
+		mounted(){
+			console.log(this.id)
+		},
 		methods:{
 			getVal(msg){
 				this.boolean=false;

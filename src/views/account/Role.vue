@@ -255,8 +255,7 @@
 					.catch(e => {
 						console.log(e)
 					})
-				})
-				.catch(( ) => {})
+				}).catch(( ) => {})
 			},
 			selsChange:function(sels){
 				//选择

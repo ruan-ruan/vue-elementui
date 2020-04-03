@@ -27,6 +27,9 @@
 										</el-option>
 									</el-select>
 								</el-form-item>
+								<el-form-item :label='$t("Public.userVlan")' prop='user_vlan'>
+									<el-input v-model='seeForm.user_vlan' :disabled='StaNot'class='ipt'></el-input>
+								</el-form-item>
 							</el-col>
 						</el-col>
 						<el-button size='small' type='success' @click='equStatusTwo = !equStatusTwo' v-show='addEquipStatus' v-text='equStatusTwo?$t("Public.packUpDeviceTwo"):$t("Public.addphyDeviceTwo")' ></el-button>
@@ -126,7 +129,7 @@
 
 <script>
 	
-	import {isValidNumber,isTest} from '@/assets/js/index.js'
+	import {isValidNumber,isTest,isVlan} from '@/assets/js/index.js'
 	export default{
 		name:'node',
 		//这里的title是节点的额详情的时候额界面
@@ -141,15 +144,24 @@
 			};
 			let validNumber = (rule,value,callback) => {
 				if(!value){
-					callback(new Error('请输入的端口号'))
+					callback(new Error(this.$t('Public.PortNum')))
 				}else if(!isTest(value).bool){
-					callback(new Error('请输入正确的端口号，详细规则请点击右侧'))
+					callback(new Error(this.$t('Public.portRulestip')))
+				} else {
+					callback()
+				}
+			};
+			var vlanNumber= (rule,value,callback) => {
+				if(!value){
+					callback(new Error(this.$t('Public.vlanNum')))
+				}else if(!isVlan(value).bool){
+					callback(new Error(this.$t('Public.vlanRulestip')))
 				} else {
 					callback()
 				}
 			};
 			return{
-				portRules:'格式:填写1~54内的正整数;"-"代表端口区间并取两边的数值;","代表单个端口隔离 ,例:1-23,25,26-48代表除去24口的所有端口 ',
+				portRules:this.$t('Public.portRules'),
 				//获取用户的权限信息
 				token:'',
 				//这是在节点编辑的时候传过来的值
@@ -166,6 +178,8 @@
 					id:'',
 					name:'',
 					vtep:'',
+					user_vlan:'',
+					
 					devices0_id:'',
 					devices0_hostname:'',
 					devices0_ip:'',
@@ -198,14 +212,16 @@
 					name:[{ required: true, message: this.$t('validateMes.place')+this.$t('Public.nodeName'), trigger: 'blur' }],
 					dc_id:[{ required: true, message: this.$t('validateMes.placeCh')+this.$t('Public.dataCen'), trigger: 'change' }],
 					vtep:[{ required: true, message:this.$t('validateMes.place')+ 'vtep', trigger: 'blur' }],
-					devices0_id:[{ required: true, message: '请输入设备ID', trigger: 'blur' },
+					user_vlan:[{ required: true, trigger: 'blur', validator: vlanNumber }],
+					
+					devices0_id:[{ required: true, message: this.$t('Public.plaDeviceID'), trigger: 'blur' },
 					{validator:validcodeID,trigger:'blur'}],
 					devices0_hostname:[{ required: true, message:this.$t('validateMes.place')+this.$t('Public.deviceName'), trigger: 'blur' }],
 					devices0_vendor:[{ required: true, message: this.$t('validateMes.place')+this.$t('Public.vendor'), trigger: 'blur' }],
 					devices0_sn:[{ required: true, message: this.$t('validateMes.place')+this.$t('Public.snNumber'), trigger: 'blur' }],
 					devices0_ip:[{ required: true, message: this.$t('validateMes.place')+'ip', trigger: 'blur' }],
 					devices0_model:[{ required: true, message: this.$t('validateMes.place')+this.$t('Public.deviceModel'), trigger: 'blur' }],
-					devices1_id:[{ required: true, message: '请输入设备ID', trigger: 'blur' },
+					devices1_id:[{ required: true, message: this.$t('Public.plaDeviceID'), trigger: 'blur' },
 					{validator:validcodeID,trigger:'blur'}],
 					devices1_hostname:[{ required: true, message:this.$t('validateMes.place')+this.$t('Public.deviceName'), trigger: 'blur' }],
 					devices1_vendor:[{ required: true, message:this.$t('validateMes.place')+this.$t('Public.vendor'), trigger: 'blur' }],
@@ -326,6 +342,7 @@
 		mounted(){
 			this.bus.$emit('equipment',this.seeForm.devices);
 			this.$refs['seeForm'].resetFields();
+
 		},
 		methods:{
 			change(){
@@ -345,14 +362,14 @@
 					console.log(e)
 				})
 			},
-			cli_toTip(){
-				this.$confirm('规则:n-m,代表是n-m之间所有的整数代表的端口，且包含n和m,如需断点，请使用","逗号隔开即可，只能输入数字和-，请按照规则输入！！！','警告',{type:'warning'})
-				.then(()=>{})
-				.catch(() =>{})
-			},
-			StatusDisplay(){
-				this.equStatusTwo=true;
-			},
+//			cli_toTip(){
+//				this.$confirm('规则:n-m,代表是n-m之间所有的整数代表的端口，且包含n和m,如需断点，请使用","逗号隔开即可，只能输入数字和-，请按照规则输入！！！','警告',{type:'warning'})
+//				.then(()=>{})
+//				.catch(() =>{})
+//			},
+//			StatusDisplay(){
+//				this.equStatusTwo=true;
+//			},
 			dateFormats(value){
 	    		let date=new Date(parseInt(value)*1000);
 	    		let Y=date.getFullYear()+'-';
@@ -392,6 +409,7 @@
 									name:strData.name,
 									vtep:strData.vtep,
 									dc_id:dc_name,
+									user_vlan:strData.user_vlan,
 									
 									port_section0:str[0].port_section,
 									devices0_id:str[0].id,
@@ -421,6 +439,7 @@
 									name:strData.name,
 									vtep:strData.vtep,
 									dc_id:dc_name,
+									user_vlan:strData.user_vlan,
 									
 									port_section0:d1['port_section'],
 									devices0_id:d1.id,
@@ -466,6 +485,7 @@
 						name:this.seeForm.name,
 						dc_id:this.seeForm.dc_id == this.baseData.dc.name?this.baseData.dc.id:this.seeForm.dc_id,
 						vtep:this.seeForm.vtep,
+						user_vlan:this.seeForm.user_vlan,
 						devices:[
 							{
 								id:this.seeForm.devices0_id,
@@ -482,6 +502,7 @@
 						name:this.seeForm.name,
 						dc_id:this.seeForm.dc_id==this.baseData.dc.name?this.baseData.dc.id:this.seeForm.dc_id,
 						vtep:this.seeForm.vtep,
+						user_vlan:this.seeForm.user_vlan,
 						devices:[
 							{
 								id:this.seeForm.devices0_id,
@@ -505,7 +526,9 @@
 				//节点界面的 编辑部分的提交的数据
 				this.$refs.seeForm.validate(valid => {					
 					if(valid){
-						this.$confirm('确认要修改吗?','提示',{})
+						this.$confirm(this.$t('nav.conEditPwd'),this.$t('confirm.tooltip'),{
+							type:'warning'
+						})
 						.then(() => {
 							this.$ajax.put('/node/edit_node/'+this.seeForm.id+'?token='+this.token,para)
 							.then(res => {
@@ -513,7 +536,7 @@
 								if(res.status==200){
 									if(res.data.status==0){
 										this.$message({
-											message:'修改成功!',
+											message:this.$t('tooltipMes.editSuccess'),
 											type:'success',
 										})
 										//返回节点数据主页
@@ -537,6 +560,7 @@
 						name:this.seeForm.name,
 						dc_id:this.seeForm.dc_id,
 						vtep:this.seeForm.vtep,
+						user_vlan:this.seeForm.user_vlan,
 						devices:[
 							{						
 								hostname:this.seeForm.devices0_hostname,
@@ -559,6 +583,7 @@
 						name:this.seeForm.name,
 						dc_id:this.seeForm.dc_id,
 						vtep:this.seeForm.vtep,
+						user_vlan:this.seeForm.user_vlan,
 						devices:[
 							{
 //								id:this.seeForm.devices0_id,							
@@ -592,14 +617,16 @@
 			
 				this.$refs.seeForm.validate(valid => {
 					if(valid){
-						this.$confirm('确认要提交吗?','提示',{})
+						this.$confirm(this.$t('confirm.conAdd'),this.$t('confirm.tooltip'),{
+							type:'success'
+						})
 						.then(() => {
 							this.$ajax.post('/node/add_unknown_node'+'?token='+this.token,para)
 							.then(res => {
 								if(res.status==200){
 									if(res.data.status==0){
 										this.$message({
-											message:'添加成功!',
+											message:this.$t('tooltipMes.addSuccess'),
 											type:'success'
 										})
 										this.$store.state.statusname=true;
@@ -650,6 +677,7 @@
 						name:this.seeForm.name,
 						dc_id:this.seeForm.dc_id==obj.name?obj.id:this.seeForm.dc_id,
 						vtep:this.seeForm.vtep,
+						user_vlan:this.seeForm.user_vlan,
 						devices:[
 							{
 								id:this.seeForm.devices0_id,							
@@ -674,6 +702,7 @@
 						name:this.seeForm.name,
 						dc_id:this.seeForm.dc_id==obj.name?obj.id:this.seeForm.dc_id,
 						vtep:this.seeForm.vtep,
+						user_vlan:this.seeForm.user_vlan,
 						devices:[
 							{
 								id:this.seeForm.devices0_id,							
@@ -708,7 +737,9 @@
 
 				this.$refs.seeForm.validate(valid => {
 					if(valid){
-						this.$confirm('确认要修改吗?','提示',{})
+						this.$confirm(this.$t('nav.conEditPwd'),this.$t('confirm.tooltip'),{
+							type:'warning'
+						})
 						.then(() => {
 							this.loading=true;
 							this.$ajax.put('/node/edit_unknown_node/'+para.id+'?token='+this.token,para)
@@ -717,7 +748,7 @@
 								if(res.status==200){
 									if(res.data.status==0){
 										this.$message({
-											message:'修改成功!',
+											message:this.$t('tooltipMes.editSuccess'),
 											type:'success'
 										})
 
@@ -757,6 +788,7 @@
 									id:unknownSee.id,
 									name:unknownSee.name,
 									vtep:unknownSee.vtep,
+									user_vlan:unknownSee.user_vlan,
 									devices0_id:d1.id,
 									devices0_hostname:d1.hostname,
 									devices0_ip:d1.ip,
@@ -784,6 +816,7 @@
 									id:unknownSee.id,
 									name:unknownSee.name,
 									vtep:unknownSee.vtep,
+									user_vlan:unknownSee.user_vlan,
 				
 									devices0_id:d1.id,
 									devices0_hostname:d1.hostname,

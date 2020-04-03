@@ -23,7 +23,7 @@
 						<el-dropdown trigger="click">
 							<span class="el-dropdown-link userinfo-inner cur_poin" :title="$t('nav.contactNumber')">{{$t('nav.contactNumber')}}</span>
 							<el-dropdown-menu slot="dropdown">
-								<el-dropdown-item >{{$t('nav.telephone')}}:010-5569850</el-dropdown-item>
+								<el-dropdown-item >{{$t('nav.telephone')}}:400-8768-711</el-dropdown-item>
 							</el-dropdown-menu>
 						</el-dropdown>
 					</el-col>

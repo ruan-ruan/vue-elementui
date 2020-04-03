@@ -12,6 +12,7 @@ const en = {
     	changPsd:'Change password',
     	language:'Language',
     	message:'Message',
+    	personal:'Personal Data',
 		lanTooltip:"Language choice ",
 		guide:'Operation guide ',
     	contactNumber :'Contact number ',
@@ -213,7 +214,8 @@ const en = {
 	    room:'Room',
 	    rack:'Rack',
 	    place150:'Enter up to 150 characters ',
-	    
+	    vlanNum:'Please enter VLAN',
+		vlanRulestip:'Please enter the correct VLAN',
 	    PortNum:'port number',
 	    portRulestip:'Please input the correct port number: for details, please click the right! ',
 		portRules:'Format: fill in the positive integer in 1-54; "-" represents the port interval and takes the values on both sides; "," represents a single port isolation, for example: 1-23, 25, 26-48 represents all ports excluding 24 ports ',
@@ -223,6 +225,7 @@ const en = {
 	    backboneStatus:'Backbone status',
 	    backboneName:'Backbone name ',
 	    dataCen:'Data center ',
+	    userVlan:'Available VLAN interval',
 	    backboneNode:'Backbone node ',
 	    unNode:'Unknown node ',
 	    //拓扑图的线的详情里面  使用
@@ -433,6 +436,8 @@ const en = {
     	yes:'Yes',
     	no:'No',
     	information:'Descriptive information ',
+    	plaChangModel:'Please select billing mode',
+    	plaDeviceID:'Please enter the divice ID',
     },
     confirm:{
     	tooltip:'Tooltip',
@@ -453,9 +458,11 @@ const en = {
 		conRun:'Are you sure you want to enable ?',
     	conDecetion:'Determine to re detect cloud state !',
 		conRemove:'Are you sure you want to clear the cloud configuration ?',
-		conTootip:'Note: this operation may not be successful. See the message reminder for details!'
-//  	cancel:'取消'
-		
+		conTootip:'Note: this operation may not be successful. See the message reminder for details!',
+		conAdd:'Are you sure you want to submit?',
+		conDel:'Are you sure you want to delete',
+		areaMes:'regional information?',
+		war:'Note: the information will not be retrieved after deletion!'
     },
     
     business:{

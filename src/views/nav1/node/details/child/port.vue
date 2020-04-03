@@ -1,19 +1,18 @@
 <template>
 	<div>
 		<!--端口信息-->
-		<!--顶部标签-->
 		<el-tabs type='border-card'>
 			<el-tab-pane :label='$t("Public.physics1")'>
-				<portChilds :titleOne='base1' ></portChilds>
+				<portChilds :titleOne='base1' :nodeID='title' v-if='title && JSON.stringify(base1) !="{}" '></portChilds>
 			</el-tab-pane>
 			<el-tab-pane :label='$t("Public.physics2")' v-if='equipStatue'>
-				<portChilds :titleTwo='base2'></portChilds>
+				<portChilds :titleTwo='base2' :nodeID='title' v-if='title && JSON.stringify(base2) !="{}" '></portChilds>
 			</el-tab-pane>
 			<el-tab-pane :label='$t("Public.logic1")' v-if='port'>
-				<logicalPort :titleOne='base1ID'></logicalPort>
+				<logicalPort :titleOne='base1ID' :nodeID='title' v-if='title && base1ID'></logicalPort>
 			</el-tab-pane>
 			<el-tab-pane :label='$t("Public.logic2")' v-if='port && equipStatue'>
-				<logicalPort :titleTwo='base2ID'></logicalPort>
+				<logicalPort :titleTwo='base2ID' :nodeID='title' v-if='title && base2ID'></logicalPort>
 			</el-tab-pane>
 		</el-tabs>
 	</div>
@@ -21,7 +20,6 @@
 
 <script>
 	import portChilds from '@/views/nav1/node/details/child/portsChild/portChilds'
-//	import logicalPort from '@/views/nav1/node/details/child/portsChild/logicalPort'
 	import logicalPort from '@/views/resources/port'
 
 	export default{
@@ -46,17 +44,21 @@
 				obj:{},
 				base1:{},
 				base2:{},
-//				dataVal:[],
 				base1ID:'',
 				base2ID:'',
-//				ids1:''
+				nodeID:this.title
+			}
+		},
+		watch:{
+			'title':function(newVal,oldVal){
+				console.log(newVal)
 			}
 		},
 		created(){
 			
 			this.token=sessionStorage.getItem('token');
 			this.getUsers(this.title);
-//			console.log( this.recursion( this.$store.state.aside ,"aside.logicManage") )
+
 		},
 		watch:{
 			base1:{

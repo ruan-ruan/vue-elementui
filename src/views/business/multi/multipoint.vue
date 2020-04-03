@@ -32,16 +32,16 @@
 				</el-col>
 			</el-row>
 			
-			<el-row>
+			<el-row v-if='filProps'>
 				<el-col :span='24'>
 				<el-col :span='4'>
 					<div v-if='buttonVal.add'>
 						<el-button size='small' @click='add' type='primary'
-							v-show='(typeof virTit !=="undefined"?false: (typeof clounID !=="undefined"?false:true)) '>{{$t('multi.addMulti')}}</el-button>	
+							>{{$t('multi.addMulti')}}</el-button>	
 					</div>
 				</el-col>
-				<el-col :span='20' class='table-top' :class='(typeof virTit !=="undefined"?"marL": (typeof clounID !=="undefined"?"marL":"table_top")) ' v-if='buttonVal.del'  >
-					<el-button type='danger' size='small'  @click='batchRemove(sels)':disabled="this.sels.length===0" v-if='(typeof clounID !=="undefined"?false:true)'>
+				<el-col :span='20' class='table-top'  v-if='buttonVal.del'  >
+					<el-button type='danger' size='small'  @click='batchRemove(sels)':disabled="this.sels.length===0" >
 						{{$t('tabOperation.delete')}}</el-button>
 				</el-col>
 			</el-col>
@@ -73,7 +73,7 @@
 				</el-table-column>
 				<el-table-column prop='tenant.name':label='$t("Public.tenant")' align='center'min-width='150' ></el-table-column>
 				<el-table-column prop='descriptionVal':label='$t("Public.description")' align='center'min-width='150' ></el-table-column>
-				<el-table-column :label='$t("Public.operation")' align='center' width='140'>
+				<el-table-column :label='$t("Public.operation")' align='center' width='140' v-if='filProps'>
 					<template slot-scope='scope' v-if='scope.row.status == "creating" ? false : true ' >
 						<el-button size='mini' type='warning' @click='handleSta(scope.$index,scope.row)' v-if='buttonVal.run?  scope.row.status == "failure"? false : true :buttonVal.run'>{{scope.row.btnStatus}}</el-button>
 						<el-button size='mini' type='info' @click='handleDetails(scope.$index,scope.row)'v-if='buttonVal.see'>{{$t('tabOperation.info')}}</el-button>
@@ -137,7 +137,12 @@
 	
 	export default{
 		name:"multiPoint",
-		props:['virTit','clounID','logicID','tenantID'],//虚拟组网专线  控制添加按钮的隐藏    clounID//节点里面的组网的详情     logicID逻辑口的详情里的id
+		/**nodeDetail  节点组件传过来的详情 ---id
+		 * clounID     云对接 详情界面   --id
+		 * logicID     逻辑口管理里面  ---id
+		 * tenantID    租户里面详情里面对应的--- id
+		 * */
+		props:['virTit','clounID','logicID','nodeDetail','tenantID'],
 		data(){
 			return{
 				token:'',
@@ -204,19 +209,30 @@
 		created(){
 			this.token=sessionStorage.getItem('token');
 			this.getUsers();
+		},
+		mounted(){
 			this.getTenant();
-			if(typeof this.clounID !=='undefined'){
-				//执行云对接里面的详情的界面的数据
-				this.getUsers();//加上 this.clounID
+			console.log(this.logicID)
+			
+		},
+		computed:{
+			filProps(){
+				if(this.nodeDetail || this.clounID || this.logicID || this.tenantID){
+					return false;
+				}else{
+					return true;
+				}
+				
 			}
-
 		},
 		methods:{
 			handleSta(index,row){
 				if(row.status == 'servicing'){
-					this.$ajax.put('/vll/to_stop_vll/'+row.id+'?token='+this.token)
-					.then(res => {
-
+					this.$confirm(this.$t('confirm.conStop'),this.$t('confirm.tooltip'),{
+						type:'warning'
+					}).then( () =>{
+						return this.$ajax.put('/vll/to_stop_vll/'+row.id+'?token='+this.token)
+					}).then(res => {
 						if(res.status == 200){
 							if(res.data.status ==0){
 								this.$message({
@@ -229,8 +245,11 @@
 						
 					}).catch(e => {console.log(e)})
 				}else if(row.status =='stopping'){
-					this.$ajax.put('/vll/to_serve_vll/'+row.id+'?token='+this.token)
-					.then(res => {
+					this.$confirm (this.$t('confirm.conRun'),this.$t('confirm.tooltip'),{
+						type:'success'
+					}).then( () => {
+						return this.$ajax.put('/vll/to_serve_vll/'+row.id+'?token='+this.token)
+					} ).then(res => {
 
 						if(res.status == 200){
 							if(res.data.status ==0){
@@ -281,7 +300,7 @@
 			        per_page:this.pagesize,
 			        search_name:this.filters.name,
 			        search_tenant: typeof this.tenantID !='undefined'?this.tenantID: this.filters.tenant_id,
-			        search_node:(typeof this.clounID !=='undefined' ? this.clounID:''),
+			        search_node:(typeof this.nodeDetail !=='undefined' ? this.nodeDetail:''),
 			        search_logic_port:(typeof this.logicID !=='undefined' ?this.logicID:''),
 			        search_status:this.filters.status
 				}

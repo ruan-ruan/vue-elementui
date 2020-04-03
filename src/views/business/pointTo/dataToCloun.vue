@@ -162,7 +162,7 @@
 				str.forEach(ele => {
 					ele.validate((valid) => {
 						if(valid){
-							this.$confirm('确定要提交吗?','提示',{})
+							this.$confirm(this.$t('confirm.conAdd'),this.$t('confirm.tooltip'),{})
 							.then(() => {
 								
 								this.$ajax.post('/vll/add_d2c_vll'+'?token='+this.token,para)
@@ -170,9 +170,9 @@
 									console.log(res);
 									if(res.status==200){
 										if(res.data.status==0){
-											this.$confirm('业务提交成功,正在处理，请到消息列表中查看！','提示',{
-												confirmButtonText: '继续开通',
-										        cancelButtonText: '查看',
+											this.$confirm(this.$t('business.busiSubmitS'),this.$t('confirm.tooltip'),{
+												confirmButtonText: this.$t('business.continueOpen'),
+										        cancelButtonText: this.$t('business.goToSee'),
 										        type: 'success'
 											})
 											.then(() => {

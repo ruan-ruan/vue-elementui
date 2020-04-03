@@ -183,7 +183,7 @@
 				this.$router.push({
 					path:'/location/line/addcloun',
 					query:{
-						name:'添加云'
+						name:'addCloud'
 					}
 				})
 			},

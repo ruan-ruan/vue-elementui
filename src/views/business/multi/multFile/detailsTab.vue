@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<!--虚拟组网详情-->
-		<goback>返回</goback>
+		<goback></goback>
 		<el-tabs v-model='activeName'>
 			<el-tab-pane :label='$t("Public.detailed")' name='first'>
 				<details-mult :detailsID='detailsID'></details-mult>

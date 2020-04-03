@@ -290,7 +290,7 @@
 					
 					ele.validate(valid => {
 						if(valid) {
-							that.$confirm('确认要添加吗?',{})
+							that.$confirm(this.$t('confirm.conAdd'),this.$t('confirm.tooltip'),{})
 							.then(() => {
 								that.editLoading=true;
 								var colun={
@@ -338,7 +338,7 @@
 				str.map(ele => {
 					ele.validate(valid => {
 						if(valid){
-							this.$confirm('确认要添加吗?','提示',{type:'success'})
+							this.$confirm(this.$t('confirm.conAdd'),this.$t('confirm.tooltip'),{type:'success'})
 							.then(() => {
 								this.editLoading=true;
 	
@@ -458,15 +458,15 @@
 									}
 									if(getPortStatus(ele.ports) =='UP'){
 										ele.logicStatus='UP'
-										ele.LogicColor='colorGreen'
+										ele.LogicColor='backRun'
 									}
 									if(getPortStatus(ele.ports) =='DOWN'){
 										ele.logicStatus='DOWN'
-										ele.LogicColor='colorRed'
+										ele.LogicColor='backWarn'
 									}
 									if(getPortStatus(ele.ports) =='故障'){
 										ele.logicStatus='DOWN'
-										ele.LogicColor='colorWarning'
+										ele.LogicColor='backWarn'
 									}
 
 									if( (!ele.charge_time && typeof(ele.charge_time)!='undefined' && ele.charge_time!=0) || ele.charge_time=='' ){
@@ -486,20 +486,20 @@
 										if(ele.usable){
 											ele.statusName=this.$t('tooltipMes.creaSuccess')
 											ele.changeBtn=this.$t('Public.Prohibit');
-											ele.statusColor='suc';
+											ele.statusColor='backRun';
 										}else if(!ele.usable){
 											ele.statusName=this.$t('Public.Prohibit');
 											ele.changeBtn=this.$t('Public.enable');
-											ele.statusColor='dan'	
+											ele.statusColor='backWarn'	
 										}
 										
 									}else if(ele.status == 'creating'){
 										ele.statusName=this.$t('Public.creating');
-										ele.statusColor='pri'
+										ele.statusColor='backCreat'
 										
 									}else if(ele.status == 'failure'){
 										ele.statusName=this.$t('Public.failure')
-										ele.statusColor='dan'	
+										ele.statusColor='backWarn'	
 									}
 									ele.dataType='endpoints';//添加新的字段判断  改数据是dc还是云  该数据是dc的
 									ele.typeName='数据中心'
@@ -523,15 +523,15 @@
 									}
 									if(getPortStatus(ele.ports) =='UP'){
 										ele.logicStatus='UP'
-										ele.LogicColor='colorGreen'
+										ele.LogicColor='backRun'
 									}
 									if(getPortStatus(ele.ports) =='DOWN'){
 										ele.logicStatus='DOWN'
-										ele.LogicColor='colorRed'
+										ele.LogicColor='backWarn'
 									}
 									if(getPortStatus(ele.ports) =='故障'){
 										ele.logicStatus='DOWN'
-										ele.LogicColor='colorWarning'
+										ele.LogicColor='backWarn'
 									}
 									if( (!ele.charge_time && typeof(ele.charge_time)!='undefined' && ele.charge_time!=0) || ele.charge_time=='' ){
 										ele.charge_time=''
@@ -550,20 +550,20 @@
 										if(ele.usable){
 											ele.statusName=this.$t('tooltipMes.creaSuccess')
 											ele.changeBtn=this.$t('Public.Prohibit');
-											ele.statusColor='suc';
+											ele.statusColor='backRun';
 										}else if(!ele.usable){
 											ele.statusName=this.$t('Public.Prohibit');
 											ele.changeBtn=this.$t('Public.enable');
-											ele.statusColor='dan'	
+											ele.statusColor='backStop'	
 										}
 										
 									}else if(ele.status == 'creating'){
 										ele.statusName=this.$t('Public.creating');
-										ele.statusColor='pri'
+										ele.statusColor='backCreat'
 										
 									}else if(ele.status == 'failure'){
 										ele.statusName=this.$t('Public.failure')
-										ele.statusColor='dan'	
+										ele.statusColor='backWarn'	
 									}
 									this.users.push(ele);
 								})
@@ -594,7 +594,7 @@
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
-										message:'修改成功!',
+										message:this.$t('tooltipMes.editSuccess'),
 										type:'success'
 									})
 									this.$refs['editForm'].resetFields();
@@ -726,16 +726,4 @@
 </script>
 
 <style >
-	
-	
-	
-	.suc{
-		color: #67C23A;
-	}
-	.pri{
-		color: #409EFF;
-	}
-	.dan{
-		color: #F56C6C;
-	}
 </style>

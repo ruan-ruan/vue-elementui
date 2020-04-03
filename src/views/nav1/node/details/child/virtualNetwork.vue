@@ -1,7 +1,7 @@
 <template>
 
 	<div>
-			<vir-network :clounID='clounID'></vir-network>
+		<vir-network :nodeDetail='clounID'></vir-network>
 	</div>
 </template>
 

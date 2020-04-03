@@ -250,7 +250,7 @@
 				}else if ( ! isValidIP(value)){
 					callback(new Error('请输入正确的a端ip地址'))
 				}else{
-					callback()
+					callback()	
 				}
 			};
 			var zIsIp= (rule , value , callback) => {
@@ -259,7 +259,7 @@
 				}else if ( ! isValidIP(value)){
 					callback(new Error('请输入正确的z端ip地址'))
 				}else{
-					callback()
+					callback()	
 				}
 			};
 			return{
@@ -658,6 +658,13 @@
 				this.editLoading=true;
 				this.$refs.editForm.validate(valid => {
 					if(valid){
+						this.editLoading=false;
+						if(this.editForm.a_ip == this.editForm.z_ip){
+							this.$message({
+								message:"A,Z两端IP不能相同,请重新输入",
+								type:'warning'
+							})
+						}else{
 							let para={
 								a_node_id:this.editForm.a_node_id,
 								a_ip:this.editForm.a_ip,
@@ -681,7 +688,7 @@
 
 								if(res.status==200){
 									if(res.data.status==0){
-										this.editLoading=false;
+										
 										this.$message({
 											message:this.$t('tooltipMes.editSuccess'),
 											type:'success'
@@ -694,6 +701,7 @@
 							.catch(e => {
 								console.log(e)
 							})
+						}
 					}
 				})
 			},

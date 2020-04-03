@@ -171,12 +171,12 @@
 				str.forEach(ele => {
 					ele.validate(valid => {
 						if(valid){
-							this.$confirm('确定要提交吗?','提示',{})
+							this.$confirm(this.$t('confirm.conAdd'),this.$t('confirm.tooltip'),{})
 							.then(() => {
 
 								if(this.editForm.endpoints_logic_port_id_a == this.editForm.endpoints_logic_port_id_z){
 									this.$message({
-										message:'两端不能选择相同的逻辑口，请重新选择!',
+										message:this.$t('business.bothPort'),
 										type:'warning'
 									})
 								}else {
@@ -213,9 +213,9 @@
 												type:'success'
 											})
 											this.reset();
-											this.$confirm('业务提交成功，正在处理请在消息列表中查看具体进度!',{
-								    			cancelButtonText:'继续开通',
-								    			confirmButtonText:'前往查看',
+											this.$confirm(this.$t('business.busiSubmitS'),this.$t('confirm.tooltip'),{
+								    			cancelButtonText:this.$t('business.continueOpen'),
+								    			confirmButtonText:this.$t('business.goToSee'),
 											}).then(() => {
 												this.$router.push('/resource/virtualLine/pointTo')
 											}).catch(() => {})

@@ -421,7 +421,7 @@
 								if(res.data.status=='0'){
 									
 									this.$message({
-										message:'修改成功',
+										message:this.$t('tooltipMes.editSuccess'),
 										type:'success'
 									})
 									this.$refs["editForm"].resetFields();									
@@ -685,7 +685,7 @@
 					const filterVal=['creation_time','name','mobile','email','description','roles.name'];
 					const list=that.excelData;
 					const data=that.formatJson(filterVal,list);
-					export_json_to_excel(tHeader,data,'下载数据excel')
+					export_json_to_excel(tHeader,data,this.$t('tooltipMes.download')+'excel')
 				})
 			},
 			formatJson(filterVal,jsonData){

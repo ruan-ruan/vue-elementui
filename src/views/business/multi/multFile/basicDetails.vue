@@ -82,7 +82,7 @@
 //				DataStatus:false,//默认的 时候是可以编辑的
 				basicFormRules:{
 					bandwidth:[ { required: true,  validator: isValidNumber, trigger: 'blur' }],
-					changeModel:[{ required: true, message:'请选择计费模式', trigger: 'change' }]
+					changeModel:[{ required: true, message:this.$t('Public.plaChangModel'), trigger: 'change' }]
 				},
 				startDatePicker: this.beginDate(),//计费时间 和 结束时间的判断
              	endDatePicker: this.processDate(),

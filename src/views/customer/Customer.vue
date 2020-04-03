@@ -336,7 +336,7 @@ export default {
 	      this.$router.push({
 	        path: "/customer/details/tenant",
 	        query:{
-	        	id:row.id
+	        	seeId:row.id
 	        }
 	      });
       }else{

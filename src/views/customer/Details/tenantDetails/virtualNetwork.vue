@@ -1,7 +1,7 @@
 <template>
 	<div>
-		虚拟组网
-		<multiPoint :tenantID='clounID'></multiPoint>
+		<!--虚拟组网-->
+		<multiPoint :tenantID='clounID' v-if='clounID'></multiPoint>
 	</div>
 </template>
 
@@ -17,6 +17,9 @@
 			return{
 				clounID:this.customerID
 			}
+		},
+		mounted(){
+			console.log(this.clounID)
 		}
 	}
 </script>

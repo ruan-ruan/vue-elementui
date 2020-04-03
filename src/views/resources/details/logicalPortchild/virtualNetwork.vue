@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<virNetwork :logicID='clounID'></virNetwork>
+		<virNetwork  :logicID='clounID' v-if='clounID'></virNetwork>
 	</div>
 </template>
 
@@ -16,7 +16,10 @@
 			return{
 				clounID:this.clounId
 			}
-		}
+		},
+		mounted(){
+			console.log(this.clounID)
+		},
 	}
 </script>
 

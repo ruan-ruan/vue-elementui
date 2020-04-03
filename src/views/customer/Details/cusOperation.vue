@@ -1,11 +1,10 @@
 <template>
 	<div>
-
 		<section >
 			<el-row>
 				<el-col :span='24'style='margin-left: 40px;'>
 						<el-form :model='customer' ref='customer' :rules='customerRules' v-loading='editLoading' label-width='210px'>
-							<el-form-item :label='$t("Public.creation")+"："'v-show='editOpera'>
+							<el-form-item :label='$t("Public.creation")+"："'v-if='!addCustome'>
 								<el-input disabled v-model='customer.creation_time' class='ipt_sels'  ></el-input>
 							</el-form-item>
 							<el-form-item :label='$t("customer.tenantName")+"："' prop='name'>
@@ -57,11 +56,10 @@
 							</el-form-item>
 							<el-form-item v-show='btnStatus'class='tc_L'>
 								<el-button size='small' @click='goback'>{{$t('Public.goback')}}</el-button>
-								
 								<!--添加-->
-								<el-button size='small' type='primary' v-show='addOpera' @click='handleAdd'>{{$t('tabOperation.save')}}</el-button>
+								<el-button size='small' type='primary' v-if='addCustome' @click='handleAdd'>{{$t('tabOperation.save')}}</el-button>
 								<!--编辑-->
-								<el-button size='small' type='primary' v-show='!addOpera' @click='handleEdit'>{{$t('tabOperation.save')}}</el-button>
+								<el-button size='small' type='primary' v-if='cusEditID' @click='handleEdit'>{{$t('tabOperation.save')}}</el-button>
 
 							</el-form-item>
 						</el-form>
@@ -82,22 +80,21 @@
 		name:'cusOperation',
 		//这个是接收的是详情的时候的id
 		props:['tit'],
-		
 		data(){
 			var validPhone = (rule,value,callback) => {
 				if(!value){
-					callback(new Error('请输入手机号'))
+					callback(new Error(this.$t('customer.plaPho')))
 				}else if(!isvalidPhone(value)){
-					callback(new Error('请输入正确的手机号'))
+					callback(new Error(this.$t('customer.plaRightPho')))
 				}else{
 					callback()
 				}
 			}
 			var validEamil = (rule, value ,callback) => {
 				if(!value){
-					callback(new Error('请输入邮箱'))
+					callback(new Error(this.$t('customer.plaEma')))
 				}else if(!isvalidEmail(value)){
-					callback(new Error('请输入正确的邮箱'))
+					callback(new Error(this.$t('customer.plaRightEma')))
 				}else{
 					callback();
 				}
@@ -105,11 +102,9 @@
 			return {
 				//获对应的token
 				token:'',
-				//租户添加的按钮默认是显示的
-				addOpera:true,
-				editOpera:true,
-				cusEditID:this.$route.query.id,
-				addCustome:this.$route.query.name,
+
+				cusEditID:this.$route.query.id, //编辑
+				addCustome:this.$route.query.name,//添加
 				//列表的主要的信息
 				customer:{
 					name:'',
@@ -128,33 +123,33 @@
 					
 				},
 				customerRules:{
-					name:[{ required: true, message: '请输入租户标识', trigger: 'blur' }],
-            		contact:[{ required: true, message: '请输入租户联系人', trigger: 'blur' }],
+					name:[{ required: true, message: this.$t('customer.plaTenant'), trigger: 'blur' }],
+            		contact:[{ required: true, message: this.$t('customer.plaTenantUser'), trigger: 'blur' }],
             		email:[{ required: true, trigger: 'blur', validator: validEamil }],
      				mobile:[{ required: true, trigger: 'blur', validator: validPhone }],
-     				company_name:[{ required: true, message: '请输入公司名称', trigger: 'blur' }]
+     				company_name:[{ required: true, message: this.$t('customer.plaComporate'), trigger: 'blur' }]
 //          		validEamil
 				},
 				editLoading:false,
 				industryType:[
 					{
 						value:'云服务商',
-						label:'云服务商'
+						label:this.$t('customer.cloud')
 					},{
 						value:'IDC运用商',
-						label:'IDC运用商'
+						label:this.$t('customer.idc')
 					},{
 						value:'政府客户',
-						label:'政府客户'
+						label:this.$t('customer.government')
 					},{
 						value:'行业客户',
-						label:'行业客户'
+						label:this.$t('customer.industry')
 					},{
 						value:'网络提供商',
-						label:'网络提供商'
+						label:this.$t('customer.network')
 					},{
 						value:'其他',
-						label:'其他'
+						label:this.$t('customer.other')
 					},
 					
 				],
@@ -163,38 +158,28 @@
 				//城市的数据
 				selectedOptions: [],
 				//按钮部分的默认的时候，编辑和添加是显示的，详情的时候隐藏
-				btnStatus:true,
-				//时间默认的时候是隐藏的额
-//				cusTimeStatus:false,
-//				tenantData:[]
+			}
+		},
+		computed:{
+			btnStatus(){
+				if(typeof this.tit =='string'){
+					return false
+				}else {
+					return true;
+				}
 			}
 		},
 		created(){
 			this.token=sessionStorage.getItem('token');
 			if(typeof this.tit ==='string'){
 //				('执行详情的界面');
-				//设置成不可以编辑
-				this.btnStatus=false;
-				//传入对应的实参
-				this.editOpera=true;
 				this.getCusDetails(this.tit)
 			}
-			if(this.addCustome ==='add'){
-//				('进入可以添加的界面');
-				this.btnStatus=true;
-				this.addOpera=true;
-				this.editOpera=false;
-//				this.getTenant()
-			}
+
 			if(typeof this.cusEditID ==='string'){
 //				('进入编辑的界面');
-				this.btnStatus=true;
-				this.addOpera=false;
-				this.editOpera=true;
-				//传入对应的实参
 				this.getCusDetails(this.cusEditID)
 			}
-//			this.getTenant()
 		},
 		methods:{
 			addressChange(arr) {
@@ -226,7 +211,7 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.$message({
-								message:'添加成功!',
+								message:this.$t('tooltipMes.addSuccess'),
 								type:'success'
 							})
 							this.$refs["customer"].resetFields();
@@ -261,7 +246,7 @@
 							if(res.status==200){
 								if(res.data.status==0){
 									this.$message({
-										message:'修改成功!',
+										message:this.$t('tooltipMes.editSuccess'),
 										type:'success'
 									})
 									this.$refs["customer"].resetFields();
@@ -287,8 +272,7 @@
 							//datedialogFormat
 							res.data.data.creation_time=datedialogFormat(res.data.data.creation_time);
 							this.customer=res.data.data;
-//							creation_time
-							
+
 							this.selectedOptions.push(res.data.data.province,res.data.data.city,res.data.data.district);
 
 						}
