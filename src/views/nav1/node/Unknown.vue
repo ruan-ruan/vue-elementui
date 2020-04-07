@@ -242,7 +242,6 @@
 			    					var str1=ele.devices.find(item => {
 				    					return item['sign'] == 'd1' 
 				    				})
-			    					console.log(str1)
 				    				ele.devices_name1=str1.hostname
 				    				ele.devices_ip1=str1.ip;
 				    				ele.devices_sn1=str1.sn;
@@ -359,7 +358,7 @@
 	    					if(res.status==200){
 	    						if(res.data.status==0){
 	    							this.$message({
-	    								message:this.$t('Publice.runSuccess'),
+	    								message:this.$t('tooltipMes.runSuccess'),
 	    								type:'success'
 	    							})
 	    							this.getUsers()

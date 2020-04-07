@@ -243,7 +243,6 @@
 							this.basicData=res.data.data;
 
 							if(res.data.data.rights==='all'){
-
 								this.getALl()//当时超级管理员的时候   这个时候直接获取所有的底层的数据既可
 							}else{
 								if (!res.data.data.rights && typeof(res.data.data.rights)!="undefined" && res.data.data.rights!=0){
@@ -284,14 +283,15 @@
 									 if(ev.code) {
 										 // 在这里打印出结果
 										str.push(ev.code)	 
-										 
 									 } else if(ev.list) {
-										 gethref(ev.list)
+										gethref(ev.list)
 									 } 
 								 })
 							 }
 							gethref(arr);
 							this.roleDetails=str;
+							this.editForm.rights=str;
+
 						}
 					}
 				}).catch(e => {
@@ -343,7 +343,6 @@
 					this.Loading=false;
 					if(res.status==200){
 						if(res.data.status==0){
-							
 							if(res.data.data.rights=='all'){
 								this.getALl()
 								

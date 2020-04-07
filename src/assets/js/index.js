@@ -617,7 +617,6 @@ export function isNumberInteger(str){//正整数
 }
 //节点里面的添加的时候对vlan的填写的处理
 export function isVlan(val){
-	
 	var num= val.split(',');
 	var newVal=[];
 	var newData=[];
@@ -626,9 +625,16 @@ export function isVlan(val){
 		bool:null,//未知节点添加的端口区间，处理
 		dataVal:[]
 	};
+
 	num.map(ele => {//获取切割后的数组
-		newVal.push(ele.split('-'))
+		if(ele.indexOf('-') !==-1){
+			newVal.push(ele.split('-'))
+		}else{
+			newVal.push(ele)
+		}
+		
 	})
+
 	newVal.map(ele => {
 		if(ele.length>1){//判断  数据是区间还是单个的 
 			for(var i=ele[0];i<= ele[1];i++ ){//区间的时候   遍历
@@ -637,17 +643,23 @@ export function isVlan(val){
 		}else {  //当为单个的数据的时候   直接转化为数字  添加
 			data.push( ele[0])
 		}
-	})
+	});
+
 	data.map(ele => {
-		if(!isNaN(ele) && ele.indexOf('.') ===-1){
-			if(ele<1){
-				str.bool=false
-			}else{
-				str.bool=true
-			}
-			if( newData.indexOf(ele) == -1 ){
-				newData.push(ele)
-			}	
+		if(!isNaN(ele) ){
+//			if(Number(ele).indexOf('.') !== -1){
+//				return false;
+//			}else{
+				if(ele<1){
+					str.bool=false
+				}else{
+					str.bool=true
+				}
+				if( newData.indexOf(ele) == -1 ){
+					newData.push(ele)
+				}
+//			}
+				
 		}else if(isNaN(ele)){
 			str.bool=false
 		}
@@ -677,16 +689,19 @@ export function isTest(val){
 		}
 	})
 	data.map(ele => {
-		console.log(ele)
-		if(!isNaN(ele) && ele.indexOf('.') ===-1){
-			if(ele>54 || ele<1){
-				str.bool=false
-			}else{
-				str.bool=true
-			}
-			if( newData.indexOf(ele) == -1 ){
-				newData.push(ele)
-			}	
+		if(!isNaN(ele) ){
+//			if(ele.indexOf('.') !==-1){
+//				return false;
+//			}else{
+				if(ele>54 || ele<1){
+					str.bool=false
+				}else{
+					str.bool=true
+				}
+				if( newData.indexOf(ele) == -1 ){
+					newData.push(ele)
+				}	
+//			}
 		}else if(isNaN(ele)){
 //			console.log(ele)
 			str.bool=false

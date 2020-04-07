@@ -254,7 +254,7 @@
 						if(res.status == 200){
 							if(res.data.status ==0){
 								this.$message({
-									message:res.data.message,
+									message:this.$t('tooltipMes.runSuccess'),
 									type:'success'
 								})
 								this.getUsers()
