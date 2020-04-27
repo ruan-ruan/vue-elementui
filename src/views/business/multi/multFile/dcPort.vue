@@ -94,17 +94,15 @@
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				 <el-button size='small' @click.native="dialogFormVisible=false">{{$t('tabOperation.cancel')}}</el-button>
-				 <el-button size='small' type='primary' @click='creatVlan'>{{$t('tabOperation.save')}}</el-button>
+				<el-button size='small' @click.native="dialogFormVisible=false">{{$t('tabOperation.cancel')}}</el-button>
+				<el-button size='small' type='primary' @click='creatVlan'>{{$t('tabOperation.save')}}</el-button>
 			</div>
 		</el-dialog>
-
 	</div>
 </template>
 
 <script>
 
-	
 	import {datedialogFormat,getPortStatus ,isPortStatus} from '@/assets/js/index.js'
 	export default{
 		name:'dcPort',
@@ -306,7 +304,10 @@
 				this.handleCurrentChange(this.index)
 			},
 			getformData(){
-				this.$ajax.get('/node/nodes'+'?token='+this.token)   //获取节点的数据
+				var para={
+					search_activated:true
+				}
+				this.$ajax.get('/node/nodes'+'?token='+this.token,para)   //获取节点的数据
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){

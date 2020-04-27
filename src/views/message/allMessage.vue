@@ -145,8 +145,8 @@
               placement="right"
               trigger="hover"
             >
-              <span class="warptitle">
-                {{scope.row.content | ellipsis}}
+              <span class="warptitle" v-html='scope.row.content'>
+                <!--{{scope.row.content | ellipsis}}-->
               </span>
 
               <span
@@ -154,11 +154,13 @@
                 class='cli_spn'
                 slot="reference"
                 @click="handleClick(scope.$index,scope.row)"
+                
               >
                 <span v-show="!scope.row.is_read"><img
                     src="../../assets/images/message/unread.png.png"
                     alt=""
                     style="width:12px;height:12px;"
+                   
                   ></span>
                 {{ scope.row.title}}
               </span>
@@ -189,9 +191,9 @@
           :label="$t('mesModule.unMessage.table.type')"
           align='center'
         >
-          <template slot-scope="scope">
+          <!--<template slot-scope="scope">
             <span>{{ scope.row.type=='notice'?$t('mesModule.sea.mesTypeList.product'):$t('mesModule.sea.mesTypeList.police')}}</span>
-          </template>
+          </template>-->
         </el-table-column>
       </el-table>
       <!--底部工具条-分页-数据的导出等-->
@@ -205,6 +207,7 @@
           @current-change="handleCurrentChange"
           layout="total, sizes, prev, pager, next, jumper"
           :page-sizes="[10, 20, 30,50]"
+          :page-size='pagesize'
           :current-page.sync="currentPage"
           :page-count='pageNum'
           :pager-count="pagecount"
@@ -248,8 +251,9 @@ export default {
         header: "",
         title: "",
         type: "",
-        timeVal: "2019.12.9",
-        text: "ertertretdfgdg"
+        timeVal: "",
+        text: "",
+        parma:{}
       },
       //表格的数据
       tableData: [],
@@ -353,6 +357,7 @@ export default {
             this.$ajax
               .put("/public/read_news" + "?token=" + this.token, para)
               .then(res => {
+              	console.log(res)
                 if (res.status == 200) {
                   if (res.data.status == 0) {
                     this.$message({
@@ -439,6 +444,7 @@ export default {
       this.$ajax
         .get("/public/get_news" + "?token=" + this.token, para)
         .then(res => {
+        	console.log(res)
           _this.loading = false;
           if (res.status == 200) {
             if (res.data.status == 0) {
@@ -492,13 +498,21 @@ export default {
     },
     // 消息详情-弹窗
     handleClick(index, row) {
-      this.mesdetail.dialogVisible = true;
-      this.mesdetail.header = row.title;
-      this.mesdetail.title = row.type == "notice" ?this.$t('mesModule.sea.mesTypeList.product'): this.$t('mesModule.sea.mesTypeList.police');
-      this.mesdetail.type = row.level + this.$t('mesModule.sea.leType');
-      this.mesdetail.timeVal = row.time;
-      this.mesdetail.text = row.content;
+    	console.log(row)
+    	this.mesdetail={
+    		dialogVisible:true,
+    		header:row.title,
+    		title:row.type,
+    		type : row.level + this.$t('mesModule.sea.leType'),
+    		timeVal : row.time,
+    		text : row.content,
+    		param:row.param,
+    		code:row.code,
+    		id:row.id,
+    		level:row.level,
+    	}
       this.readid = row.id.split(",");
+      
       let para = { ids: this.readid };
       this.$ajax
         .put("/public/read_news" + "?token=" + this.token, para)

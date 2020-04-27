@@ -13,7 +13,7 @@
 						<linkTab v-if='linkStatus'@linkBack='closeNode'></linkTab>
 					</el-col>
 				</el-col>	
-				<el-col :span='24' style='margin-top: 10px;'>
+				<el-col :span='24' style='margin-top: 10px;position: absolute;bottom: 20px;'>
 					<btnLeft></btnLeft>
 				</el-col>
 			</el-row>

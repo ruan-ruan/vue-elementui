@@ -64,10 +64,13 @@
 		created(){
 			this.token=sessionStorage.getItem('token');
 			this.getData();
+			
+
+		},
+		mounted(){
 			this.interVal=setInterval( () => {
 				this.getData()
-			},30000)
-
+			},10000)
 		},
 		beforeDestroy(){
 			clearInterval(this.interVal)

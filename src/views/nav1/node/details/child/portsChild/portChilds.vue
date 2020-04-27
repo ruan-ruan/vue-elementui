@@ -29,9 +29,15 @@
 						{{ scope.row.available ? $t("Public.yes") : $t("Public.no")}}
 					</template>
 				</el-table-column>
-				<el-table-column prop='description' align='center':label='$t("Public.information")' >					
+				<el-table-column align='center':label='$t("Public.information")' >
+					<template slot-scope='scope'>
+						{{ scope.row.description | descriptionValue }}
+					</template>
 				</el-table-column>
-				<el-table-column prop='note' align='center':label='$t("Public.description")' >					
+				<el-table-column  align='center':label='$t("Public.description")' >	
+					<template slot-scope='scope'>
+						{{ scope.row.note | descriptionValue }}
+					</template>
 				</el-table-column>
 				<el-table-column  align='center':label='$t("Public.operation")' >
 					<template slot-scope='scope'>
@@ -47,8 +53,9 @@
 			     	@size-change="handleSizeChange"
                		@current-change="handleCurrentChange"
 			     	layout="total, sizes, prev, pager, next, jumper"
-			     	:page-sizes="[10, 20, 30,50]" 						     	 
+			     	:page-sizes="[10, 20, 30,50]" 
 			     	:current-page.sync="currentPage"  
+			     	:page-size='pagesize'
 			     	:page-count='pageNum'
 			     	:pager-count="pagecount"
 			     	>					
@@ -71,14 +78,13 @@
 </template>
 
 <script>
-//	import {base} from '@/api/api'
 	export default{
 		name:'childs',
 		props:['titleOne','titleTwo'],  //,'titleOne','titleTwo'  逻辑端口部分
 		data(){
 			return{
 				//获取用户的权限
-				token:'',
+				token:sessionStorage.getItem('token'),
 				//接收数据
 				users:[],
 				total:0,
@@ -131,7 +137,6 @@
 
 		},
 		created(){
-			this.token=sessionStorage.getItem('token');
 
 			if(typeof this.titleTwo   !=='undefined'){
 				this.getList(this.titleTwo.id);
@@ -167,7 +172,7 @@
 				}
 				this.$ajax.get('/node/device_info/'+ids+'/ports'+'?token='+this.token,para)
 				.then(res => {
-	
+					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
 							this.users=res.data.data.items;
@@ -192,30 +197,27 @@
 			updateData(){
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-							var para={
-								note:this.editForm.note,
-							}
-							this.$ajax.put('/node/edit_port/'+this.editForm.id+'?token='+this.token,para)
-							.then( res => {
-								if(res.status==200){
-									if(res.data.status==0){
-										this.$message({
-											message:this.$t('tooltipMes.editSuccess'),
-											type:'success'
-										})
-										this.$refs['editForm'].resetFields();
-										this.dialogFormVisible=false;
-										this.getList(this.title.id)
+						var para={
+							note:this.editForm.note,
+						}
+						this.$ajax.put('/node/edit_port/'+this.editForm.id+'?token='+this.token,para)
+						.then( res => {
+							if(res.status==200){
+								if(res.data.status==0){
+									this.$message({
+										message:this.$t('tooltipMes.editSuccess'),
+										type:'success'
+									})
+									this.$refs['editForm'].resetFields();
+									this.dialogFormVisible=false;
+									this.getList(this.title.id)
 //										this.getUsers()
-									}
 								}
+							}
 						}).catch(e => {console.log(e)})
 					}
 				})
 			}
-		},
-		mounted(){
-
 		}
 	}
 </script>

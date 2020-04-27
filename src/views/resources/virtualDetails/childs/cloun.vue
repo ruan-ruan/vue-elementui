@@ -11,7 +11,7 @@
 				</el-form-item>
 				<el-form-item :label='$t("aside.cloudLine")+ "："'>
 					<span>{{clounForm.cloud_config_name}}</span>-
-					<span>{{clounForm.logic_name}}{{clounForm.vlan}}  </span>
+					<span>{{clounForm.logic_name}}-{{clounForm.vlan}}  </span>
 				</el-form-item>
 				<el-form-item :label='$t("Public.logicStatus")+ "："'>
 					<span>{{clounForm.logic_status}}</span>
@@ -361,10 +361,6 @@
 </script>
 
 <style scoped>
-	
-	/*.el-dialog__wrapper[]{
-		z-index:2007 !important ;
-	}*/
 
 	.cloud_cls{
 		border:  1px solid #C0C4CC ;

@@ -82,8 +82,11 @@
 								<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 							</template>
             </el-table-column>
-            <el-table-column   prop='creation_time'
-              :formatter='dateFormat'   width='80'  :label='$t("Public.creation")'   align='center'  ></el-table-column>
+            <el-table-column    width='80'  :label='$t("Public.creation")'   align='center'  >
+            	<template slot-scope='scope'>
+            		{{ scope.row.creation_time | timeFormat }}
+            	</template>
+            </el-table-column>
             <el-table-column   prop='name'  min-width='80'  :label='$t("Public.nodeName")'   align='center' ></el-table-column>
             <el-table-column    width='80'  :label='$t("Public.nodeStatus")'  align='center' >
             	<template slot-scope='scope'>
@@ -120,9 +123,6 @@
               <template slot-scope="scope">
               	<span>{{scope.row.devices_sn1}}</span> <br />
               	<span>{{scope.row.devices_sn2}}</span>
-                <!--<ul v-for='item in scope.row.devices'>
-                  <li v-text="item.sn"></li>
-                </ul>-->
               </template>
             </el-table-column>
             <el-table-column
@@ -134,9 +134,6 @@
               <template slot-scope="scope">
               	<span>{{scope.row.devices_ip1}}</span> <br />
               	<span>{{scope.row.devices_ip2}}</span>
-                <!--<ul v-for='item in scope.row.devices'>
-                  <li v-text="item.ip"></li>
-                </ul>-->
               </template>
             </el-table-column>
             <el-table-column
@@ -154,12 +151,20 @@
               align='center'
             ></el-table-column>
             <el-table-column
-              prop='descriptionVal'
+
               min-width='60'
               
              :label='$t("Public.description")' 
               align='center'
-            ></el-table-column>
+            >
+            <template slot-scope='scope'>
+            	
+							{{ scope.row.devices[0].description | descriptionValue }} <br />
+							<span v-if='scope.row.devices && scope.row.devices.length ==2'>
+							{{ scope.row.devices[1].description | descriptionValue }}
+							</span>
+						</template>
+            </el-table-column>
             <el-table-column
             	width='140'
               :label='$t("Public.operation")' 
@@ -204,6 +209,7 @@
             @current-change="handleCurrentChange"
             layout="total, sizes, prev, pager, next, jumper"
             :page-sizes="[10, 20, 30,50]"
+            :page-size='pagesize'
             :current-page.sync="currentPage"
             :page-count='pageNum'
             :pager-count="pagecount"
@@ -224,7 +230,7 @@ export default {
   data() {
     return {
       //获取用户的token
-      token: "",
+      token: sessionStorage.getItem("token"),
       //顶部的搜索的部分对用参数
       filters: {
         name: "",
@@ -279,14 +285,10 @@ export default {
     };
   },
   created() {
-    //获取用户的权限
-    this.token = sessionStorage.getItem("token");
 
     this.selectData();
     this.getUsers();
-//  console.log( this.$store.state.aside )
-//		console.log(  this.recursion( this.$store.state.aside ,"aside.pointSpecial")  )
-    
+
   },
   methods: {
 
@@ -362,14 +364,15 @@ export default {
         search_dc: this.filters.search_dc,
         search_status: this.filters.search_status,
         search_start_time: getTime(this.filters.start_time),
-        search_end_time: getTime(this.filters.end_time)
+        search_end_time: getTime(this.filters.end_time),
+        search_activated:true,//true的时候    代表的是已经运行的节点   false是未运行节点
       };
       this.$ajax.get("/node/nodes" + "?token=" + this.token, para)
         .then(res => {
+        	console.log(res)
           _this.loading = false;
           if (res.status == 200) {
             if (res.data.status == 0) {
-            	descriptionValue(res.data.data.items)
               let params = res.data.data.items;
 
               params.forEach((ele, index) => {
@@ -432,7 +435,6 @@ export default {
 								
                _this.users = res.data.data.items;
               _this.total = res.data.data.page.total;
-              console.log(_this.users)
             }
           }
         })
@@ -440,23 +442,6 @@ export default {
           _this.loading = false;
           console.log(e);
         });
-    },
-    dateFormat(row, column) {
-      let date = new Date(parseInt(row.creation_time) * 1000);
-      let Y = date.getFullYear() + "-";
-      let M = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
-      let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
-      let h =
-        date.getHours() < 10
-          ? "0" + date.getHours() + ":"
-          : date.getHours() + ":";
-      let m =
-        date.getMinutes() < 10
-          ? "0" + date.getMinutes() + ":"
-          : date.getMinutes() + ":";
-      let s =
-        date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-      return Y + M + D + h + m + s;
     },
     //分页的选择页面显示个数和点击其他的分页的时候显示数据
     handleSizeChange(val) {
@@ -552,7 +537,8 @@ export default {
           .then(() => {
             var para = {
               page: this.currentPage,
-              per_page: this.pagesize
+              per_page: this.pagesize,
+              search_activated:true
             };
             this.exportData(para);
           })

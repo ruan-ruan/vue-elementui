@@ -59,7 +59,10 @@
 							<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 						</template>
 					</el-table-column>
-					<el-table-column prop="creation_time"  :label='$t("Public.creation")' align='center' width='80' :formatter='dateFormat' >
+					<el-table-column prop="creation_time"  :label='$t("Public.creation")' align='center' width='80' >
+						<template slot-scope='scope'>
+							{{scope.row.creation_time | timeFormat}}
+						</template>
 					</el-table-column>
 					<el-table-column prop="name" :label='$t("Public.name")' align='center' min-width='120'>
 					</el-table-column>
@@ -89,7 +92,8 @@
 				     	@size-change="handleSizeChange"
                    		@current-change="handleCurrentChange"
 				     	layout="total, sizes, prev, pager, next, jumper"
-				     	:page-sizes="[10, 20, 30,50]" 						     	 
+				     	:page-sizes="[10, 20, 30,50]" 	
+				     	:page-size='pagesize'
 				     	:current-page.sync="currentPage"  
 				     	:page-count='pageNum'
 				     	:pager-count="pagecount"
@@ -101,7 +105,7 @@
 				<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false"  v-loading='editLoading'>
 					<el-form  :model="editForm" label-width="200px" :rules="editFormRules" ref="editForm" >
 						<el-form-item :label="$t('Form.creation')" v-if=' dialogStatus =="see" ' >
-							<el-input v-model='Time':disabled=' dialogStatus =="see"  '  class='ipt_sels' ></el-input>
+							<span>{{ editForm.creation_time | timeFormat}}</span>
 						</el-form-item>
 						<el-form-item label="ID :"  v-if=' dialogStatus =="see" ' >
 							<el-input v-model='editForm.id' :disabled=' dialogStatus =="see"  '  class='ipt_sels'></el-input>
@@ -177,13 +181,12 @@
 		        	name: "",
 		        	description: ""
 		      	},
-		      	Time:0,
 		      	addFormVisible: false, //新增界面是否显示
 		      	addFormRules: {
 		        	name: [{ required: true,  message:this.$t('validateMes.place')+this.$t('tooltipMes.name') , trigger: "blur" }]
 		      	},
 		      	excelData:[],
-		      	token:'',
+		      	token:sessionStorage.getItem('token'),
 		      	buttonData:this.recursion( this.$store.state.aside , 'physicalPosition.tab.area'),//获取区域内的所有的按钮的权限
 		      	buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏
 		      		del:this.codeVal(this.recursion( this.$store.state.aside , 'physicalPosition.tab.area').list, "location@del_region").show,//单个删除和批量的删除是绑定在一起的  
@@ -194,16 +197,13 @@
 		    };
 	  	},
 	  	created(){
-			this.token=sessionStorage.getItem('token');
 			this.getUsers();
 	  	},	
-
 		methods: { 	
 			reset(){
 				this.$refs['filters'].resetFields();
-				
 			},
-		//改变的时候
+			//每页显示数  改变的时候
 			handleSizeChange(val){
 				this.pagesize=val;
 				this.getUsers();
@@ -212,7 +212,6 @@
 		    handleCurrentChange(val) {
 		    	let _this=this;
 		    	_this.currentPage=val
-		    	
 		      this.getUsers();
 		    }, 
 		    getUsers() {
@@ -279,20 +278,9 @@
 		    handleSee:function(index, row){
 			    this.dialogStatus = "see";
 			    this.dialogFormVisible = true;
-		        this.editLoading = true;       
-				this.$ajax.get('/location/region_info/'+row.id+'?token='+this.token)
-		        .then(res => {
-		        	if(res.status ==200){
-		        		if(res.data.status ==0){
-
-		        			//将时间戳转化为时间格式
-							this.Time=datedialogFormat(res.data.data.creation_time)
-				            this.editLoading = false;
-		        			this.editForm=res.data.data;
-		        		}
-		        	}
-		        }).catch(e => {
-		          	console.log(e);
+		        this.editForm=row;
+		        this.$nextTick(() =>{
+		        	this.$refs.editForm.resetFields()
 		        })
 		    },		    
 		    //显示编辑界面
@@ -312,7 +300,7 @@
 				}
 		    },
 		    //编辑
-		    updateData:function() {
+		    updateData() {
 		    	
 		      this.$refs.editForm.validate(valid => {
 		        if (valid) {
@@ -399,8 +387,6 @@
 				if(command=='current'){//当前页的数据
 		    		//导出所有的数据
 		    		this.$confirm(this.$t('tooltipMes.exportDataCurr'),this.$t('confirm.tooltip'),{
-//		    			confirmButtonText:'确定',
-//		    			cancelButtonText:'取消',
 		    			type:'warning'
 		    		}).then(() => {
 		    			var para={
@@ -414,8 +400,6 @@
 		    	}else if(command=='all'){
 		    		//导出当前
 		    		this.$confirm(this.$t('tooltipMes.exportDataAll'),this.$t('confirm.tooltip'),{
-//		    			confirmButtonText:'确定',
-//		    			cancelButtonText:'取消',
 		    			type:'warning'
 		    		}).then(() => {
 		    			this.exportData()
@@ -456,17 +440,6 @@
 			formatJson(filterVal,jsonData){
 				return jsonData.map(v => filterVal.map (j => v[j]))
 			},
-			dateFormat(row, column) {
-//				
-		      	let date = new Date(parseInt(row.creation_time) * 1000);
-		      	let Y = date.getFullYear() + "-";
-		      	let M =date.getMonth() + 1 < 10  ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
-		      	let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + "  ";
-		      	let h = date.getHours() < 10  ? "0" + date.getHours() + ":"  : date.getHours() + ":";
-		        let m = date.getMinutes() < 10  ? "0" + date.getMinutes() + ":"  : date.getMinutes() + ":";
-		        let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-		      return Y + M + D + h + m + s;
-		    },
 		},
 
 	};
@@ -474,7 +447,7 @@
 
 
 <style>
-	.el-table .cell{
+.el-table .cell{
   position:relative;
 }
 .el-table .caret-wrapper{
@@ -482,13 +455,5 @@
   top:2px;
   right:0;
 }
-	 /*.el-table td .cell {
-	    overflow: hidden !important;
-	    text-overflow: ellipsis !important;
-	    white-space: nowrap !important;
-	    vertical-align: middle;
-	}*/
-	/*.el-table .cell .el-tooltip{
-		white-space: nowrap;
-	}*/
+
 </style>

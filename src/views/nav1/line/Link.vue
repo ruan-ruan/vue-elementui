@@ -58,7 +58,11 @@
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='creation_time'width='80' :formatter='dateFormat' :label='$t("Public.creation")'align='center' ></el-table-column>
+				<el-table-column width='80' :label='$t("Public.creation")'align='center' >
+					<template slot-scope='scope'>
+						{{scope.row.creation_time | timeFormat}}
+					</template>
+				</el-table-column>
 				<el-table-column  :label='$t("Public.aPort")' align='center' min-width='60' >
 					<template slot-scope='scope'>
 						<el-tag size='small' type='primary'style='cursor: pointer;' @click='handleNode_a(scope.$index, scope.row)'>{{scope.row.a_node.name}}</el-tag>
@@ -96,26 +100,27 @@
 				</el-table-column>
 				<el-table-column prop='z_desc' :label='$t("Public.zportDescribe")' align='center' min-width='70'>
 				</el-table-column>
-				<el-table-column prop='descriptionVal' :label='$t("Public.description")' align='center' min-width='70'>
+				<el-table-column :label='$t("Public.description")' align='center' min-width='70'>
+					<template slot-scope='scope'>
+						{{scope.row.description | descriptionValue}}
+					</template>
 				</el-table-column>
 				<el-table-column  :label='$t("Public.operation")' align='center'  width='190'>
 					<template slot-scope='scope'>
-							<el-button size='mini' type='primary' @click='handleStatus(scope.$index, scope.row)'
-								v-if='buttonVal.open? scope.row.maintenance_value=== $t("Public.fau") ? false : true : buttonVal.open' class='maintenance'> <!--当状态为故障的时候   这个时候的该按钮 -->
-								{{scope.row.maintenanceBtn}}
-							</el-button>
-							<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'v-if='buttonVal.see'>
-								<!--详情-->{{$t('tabOperation.info')}}
-							</el-button>	
+						<el-button size='mini' type='primary' @click='handleStatus(scope.$index, scope.row)'
+							v-if='buttonVal.open? scope.row.maintenance_value=== $t("Public.fau") ? false : true : buttonVal.open' class='maintenance'> <!--当状态为故障的时候   这个时候的该按钮 -->
+							{{scope.row.maintenanceBtn}}
+						</el-button>
+						<el-button size='mini' type='info' @click='handleSee(scope.$index, scope.row)'v-if='buttonVal.see'>
+							<!--详情-->{{$t('tabOperation.info')}}
+						</el-button>	
 
-							<el-button size='mini' v-if='buttonVal.del?  scope.row.status==="DOWN"?true:false: buttonVal.del' type='danger' @click='handleDel(scope.$index, scope.row)'>
-								<!--删除-->{{$t('tabOperation.delete')}}
-							</el-button>
-							<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'v-if='buttonVal.edit'>
-								<!--编辑-->{{$t('tabOperation.edit')}}
-							</el-button>				
-							
-
+						<el-button size='mini' v-if='buttonVal.del?  scope.row.status==="DOWN"?true:false: buttonVal.del' type='danger' @click='handleDel(scope.$index, scope.row)'>
+							<!--删除-->{{$t('tabOperation.delete')}}
+						</el-button>
+						<el-button size='mini' type='success' @click='handleEdit(scope.$index, scope.row)'v-if='buttonVal.edit'>
+							<!--编辑-->{{$t('tabOperation.edit')}}
+						</el-button>				
 					</template>
 				</el-table-column>
 
@@ -131,6 +136,7 @@
 				     	:current-page.sync="currentPage"  
 				     	:page-count='pageNum'
 				     	:pager-count="pagecount"
+				     	:page-size='pagesize'
 				     	></el-pagination>
 				</el-col>
 
@@ -146,7 +152,8 @@
 					</el-form-item>
 					<el-form-item :label='$t("Public.creation")+"："'>
 						<template>
-							<span v-text="editForm.creation_time"></span>
+							{{ editForm.creation_time | timeFormat }}
+							<!--<span v-text="editForm.creation_time"></span>-->
 						</template>
 					</el-form-item>
 					<el-form-item :label='$t("Public.linkState")+"："'>
@@ -158,8 +165,11 @@
 					<el-form-item :label='$t("Public.aPort")+"："'>
 							<template >
 								<span>{{editForm.a_node.name}}</span>-
+								<span>{{editForm.a_device.hostname}}</span>-
+								<span>{{editForm.a_port.port_no}}</span>-
 								<span>{{editForm.a_ip}}</span>-
 								<span>{{editForm.a_vlan}}</span>
+								
 							</template>
 					</el-form-item>
 					<el-form-item :label='$t("Public.aportDescribe")+"："'>
@@ -170,8 +180,11 @@
 					<el-form-item :label='$t("Public.zPort")+"："'>
 						<template slot-scope='scope'>
 							<span v-text="editForm.z_node.name"></span>-
+							<span v-text='editForm.z_device.hostname'></span>-
+							<span v-text='editForm.z_port.port_no'></span>-
 							<span v-text="editForm.z_ip"></span>-
 							<span v-text="editForm.z_vlan"></span>
+							<!--<span></span>-->
 						</template>
 					</el-form-item>
 					<el-form-item :label='$t("Public.zportDescribe")+"："'>
@@ -179,6 +192,7 @@
 							<span v-text="editForm.z_desc"></span>
 						</template>
 					</el-form-item>
+					
 					
 					<el-form-item :label='$t("Public.sysBandwidth")+"："' prop='bandwidth'>
 						<el-input v-model='editForm.bandwidth' :disabled='editFormStatue'  class='ipt'></el-input>
@@ -213,11 +227,7 @@
 					<el-form-item v-show='detectionStatus' :label='$t("Public.checkParams")+"："'>
 						<el-input v-model='editForm.monitoring_param' :disabled='editFormStatue' class='ipt'></el-input>
 					</el-form-item>
-					<el-form-item  :label='$t("Public.get_flow")+"："' prop='get_speed_key'>
-						<el-input v-model='editForm.get_speed_key' :disabled="editFormStatue" class='ipt'></el-input>
-					</el-form-item>
 					<el-form-item :label='$t("Public.description")+"："'>
-						<!--<textarea name="" rows="" cols="7"></textarea>-->
 						<el-input type='textarea'cols="7" v-model='editForm.description' :disabled='editFormStatue' class='ipt'></el-input>
 					</el-form-item>
 				</el-form>
@@ -232,7 +242,7 @@
 
 <script>
 
-	import {datedialogFormat ,descriptionValue,getTime , isValidNumber} from '@/assets/js/index.js'
+	import {getTime , isValidNumber} from '@/assets/js/index.js'
 
 
 	export default{
@@ -249,7 +259,7 @@
 			};
 			return{
 				//获取用户的权限
-				token:'',
+				token:sessionStorage.getItem('token'),
 				status:[
 					{
 						name:'UP',
@@ -295,6 +305,14 @@
 						id:'',
 						name:''
 					},
+					a_device:{
+						hostname:'',
+						id:''
+					},
+					a_port:{
+						port_no:'',
+						id:''
+					},
 					a_ip:'',
 					a_vlan:'',
 					a_desc:'',
@@ -302,6 +320,14 @@
 					z_node:{
 						id:'',
 						name:'',
+					},
+					z_device:{
+						hostname:'',
+						id:''
+					},
+					z_port:{
+						port_no:'',
+						id:''
 					},
 					z_ip:'',
 					z_vlan:'',
@@ -317,9 +343,7 @@
 					status:'',
 					creation_time:'',
 					description:'',
-					get_speed_key:'',
-//					maintenance_value:'',
-//					token:''
+
 				},
 				ruleEditform:{
 					monitoring_type:[  { required: true, message: this.$t('validateMes.placeCh')+this.$t('Public.checkType'), trigger: 'change' }],
@@ -340,7 +364,7 @@
 						name:this.$t('Public.close')
 					}
 				],
-				//当链路 检测是开启的时候u，会显示对应的数据
+				//当链路 检测是开启的时候，会显示对应的数据
 				detectionType:[
 					{
 						label:'BFD',
@@ -380,10 +404,7 @@
 			}
 		},
 		created(){
-			//获取用户的权限
-			this.token =sessionStorage.getItem('token');
-
-			
+			this.getUsers()			
 		},
 		methods:{
 			handleSizeChange(val){
@@ -421,21 +442,21 @@
 					search_status:this.filters.search_status,
 					search_start_time:getTime(this.filters.start_time),
 					search_end_time:getTime(this.filters.end_time),
+					search_activated:true
 				}
 				this.$ajax.get('/link/links'+'?token='+this.token,para)
 				.then( res => {
 					if(res.status==200){
+						console.log(res)
 						if(res.data.status==0){
 						this.loading=false;
-						descriptionValue(res.data.data.items)
+
 						_this.users=res.data.data.items;
 						_this.total=res.data.data.page.total;	
 						//控制删除按钮的显示与隐藏
 						
 						if(res.data.data.items){
 							res.data.data.items.map(ele => {
-								//datedialogFormat
-//								ele.creation_time=datedialogFormat(ele.creation_time)
 								//添加新的属性，作为是否维护和故障的字段
 								if(!ele.monitoring){
 									ele.monitorHTML=this.$t('Public.close');									
@@ -465,8 +486,7 @@
 //										ele.maintenanceBtn='关闭维护'
 									}else{
 										ele.maintenanceBtn=this.$t('Public.fau');	
-										
-//										ele.maintenance_value='故障'
+
 									}
 								}	
 							})
@@ -609,6 +629,7 @@
 			},
 			//详情
 			handleSee(index,row){
+				console.log(row)
 				this.editLoading=true;
 				this.dialogStatus='details';
 				this.dialogFormVisible=true;
@@ -622,7 +643,6 @@
 						if(res.data.status==0){
 							this.editLoading=false;
 							this.editForm=Object.assign({},res.data.data)
-							this.editForm.creation_time=datedialogFormat(this.editForm.creation_time);
 							if(this.editForm.monitoring==true){
 								this.detectionStatus=true;
 							}else{
@@ -636,13 +656,11 @@
 			},
 			//编辑
 			handleEdit(index,row){
-			
 				this.dialogStatus='update';
 				this.dialogFormVisible=true;
 				this.editFormStatue=false;
 				this.editForm=Object.assign({} ,row)
-				this.editForm.creation_time=datedialogFormat(row.creation_time)
-					if(this.editForm.monitoring==true){
+				if(this.editForm.monitoring==true){
 					this.detectionStatus=true;
 				}else{
 					this.detectionStatus=false
@@ -659,10 +677,14 @@
 								a_ip:this.editForm.a_ip,
 								a_vlan:this.editForm.a_vlan,
 								a_desc:this.editForm.a_desc,
+								a_device:this.editForm.a_device.id,
+								a_port:this.editForm.a_port.id,
 								z_node_id:this.editForm.z_node.id,
 								z_ip:this.editForm.z_ip,
 								z_vlan:this.editForm.z_vlan,
 								z_desc:this.editForm.z_desc,
+								z_device:this.editForm.z_device.id,
+								z_port:this.editForm.z_port.id,
 								physical_bandwidth:	this.editForm.physical_bandwidth,
 								bandwidth:this.editForm.bandwidth,
 								monitoring:this.editForm.monitoring.toString(),
@@ -670,7 +692,7 @@
 								monitoring_param:this.editForm.monitoring_param,
 								link_cost:this.editForm.link_cost,
 								description:this.editForm.description,
-								get_speed_key:this.editForm.get_speed_key,
+//								get_speed_key:this.editForm.get_speed_key,
 							};
 							this.$ajax.put('/link/edit_link/'+this.editForm.id+'?token='+this.token,para)
 							.then( res => {
@@ -777,30 +799,7 @@
 			formatJson(filterVal,jsonData){
 				return jsonData.map(v => filterVal.map(j => v[j]))
 			},
-			dateFormat(row,column){
-	    		//将时间戳转换为前端的时间
-	    		let date=null;
-	    		if(column.property == "creation_time"){
-	    				date=new Date(parseInt(row.creation_time)*1000);
-	    		}
-	    		if(column.property == "start_time"){
-	    				date=new Date(parseInt(row.start_time)*1000);
-	    		}
-	    		if(column.property == "end_time"){
-	    				date=new Date(parseInt(row.end_time)*1000);
-	    		}
-	    		
-	    		let Y=date.getFullYear()+'-';
-	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +' ':date.getDate()+' ';
-	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
-	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
-	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
-	    		return Y + M + D + h + m + s	    		
-	   		}
-		},
-		mounted(){
-			this.getUsers()
+			
 		}
 	}
 </script>

@@ -62,13 +62,19 @@
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="creation_time"  :label='$t("Public.creation")' align='center' width='80' :formatter='dateFormat' >
+				<el-table-column prop="creation_time"  :label='$t("Public.creation")' align='center' width='80' >
+					<template slot-scope='scope'>
+						{{scope.row.creation_time | timeFormat}}
+					</template>
 				</el-table-column>
 				<el-table-column prop="name" :label='$t("Public.name")'  align='center' min-wdith='100'>
 				</el-table-column>
 				<el-table-column prop="region.name" :label='$t("Public.SubordinateArea")' align='center'min-width='100' >
 				</el-table-column>
-				<el-table-column prop="descriptionVal" :label='$t("Public.description")'  align='center'min-width='100' >
+				<el-table-column prop='description'  :label='$t("Public.description")'  align='center'min-width='100' >
+					<template slot-scope='scope'>
+						{{ scope.row.description | descriptionValue }}
+					</template>
 				</el-table-column>
 				<el-table-column :label='$t("Public.operation")' align='center'width='140'>
 					<template slot-scope="scope">
@@ -94,6 +100,7 @@
 					@size-change='handleSizeChange' 
 					@current-change="handleCurrentChange" 
 					:page-sizes="[10, 20, 50, 100]"
+					:page-size='pagesize'
 					:page-count='pageNum' 
 					:pager-count="pagecount"
 				    >
@@ -101,7 +108,8 @@
 			</el-col>
 	
 			<!--编辑界面-->
-			<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+			<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" 
+				:close-on-click-modal="false" @close='$refs["editForm"].resetFields()'>
 				<el-form :model="editForm"  label-width="200px" :rules="editFormRules" ref="editForm">
 					<el-form-item label="ID： " v-show='dialogStatus == "create" ? false:true'>
 						<el-input v-model="editForm.id"  auto-complete="off" disabled class='ipt_sels'></el-input>
@@ -152,9 +160,8 @@
 		name:'City',
 		data() {
 		    return {
-		    	 token:'',
+		    	token:sessionStorage.getItem('token'),
 		    	//选择区域部分
-		    	
 		    	regions:'',
 		      	activeName:'first',
 		      	dialogStatus: "",
@@ -207,10 +214,8 @@
 		    };
 		},
 		  created(){
-			this.token=sessionStorage.getItem('token');
 			this.getCitys();
 			this.getArea();
-
 		  },
 		  methods: {
 		  	reset(){
@@ -251,7 +256,6 @@
 		    	this.loading = false;
 		    	if(res.status==200){
 		    		if(res.data.status==0){
-		    			descriptionValue(res.data.data.items);
 		    			this.total = res.data.data.page.total;
 						this.users=res.data.data.items;
 		    		}
@@ -287,23 +291,14 @@
 //		    	this.dialog=true;
 				this.dialogFormVisible = true;
 		    	this.editLoading=true;
+		    	this.editForm={
+		        	id: row.id,
+		        	name: row.name,
+		        	description: row.description,
+		        	region_id:row.region.id,
+		        	region_name:row.region.name
+		      	}
 
-				this.$ajax.get('/location/city_info/'+row.id+'?token='+this.token)
-				.then(res => {
-					if(res.status==200){
-						if(res.data.status==0){
-							this.editLoading=false;
-							var str=res.data.data;
-							this.editForm={
-					        	id: str.id,
-					        	name: str.name,
-					        	description: str.description,
-					        	region_id:str.region.id,
-					        	region_name:str.region.name
-					      	}
-						}
-					}
-				}).catch(e => {console.log(e)})
 		    },
 		    //显示编辑界面
 		    handleEdit: function(index, row) {
@@ -486,16 +481,7 @@
 			formatJson(filterVal,jsonData){
 				return jsonData.map(v => filterVal.map (j => v[j]))
 			},
-			dateFormat(row, column) {
-		      	let date = new Date(parseInt(row.creation_time) * 1000);
-		      	let Y = date.getFullYear() + "-";
-		      	let M =date.getMonth() + 1 < 10  ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
-		      	let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
-		      	let h = date.getHours() < 10  ? "0" + date.getHours() + ":"  : date.getHours() + ":";
-		        let m = date.getMinutes() < 10  ? "0" + date.getMinutes() + ":"  : date.getMinutes() + ":";
-		        let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-		      	return Y + M + D + h + m + s;
-		    },
+
 		  }
 	}
 </script>

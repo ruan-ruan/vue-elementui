@@ -140,28 +140,30 @@
 									sessionStorage.setItem('psd', loginParams.password)
 									sessionStorage.setItem('token',res.data.data.token);
 									
-									this.$ajax.get('/public/get_menu'+'?token='+res.data.data.token)
-									.then(res => {
-										if(res.status == 200){
-											if(res.data.status ==0){
-												this.$store.commit('setAside',res.data.data);
-												sessionStorage.setItem('asideList',JSON.stringify(res.data.data));
+									return this.$ajax.get('/public/get_menu'+'?token='+res.data.data.token)
+									
+									
+									
+								}
+							}
+						})
+						.then(res => {
+							if(res.status == 200){
+								if(res.data.status ==0){
+									this.$store.commit('setAside',res.data.data);
+									sessionStorage.setItem('asideList',JSON.stringify(res.data.data));
 //												routerEach(routers,res.data.data);
-												fil(this.$router.options.routes ,res.data.data);
+									fil(this.$router.options.routes ,res.data.data);
 //												let redirect = decodeURIComponent('/message/unreadMessage' || this.$route.query.redirect);
 //										        this.$router.push({
 //										            path: redirect,
 //										        })
-											}
-										}
-									}).catch(e => {console.log(e)})
-									
-									this.$router.push({
+								this.$router.push({
 							            path: '/message/unreadMessage',
 							        })
 								}
 							}
-						}) .catch(e => { console.log(e) })
+						}).catch(e => {console.log(e)})
 		          	}
 		        });
 	      	}

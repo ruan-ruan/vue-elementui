@@ -24,10 +24,16 @@ import ajax from '@/api/api'
 import i18n from './lang/i18n';
 import { fil } from '@/assets/js/index.js'
 import {recursion,exportCom,exportIcon,codeVal} from '@/assets/js/index'	
+import *as filters from '@/assets/js/filters.js'
 //语言处理
 Vue.use(ElementUI,{
 	size:'medium',
 	i18n:(key ,value) => i18n.t(key,value)
+})
+
+//全局定义过滤器
+Object.keys(filters).forEach(key => {
+    Vue.filter( key, filters[key])
 })
 
 Vue.prototype.recursion=recursion;

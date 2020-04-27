@@ -430,6 +430,8 @@ export default {
       }
     };
     return {
+    	search_device:this.$route.query.search_device,
+    	search_port:this.$route.query.search_port,
       token: "",
       filters: {
         billingTime: "", //计费时间开始和截止
@@ -545,10 +547,12 @@ export default {
     this.token = sessionStorage.getItem("token");
 
     this.getUsers();
+    
   },
 	mounted(){
 		this.getFiltersData();
 	},
+
 	computed:{
 		filProps(){
   		if( this.nodeID || this.customer ||this.customerID ){
@@ -621,7 +625,9 @@ export default {
         search_start_expiration_time: typeof this.filters.overdueTime[0] == "undefined" ? ""  : Number(this.filters.overdueTime[0]) / 1000,
         search_end_expiration_time:  typeof this.filters.overdueTime[1] == "undefined"  ? "" : Number(this.filters.overdueTime[1]) / 1000,
         search_node: typeof this.nodeID !== "undefined" ? this.nodeID : "",
-        search_logic_port: typeof this.customer !== "undefined" ? this.customer : ""
+        search_logic_port: typeof this.customer !== "undefined" ? this.customer : "",
+        search_device:typeof this.search_device !=='undefined'?this.search_device:'',
+        search_port:typeof this.search_port !=='undefined'? this.search_port :'',
       };
       this.$ajax.get("/vll/p2p_vlls" + "?token=" + this.token, para)
         .then(res => {
@@ -912,7 +918,6 @@ export default {
       this.sels = sels;
     },
     handleSeePoint(index, row) {
-
       //专线的详情的
       if(this.buttonVal.see){
       	this.$router.push({

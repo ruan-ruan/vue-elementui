@@ -622,62 +622,58 @@ export function isVlan(val){
 	var newData=[];
 	var data=[];
 	var  str={
-		bool:null,//未知节点添加的端口区间，处理
+		bool:true,//未知节点添加的端口区间，处理
 		dataVal:[]
 	};
-
+	console.log(num)
 	num.map(ele => {//获取切割后的数组
 		if(ele.indexOf('-') !==-1){
 			newVal.push(ele.split('-'))
 		}else{
-			newVal.push(ele)
+			newVal.push(ele.split(','))
 		}
-		
 	})
-
 	newVal.map(ele => {
 		if(ele.length>1){//判断  数据是区间还是单个的 
 			for(var i=ele[0];i<= ele[1];i++ ){//区间的时候   遍历
 				data.push(i)
 			}
 		}else {  //当为单个的数据的时候   直接转化为数字  添加
-			data.push( ele[0])
+			data.push( ele)
 		}
 	});
 
 	data.map(ele => {
 		if(!isNaN(ele) ){
-//			if(Number(ele).indexOf('.') !== -1){
-//				return false;
-//			}else{
-				if(ele<1){
-					str.bool=false
-				}else{
-					str.bool=true
-				}
-				if( newData.indexOf(ele) == -1 ){
-					newData.push(ele)
-				}
-//			}
-				
+			if(parseInt(ele)  <2 || parseInt(ele) >4094){
+				str.bool=false
+			}
+			if( newData.indexOf(ele) == -1 ){
+				newData.push(ele)
+			}
 		}else if(isNaN(ele)){
 			str.bool=false
 		}
 	})
+	console.log(str)
 	return str;
-}
+};
 export function isTest(val){
 	var num=val.split(',');//首先将输入的字符串分割开成数组
 	var newVal=[];
 	var newData=[];
 	var  str={
-		bool:null,//未知节点添加的端口区间，处理
+		bool:true,//未知节点添加的端口区间，处理
 		dataVal:[]
 	};
 	var data=[]
 
 	num.map(ele => {//获取切割后的数组
-		newVal.push(ele.split('-'))
+		if(ele.indexOf('-') !==-1){
+			newVal.push(ele.split('-'))
+		}else{
+			newVal.push(ele.split(','))
+		}
 	})
 	newVal.map(ele => {
 		if(ele.length>1){//判断  数据是区间还是单个的 
@@ -695,8 +691,6 @@ export function isTest(val){
 //			}else{
 				if(ele>54 || ele<1){
 					str.bool=false
-				}else{
-					str.bool=true
 				}
 				if( newData.indexOf(ele) == -1 ){
 					newData.push(ele)

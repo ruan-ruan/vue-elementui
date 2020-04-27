@@ -61,7 +61,11 @@
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='creation_time'width='80' :formatter='dateFormat' :label='$t("Public.apply")' align='center' ></el-table-column>
+				<el-table-column width='80' :label='$t("Public.apply")' align='center' >
+					<template slot-scope='scope'>
+						{{ scope.row.creation_time | timeFormat }}
+					</template>
+				</el-table-column>
 				<el-table-column prop='name' min-width='120' :label='$t("Public.nodeName")' align='center'></el-table-column>
 				<el-table-column  min-width='120' :label='$t("Public.deviceName")' align='center'>
 					<template slot-scope='scope'>
@@ -85,7 +89,14 @@
 				</el-table-column>
 				<el-table-column prop='vtep' min-width='90' label='Vtep' align='center'></el-table-column>		
 				<el-table-column prop='dc.name' min-width='100' :label='$t("Public.dataCen")' align='center'></el-table-column>
-				<el-table-column prop='description' min-width='80' :label='$t("Public.description")' align='center'></el-table-column>
+				<el-table-column prop='description' min-width='80' :label='$t("Public.description")' align='center'>
+					<template slot-scope='scope'>
+						{{scope.row.devices[0].description | descriptionValue}} <br />
+						<span v-if='scope.row.devices && scope.row.devices.length ==2'>
+						{{ scope.row.devices[1].description | descriptionValue }}
+						</span>
+					</template>
+				</el-table-column>
 				<el-table-column width='180' align='center':label='$t("Public.operation")'>
 					<template slot-scope='scope'>
 						<el-button type='primary':diasbled='RunStatus' size='mini' @click='run(scope.$index, scope.row)' class='run' v-if='buttonVal.run'>
@@ -112,8 +123,9 @@
 				     	@size-change="handleSizeChange"
                    		@current-change="handleCurrentChange"
 				     	layout="total, sizes, prev, pager, next, jumper"
-				     	:page-sizes="[10, 20, 30,50]" 						     	 
+				     	:page-sizes="[10, 20, 30,50]" 	
 				     	:current-page.sync="currentPage"  
+				     	:page-size='pagesize'
 				     	:page-count='pageNum'
 				     	:pager-count="pagecount"
 				     	>
@@ -146,7 +158,7 @@
 		data() {
 	 		return {
 	 			//获取用户的权限：
-	 			token:'',
+	 			token:sessionStorage.getItem('token'),
 	 			//运行按钮的控制是否是可点击，根据表格里面的数据，如果必填项里面存在空的时候，则是禁止点击
 	 			RunStatus:false,
 	 			//顶部的搜索的绑定对象
@@ -201,8 +213,12 @@
 	   },
 	    created(){
 	    	//获取用户的权限信息
-	    	this.token=sessionStorage.getItem('token');
-		
+			this.getUsers();
+	    	
+	    },
+	     mounted(){
+	    	
+	    	this.getDataCen()
 	    	
 	    },
 	    methods:{
@@ -227,10 +243,11 @@
 					search_name:this.filters.name,
 					search_dc:this.filters.search_dc,
 					search_status:this.filters.search_status,
+					search_activated:false,
 					search_start_time:getTime(this.filters.start_time),
 					search_end_time:getTime(this.filters.end_time),
 				}
-				this.$ajax.get('/node/unknown_nodes'+'?token='+this.token,para)
+				this.$ajax.get('/node/nodes'+'?token='+this.token,para)
 	    		.then(res => {
 	    			if(res.status==200){
 	    				if(res.data.status==0){
@@ -281,11 +298,10 @@
 			},
 
 	    	handleAdd(){
-//				this.$trouter.push('/location/index/unknown')
 				this.$router.push({
 					path:'/location/index/unknown_add',
 					query:{
-						id:'add'
+						name:'add'
 					}
 				})
 			},
@@ -343,7 +359,7 @@
 	    	},
 	    	//运行
 	    	run(index,row){
-	    		
+	    		console.log(row)
 	    		var data=[row.dc,row.devices_sn1,row.devices_name1,row.devices_ip1,row.vtep,row.name];//将设备一的必填项里面是否存在null或者''或者undefined这个时候都是需要重新配置
 	    		
 //	    		debug;
@@ -406,7 +422,7 @@
 		       		type: "warning"
 		      	})
 		        .then(() => {
-					this.$ajax.del('/node/del_unknown_node/'+row.id+'?token='+this.token)
+					this.$ajax.del('/node/del_node/'+row.id+'?token='+this.token)
 		          .then(res => {
 		          		if(res.status==200){
 		          			if(res.data.status==0){
@@ -424,7 +440,7 @@
 		        })
 		        .catch(() => {});
 		    },
-		    		    //全选单选多选
+		     //全选单选多选
 		    selsChange: function(sels) {
 		      this.sels = sels;
 		    },
@@ -442,7 +458,7 @@
 		          let para = { 
 		          	ids: ids,
 		          };
-		          this.$ajax.del('/node/del_unknown_nodes'+'?token='+this.token,para)
+		          this.$ajax.del('/node/del_nodes'+'?token='+this.token,para)
 		          .then(res => {
 		          	if(res.status=='200'){
 		          		if(res.data.status=='0'){
@@ -490,26 +506,9 @@
 					console.log(e)
 				})
 	    	},
-	    	dateFormat(row,column){
-	    		//将时间戳转换为前端的时间
-	    		let date=null;
-	    		date=new Date(parseInt(row.creation_time)*1000);
-	    		
-	    		
-	    		let Y=date.getFullYear()+'-';
-	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +' ':date.getDate()+' ';
-	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
-	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
-	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
-	    		return Y + M + D + h + m + s	    		
-	    }
+
 	    },
-	    mounted(){
-	    	this.getUsers();
-	    	this.getDataCen()
-	    	
-	    }
+
 	}
 </script>
 

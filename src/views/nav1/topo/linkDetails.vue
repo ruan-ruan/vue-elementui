@@ -1,82 +1,82 @@
 <template>
 	<div>
-		<el-form :model='filters' ref='filters' label-wdith='80px' v-loading='linkLoading' v-if='formStatus'>
+		<el-form :model='filters' ref='filters' label-wdith='100px' v-loading='linkLoading' v-if='formStatus'>
 			<el-form-item>
 				<el-button size='small' type='primary' @click='charts(filters.id)'>
 					<!--图表-->
 					{{$t('Public.chart')}}
 				</el-button>
 			</el-form-item>
-			<el-form-item :label="$t('Public.linkState')">
+			<el-form-item :label="$t('Public.linkState')+'：'">
 				<span v-text='filters.status'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.sysBandwidth')">
+			<el-form-item :label="$t('Public.sysBandwidth')+'：'">
 				<span v-text='filters.bandwidth'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.phyBandwidth')">
+			<el-form-item :label="$t('Public.phyBandwidth')+'：'">
 				<span v-text='filters.physical_bandwidth'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.surBandwidth')">
+			<el-form-item :label="$t('Public.surBandwidth')+'：'">
 				<span v-text='filters.remain_bandwidth'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.linkExpen')">
+			<el-form-item :label="$t('Public.linkExpen')+'：'">
 				<span v-text='filters.link_cost'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.linkCheck')">
+			<el-form-item :label="$t('Public.linkCheck')+'：'">
 				<span v-text='filters.monitoring'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.aPort')">
+			<el-form-item :label="$t('Public.aPort')+'：'">
 				<span v-text='filters.aPort'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.aportDescribe')">
+			<el-form-item :label="$t('Public.aportDescribe')+'：'">
 				<span v-text='filters.aDesc'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.zPort')">
+			<el-form-item :label="$t('Public.zPort')+'：'">
 				<span v-text='filters.zPort'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.zportDescribe')">
+			<el-form-item :label="$t('Public.zportDescribe')+'：'">
 				<span v-text='filters.zDesc'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.description')">
+			<el-form-item :label="$t('Public.description')+'：'">
 				<span v-text='filters.description'></span>
 			</el-form-item>
 		</el-form>
 
-		<el-form :model='filters' ref='filters' v-loading='linkLoading' label-width='80px' v-if='!formStatus'>
+		<el-form :model='filters' ref='filters' v-loading='linkLoading' label-width='100px' v-if='!formStatus'>
 			<el-form-item>
 				<el-button size='small' type='primary' @click='charts(filters.id)' >
 					<!--图表-->
 					{{$t('Public.chart')}}
 				</el-button>
 			</el-form-item>
-			<el-form-item :label="$t('Public.cloudName')">
+			<el-form-item :label="$t('Public.cloudName')+'：'">
 				<span v-text='filters.name'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.shardCloud')">
+			<el-form-item :label="$t('Public.shardCloud')+'：'">
 				<span v-text='filters.type'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.status')">
+			<el-form-item :label="$t('Public.status')+'：'">
 				<span v-text='filters.status'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.region')">
+			<el-form-item :label="$t('Public.region')+'：'">
 				<span v-text='filters.region_id'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.accessPoint')">
+			<el-form-item :label="$t('Public.accessPoint')+'：'">
 				<span v-text='filters.access_point_id'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.logic')">
+			<el-form-item :label="$t('Public.logic')+'：'">
 				<span v-text='filters.logic_port_name'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.logicStatus')">
+			<el-form-item :label="$t('Public.logicStatus')+'：'">
 				<span v-text='filters.logic_port_status'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.bandwidth')">
+			<el-form-item :label="$t('Public.bandwidth')+'：'">
 				<span v-text='filters.bandwidth'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.interface_driver')">
+			<el-form-item :label="$t('Public.interface_driver')+'：'">
 				<span v-text='filters.interface_driver'></span>
 			</el-form-item>
-			<el-form-item :label="$t('Public.description')">
+			<el-form-item :label="$t('Public.description')+'：'">
 				<span v-text='filters.description'></span>
 			</el-form-item>
 		</el-form>
@@ -121,7 +121,6 @@
 
 					this.$ajax.get('/link/link_info/'+obj.id+'?token='+this.token)
 					.then(res => {
-
 						if(res.status==200){
 							if(res.data.status==0){
 								this.linkLoading=false;
@@ -129,11 +128,8 @@
 								let obj={}
 								if(str.monitoring){
 									obj.sta=this.$t('Public.open')
-//									obj.sta='开启'
 								}else{
 									obj.sta=this.$t('Public.close')
-									
-//									obj.sta='关闭'
 								}
 								this.filters={
 									id:str.id,
@@ -161,30 +157,17 @@
 					.then(res => {
 						if(res.status==200){
 							if(res.data.status==0){
-
 								this.linkLoading=false;
 								let str=res.data.data;
-								let obj={}
-								if(str.type==='ali'){
-//									obj.typeName='阿里云'
-									obj.typeName=this.$t('topology.leng.ali')
-									
-								}else if(str.type==='tencent'){
-//									obj.typeName='腾讯云'
-									obj.typeName=this.$t('topology.leng.tc')
-								}else if(str.type==='other'){
-									obj.typeName=this.$t('topology.leng.other')
-//									obj.typeName='其他'
-								}
 								this.filters={
 									id:str.id,
 									name:str.name,
-									type:obj.typeName,
+									type:str.type,
 									status:'',
 									region_id:str.region,//区域  这里原始数据是id  需要处理
 									access_point_id:str.access_point,//同上
 									logic_port_name:str.logic_port.name,
-									logic_port_status:getPortStatus(str.logic_port),
+									logic_port_status:getPortStatus(str.logic_port.physical_port),
 									bandwidth:str.bandwidth,
 									interface_driver:str.interface_driver,
 									description:str.description

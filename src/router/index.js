@@ -65,10 +65,13 @@ var router = new Router({
 				{path:'/message',component: () => import ('@/views/parent'), name: 'aside.standLetter',leaf:false,meta:{requireAuth:true,name:'站内信'},
 				children:[
 					{path:'/message/unreadMessage',component: () => import ('@/views/message/unreadMessage'), name: 'aside.unMessage',leaf:true,meta:{requireAuth:true,name:'未知消息'}},
-					{path:'/message/allMessage',component: () => import ('@/views/message/allMessage'), name: 'aside.allMessage',leaf:true,meta:{requireAuth:true,name:'全部消息'} },   
+					{path:'/message/allMessage',component: () => import ('@/views/message/allMessage'), name: 'aside.allMessage',leaf:true,meta:{requireAuth:true,name:'全部消息'} }, 
+					//  查看组网
+//					{path:'/resource/virtualLine/pointsTos-see',component: () => import ('@/views/resources/pointsTos'), name: 'aside.virtualSpecial',leaf:true,meta:{ requireAuth:true, name:'虚拟组网'},},
+					// 查看点到点
 				]},
 				//个人资料部分  待开发
-//				{path:'/personal',component: () =>import ('@/views/message/personal'),name:'aside.personal',leaf:true ,meta:{requireAuth:true,name:'个人资料'}}
+				{path:'/personal',component: () =>import ('@/views/message/personal'),name:'aside.personal',leaf:true ,meta:{requireAuth:true,name:'个人资料'}}
 			] 
 		},
 		{

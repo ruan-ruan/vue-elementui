@@ -212,7 +212,8 @@
 						if(res.data.status==0){
 							this.loading=false;
 							//datedialogFormat
-							descriptionValue(res.data.data.items)
+							descriptionValue(res.data.data.items);
+							console.log(res)
 							res.data.data.items.map(ele => {
 								ele.portStatus=getPortStatus(ele.logic_port.physical_port)
 								switch( getPortStatus(ele.logic_port.physical_port) ){
@@ -223,17 +224,10 @@
 										ele.color='backWarn';
 										break;
 								}
-//								if(getPortStatus(ele.logic_port.physical_port) === 'UP'){
-//									ele.color='backRun'
-//								}else if(getPortStatus(ele.logic_port.physical_port) === 'DOWN'){
-//									ele.color='backWarn'
-//								}else if(getPortStatus(ele.logic_port.physical_port) === '异常'){
-//									ele.color='backWarn'	
-//								}
+								ele.bandwidth=Math.round(ele.bandwidth/1024) 
 							})
 							this.users=res.data.data.items;
 							this.total=res.data.data.page.total;
-							console.log(this.users)
 						}
 					}
 				}).catch(e => {console.log(e)})

@@ -36,9 +36,7 @@
 				virtualSpecial:this.recursion( this.$store.state.aside ,"aside.virtualSpecial").show,//组网
 			}
 		},
-		mounted(){
-			console.log(this.id)
-		},
+
 		methods:{
 			getVal(msg){
 				this.boolean=false;
