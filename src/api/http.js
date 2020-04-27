@@ -9,7 +9,7 @@ axios.defaults.timeout = 10000;
 //http://api.tianchi.com   线上
 //http://api.tianchic.com  本地测试   
 //http://demoapi.tianchic.com 客户测试
-axios.defaults.baseURL='http://demoapi.tianchic.com';
+axios.defaults.baseURL='http://api.tianchi.com';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 // post请求头
 //axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';

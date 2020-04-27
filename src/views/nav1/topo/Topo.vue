@@ -2,21 +2,21 @@
 	<div class='main'>
 		<el-row>
 			<el-col :span='24'>
-					<el-form>
-						<el-form-item>
-							<template>
-								<el-button @click='Save' v-if='buttonVal.save' >
-									<!--保存布局-->
-									{{$t('topology.topBtn.save')}}
-								</el-button>
-								<el-button @click='reset' id='reset'>
-									<!--还原布局-->
-									{{$t('topology.topBtn.reduction')}}
-									
-								</el-button>
-							</template>
-						</el-form-item>
-					</el-form>
+				<el-form>
+					<el-form-item>
+						<template>
+							<el-button @click='Save' v-if='buttonVal.save' >
+								<!--保存布局-->
+								{{$t('topology.topBtn.save')}}
+							</el-button>
+							<el-button @click='reset' id='reset'>
+								<!--还原布局-->
+								{{$t('topology.topBtn.reduction')}}
+								
+							</el-button>
+						</template>
+					</el-form-item>
+				</el-form>
 			</el-col>
 			<el-col :span='24'>
 				<el-col :span='24'class='back'>
@@ -108,7 +108,7 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.$message({
-								message:'修改成功!',
+								message:this.$t('tooltipMes.editSuccess'),
 								type:'success'
 							})
 							this.getNodesData(this.selectForm)
@@ -129,23 +129,30 @@
 
 				var nodeVal=new Array();
 				var linkVal=new Array();
+				console.log(linksData)
 				for(let item in obj){
 
 					if(item ==='checkboxGroup1'){//进入隐藏标签和隐藏流量的控制部分   
 						let str=obj['checkboxGroup1'];//用来查找对应的值
 						
-						if(str.length !=0){
-							
+						if(str.length !=0){							
 							if(str.indexOf( this.$t('topology.footerBtn.showFlow') ) == -1){//隐藏流量
 								linkVal=newLink;
 							}else if(str.indexOf( this.$t('topology.footerBtn.showFlow') ) !=-1){//显示流量
 								linksData.forEach(ele => {
-									
 									if(!ele.instant_speed && typeof(ele.instant_speed)!='undefined' && ele.instant_speed!=0){
-										ele.instant_speed=0
+										ele.maxSpeed=0
+									}									
+									/**
+									 * 这里的bandwidth  单位是MB  需要换算为byts 1000*1024
+									 * maxSpeed  出和入的 最大值
+									 * */
+									if(ele.instant_speed['input']['bytes'] >ele.instant_speed['output'] ){
+										ele.maxSpeed=ele.instant_speed['input']['bytes']
+									}else{
+										ele.maxSpeed=ele.instant_speed['output']['bytes']
 									}
-									
-									var speedVal=ele.instant_speed/ele.bandwidth;
+									var speedVal=ele.maxSpeed/ele.bandwidth;
 									if(speedVal>=0 && speedVal <=0.5){
 										ele.speedColor='spedGreen'
 									}else if(speedVal>0.5 && speedVal <=0.75){
@@ -153,11 +160,9 @@
 									}else if(speedVal>0.75 && speedVal<=1 ){
 										ele.speedColor='spedRed'
 									}
-									
 								})
 								linkVal=linksData
-							}
-							
+							}							
 							if(str.indexOf( this.$t('topology.footerBtn.showLabel') ) ===-1){//未找标签
 								nodesData.forEach(ele => {
 									ele.node.name=''
@@ -166,7 +171,6 @@
 							}else if(str.indexOf( this.$t('topology.footerBtn.showLabel') ) !== -1){
 								nodeVal=newNode;
 							}
-
 						}else{
 							nodesData.forEach(ele => {
 								ele.node.name=''
@@ -175,8 +179,6 @@
 //								ele.bandwidth=''
 //							})
 							nodeVal=nodesData;
-//							linkVal=linksData;
-
 						}
 					}
 					
@@ -201,19 +203,19 @@
 						}
 						else{
 							if(str === this.$t('topology.footerBtn.bandW.showbandwidth1')   ){
-								linkVal=isTopo.isBandWidth(linksData,'bandwidth',1);
+								linkVal=isTopo.isBandWidth(linksData,'bandwidth',1*1024);
 							}
 								
 							if(str === this.$t('topology.footerBtn.bandW.showbandwidth2') ){
-								linkVal=isTopo.isBandWidth(linksData,'bandwidth',10);
+								linkVal=isTopo.isBandWidth(linksData,'bandwidth',10*1024);
 							}
 							
 							if(str === this.$t('topology.footerBtn.bandW.showbandwidth3')  ){
-								linkVal=isTopo.isBandWidth(linksData,'bandwidth',40);
+								linkVal=isTopo.isBandWidth(linksData,'bandwidth',40*1024);
 							}
 							
 							if(str  === this.$t('topology.footerBtn.bandW.showbandwidth4')  ){
-								linkVal=isTopo.isBandWidth(linksData,'bandwidth',100);
+								linkVal=isTopo.isBandWidth(linksData,'bandwidth',100*1024);
 							}
 							if(str  === this.$t('topology.footerBtn.bandW.showbandwidth5')   ){
 								linkVal=isTopo.isBandVal(linksData);
@@ -279,18 +281,6 @@
 				})
 				.catch(err => console.log(err))
 			},
-//			getLinksData:function(nodesData,obj ){   //获取链路的信息数据集合
-//				this.linksData=[];
-//				let that=this;
-//				this.$ajax.get('/topology/links'+'?token='+this.token)
-//				.then(res => {
-//					if(res.status==200 && res.data.status==0){
-//							that.linksData=res.data.data;	
-//
-//						this.dealForm(obj,nodesData,that.linksData)
-//					}
-//				}).catch(e => {console.log(e)})
-//			},
 			setTopo:function(nodesData,linksData){//设置拓扑图的展示
 				//对数据的里面的匹配进行处理
 				linksData.some(function(v, i) {
@@ -305,14 +295,13 @@
 			        v.index = ++i;
 			   });
 				d3.select('svg').select('g').remove()
-				var width = 890,
-				  height = 470;
+				var width = 840,
+				  height = 500;
 				var text_dx = -20;
 				var text_dy = 20;
 				var img_w=16,img_h=16;
 				var radius=16;
-				
-				
+
 				let that=this
 				
 				var linkForce=d3.forceLink(linksData).id(function(d){})
@@ -344,15 +333,53 @@
 	            .attr('class','font')
 	            .text(function(d){
 	            	return d.node.name
-	            })
+	            });
+	            
 	            var links_text=g.selectAll('.link_text')
 	            .data(linksData)
 	            .enter()
 	            .append('text')
-	            .attr('class','links_text')
+	            .attr('class','links_text')	            
 				.text(function(d){
-					return d.bandwidth
-	         })
+					var d_val=d.instant_speed;
+					for(var item in d_val){
+						for(var i in d_val[item]){
+							if(i == 'bytes'){
+								if(d_val[item][i]>=1000 && d_val[item][i]< 1000*1024){
+									d_val[item]['bbs']=Math.round( d_val[item][i] / 1000  )  + "KB";
+								}else if(d_val[item][i]>=1000*1024 && d_val[item][i]<1000*1024*1024){
+									d_val[item]['bbs']=Math.round( d_val[item][i] / (1000*1024)  ) + "MB";
+								}else if(d_val[item][i]>=1000*1024*1024  && d_val[item][i]<1000*1024*1024*1024){
+									d_val[item]['bbs']=Math.round( d_val[item][i] / (1000*1024*1024)  )  + "GB";
+								}else if(d_val[item][i]>=1000*1024*1024*1024 ){
+									d_val[item]['bbs']=Math.round( d_val[item][i] / (1000*1024*1024*1024)  )  + "TB";
+								}else{
+									d_val[item]['bbs']=d_val[item][i]
+								}
+							}else{
+								if(d_val[item][i]>=1000 && d_val[item][i]< 1000*1024){
+									d_val[item]['pps']=Math.round( d_val[item][i] / 1000  )  + "KB";
+								}else if(d_val[item][i]>=1000*1024 && d_val[item][i]<1000*1024*1024){
+									d_val[item]['pps']=Math.round( d_val[item][i] / (1000*1024)  ) + "MB";
+								}else if(d_val[item][i]>=1000*1024*1024  && d_val[item][i]<1000*1024*1024*1024){
+									d_val[item]['pps']=Math.round( d_val[item][i] / (1000*1024*1024)  )  + "GB";
+								}else if(d_val[item][i]>=1000*1024*1024*1024 ){
+									d_val[item]['pps']=Math.round( d_val[item][i] / (1000*1024*1024*1024)  )  + "TB";
+								}else{
+									d_val[item]['pps']=d_val[item][i]
+								}
+							}
+						}
+					}
+					if(d.bandwidth<1024){
+						d.bandwidthVal=d.bandwidth+'MB'
+					}else if(d.bandwidth>=1024 && d.bandwidth< 1024*1024){
+						d.bandwidthVal= Math.round(d.bandwidth/1024) +'GB'
+					}else if(d.bandwidth>=1024*1024 && d.bandwidth< 1024*1024*1024){
+						d.bandwidthVal= Math.round(d.bandwidth/1024*1024) +'TB'
+					}
+					return d.instant_speed.input.bbs+'(入)'+'-'+d.instant_speed.output.bbs+'(出)'+'-'+d.bandwidthVal+'(物理带宽)'
+	        })
 				
 	        let link = g.append('g') 
 	        	.attr('class', 'link')
@@ -372,9 +399,9 @@
 			    .on('click',function(d){
 			    	var cls=document.getElementsByTagName('line');
 			    	for (let index=0;index<cls.length;index++) {
-							cls[index].style.strokeWidth='2';
+							cls[index].style.strokeWidth=1.5;
 						}
-		            	this.style.strokeWidth='8';
+		            	this.style.strokeWidth=3;
 		            	let obj={}
 		            	if(d.type==='link'){
 		            		obj={
@@ -391,9 +418,25 @@
 		            	that.bus.$emit('sendlink',obj);
 		            	that.$store.commit('sendLink',obj);
 			    })
+			    .on('mouseover',function(d,i){
+			    	//显示连接线上的文字
+			    	links_text.style('fill-opacity',function(edge){
+			    		if(d.id === edge.id){
+			    			return 1.0;
+			    		}
+			    	})
+			    })
+			    .on("mouseout",function(d,i){
+                    //隐去连接线上的文字
+                    links_text.style("fill-opacity",function(edge){
+                        if( d.id === edge.id){
+                            return 0.0;
+                        }
+                    });
+                });
 
 	            function linkWidth(d){
-	            	return 2;
+	            	return 1.5;
 	            }
 	            function linkColour(d){//链路     链路和云对接链路
 	            	
@@ -493,7 +536,19 @@
 		                })
 				   	nodes_text.attr('x',function(d){d.fx=d.x;return d.x-12})
 				            .attr("y", function(d) { d.fy=d.y;return d.y-12 });
-		           	links_text.attr("x", function(d) { 
+					
+//					links_text.attr('transform',function(d,i){
+//				        if (d.target.x<d.source.x){
+//				            bbox = that.getBBox();
+//				            rx = bbox.x+bbox.width/2;
+//				            ry = bbox.y+bbox.height/2;
+//				            return 'rotate(180 '+rx+' '+ry+')';
+//				        }
+//				        else {
+//				            return 'rotate(0)';
+//				        }
+//				   });
+		           	links_text.attr("x", function(d) {
 				           	if(d.source_val && d.target_val){
 				           		return (d.source_val.x+d.target_val.x)/2;
 				           	}
@@ -516,10 +571,9 @@
 						return require('../../../assets/images/newTopo/huawei.png')
 									
 					}else if(nodes.type==='UCloud'){
-						return require('../../../assets/images/newTopo/ucloud.png')
-								
+						return require('../../../assets/images/newTopo/ucloud.png')	
 					}else{
-						return require('../../../assets/images/newTopo/error.png')
+						return require('../../../assets/images/newTopo/other.png')
 					}
 				}
 		        function dragStart (d) {
@@ -561,6 +615,7 @@
 	.links_text{
 		font-size: 6px;
 		color: #484948;
+		fill-opacity:0.0 ;
 	}
 	.link {
 		cursor: pointer;
@@ -601,7 +656,7 @@
 	  	cursor: pointer;
 	 	fill: #ccc;
 	  	stroke: #000;
-	  	stroke-width: 1.5px;
+	  	stroke-width: 1px;
 	}
 	.btn{
 		font-size: 14px;
@@ -616,4 +671,5 @@
 	.back{
 	background: #F7F5FA;
 	}
+
 </style>

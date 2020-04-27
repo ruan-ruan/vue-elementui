@@ -711,8 +711,9 @@
 									message:this.$t('tooltipMes.delSuccess'),
 									type:'success'
 								})
-								this.getDetails(this.id);
+								
 							}
+							this.getDetails(this.id);
 						}
 					})
 					.catch(e => {

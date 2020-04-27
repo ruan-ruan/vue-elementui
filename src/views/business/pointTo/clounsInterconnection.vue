@@ -130,7 +130,7 @@
 				this.editForm.sharedCloun_a=msg.cloun
 				this.editForm.clounDoc_a=msg.clounDock
 				this.editForm.target_a=msg.targetRegion
-
+				this.creatFormDetails.sharedCloun_a=msg.cloun
 			},
 			sendClounList_a(list){
 				this.selectFormA=Object.assign({},list)
@@ -139,7 +139,8 @@
 			getsharedCloun_z(msg){
 				this.editForm.sharedCloun_z=msg.cloun
 				this.editForm.clounDoc_z=msg.clounDock
-				this.editForm.target_z=msg.targetRegion
+				this.editForm.target_z=msg.targetRegion;
+				this.creatFormDetails.sharedCloun_z=msg.cloun
 			},
 			sendClounList_z(list){
 				this.selectFormZ=Object.assign({},list)

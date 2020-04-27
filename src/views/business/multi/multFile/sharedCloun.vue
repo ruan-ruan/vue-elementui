@@ -251,16 +251,19 @@
 					this.sendForm.cloun=newVal.cloun;
 					this.sendForm.targetRegion=newVal.targetRegion;
 					this.sendForm.clounDock=newVal.clounDock
-					
-					
 				},
 				deep:true,
 			},
 			sendForm:{
 				handler(newVal,oldval){
-					this.$emit('sendClounbasic',newVal)//发送基本的云选择的列表
-					this.$emit('sendClounbasic_a',newVal)
-					this.$emit('sendClounbasic_z',newVal)
+					console.log(newVal)
+					if(newVal){
+					
+						this.$emit('sendClounbasic',newVal)//发送基本的云选择的列表
+						this.$emit('sendClounbasic_a',newVal);
+
+						this.$emit('sendClounbasic_z',newVal)
+					}
 				},
 				deep:true,
 			},

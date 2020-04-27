@@ -11,7 +11,7 @@
 						<el-col :span='24'>
 							<el-col :span='12'>
 								<h4 class="title_h4">{{$t('business.c2cAshared')}}</h4>
-								<shared-cloun @sendClounbasic='getSharedCloun' @sendClounList='getClounList' ref='editForm'></shared-cloun>
+								<shared-cloun @sendClounbasic='getSharedCloun'  @sendClounList='getClounList' ref='editForm'></shared-cloun>
 							</el-col>
 							<el-col :span='12'>
 								<h4 class="title_h4":title="$t('business.ztooltip')">{{$t('business.zDc')}}<span class="cli_toTip" >?</span></h4>
@@ -101,6 +101,7 @@
 		},
 		created(){
 			this.token=sessionStorage.getItem('token');
+			console.log(123456)
 		},
 		methods:{
 			getDcPort(msg){
@@ -116,13 +117,13 @@
 				this.clounList=Object.assign({},msg)
 			},
 			getSharedCloun(msg){
-
+				console.log(msg)
 				this.clounForm={
 					sharedCloun:msg.cloun,
 					target:msg.targetRegion,
 					clounDoc:msg.clounDock
 				}
-
+				this.creatFormDetails.sharedCloun=msg.cloun
 			},
 			reset(){
 				this.$refs['basicForm'].$refs['editForm'].resetFields();

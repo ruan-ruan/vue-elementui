@@ -19,20 +19,20 @@
               </el-badge>
             </el-col>
             
-            <el-popover  placement="left-start"  ref="visible"  title="站内消息通知列表"  width="300"  trigger="hover" >
+            <el-popover  placement="left-start"  ref="visible"  :title="$t('nav.messageList')"  width="300"  trigger="hover" >
               <ul  v-if="tableData.length>0" style="border-top:1px solid #ccc;" >
-                <li  style="border-top:1px solid #ccc;padding:8px 0;padding-bottom:2px;" v-for="(item,is) in tableData" :key="is" >
+                <li  style="border-top:2px solid #1D1C1C;padding:8px 0;padding-bottom:2px;" v-for="(item,is) in tableData" :key="is" >
                   <span>
                   	<img  src="../assets/images/message/unread.png.png"  alt=""  v-show="!item.is_read"  style="width:12px;height:12px;" >
                   </span>
-                  <span>{{item.content}}</span>
+                  <span v-html='item.content'></span>
                   <div style="margin-top:6px;">
                     <span>{{timestamp(item.time)}}</span>
                     <span style="float:right;font-size:14px;font-weight:700;">{{item.level}}级</span>
                   </div>
                 </li>
               </ul>
-              <div v-else> 暂无消息  </div>
+              <div v-else> {{$t('nav.notMessage')}}</div>
             </el-popover>
             <el-col :span='7'>
               <el-dropdown  trigger="click"  @command="Change" >
@@ -564,7 +564,6 @@ export default {
 }
 .el-menu-item-group__title {
   display: none !important;
-  /*padding-top: 0px !important;*/
 }
 .asideLogo {
   width: 22px;

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-button size='small' @click='goBack()'><i class="fa fa-angle-double-left"></i>返回</el-button>
+		<el-button size='small' @click='goBack()'><i class="fa fa-angle-double-left"></i>{{$t('Public.goback')}}</el-button>
 		<el-tabs v-model='activeName'>
 			<el-tab-pane :label='$t("Public.nodeDetails")' name='first'>
 				<Node :title='id' :physicalPort='physicalValue' :physicalData='physicalData'></Node>

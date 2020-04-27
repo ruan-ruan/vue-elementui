@@ -74,7 +74,10 @@
 							<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 						</template>
 					</el-table-column>
-					<el-table-column prop="creation_time"  :label="$t('Public.creation')" align='center' width='80' :formatter='dateFormat' >
+					<el-table-column   :label="$t('Public.creation')" align='center' width='80' >
+						<template slot-scope='scope'>
+							{{scope.row.creation_time |  timeFormat}}
+						</template>
 					</el-table-column>
 					<el-table-column prop="name" :label="$t('Public.name')" min-width="120" align='center'>
 					</el-table-column>
@@ -82,7 +85,10 @@
 					</el-table-column>
 					<el-table-column prop="city.name" :label="$t('Public.SubordinateArea')" min-width="120"  align='center'>
 					</el-table-column>
-					<el-table-column prop="descriptionVal" :label="$t('Public.description')" align='center' >
+					<el-table-column  :label="$t('Public.description')" align='center' >
+						<template slot-scope='scope'>
+							{{ scope.row.description | descriptionValue }}
+						</template>
 					</el-table-column>
 					<el-table-column :label="$t('Public.operation')" align='center'width='140'>
 						<template slot-scope="scope">
@@ -107,6 +113,7 @@
 						@size-change='handleSizeChange' 
 						@current-change="handleCurrentChange" 
 						:page-sizes="[10, 20, 50, 100]"
+						:page-size='pagesize'
 						:page-count='pageNum' 
 						:pager-count="pagecount"
 					    >
@@ -115,7 +122,8 @@
 					
 		
 				<!--编辑界面-->
-				<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false" v-loading='editLoading'>
+				<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" 
+					:close-on-click-modal="false" v-loading='editLoading' @close='$refs["editForm"].resetFields()'>
 					<el-form  :model="editForm" label-width="200px" label-ailgn='center' :rules="editFormRules" ref="editForm">
 						<el-form-item label="ID:" prop='id' v-if=' dialogStatus !=="create" '>
 							<el-input v-model="editForm.id" disabled  auto-complete="off" class='ipt_sels'></el-input>
@@ -175,7 +183,7 @@
 		name:'Data',
 		data() {
 		    return {
-		    	token:'',
+		    	token:sessionStorage.getItem('token'),
 			    activeName:'first',
 			    dialogStatus: "",
 			    textMap: {
@@ -232,17 +240,14 @@
 		    };
 		},
 		created(){
-			this.token=sessionStorage.getItem('token');	
-			this.getData();
-		},
-		mounted() {
-		    this.getDatas();
+			this.getDatas();
+			this.getArea();
 		},
 		methods: {
 			reset(){
 				this.$refs['filters'].resetFields()
 			},
-			getData(){
+			getArea(){
 				this.$ajax.get('/location/regions'+'?token='+this.token)
 		  		.then(res => {
 		  			if(res.status==200){
@@ -302,7 +307,6 @@
 					this.loading = false;
 					if(res.status==200){
 						if(res.data.status==0){
-							descriptionValue(res.data.data.items);
 							this.total = res.data.data.page.total;
 					        this.pageNum=res.data.data.page.pages;
 							this.users=res.data.data.items;
@@ -318,7 +322,6 @@
 		        type: "warning"
 		      })
 		        .then(() => {
-
 					this.$ajax.del('/location/del_dc/'+row.id+'?token='+this.token)
 		          	.then(res => {
 						if(res.status=='200'){
@@ -338,29 +341,17 @@
 		    handleSee:function(index,row){
 		    	this.dialogStatus='see';
 		    	this.dialogFormVisible = true;
-		    	this.editLoading = true;
-		    	//克隆赋值
-				this.$ajax.get('/location/dc_info/'+row.id+'?token='+this.token,)
-				.then( res =>{
-					if(res.status==200){
-						if(res.data.status==0){
-							this.editLoading = false;
-							var str=res.data.data;
-							this.editForm={
-								id:str.id,
-						        name: str.name,
-						        region_id:str.region.id,
-						        city_id:str.city.name,
-						        description: str.description,
-						        region_val:'',
-						      	city_val:"",
-						    }
-						}
-					}
-				})
-				.catch(e => {
-					console.log( e)
-				})
+//		    	this.editLoading = true;
+				this.editForm={
+					id:row.id,
+			        name: row.name,
+			        region_id:row.region.id,
+			        city_id:row.city.name,
+			        description: row.description,
+			        region_val:'',
+			      	city_val:"",
+			    }
+
 		    },
 		    //显示编辑界面
 		    handleEdit: function(index, row) {
@@ -380,9 +371,6 @@
 		    handleAdd: function() {
 		      	this.dialogStatus = "create";
 		      	this.dialogFormVisible = true;
-				this.$nextTick(() => {
-					this.$refs["editForm"].resetFields();
-				})
 		      	this.editForm = {
 			        id: "",
 			        name: "",
@@ -397,12 +385,12 @@
 			    this.$refs.editForm.validate(valid => {
 			        if (valid) {
 		                this.editLoading = true;
-		              	let  params={
-		              		name:this.editForm.name,
-		              		description:this.editForm.description,
-		              		city_id:this.editForm.city_id === this.backUp.city.name ? this.backUp.city.id : this.editForm.city_id,
-		              		region_id:this.editForm.region_id
-		              	}
+		              	let params={
+			              		name:this.editForm.name,
+			              		description:this.editForm.description,
+			              		city_id:this.editForm.city_id === this.backUp.city.name ? this.backUp.city.id : this.editForm.city_id,
+			              		region_id:this.editForm.region_id
+			              	}
 						this.$ajax.put('/location/edit_dc/'+this.editForm.id+"?token="+this.token,params)
 		              	.then((res) => {
 			              	if(res.status=='200'){
@@ -532,17 +520,7 @@
 			},
 			formatJson(filterVal,jsonData){
 				return jsonData.map(v => filterVal.map (j => v[j]))
-			},
-			dateFormat(row, column) {
-		      	let date = new Date(parseInt(row.creation_time) * 1000);
-		      	let Y = date.getFullYear() + "-";
-		      	let M =date.getMonth() + 1 < 10  ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
-		      	let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
-		      	let h = date.getHours() < 10  ? "0" + date.getHours() + ":"  : date.getHours() + ":";
-		        let m = date.getMinutes() < 10  ? "0" + date.getMinutes() + ":"  : date.getMinutes() + ":";
-		        let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-		      return Y + M + D + h + m + s;
-		    },
+			}
 		},
 		
 	}

@@ -329,6 +329,7 @@
 
 			physical_ports:{
 				handler(newVal,oldVal){
+//					console.log(newVal)
 					this.physicalData=[];
 					this.physicalData=JSON.parse(JSON.stringify(newVal));
 				},
@@ -340,10 +341,9 @@
 		created(){
 			this.token=sessionStorage.getItem('token');
 			
-			
-			if(this.addLogicalPort==='addLogicPort'){
+			this.getTenantData();
+				if(this.addLogicalPort==='addLogicPort'){
 				//新建逻辑端口界面
-				this.getTenantData();
 				this.addPortStatus=false;
 				//控制标题的操作
 				this.seePortDetails=false;
@@ -351,7 +351,6 @@
 			}
 			if (typeof this.editLogicalPort !='undefined'){
 				//逻辑端口的编辑界面
-				this.getTenantData();
 				this.addPortStatus=true;
 				//控制标题的操作
 				this.seePortDetails=false;
@@ -360,17 +359,15 @@
 			}
 			if(typeof this.title!='undefined'){
 				//进入详情的界面
-
 				this.seePortDetails=true;
 				this.addPortStatus=true;
 				this.getUsers(this.title)
 			}
-			
-			
 		},
 
 		methods:{
 			beginDate(){
+				
 	            const self = this
 	            return {
 		            disabledDate(time){
@@ -412,17 +409,19 @@
 					console.log(e)
 				})
 				
+
 				//获取骨干节点的数据
-				
-				this.$ajax.get('/node/nodes'+'?token='+this.token)
+				var para={
+					search_activated:true
+				}
+				this.$ajax.get('/node/nodes'+'?token='+this.token,para)
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-						
 							this.backNodes=res.data.data.items;
 						}
 					}
-				}).catch(e => {console.log(e)})
+				}).catch(e => console.log(e))
 				
 				//对列表内所有的端口已经使用过的  不能再使用的排除  newtworkBasePortP
 				this.$ajax.get('/port/logic_ports'+'?token='+this.token)
@@ -449,6 +448,7 @@
 				var findVal=this.backNodes.find(function(obj){
 					return obj.id===items;
 				})
+//				console.log(findVal)
 				//将选择的骨干的id的名字保存下来
 //				this.editForm.node_id=findVal.id;
 				this.editForm.node_name=findVal.name;
@@ -460,7 +460,6 @@
 					this.editForm.dc_name=findVal.dc.name;
 					this.editForm.dc_id=findVal.dc.id;
 				}
-
 				//根据节点选取对应的设备
 				
 				this.$ajax.get('/node/node_info/'+ids+'?token='+this.token)
@@ -639,28 +638,39 @@
 			getUsers(id){
 				//编辑和详情的界面的数据
 				//获取所有的列表和详情的时候的界面的数据
+				let that=this
 				
-				this.$ajax.get('/port/logic_port_info/'+id+'?token='+this.token)
-				.then(res =>{
-					if(res.status==200){
-						if(res.data.status==0){
-							this.filters=Object.assign({},res.data.data);
-							if(res.data.data.usable){
-								this.filters.status=this.$t('Public.enable');//启用
-							}else if(!res.data.data.usable){
-								this.filters.status=this.$t('Public.Prohibit');//禁用
+				setTimeout(function(){
+					that.$ajax.get('/port/logic_port_info/'+id+'?token='+that.token)
+					.then(res =>{
+						
+						if(res.status==200){
+							if(res.data.status==0){
+								res.data.data.physical_ports.map(item => {
+									var findVal=that.backNodes.find(j => {
+										return j.id == item.node.id
+										
+									})
+									item.dc_name=findVal.dc.name
+								})
+								that.filters=Object.assign({},res.data.data);
+								if(res.data.data.usable){
+									that.filters.status=that.$t('Public.enable');//启用
+								}else if(!res.data.data.usable){
+									that.filters.status=that.$t('Public.Prohibit');//禁用
+								}
+								that.filters.tenant_id=res.data.data.tenant.name;
+								that.filters.creation_time=datedialogFormat(res.data.data.creation_time);
+								//设置时间的转换
+								that.filters.start_time=new Date(datedialogFormat(res.data.data.start_time));
+								that.filters.end_time=new Date(datedialogFormat(res.data.data.end_time))
+								that.physical_ports=res.data.data.physical_ports;
 							}
-							this.filters.tenant_id=res.data.data.tenant.name;
-							this.filters.creation_time=datedialogFormat(res.data.data.creation_time);
-							//设置时间的转换
-							this.filters.start_time=new Date(datedialogFormat(res.data.data.start_time));
-							this.filters.end_time=new Date(datedialogFormat(res.data.data.end_time))
-							this.physical_ports=res.data.data.physical_ports;
 						}
-					}
-				}).catch(e => {
-					console.log(e)
-				})
+					}).catch(e => {
+						console.log(e)
+					})
+				},10)
 				
 			},
 			addPort(){
@@ -685,6 +695,10 @@
 								hostname:this.editForm.device_name,
 								id:this.editForm.device_id,
 								status:this.editForm.device_status,
+							},
+							dc:{
+								name:this.editForm.dc_name,
+								id:this.editForm.dc_id,
 							},
 							device_type:this.editForm.device_type,
 							node:{//节点

@@ -100,8 +100,7 @@
               placement="right"
               trigger="hover"
             >
-              <span class="warptitle">
-                {{scope.row.content | ellipsis}}
+              <span class="warptitle" v-html='scope.row.content'>
               </span>
             <span
               style="margin-left: 5px;"
@@ -140,9 +139,6 @@
           :label="$t('mesModule.unMessage.table.type')"
           align='center'
         >
-          <template slot-scope="scope">
-            <span>{{ scope.row.type=='notice'? $t('mesModule.sea.mesTypeList.product'):$t('mesModule.sea.mesTypeList.police')}}</span>
-          </template>
         </el-table-column>
       </el-table>
       <!--底部工具条-分页-数据的导出等-->
@@ -156,6 +152,7 @@
           @current-change="handleCurrentChange"
           layout="total, sizes, prev, pager, next, jumper"
           :page-sizes="[10, 20, 30,50]"
+          :pase-size='pagesize'
           :current-page.sync="currentPage"
           :page-count='pageNum'
           :pager-count="pagecount"
@@ -285,13 +282,13 @@ export default {
         });
   },
   filters: {
-    ellipsis(value) {
-      if (!value) return "";
-      if (value.length > 30) {
-        return value.slice(0, 30) + "...";
-      }
-      return value;
-    }
+//  ellipsis(value) {
+//    if (!value) return "";
+//    if (value.length > 30) {
+//      return value.slice(0, 30) + "...";
+//    }
+//    return value;
+//  }
   },
   methods: {
     //重置按钮
@@ -467,12 +464,19 @@ export default {
     },
     // 消息详情-弹窗
     handleClick(index, row) {
-      this.mesdetail.dialogVisible = true;
-      this.mesdetail.header = row.title;
-      this.mesdetail.title = row.type == "notice" ? this.$t('mesModule.sea.mesTypeList.product'): this.$t('mesModule.sea.mesTypeList.police');
-      this.mesdetail.type = row.level + this.$t('mesModule.sea.leType');
-      this.mesdetail.timeVal = row.time;
-      this.mesdetail.text = row.content;
+
+			this.mesdetail={
+    		dialogVisible:true,
+    		header:row.title,
+    		title:row.type,
+    		type : row.level + this.$t('mesModule.sea.leType'),
+    		timeVal : row.time,
+    		text : row.content,
+    		param:row.param,
+    		code:row.code,
+    		id:row.id,
+    		level:row.level,
+    	}
       this.readid = row.id.split(",");
       let para = { ids: this.readid };
       this.$ajax

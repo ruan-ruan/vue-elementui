@@ -188,7 +188,7 @@
 			}
 		},
 		mounted(){
-			console.log(this.filNode)
+//			console.log(this.filNode)
 		},
 		methods:{
 			getTenantData(){

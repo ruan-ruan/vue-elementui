@@ -18,7 +18,7 @@
 			}
 		},
 		mounted(){
-			console.log(this.clounID)
+//			console.log(this.clounID)
 		},
 	}
 </script>

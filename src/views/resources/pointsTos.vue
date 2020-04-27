@@ -1,6 +1,6 @@
 <template>
 	<div >
-		<multiPoint :virTit='virTit'></multiPoint>
+		<multiPoint :virTit='virTit':search_device='search_device':search_port='search_port'></multiPoint>
 	</div>
 </template>
 
@@ -13,7 +13,9 @@
 		},
 		data(){
 			return{
-				virTit:'虚拟组网专线'
+				virTit:'虚拟组网专线',
+				search_device:this.$route.query.search_device,
+    			search_port:this.$route.query.search_port,
 			}
 		}
 	}

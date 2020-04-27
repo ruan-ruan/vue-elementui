@@ -142,7 +142,7 @@
 		 * logicID     逻辑口管理里面  ---id
 		 * tenantID    租户里面详情里面对应的--- id
 		 * */
-		props:['virTit','clounID','logicID','nodeDetail','tenantID'],
+		props:['virTit','clounID','logicID','nodeDetail','tenantID','search_port','search_device'],
 		data(){
 			return{
 				token:'',
@@ -209,10 +209,11 @@
 		created(){
 			this.token=sessionStorage.getItem('token');
 			this.getUsers();
+			console.log(this.search_port)
 		},
 		mounted(){
 			this.getTenant();
-			console.log(this.logicID)
+//			console.log(this.logicID)
 			
 		},
 		computed:{
@@ -302,7 +303,9 @@
 			        search_tenant: typeof this.tenantID !='undefined'?this.tenantID: this.filters.tenant_id,
 			        search_node:(typeof this.nodeDetail !=='undefined' ? this.nodeDetail:''),
 			        search_logic_port:(typeof this.logicID !=='undefined' ?this.logicID:''),
-			        search_status:this.filters.status
+			        search_status:this.filters.status,
+			        search_device:typeof this.search_device !=='undefined'?this.search_device:'',
+        			search_port:typeof this.search_port !=='undefined'? this.search_port :'',
 				}
 				this.$ajax.get('/vll/multi_vlls'+'?token='+this.token,para)
 				.then(res => {
@@ -378,15 +381,7 @@
 						detailsID:row.id,
 					}
 				})
-				this.$ajax.get('/vll/multi_vll_info/'+row.id+'?token='+this.token)
-				.then(res => {
-					console.log(res);
-					
-				})
-				.catch(e => {
-					console.log(e)
-				})
-
+			
 			},
 			handleEdit(index,row){//编辑
 				this.$router.push({

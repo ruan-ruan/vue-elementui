@@ -206,8 +206,10 @@
 				this.pointLogic=[];
 				this.clounData=[];
 				this.driveData=[];
-				
-				this.$ajax.get('/node/nodes'+'?token='+this.token)
+				var para={
+					search_activated:true
+				}
+				this.$ajax.get('/node/nodes'+'?token='+this.token,para)
 				.then(res => {//获取节点的数据
 					if(res.status==200){
 						if(res.data.status==0){
@@ -338,7 +340,7 @@
 								name:str.name,
 								region:str.region,
 								access_point:str.access_point,
-								bandwidth:str.bandwidth,
+								bandwidth:Math.round(str.bandwidth/1024) ,
 								description:str.description,
 								node_id:str.node.name,
 								logic_port_id:str.logic_port.name,
@@ -366,7 +368,7 @@
 								name:this.editForm.name,
 								region:this.editForm.region,
 								access_point:this.editForm.access_point,
-								bandwidth:this.editForm.bandwidth,
+								bandwidth:this.editForm.bandwidth*1024,
 								description:this.editForm.description,
 								node_id:this.editForm.node_id,
 								logic_port_id:this.editForm.logic_port_id,
@@ -419,7 +421,7 @@
 							name:this.editForm.name,
 							region:this.editForm.region,
 							access_point:this.editForm.access_point,
-							bandwidth:this.editForm.bandwidth,
+							bandwidth:this.editForm.bandwidth*1024,
 							description:this.editForm.description,
 							node_id:obj.node_id,
 							logic_port_id:obj.logic_port_id,
@@ -430,7 +432,6 @@
 							extension:this.editForm.extension,
 							get_speed_key:this.editForm.get_speed_key,
 						}
-
 						this.$ajax.put('/link/edit_cloud_link/'+this.editForm.id+'?token='+this.token,para)
 						.then(res => {
 							this.editLoading=false;
