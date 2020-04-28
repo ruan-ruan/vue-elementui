@@ -285,7 +285,7 @@ export default {
     };
   },
   created() {
-
+		console.log( this.$store.state.aside )
     this.selectData();
     this.getUsers();
 

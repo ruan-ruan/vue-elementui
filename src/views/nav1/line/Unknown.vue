@@ -467,9 +467,9 @@
 				seeStatusCreatime:true,
 				buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏 "link@add_unknown_link"
 			  		add:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unLink").list, "link@add_unknown_link").show,//添加	
-			  		del:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unLink").list, "link@del_unknown_link").show,//单个删除和批量的删除是绑定在一起的  
+			  		del:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unLink").list, "link@del_link").show,//单个删除和批量的删除是绑定在一起的  
 			  		edit:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unLink").list,"link@edit_unknown_link").show,//编辑的值
-			  		see:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unLink").list, "link@unknown_link_info" ).show,//查看详情
+			  		see:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unLink").list, "link@link_info" ).show,//查看详情
 			  		run:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unLink").list,"link@run_link" ).show,//运行
 			  	},
 //			  	linkTotalData:[],//链路和未知链路所有的数据
@@ -951,7 +951,7 @@
 					type:'danger'
 				})
 				.then( () => {
-					this.$ajax.del('/link/del_unknown_link/'+row.id+'?token='+this.token)
+					this.$ajax.del('/link/del_link/'+row.id+'?token='+this.token)
 					.then( res => {
 						if(res.status==200){
 							if(res.data.status==0){
@@ -1011,7 +1011,7 @@
 					let para={
 						ids :ids,
 					};
-					this.$ajax.del('/link/del_unknown_links'+'?token='+this.token,para)
+					this.$ajax.del('/link/del_links'+'?token='+this.token,para)
 					.then( res => {
 
 						if(res.status==200){

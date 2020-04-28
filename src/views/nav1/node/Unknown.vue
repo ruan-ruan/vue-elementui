@@ -202,12 +202,11 @@
 				},
 				buttonData:this.recursion( this.$store.state.aside ,"Public.unNode"),//获取未知节点权限
 			  	buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏
-			  		del:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unNode").list, "node@del_unknown_node").show,//单个删除和批量的删除是绑定在一起的  
+			  		del:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unNode").list, "node@del_node").show,//单个删除和批量的删除是绑定在一起的  
 			  		edit:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unNode").list, "node@edit_unknown_node").show,//编辑的值
 			  		add:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unNode").list, "node@add_unknown_node").show,//添加的值
-			  		see:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unNode").list, "node@unknown_node_info" ).show,//查看详情  
+			  		see:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unNode").list, "node@node_info" ).show,//查看详情  
 			  		run:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unNode").list,  "node@run_node").show,//运行 "node@run_node"
-			  		
 			  	}
 	 		};
 	   },
