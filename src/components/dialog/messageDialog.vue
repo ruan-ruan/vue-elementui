@@ -75,10 +75,11 @@ export default {
     	code:'',//  port& device
     	//  获取各个   信息的查看的权限
     	buttonVal:{
-    		Vll:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list, "vll@p2p_vll_info" ).show,//查看点到点详情
-    		node:this.codeVal(this.recursion( this.$store.state.aside ,"Public.backboneNode").list, "node@node_info" ).show,//查看节点详情
-    		node_unknow:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unNode").list, "node@unknown_node_info" ).show,//查看未知节点详情  
-    		mul:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointsMultiInter").list, "vll@multi_vll_info").show,//查看组网详情
+    		Vll_Info:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointSpecial").list, "vll@p2p_vll_info" ).show,//查看点到点详情
+    		node_Info:this.codeVal(this.recursion( this.$store.state.aside ,"Public.backboneNode").list, "node@node_info" ).show,//查看节点详情
+    		mul_Info:this.codeVal(this.recursion( this.$store.state.aside ,"aside.pointsMultiInter").list, "vll@multi_vll_info").show,//查看组网详情
+    		muls:this.recursion( this.$store.state.aside ,"aside.virtualSpecial").show,//查看组网列表
+    		vlls:this.recursion( this.$store.state.aside ,"aside.pointSpecial").show//查看组网列表
     	}
     };
   },
@@ -87,13 +88,9 @@ export default {
   		handler(newVal,oldVal){
   			this.param=JSON.parse(JSON.stringify(newVal.param));
   			this.code=newVal.code.match(/(\S*)@/)[1];
-  			console.log(this.code)
   		},
   		deep:true
   	}
-  },
-  created(){
-  	console.log(this.mesdetail);
   },
   methods: {
     handleClose() {
@@ -106,14 +103,16 @@ export default {
     	 * type		要显示的界面的类型   vll  multi  两种
     	 * code  	只有在 str数组里对应的name  获取对应的value  作为参数  传递
     	 * */
-    	//  code   分为 设备 或者端口
+    	//  code   分为 设备 或者端口  查看对应的列表
     	var arr=[
     		{
     			type:'vll',
     			path:'/resource/virtualLine/pointTo',
+    			value:this.buttonVal.vlls
     		},{
     			type:'multi',
-    			path:'/resource/virtualLine/pointsTos'
+    			path:'/resource/virtualLine/pointsTos',
+    			value:this.buttonVal.muls
     		},
     	];
     	var str=[
@@ -128,22 +127,30 @@ export default {
     	str.map(item => {
     		arr.map(inject => {
     			if(this.code == item.name){
-    				if(inject.type == type ){
-    					var para={};
-		    			var query={};
-		    			para['path']=inject.path;
-		    			query[item.value]=id;
-		    			para.query=query;
-		    			console.log(para)
-		    			this.$router.push(para)
+    				if(inject.value){
+    					if(inject.type == type ){
+	    					var para={};
+			    			var query={};
+			    			para['path']=inject.path;
+			    			query[item.value]=id;
+			    			para.query=query;
+			    			console.log(para)
+			    			this.$router.push(para)
+	    				}
+    				}else{
+    					this.$message({
+    						message:'暂无查看权限!',
+    						type:'warning'
+    					})
     				}
+    				
     			}
     		})
     	})
 
     },
     seeInfo(id){
-    	console.log(id)
+    	console.log( this.buttonVal.Vll_Info )
     	/**
     	 * id   获取详情的时候需要的使用的id
     	 * {mesdetail{code}
@@ -157,11 +164,13 @@ export default {
     		{
     			type:'vll',
     			path:'/resource/virtualLine/pointdetails',
-    			value:'pointID'
+    			value:'pointID',
+    			boo:this.buttonVal.Vll_Info
     		},{
     			type:'point',
     			path:'/business/detailsMultipoint',
-    			value:'detailsID'
+    			value:'detailsID',
+    			boo:this.buttonVal.mul_Info
     		}
     	];
     	if(this.code == 'node'){
@@ -188,12 +197,19 @@ export default {
     	}else {
     		//不是节点的时候   剩下  虚拟专线和组网详情界面
     		arr.map(item => {
-    			if( this.code == item.type ){
-    				var obj={},query={};
-    				obj['path']=item.path;
-    				query[item.value]= id;
-    				obj.query=query;
-    				this.$router.push(obj)
+    			if(item.boo){
+    				if( this.code == item.type ){
+	    				var obj={},query={};
+	    				obj['path']=item.path;
+	    				query[item.value]= id;
+	    				obj.query=query;
+	    				this.$router.push(obj)
+	    			}
+    			}else{
+    				this.$message({
+    					message:'暂无查看权限!',
+    					type:"warning"
+    				})
     			}
     		})
     	}

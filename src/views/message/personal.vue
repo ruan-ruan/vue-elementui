@@ -32,8 +32,8 @@
 			</el-row>
 			
 			<!--iphone email  edit dialog-->
-			<el-dialog :title='textMap[dialogStatus]':visible.sync="dialogFormVisible":close-on-click-modal="false"  v-loading='editLoading'>
-				
+			<el-dialog :title='textMap[dialogStatus]':visible.sync="dialogFormVisible"
+				:close-on-click-modal="false"  v-loading='editLoading'@close='close'>
 				<el-steps :active="active" finish-status="success">
 				  	<el-step v-for='(item ,index) in stepData' :key='index' 
 				  		:title="item.value" :label='item.label'></el-step>
@@ -230,6 +230,19 @@
 			},
 		},
 		methods:{
+			close(){
+				if(this.$refs['iphoneForm'] !==undefined){
+					this.$nextTick(() => {
+						this.$refs['iphoneForm'].resetFields();
+					})
+				}
+				if(this.$refs['emailForm'] !==undefined){
+					this.$nextTick(() => {
+						this.$refs['emailForm'].resetFields();
+					})
+				}
+				this.active = 1; 
+			},
 			myself(){
 				this.infoLoading=true;
 				this.$ajax.get('/public/get_me'+'?token='+this.token)
