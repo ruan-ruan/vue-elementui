@@ -474,6 +474,7 @@ const en = {
 		edit:"Modify",
 		next:'Next step',
 		note:'Note: The bound mailbox number will be used to receive important message prompts, please be sure to update in real time.',
+		noView:'No permission to view!',
 		
     },
     confirm:{

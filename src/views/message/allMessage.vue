@@ -146,7 +146,6 @@
               trigger="hover"
             >
               <span class="warptitle" v-html='scope.row.content'>
-                <!--{{scope.row.content | ellipsis}}-->
               </span>
 
               <span
@@ -235,7 +234,7 @@ export default {
   data() {
     return {
       //获取用户的token
-      token: "",
+      token: sessionStorage.getItem("token"),
       //顶部的搜索的部分对用参数
       formList: {
         name: "",
@@ -309,21 +308,7 @@ export default {
     };
   },
   created() {
-    //获取用户的权限
-    this.token = sessionStorage.getItem("token");
-  },
-  mounted() {
-    //执行钩子函数
     this.getData();
-  },
-  filters: {
-    ellipsis(value) {
-      if (!value) return "";
-      if (value.length > 15) {
-        return value.slice(0, 15) + "...";
-      }
-      return value;
-    }
   },
   methods: {
     //重置按钮

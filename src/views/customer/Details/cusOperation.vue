@@ -5,7 +5,9 @@
 				<el-col :span='24'style='margin-left: 40px;'>
 						<el-form :model='customer' ref='customer' :rules='customerRules' v-loading='editLoading' label-width='210px'>
 							<el-form-item :label='$t("Public.creation")+"："'v-if='!addCustome'>
-								<el-input disabled v-model='customer.creation_time' class='ipt_sels'  ></el-input>
+								<template>
+									{{ customer.creation_time | timeFormat }}
+								</template>
 							</el-form-item>
 							<el-form-item :label='$t("customer.tenantName")+"："' prop='name'>
 								<template>
@@ -269,8 +271,6 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.editLoading=false;
-							//datedialogFormat
-							res.data.data.creation_time=datedialogFormat(res.data.data.creation_time);
 							this.customer=res.data.data;
 
 							this.selectedOptions.push(res.data.data.province,res.data.data.city,res.data.data.district);

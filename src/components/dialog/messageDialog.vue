@@ -101,9 +101,8 @@ export default {
     	/**
     	 * id  		当前需要传的id
     	 * type		要显示的界面的类型   vll  multi  两种
-    	 * code  	只有在 str数组里对应的name  获取对应的value  作为参数  传递
+    	 * code  	只有在 str数组里对应的name  获取对应的value  作为参数  传递     分为 设备 或者端口  查看对应的列表
     	 * */
-    	//  code   分为 设备 或者端口  查看对应的列表
     	var arr=[
     		{
     			type:'vll',
@@ -134,12 +133,11 @@ export default {
 			    			para['path']=inject.path;
 			    			query[item.value]=id;
 			    			para.query=query;
-			    			console.log(para)
 			    			this.$router.push(para)
 	    				}
     				}else{
     					this.$message({
-    						message:'暂无查看权限!',
+    						message:this.$t("Public.noView"),
     						type:'warning'
     					})
     				}
@@ -150,7 +148,6 @@ export default {
 
     },
     seeInfo(id){
-    	console.log( this.buttonVal.Vll_Info )
     	/**
     	 * id   获取详情的时候需要的使用的id
     	 * {mesdetail{code}
@@ -174,26 +171,33 @@ export default {
     		}
     	];
     	if(this.code == 'node'){
-    		this.$ajax.get('/node/node_info/'+id+'?token='+this.token)
-    		.then(res => {
-    			if(res.status == 200 && res.data.status == 0){
-    				if(res.data.data.activated){//进入节点详情
-    					this.$router.push({
-				        path: "/location/index/unknown/nodedetails",
-				        query:{
-				        	detailsID:id
-				        }
-				      });
-    				}else{// 进入未知节点详情
-    					this.$router.push({
-								path:'/location/index/unknown_details',
-								query:{
-									unknownID:id
-								}
-							})
-    				}
-    			}
-    		})
+    		if(this.buttonVal.node_Info){
+    			this.$ajax.get('/node/node_info/'+id+'?token='+this.token)
+	    		.then(res => {
+	    			if(res.status == 200 && res.data.status == 0){
+	    				if(res.data.data.activated){//进入节点详情
+	    					this.$router.push({
+					        path: "/location/index/unknown/nodedetails",
+					        query:{
+					        	detailsID:id
+					        }
+					      });
+	    				}else{// 进入未知节点详情
+	    					this.$router.push({
+									path:'/location/index/unknown_details',
+									query:{
+										unknownID:id
+									}
+								})
+	    				}
+	    			}
+	    		})
+    		}else{
+    			this.$message({
+						message:this.$t("Public.noView"),
+						type:"warning"
+					})
+    		}
     	}else {
     		//不是节点的时候   剩下  虚拟专线和组网详情界面
     		arr.map(item => {
@@ -207,7 +211,7 @@ export default {
 	    			}
     			}else{
     				this.$message({
-    					message:'暂无查看权限!',
+    					message:this.$t("Public.noView"),
     					type:"warning"
     				})
     			}

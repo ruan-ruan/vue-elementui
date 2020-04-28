@@ -57,12 +57,14 @@
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="creation_time"  :label="$t('Public.creation')" align='center' width='80' :formatter='dateFormat' >
+				<el-table-column  :label="$t('Public.creation')" align='center' width='80'  >
+					<template slot-scope='scope'>
+						{{ scope.row.creation_time | timeFormat }}
+					</template>
 				</el-table-column>
 				<el-table-column prop='name':label='$t("multi.multiName")' align='center'min-width='130' ></el-table-column>
 				<el-table-column :label='$t("multi.multiStatus")' align='center'width='80' >
 					<template slot-scope='scope'>
-						<!--:class="scope.row.color"-->
 						<span  :class="scope.row.color">{{scope.row.statusName}}</span>
 					</template>
 				</el-table-column>
@@ -72,7 +74,11 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop='tenant.name':label='$t("Public.tenant")' align='center'min-width='150' ></el-table-column>
-				<el-table-column prop='descriptionVal':label='$t("Public.description")' align='center'min-width='150' ></el-table-column>
+				<el-table-column :label='$t("Public.description")' align='center'min-width='150' >
+					<template slot-scope='scope'>
+						{{ scope.row.description | descriptionValue }}
+					</template>
+				</el-table-column>
 				<el-table-column :label='$t("Public.operation")' align='center' width='140' v-if='filProps'>
 					<template slot-scope='scope' v-if='scope.row.status == "creating" ? false : true ' >
 						<el-button size='mini' type='warning' @click='handleSta(scope.$index,scope.row)' v-if='buttonVal.run?  scope.row.status == "failure"? false : true :buttonVal.run'>{{scope.row.btnStatus}}</el-button>
@@ -94,6 +100,7 @@
 			            @current-change="handleCurrentChange"
 			            layout="total, sizes, prev, pager, next, jumper"
 			            :page-sizes="[10, 20, 30,50]"
+			            :page-size='pagesize'
 			            :current-page.sync="currentPage"
 			            :page-count='pageNum'
 			            :pager-count="pagecount"
@@ -132,9 +139,7 @@
 </template>
 
 <script>
-	
-	import {descriptionValue} from '@/assets/js/index.js'
-	
+
 	export default{
 		name:"multiPoint",
 		/**nodeDetail  节点组件传过来的详情 ---id
@@ -145,7 +150,7 @@
 		props:['virTit','clounID','logicID','nodeDetail','tenantID','search_port','search_device'],
 		data(){
 			return{
-				token:'',
+				token:sessionStorage.getItem('token'),
 				filters:{
 					name:'',
 					tenant_id:'',
@@ -207,14 +212,10 @@
 			}
 		},
 		created(){
-			this.token=sessionStorage.getItem('token');
 			this.getUsers();
-			console.log(this.search_port)
 		},
 		mounted(){
 			this.getTenant();
-//			console.log(this.logicID)
-			
 		},
 		computed:{
 			filProps(){
@@ -312,7 +313,6 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.loading=false
-							descriptionValue(res.data.data.items);
 							res.data.data.items.map(item => {
 								if(item.status == 'servicing'){
 									item.statusName=this.$t('Public.servicing');
@@ -334,7 +334,6 @@
 							})
 							this.users=res.data.data.items;
 							this.total=res.data.data.page.total;
-//							console.log(this.users)
 						}
 					}
 				}).catch(e => {console.log(e)})
@@ -436,16 +435,6 @@
 	              console.log(e);
 	            });
 			},
-			dateFormat(row, column) {
-		      	let date = new Date(parseInt(row.creation_time) * 1000);
-		      	let Y = date.getFullYear() + "-";
-		      	let M =date.getMonth() + 1 < 10  ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
-		      	let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
-		      	let h = date.getHours() < 10  ? "0" + date.getHours() + ":"  : date.getHours() + ":";
-		        let m = date.getMinutes() < 10  ? "0" + date.getMinutes() + ":"  : date.getMinutes() + ":";
-		        let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-		      return Y + M + D + h + m + s;
-		    },
 		}
 	}
 </script>

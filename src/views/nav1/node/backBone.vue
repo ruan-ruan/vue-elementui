@@ -104,13 +104,12 @@
             <el-table-column
               prop='exist_status'
               width='80'
-
               :label='$t("Public.deviceStatus")' 
               align='center'
             >
               <template slot-scope="scope">
                 <ul v-for='(item,index) in scope.row.devices' :key='index'>
-                  <li :class="item.exist_status=='normal'? 'backRun':'backStop' ">{{item.exist_status=='normal'?$t('Public.run') : $t('Public.leave') }}</li>
+                  <li  :class="item.exist_status=='normal'? 'backRun':'backStop' ">{{item.exist_status=='normal'?$t('Public.run') : $t('Public.leave') }}</li>
                 </ul>
               </template>
             </el-table-column>
@@ -121,7 +120,7 @@
               align='center'
             >
               <template slot-scope="scope">
-              	<span>{{scope.row.devices_sn1}}</span> <br />
+              	<span >{{scope.row.devices_sn1}}</span> <br />
               	<span>{{scope.row.devices_sn2}}</span>
               </template>
             </el-table-column>

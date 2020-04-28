@@ -312,7 +312,6 @@
 			}
 			//下面的是未知节点的编辑，添加，详情的界面的控制
 			if(typeof this.unknown_id != 'undefined'){
-				console.log(this.unknown_id)
 				//此处是未知节点的添加界面的控制除了物理id的隐藏  其他的都是可以控制的
 				this.StaEditForm=false;
 				this.StaNot=false;
@@ -428,7 +427,6 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-							console.log(res)
 							this.loading=false
 							var strData=res.data.data;
 							this.baseData=res.data.data
@@ -646,18 +644,15 @@
 									console.log(e)
 								})
 							}else{// 执行   添加   --> 详情 -- > 编辑
-								console.log(para)
 								this.$ajax.post('/node/add_dev/'+para.id+'?token='+this.token,para.devices[0])
 								.then(res => {
 									if(res.status ===200){
 										if(res.data.status ===0){
-											console.log(res)
 											return this.$ajax.get('/node/node_info/'+para.id+"?token="+this.token)
 										}
 									}
 								})
 								.then(res => {
-									console.log(res)
 									if(res.status == 200){
 										if(res.data.status == 0){
 											this.baseData=JSON.parse(JSON.stringify(res.data.data));
@@ -1051,7 +1046,6 @@
 						.then(res => {
 							if(res.status == 200){
 								if(res.data.status == 0){
-									console.log(res);
 									this.baseData=Object.assign({},res.data.data);
 									var str=res.data.data;
 									var d1=str.devices.find(item => {
@@ -1155,99 +1149,6 @@
 					
 				}
 			},
-//			getUnknownDetail(id){
-//				
-//				//获取未知节点的详情   编辑的数据
-//				this.loading=true;				
-//				this.$ajax.get('/node/node_info/'+id+'?token='+this.token)
-//				.then(res => {
-//					console.log(res)
-//					this.$refs['seeForm'].resetFields();
-//					this.loading=false;
-//					if(res.status==200){
-//						if(res.data.status==0){
-//							
-//							this.baseData=Object.assign({},res.data.data);
-//							console.log(this.baseData)
-//							var unknownSee;
-//							unknownSee=res.data.data;
-//							var d1=unknownSee.devices.find( item => {
-//								return item['sign'] == 'd1'
-//							})
-//							if(unknownSee.devices.length==1){
-//								this.equStatusTwo=false;
-//								this.seeForm={
-//									id:unknownSee.id,
-//									name:unknownSee.name,
-//									vtep:unknownSee.vtep,
-//									user_vlan:unknownSee.user_vlan,
-//									devices0_id:d1.id,
-//									devices0_hostname:d1.hostname,
-//									devices0_ip:d1.ip,
-//									devices0_vendor:d1.vendor,
-//									devices0_model:d1.model,
-//									devices0_sn:d1.sn,
-//									devices0_position:d1.position,
-//									devices0_room:d1.room,
-//									devices0_rack:d1.rack,
-//									devices0_description:d1.description,
-//									port_section0:d1.port_section,
-////										dc_id:unknownSee.dc.id,
-////										dc_name:unknownSee.dc.name,
-//								}
-//							}else if(unknownSee.devices.length=2){
-//								this.equStatusTwo=true;
-//								var d1=unknownSee.devices.find( item => {
-//									return item['sign'] == 'd1'
-//								})
-//								var d2=unknownSee.devices.find( item => {
-//									return item['sign'] == 'd2'
-//								})
-//								this.seeForm={
-////										dc_id:unknownSee.dc.id,
-//									id:unknownSee.id,
-//									name:unknownSee.name,
-//									vtep:unknownSee.vtep,
-//									user_vlan:unknownSee.user_vlan,
-//				
-//									devices0_id:d1.id,
-//									devices0_hostname:d1.hostname,
-//									devices0_ip:d1.ip,
-//									devices0_vendor:d1.vendor,
-//									devices0_model:d1.model,
-//									devices0_sn:d1.sn,
-//									devices0_position:d1.position,
-//									devices0_room:d1.room,
-//									devices0_rack:d1.rack,
-//									devices0_description:d1.description,
-//									port_section0:d1.port_section,
-//				
-//									devices1_id:d2.id,
-//									devices1_hostname:d2.hostname,
-//									devices1_ip:d2.ip,
-//									devices1_vendor:d2.vendor,
-//									devices1_model:d2.model,
-//									devices1_sn:d2.sn,
-//									devices1_position:d2.position,
-//									devices1_room:d2.room,
-//									devices1_rack:d2.rack,
-//									devices1_description:d2.description,
-//									port_section1:d2.port_section,
-//			
-////										dc_id:unknownSee.dc.id,
-////										dc_name:unknownSee.dc.name,
-//								}
-//							}
-//							if(res.data.data.dc){
-//								this.seeForm.dc_id=res.data.data.dc.name;
-//							}
-//							
-//						}
-//					}
-//				}).catch(e => {
-//					console.log(e)
-//				})
-//			},
 			goback(){
 				
 				this.$store.state.statusname=false;

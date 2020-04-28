@@ -61,7 +61,10 @@
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='creation_time' :formatter='dateFormat' :label='$t("Public.creation")' width='80' align='center' >					
+				<el-table-column :label='$t("Public.creation")' width='80' align='center' >					
+					<template slot-scope='scope'>
+						{{ scope.row.creation_time | timeFormat }}
+					</template>
 				</el-table-column>
 				<el-table-column  :label='$t("Public.cloudName")' min-width='100' align='center'>
 					<template slot-scope='scope'>
@@ -91,7 +94,10 @@
 						<span :class='scope.row.color' v-text="scope.row.portStatus"></span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='descriptionVal'  :label='$t("Public.description")' min-width='80' align='center'>
+				<el-table-column  :label='$t("Public.description")' min-width='80' align='center'>
+					<template slot-scope='scope'>
+						{{ scope.row.description  | descriptionValue }}
+					</template>
 				</el-table-column>
 				<el-table-column   :label='$t("Public.operation")' width='100' align='center'>
 					<template slot-scope='scope'>
@@ -102,33 +108,32 @@
 			</el-table>
 			
 			<el-row class='toolbar'>
-					<el-col :span='24'>
-						<el-pagination
-						:total="total"
-				     	@size-change="handleSizeChange"
-                   		@current-change="handleCurrentChange"
-				     	layout="total, sizes, prev, pager, next, jumper"
-				     	:page-sizes="[10, 20, 30,50]" 						     	 
-				     	:current-page.sync="currentPage"  
-				     	:page-count='pageNum'
-				     	:pager-count="pagecount"
-				     	></el-pagination>
-					</el-col>
+				<el-col :span='24'>
+					<el-pagination
+					:total="total"
+			     	@size-change="handleSizeChange"
+               		@current-change="handleCurrentChange"
+			     	layout="total, sizes, prev, pager, next, jumper"
+			     	:page-sizes="[10, 20, 30,50]" 
+			     	:page-size='pagesize'
+			     	:current-page.sync="currentPage"  
+			     	:page-count='pageNum'
+			     	:pager-count="pagecount"
+			     	></el-pagination>
+				</el-col>
 			</el-row>
-			
-			
 		</section>
 	</div>
 </template>
 
 <script>
-	import {descriptionValue,getPortStatus ,datedialogFormat} from '@/assets/js/index.js'
+	import {getPortStatus } from '@/assets/js/index.js'
 	
 	export default{
 		name:'cloun',
 		data(){
 			return{
-				token:'',
+				token:sessionStorage.getItem('token'),
 				filters:{
 					name:'',
 					cloun:"",
@@ -174,7 +179,6 @@
 			}
 		},
 		created(){
-			this.token=sessionStorage.getItem('token')
 			this.getUser()
 		},
 		methods:{
@@ -211,9 +215,6 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.loading=false;
-							//datedialogFormat
-							descriptionValue(res.data.data.items);
-							console.log(res)
 							res.data.data.items.map(ele => {
 								ele.portStatus=getPortStatus(ele.logic_port.physical_port)
 								switch( getPortStatus(ele.logic_port.physical_port) ){
@@ -372,18 +373,6 @@
 			formatJson(filterVal,jsonData){
 				return jsonData.map(v => filterVal.map(j => v[j]))
 			},
-			//表格数据时间转换
-			dateFormat(row,column){
-	    		//将时间戳转换为前端的时间
-	    		let date=new Date(parseInt(row.creation_time)*1000);
-	    		let Y=date.getFullYear()+'-';
-	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +'  ':date.getDate()+'  ';
-	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
-	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
-	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
-	    		return Y + M + D + h + m + s	    		
-	    	}
 		}
 	}
 </script>

@@ -69,8 +69,7 @@
 			},
 			base2:{
 				handler(newVal,oldVal){
-					
-					this.base2ID=newval.id;
+					this.base2ID=newVal.id;
 				},
 				deep:true
 			}

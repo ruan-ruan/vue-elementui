@@ -153,7 +153,6 @@
 					<el-form-item :label='$t("Public.creation")+"："'>
 						<template>
 							{{ editForm.creation_time | timeFormat }}
-							<!--<span v-text="editForm.creation_time"></span>-->
 						</template>
 					</el-form-item>
 					<el-form-item :label='$t("Public.linkState")+"："'>
@@ -447,7 +446,6 @@
 				this.$ajax.get('/link/links'+'?token='+this.token,para)
 				.then( res => {
 					if(res.status==200){
-						console.log(res)
 						if(res.data.status==0){
 						this.loading=false;
 

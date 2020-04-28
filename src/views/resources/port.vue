@@ -58,7 +58,11 @@
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
    	 		</el-table-column>
-   	 		<el-table-column prop='creation_time'   :label='$t("Public.creation")' :formatter='dateFormat' width='80'align='center'></el-table-column>
+   	 		<el-table-column  :label='$t("Public.creation")' width='80'align='center'>
+   	 			<template slot-scope='scope'>
+   	 				{{ scope.row.creation_time | timeFormat }}
+   	 			</template>
+   	 		</el-table-column>
    	 		<el-table-column prop='name' :label='$t("Public.logName")' min-width='100'align='center'>
    	 			<template slot-scope='scope'>
    	 				<span class='cli_spn' @click="handleSee(scope.$index,scope.row)">{{scope.row.name}}</span>
@@ -72,9 +76,21 @@
    	 		</el-table-column>
    	 		<el-table-column prop='physical_ports_len' :label='$t("Public.portNumber")' min-width='100'align='center'></el-table-column>
    	 		<el-table-column prop='access_type' :label='$t("Public.linkType")' min-width='100'align='center'></el-table-column>
-   	 		<el-table-column prop='start_time' :label='$t("Public.conStart")' :formatter='dateFormat' width='80'align='center'></el-table-column>
-   	 		<el-table-column prop='end_time' :label='$t("Public.conEnd")' :formatter='dateFormat' width='80'align='center'></el-table-column>
-   	 		<el-table-column prop='descriptionVal' :label='$t("Public.description")' min-width='100'align='center'></el-table-column>
+   	 		<el-table-column  :label='$t("Public.conStart")'  width='80'align='center'>
+   	 			<template slot-scope='scope'>
+   	 				{{scope.row.start_time | timeFormat}}
+   	 			</template>
+   	 		</el-table-column>
+   	 		<el-table-column  :label='$t("Public.conEnd")'  width='80'align='center'>
+   	 			<template slot-scope='scope'>
+   	 				{{scope.row.end_time | timeFormat}}
+   	 			</template>
+   	 		</el-table-column>
+   	 		<el-table-column  :label='$t("Public.description")' min-width='100'align='center'>
+   	 			<template slot-scope='scope'>
+   	 				 {{ scope.row.description | descriptionValue }}
+   	 			</template>
+   	 		</el-table-column>
    	 		<el-table-column  :label='$t("Public.operation")' width='120'  align='center'v-if='filProps'>
    	 			<template slot-scope='scope' >
    	 				<el-button size='mini' type='info' @click='handleStatus(scope.$index, scope.row)'v-if='buttonVal.stop'>{{scope.row.btnStatus}}</el-button>
@@ -91,7 +107,8 @@
 				     	@size-change="handleSizeChange"
               @current-change="handleCurrentChange"
 				     	layout="total, sizes, prev, pager, next, jumper"
-				     	:page-sizes="[10, 20, 30,50]" 						     	 
+				     	:page-sizes="[10, 20, 30,50]" 
+				     	:page-size='pagesize'
 				     	:current-page.sync="currentPage"  
 				     	:page-count='pageNum'
 				     	:pager-count="pagecount"
@@ -103,7 +120,7 @@
 </template>
 
 <script>
-	import {getPortStatus,isPortStatus,descriptionValue,datedialogFormat,dealNull} from '@/assets/js/index'
+	import {getPortStatus,isPortStatus,dealNull} from '@/assets/js/index'
 	export default{
 		name:'port',
 		/**titleOne ， titleTwo  节点里面设备的的详情的id的数据
@@ -113,7 +130,7 @@
 		props:['titleOne','titleTwo','LogicTitle','tenantID'],//来判断进入的界面的，控制添加和操作按钮显示
 		data(){
 			return{			
-				token:'',
+				token:sessionStorage.getItem('token'),
 				filters:{
 					nameLogo:'',
 					name:'',
@@ -164,8 +181,6 @@
 		},
 
 		created(){
-			//获取token
-			this.token=sessionStorage.getItem('token');
 
 			this.getUsers();
 			this.getTenantData();			
@@ -186,9 +201,6 @@
 					return true;
 				}
 			}
-		},
-		mounted(){
-//			console.log(this.filNode)
 		},
 		methods:{
 			getTenantData(){
@@ -227,7 +239,6 @@
 					this.loading=false;
 					if(res.status==200){
 						if(res.data.status==0){
-							descriptionValue(res.data.data.items)
 							this.total=res.data.data.page.total;
 
 							res.data.data.items.forEach(ele => {
@@ -414,35 +425,13 @@
 			formatJson(filterVal,jsonData){
 				return jsonData.map(v => filterVal.map(j => v[j]))
 			},
-			//表格数据时间转换
-			dateFormat(row,column){
-	    		//将时间戳转换为前端的时间
-	    		let date=null;
-	    		if(column.property == "creation_time"){
-	    				date=new Date(parseInt(row.creation_time)*1000);
-	    		}
-	    		if(column.property == "start_time"){
-	    				date=new Date(parseInt(row.start_time)*1000);
-	    		}
-	    		if(column.property == "end_time"){
-	    				date=new Date(parseInt(row.end_time)*1000);
-	    		}
-	    		
-	    		let Y=date.getFullYear()+'-';
-	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +' ':date.getDate()+' ';
-	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
-	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
-	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
-	    		return Y + M + D + h + m + s	    		
-	    }
+			
 		}
 	}
 
 </script>
 
 <style >
-
 	.visHidden{
 		visibility: hidden;
 	}
