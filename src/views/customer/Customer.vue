@@ -78,7 +78,10 @@
 					</template>
         </el-table-column>
           <!--:formatter='dateTableFormat'-->
-        <el-table-column prop='creation_time' :formatter='dateTableFormat' width='80' :label='$t("Public.creation")' align='center'>	
+        <el-table-column   width='80' :label='$t("Public.creation")' align='center'>	
+        	<template slot-scope='scope'>
+        		{{ scope.row.creation_time | timeFormat }}
+        	</template>
         </el-table-column>
         <el-table-column  align='center':label='$t("customer.tenantName")' >
           <template slot-scope='scope'>
@@ -111,11 +114,13 @@
           :label='$t("customer.email")'
         ></el-table-column>
         <el-table-column
-          prop='descriptionVal'
-          
           align='center'
           :label='$t("Public.description")'
-        ></el-table-column>
+        >
+        <template slot-scope='scope'>
+        	{{ scope.row.description | descriptionValue }}
+        </template>
+        </el-table-column>
         <el-table-column
           width='150'
           :label='$t("Public.operation")'
@@ -154,6 +159,7 @@
             @size-change='handleSizeChange'
             @current-change="handleCurrentChange"
             :page-sizes="[10, 20, 50, 100]"
+            :page-size='pagesize'
             :page-count='pageNum'
             :pager-count="pagecount"
           >
@@ -165,14 +171,13 @@
 </template>
 
 <script>
-	import {descriptionValue} from '@/assets/js/index.js'
 	
 export default {
   name: "Customer",
   data() {
     return {
       //获取token
-      token: "",
+      token: sessionStorage.getItem("token"),
       filters: {
         name: "",
         status: "",
@@ -210,7 +215,6 @@ export default {
     };
   },
   created() {
-    this.token = sessionStorage.getItem("token");
     this.getUsers();
 
     
@@ -218,7 +222,6 @@ export default {
   methods: {
     //分页的选择页面显示个数和点击其他的分页的时候显示数据
     handleSizeChange(val) {
-
       this.pagesize = val;
       this.getUsers();
     },
@@ -256,7 +259,6 @@ export default {
           if (res.status == 200) {
             if (res.data.status == 0) {
               this.loading = false;
-              descriptionValue(res.data.data.items)
               this.users = res.data.data.items;
               this.total = res.data.data.page.total;
               this.users.forEach(ele => {
@@ -497,17 +499,7 @@ export default {
     formatJson(filterVal, jsonData) {
       return jsonData.map(v => filterVal.map(j => v[j]));
     },
-		dateTableFormat(row,column){
-			//将时间戳转换为前端的时间
-			let date=new Date(parseInt(row.creation_time)*1000);
-			let Y=date.getFullYear()+'-';
-			let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-			let D=date.getDate() <10? '0' +date.getDate() +' ':date.getDate()+' ';
-			let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
-			let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
-			let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
-			return Y + M + D + h + m + s
-		}
+
   }
 };
 </script>

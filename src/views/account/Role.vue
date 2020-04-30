@@ -39,7 +39,10 @@
 				<el-table-column type='selection' align='center'></el-table-column>
 				<el-table-column type='index':label='$t("Public.index")' align='center'>
 				</el-table-column>
-				<el-table-column prop='creation_time'  width='80' :formatter='dateFormat' :label='$t("Public.creation")' align='center'>
+				<el-table-column  width='80'  :label='$t("Public.creation")' align='center'>
+					<template slot-scope='scope'>
+						{{ scope.row.creation_time | timeFormat }}
+					</template>
 				</el-table-column>
 				<el-table-column prop='name' :label='$t("roles.roleName")' align='center'>
 				</el-table-column>
@@ -48,7 +51,10 @@
 						<span :class='scope.row.color' v-text="scope.row.usableText"></span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='descriptionVal' :label='$t("Public.description")' align='center'>
+				<el-table-column  :label='$t("Public.description")' align='center'>
+					<template slot-scope='scope'>
+						{{ scope.row.description |  descriptionValue}}
+					</template>
 				</el-table-column>
 				<el-table-column  width='180' :label='$t("Public.operation")' align='center'>
 					<template slot-scope='scope'>
@@ -68,6 +74,7 @@
 	            @current-change="handleCurrentChange"
 	            layout="total, sizes, prev, pager, next, jumper"
 	            :page-sizes="[10, 20, 30,50]"
+	            :page-size='pagesize'
 	            :current-page.sync="currentPage"
 	            :page-count='pageNum'
 	            :pager-count="pagecount"
@@ -81,13 +88,13 @@
 
 <script>
 
-	import {descriptionValue,datedialogFormat} from '@/assets/js/index.js'
+	import {datedialogFormat} from '@/assets/js/index.js'
 	export default{
 		name:'Role',
 		data(){
 			return{
 				//权限
-				token:'',
+				token:sessionStorage.getItem('token'),
 				filters:{
 					name:''
 				},
@@ -111,8 +118,7 @@
 			}
 		},
 		created(){
-			//获取权限
-			this.token=sessionStorage.getItem('token');
+
 			this.getUsers();
 		},
 		methods:{
@@ -146,7 +152,6 @@
 						if(res.data.status==0){
 							this.loading=false;
 							//将数据同步到 store里面
-							descriptionValue(res.data.data.items)
 							
 							res.data.data.items.forEach(ele => {
 								if(ele.usable){
@@ -353,18 +358,7 @@
 			formatJson(filterVal,jsonData){
 				return jsonData.map(v => filterVal.map(j => v[j]))
 			},
-			
-			dateFormat(row,column){
-	    		//将时间戳转换为前端的时间
-	    		let date=new Date(parseInt(row.creation_time)*1000);
-	    		let Y=date.getFullYear()+'-';
-	    		let M=date.getMonth() + 1<10 ? '0' + (date.getMonth()+1) + '-' :date.getMonth() + 1 + '-';
-	    		let D=date.getDate() <10? '0' +date.getDate() +' ':date.getDate()+' ';
-	    		let h=date.getHours() <10 ?'0' +date.getHours() +':':date.getHours() + ':';
-	    		let m=date.getMinutes() <10 ? '0' +date.getMinutes() +':': date.getMinutes()+ ':';
-	    		let s=date.getSeconds() <10? '0' +date.getSeconds(): date.getSeconds();
-	    		return Y + M + D + h + m + s	    		
-	    	},
+
 		}
 	}
 </script>

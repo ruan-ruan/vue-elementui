@@ -52,7 +52,10 @@
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='creation_time' width='80' :formatter='dateFormat' :label='$t("Public.creation")' align='center'>
+				<el-table-column  width='80' :label='$t("Public.creation")' align='center'>
+					<template slot-scope='scope'>
+						{{ scope.row.creation_time |  timeFormat}}
+					</template>
 				</el-table-column>
 				<el-table-column prop='name' min-width='100' :label='$t("roles.account")' align='center'>
 				</el-table-column>
@@ -69,7 +72,10 @@
 				</el-table-column>
 				<el-table-column prop='role.name' min-width='100' :label='$t("roles.roleName")' align='center'>
 				</el-table-column>
-				<el-table-column prop='descriptionVal' min-width='100' :label='$t("Public.description")' align='center'>
+				<el-table-column  min-width='100' :label='$t("Public.description")' align='center'>
+					<template slot-scope='scope'>
+						{{ scope.row.description | descriptionValue }}
+					</template>
 				</el-table-column>
 				<el-table-column  width='180' :label='$t("Public.operation")' align='center'>
 					<template slot-scope='scope'  >
@@ -90,7 +96,8 @@
 			     	@size-change="handleSizeChange"
                		@current-change="handleCurrentChange"
 			     	layout="total, sizes, prev, pager, next, jumper"
-			     	:page-sizes="[10, 20, 30,50]" 						     	 
+			     	:page-sizes="[10, 20, 30,50]" 
+			     	:page-size='pagesize'
 			     	:current-page.sync="currentPage"  
 			     	:page-count='pageNum'
 			     	:pager-count="pagecount"
@@ -103,22 +110,24 @@
 			<!--编辑，添加，详情的部分-->
 			<el-dialog :title='textMap[dialogStatus]' :visible.sync='dialogFormVisible' :close-on-click-modal="false" v-loading='loading' >
 				<el-form :model='editForm' label-width='200px' :rules='editFormRules' ref='editForm'>
-					<el-form-item :label='$t("Public.creation")'  v-show='staCreat'>
-						<el-input v-model='editForm.creation_time' class='ipt' disabled ></el-input>
+					<el-form-item :label='$t("Public.creation")+"："'  v-show='staCreat'>
+						<template>
+							{{ editForm.creation_time | timeFormat}}
+						</template>
 					</el-form-item>
-					<el-form-item :label='$t("roles.accNumber")' prop='name'>
+					<el-form-item :label='$t("roles.accNumber")+"："' prop='name'>
 						<el-input v-model='editForm.name' class='ipt':disabled='read' ></el-input>
 					</el-form-item>
-					<el-form-item :label='$t("Public.name")' prop='real_name'>
+					<el-form-item :label='$t("Public.name")+"："' prop='real_name'>
 						<el-input v-model='editForm.real_name' class='ipt' :disabled='read' ></el-input>
 					</el-form-item>
-					<el-form-item :label='$t("customer.phone")' prop='mobile'>
+					<el-form-item :label='$t("customer.phone")+"："' prop='mobile'>
 						<el-input v-model='editForm.mobile' class='ipt' :disabled='read' ></el-input>
 					</el-form-item>
-					<el-form-item :label='$t("customer.email")' prop='email'>
+					<el-form-item :label='$t("customer.email")+"："' prop='email'>
 						<el-input v-model='editForm.email' class='ipt' :disabled='read' ></el-input>
 					</el-form-item>
-					<el-form-item :label='$t("roles.assRoles")' prop='role_id' >
+					<el-form-item :label='$t("roles.assRoles")+"："' prop='role_id' >
 						<el-select v-model='editForm.role_id':disabled='read'  class='ipt'>
 							<el-option v-for='(item,index) in roles'
 								:key='index'
@@ -129,7 +138,7 @@
 						</el-select>
 					</el-form-item>
 					<!--当弹出的是天际的时候显示密码部分，否则隐藏-->
-					<el-form-item :label='$t("roles.psd")' prop='password'  v-if='psd'>
+					<el-form-item :label='$t("roles.psd")+"："' prop='password'  v-if='psd'>
 						<el-input type="password" v-popover:popover v-model="editForm.password" auto-complete="off" class='ipt' placeholder="请输入密码"></el-input>
 						 <el-popover
 							ref="popover"
@@ -140,17 +149,17 @@
 						</el-popover>
 					</el-form-item>
 					
-					<el-form-item :label='$t("roles.conPsd")' prop='password_confirm' v-if='psd'>
+					<el-form-item :label='$t("roles.conPsd")+"："' prop='password_confirm' v-if='psd'>
 						<el-input type="password" v-model='editForm.password_confirm' auto-complete="off" class='ipt'  placeholder="请确认密码"></el-input>
 					</el-form-item>
-					<el-form-item :label='$t("roles.personStatus")' v-show='changeRoleStatus'>
+					<el-form-item :label='$t("roles.personStatus")+"："' v-show='changeRoleStatus'>
 						<el-radio-group v-model='editForm.usable' :disabled='read' >
 							<template v-for='item in roleChange'>
 								<el-radio :value='item.value' :key ='item.value' :label='item.name'>{{item.name}}</el-radio>
 							</template>	
 						</el-radio-group>
 					</el-form-item>
-					<el-form-item :label='$t("Public.description")' >
+					<el-form-item :label='$t("Public.description")+"："' >
 						<el-input type='textarea' v-model='editForm.description' class='ipt' :disabled='read' ></el-input>
 					</el-form-item>
 				</el-form>
@@ -167,12 +176,10 @@
 
 <script>
 	
-	import {descriptionValue,datedialogFormat} from '@/assets/js/index.js'
+	import {datedialogFormat} from '@/assets/js/index.js'
 	export default{
 		name:'Set',
-		mounted(){
-			this.getUsers()
-		},
+		
 		data(){
 			var regex=new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/)
 			var validatePass2 =(rule,value ,callback) => {
@@ -208,7 +215,7 @@
 			};
 			return{
 				//获取token
-				token:'',
+				token:sessionStorage.getItem('token'),
 				isOk:true,
 				classA:"classA",
 				classB:"classB",
@@ -314,8 +321,7 @@
 			}
 		},
 		created(){
-			this.token=sessionStorage.getItem('token');
-			
+			this.getUsers()
 		},
 		methods:{
 			
@@ -342,7 +348,6 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.loading=false;
-							descriptionValue(res.data.data.items)
 							res.data.data.items.forEach(ele => {
 								if(!ele.usable){
 									ele.color='backWarn'
@@ -388,7 +393,7 @@
 //				this.loading=true;
 				this.editForm={
 					id:row.id,
-					creation_time:datedialogFormat(row.creation_time),
+					creation_time:row.creation_time,
 					name:row.name,
 					real_name:row.real_name,
 					email:row.email,
@@ -556,7 +561,7 @@
 						if(res.data.status==0){
 							var str=res.data.data;
 							this.editForm={
-								creation_time:datedialogFormat(str.creation_time),
+								creation_time:str.creation_time,
 								id:str.id,
 								name:str.name,
 								real_name:str.real_name,
@@ -690,17 +695,6 @@
 			},
 			formatJson(filterVal,jsonData){
 				return jsonData.map(v => filterVal.map(j => v[j]))
-			},
-			dateFormat(row,column){
-                let date = new Date(parseInt(row.creation_time) * 1000);
-                let Y = date.getFullYear() + '-';
-                let M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) + '-' : date.getMonth() + 1 + '-';
-                let D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
-                let h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':';
-                let m = date.getMinutes()  < 10 ? '0' + date.getMinutes() + ':' : date.getMinutes() + ':';
-                let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-                return Y + M + D + h + m + s;
-				
 			},
 
 		},

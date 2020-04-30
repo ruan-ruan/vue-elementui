@@ -5,19 +5,21 @@
 			<el-row>
 				<el-col :span='24'>
 					<el-form :model='editForm' ref='editForm'label-width='200px' v-loading='basicLoading' :rules='editFormRules'>
-						<el-form-item :label='$t("Public.creation")' prop='creation_time'>
-							<el-input v-model='editForm.creation_time' class='ipt' disabled></el-input>
+						<el-form-item :label='$t("Public.creation")+"："' prop='creation_time'>
+							<template>
+								{{ editForm.creation_time | timeFormat }}
+							</template>
 						</el-form-item>
-						<el-form-item :label='$t("multi.multiName")' prop='name'>
+						<el-form-item :label='$t("multi.multiName")+"："' prop='name'>
 							<el-input v-model='editForm.name' class='ipt' :disabled=" !(typeof id !=='undefined')"></el-input>
 						</el-form-item>
-						<el-form-item :label='$t("multi.multiStatus")' prop='status'>
+						<el-form-item :label='$t("multi.multiStatus")+"："' prop='status'>
 							<el-input v-model='editForm.status' class='ipt' disabled></el-input>
 						</el-form-item>
-						<el-form-item :label='$t("Public.tenant")' prop='tenant'>
+						<el-form-item :label='$t("Public.tenant")+"："' prop='tenant'>
 							<el-input disabled v-model='editForm.tenant_name' class='ipt'></el-input>
 						</el-form-item>
-						<el-form-item :label='$t("Public.description")' prop='dec'>
+						<el-form-item :label='$t("Public.description")+"："' prop='dec'>
 							<el-input type='textarea' cols='6' v-model='editForm.dec' class='ipt':disabled=" !(typeof id !=='undefined')"></el-input>
 						</el-form-item>
 						<el-form-item v-if=" typeof id !=='undefined'" class='tc_L'>
@@ -441,7 +443,7 @@
 								tenant_id:str.tenant.id,
 								status:sta,
 								dec:str.description,
-								creation_time:datedialogFormat(str.creation_time)
+								creation_time:str.creation_time
 							}
 							
 							//数组  数据分为endpoints和cloud_endpoints
