@@ -1069,7 +1069,8 @@
 						}else{
 							let device_a_arr=[];
 							let device_z_arr=[];
-							
+							let device_a_new=[];
+							let device_z_new=[];
 							this.editForm.devicelist.map(it=> {
 								device_a_arr.push({
 									a_device:it.a_device,
@@ -1078,6 +1079,18 @@
 							})
 							this.editForm.device_zlist.map(it=> {
 								device_z_arr.push({
+									z_device:it.z_device,
+									z_device_port:it.z_device_port
+								})
+							})
+							this.editForm.devicelistdesc.map(it=> {
+								device_a_new.push({
+									a_device:it.a_device,
+									a_device_port:it.a_device_port
+								})
+							})
+							this.editForm.device_zlistdesc.map(it=> {
+								device_z_new.push({
 									z_device:it.z_device,
 									z_device_port:it.z_device_port
 								})
@@ -1092,8 +1105,15 @@
 							device_z_arr.map(v=>{
 								newdez.push(v.z_device+'_'+v.z_device_port)
 							})
-								
 							
+							let new_des_a=[];
+							let new_des_z=[];
+							device_a_new.map(v=>{
+								new_des_a.push(v.a_device+'_'+v.a_device_port)
+							})
+							device_z_new.map(v=>{
+								new_des_z.push(v.z_device+'_'+v.z_device_port)
+							})
 						
 							console.log(newde.join())
 							console.log(newdez.join())
@@ -1108,7 +1128,7 @@
 								a_ip:this.editForm.a_ip,
 								a_vlan:this.editForm.a_vlan,
 								a_desc:this.editForm.a_desc,
-								a_device_port_ids:this.editForm.devicelist.toString()==this.editForm.devicelistdesc.toString()?this.editForm.a_device_port_ids:newde.join(),
+								a_device_port_ids:newde.join()==new_des_a.join()?this.editForm.a_device_port_ids:newde.join(),
 								// a_device_id:this.editForm.a_device == this.editForm.a_device_basic?this.editForm.a_device_id:this.editForm.a_device ,
 								// a_port_id:this.editForm.a_device_port==this.editForm.a_port_basic?this.editForm.a_device_port_id:this.editForm.a_device_port,
 								
@@ -1116,7 +1136,7 @@
 								z_ip:this.editForm.z_ip,
 								z_vlan:this.editForm.z_vlan,
 								z_desc:this.editForm.z_desc,
-								z_device_port_ids:	this.editForm.device_zlist.toString()==this.editForm.device_zlistdesc.toString()?this.editForm.z_device_port_ids:newdez.join(),
+								z_device_port_ids:	newdez.join()==new_des_z.join()?this.editForm.z_device_port_ids:newdez.join(),
 								// z_device_id:this.editForm.z_device == this.editForm.z_device_basic?this.editForm.z_device_id:this.editForm.z_device ,
 								// z_port_id:this.editForm.z_device_port==this.editForm.z_port_basic?this.editForm.z_device_port_id:this.editForm.z_device_port,
 								
