@@ -120,144 +120,6 @@
 			     	></el-pagination>
 			</el-col>
 
-			<!--添加部分/编辑部分/发现链路-->
-			<el-dialog :title='textMap[dialogStatus]':visible.sync='dialogFormVisible':close-on-click-modal="false" v-loading='editLoading' @close='close'>
-				<el-form   :model="editForm" label-width='210px' ref='editForm' :rules="editFormRules">
-					<!--编辑和详情的时候才会显示的时间列表-->
-					<el-form-item :label='$t("Public.apply")+"：" ' v-show='editFormStatus'>
-						<span>
-							{{ editForm.creation_time | timeFormat }}
-						</span>
-					</el-form-item>
-					<el-form-item :label='$t("Public.aPortNode")+"："' prop='a_node_id'>
-						<el-select v-model='editForm.a_node_id' filterable :disabled='seeStatus'  class='ipt' @change='selectNodeA(editForm.a_node_id)'>
-							<el-option
-								v-for='(item,index) in nodeData'
-								:key='index'
-								:label='item.name'
-								:value='item.id'>
-							</el-option>
-						</el-select>
-					</el-form-item>
-					
-					<el-form-item :label='$t("Public.aDevice")+":"' prop='a_device'>
-						<el-select v-model='editForm.a_device' class='ipt' :disabled='seeStatus'  @change='selectDeviceA(editForm.a_device)'>
-							<el-option v-for='(item,index) in aDevice'
-								:value='item.id'
-								:label='item.hostname'
-								:key='index'></el-option>
-						</el-select>
-					</el-form-item>
-					<el-form-item :label='$t("Public.devicePort")+":"'prop='a_device_port'>
-						<el-select v-model='editForm.a_device_port' :disabled='seeStatus'  class='ipt' @change='selectDevicePort(editForm.a_device_port)'>
-							<el-option v-for='(item,index) in aDevicePort'
-								:value='item.id'
-								:label='item.port_no'
-								:key='index'
-								>
-								<template>
-									<span>{{item.port_no}}</span>
-									<span :class='[item.color ,"marL60"]'>{{item.status}}</span>
-								</template>
-							</el-option>
-						</el-select>
-					</el-form-item>
-
-					<el-form-item :label='$t("Public.a_ip")+"(cidr):"'prop='a_ip'>
-						<el-input v-model='editForm.a_ip' :disabled='seeStatus' class='ipt'></el-input>
-					</el-form-item>
-					<el-form-item :label='$t("Public.a_vlan")+"："' prop='a_vlan'>
-						<el-input v-model='editForm.a_vlan' :disabled='seeStatus' class='ipt'></el-input>
-					</el-form-item>
-					<el-form-item :label='$t("Public.a_des")+"："' prop='a_desc'>
-						<el-input v-model='editForm.a_desc' :disabled='seeStatus' class='ipt'></el-input>
-					</el-form-item>
-					<el-form-item :label='$t("Public.z_PortNode")+"："' prop='z_node_id'>
-						<el-select v-model='editForm.z_node_id'filterable :disabled='seeStatus'@change='selectNodeZ(editForm.z_node_id)'  class='ipt'>
-							<el-option
-								v-for='(item,index) in nodeData'
-								:key='index'
-								:label='item.name'
-								:value='item.id'>
-							</el-option>
-						</el-select>
-					</el-form-item>
-					<el-form-item :label='$t("Public.zDevice")+":"' prop='z_device'>
-						<el-select v-model='editForm.z_device' class='ipt' :disabled='seeStatus'  @change='selectDeviceZ(editForm.z_device)'>
-						<el-option 
-							v-for='(item ,index) in zDevice'
-							:key ='item.id'
-							:label='item.hostname'
-							:value='item.id'
-							></el-option>
-						</el-select>
-					</el-form-item>
-					<el-form-item :label='$t("Public.devicePort")+":"' prop='z_device_port'>
-						<el-select v-model='editForm.z_device_port' class='ipt' :disabled='seeStatus'  @change='selectDevicePort(editForm.z_device_port)'>
-							<el-option v-for='(item , index) in zDevicePort' :key='index'
-								:label='item.port_no'
-								:value='item.id'
-								class='ipt'>
-							<template>
-								<span>{{item.port_no}}</span>
-								<span :class='[item.color ,"marL60"]'>{{item.status}}</span>
-							</template>
-							</el-option>
-						</el-select>
-					</el-form-item>
-					<el-form-item :label='$t("Public.z_ip")+"(cidr)："'prop='z_ip'>
-						<el-input v-model='editForm.z_ip':disabled='seeStatus' class='ipt'></el-input>
-					</el-form-item>
-					<el-form-item :label='$t("Public.z_vlan")+"："'prop='z_vlan'>
-						<el-input v-model='editForm.z_vlan':disabled='seeStatus'   class='ipt'></el-input>
-					</el-form-item>
-					<el-form-item :label='$t("Public.z_des")+"："'prop='z_desc'>
-						<el-input v-model='editForm.z_desc':disabled='seeStatus' class='ipt'></el-input>
-					</el-form-item>
-					<el-form-item :label='$t("Public.sysBandwidth")+"："' prop='bandwidth'>
-						<el-input v-model.number='editForm.bandwidth' :disabled='seeStatus' :placeholder="$t('Public.placeNumber')"  class='ipt'></el-input>
-					</el-form-item>
-					<el-form-item :label='$t("Public.phyBandwidth")+"："' prop='physical_bandwidth'>
-						<el-input v-model.number='editForm.physical_bandwidth':placeholder="$t('Public.placeNumber')"   :disabled='seeStatus' class='ipt'></el-input>
-					</el-form-item>
-					<el-form-item :label='$t("Public.linkExpen")+"："' prop='link_cost'>
-						<el-input v-model.number='editForm.link_cost'  :disabled='seeStatus' :placeholder="$t('Public.placeNumber')"  class='ipt'></el-input>
-					</el-form-item>
-					<el-form-item :label='$t("Public.linkCheck")+"："' prop='monitoring'>
-						
-						<el-radio-group v-model='editForm.monitoring' :disabled='seeStatus'>
-								<el-radio 
-									v-for='(item,index) in detectionStatue'
-									:key='index' 
-									:value='item.label'
-									:label='item.label' >{{item.name}}
-								</el-radio>				
-						</el-radio-group>
-					</el-form-item>
-					<el-form-item v-if='detectionStatus' :label='$t("Public.checkType")+"："' prop='monitoring_type'>
-						<el-select v-model='editForm.monitoring_type' :disabled='seeStatus' :placehold='$t("validateMes.placeCh")' class='ipt' >
-							<el-option v-for='(item,index) in detectionType'
-								:value='item.value'
-								:label='item.label'
-								:key='index'></el-option>
-						</el-select>
-					</el-form-item>
-					<el-form-item v-if='detectionStatus' :label='$t("Public.checkParams")+"："' prop='monitoring_param'>
-						<el-input v-model='editForm.monitoring_param':disabled='seeStatus' class='ipt'></el-input>
-					</el-form-item>
-					<el-form-item :label='$t("Public.description")+"："' >
-						<el-input type='textarea'cols="7" v-model='editForm.description' :disabled='seeStatus' class='ipt' ></el-input>
-					</el-form-item>
-				</el-form>
-				<div slot='footer' class='dailog-footer'>
-					<el-button @click.native='dialogFormVisible=false'>{{$t("tabOperation.cancel")}}</el-button>
-					<el-button  v-if="dialogStatus=='update'"type="primary" @click="updateData">
-						{{$t('tabOperation.save')}}
-					</el-button>
-					<el-button  v-else-if="dialogStatus=='creat'"type="primary" @click="creatData">
-						{{$t('tabOperation.save')}}</el-button>		
-				</div>
-			</el-dialog>
 			
 			<!--发现链路-->
 			<el-dialog :title='TitleMap[dialogFormValue]' :visible.sync='foundFormVisible':close-on-click-modal="false">
@@ -272,9 +134,170 @@
 				</div>
 			</el-dialog>
 		</section>
-		
-		
-		
+		<!--添加部分/编辑部分/发现链路-->
+		<el-dialog :title='textMap[dialogStatus]' :visible.sync='dialogFormVisible' :close-on-click-modal="false" v-loading='editLoading' @close='close'>
+			<el-form :model="editForm" label-width='210px' ref='editForm' :rules="editFormRules">
+			<!--编辑和详情的时候才会显示的时间列表-->
+			<el-form-item :label='$t("Public.apply")+"：" ' v-show='editFormStatus'>
+				<span>
+					{{ editForm.creation_time | timeFormat }}
+				</span>
+			</el-form-item>
+			<el-form-item :label='$t("Public.aPortNode")+"："' prop='a_node_id'>
+				<el-select v-model='editForm.a_node_id' filterable :disabled='seeStatus'  class='ipt' @change='selectNodeA(editForm.a_node_id)'>
+					<el-option
+						v-for='(item,index) in nodeData'
+						:key='index'
+						:label='item.name'
+						:value='item.id'>
+					</el-option>
+				</el-select>
+			</el-form-item>
+			<!-- A端 --> 
+			<span v-for="(domain,index) in editForm.devicelist" :key="domain.index">
+				<el-row>
+					<el-col :span="12">
+						<el-form-item :label='$t("Public.aDevice")+":"' :prop="'devicelist.'+index+'.a_device'" :rules="{required:true,message:$t('Public.selDeviceA'),trigger:'change'}">
+							<template>
+								<el-select v-model='domain.a_device' style='width: 180px;' :disabled='seeStatus'  @change='selectDeviceA(domain)'>
+									<el-option v-for='item in aDevice'
+										:value='item.id'
+										:label='item.hostname'
+										:key='item.id'></el-option>
+								</el-select>		
+							</template>
+						</el-form-item>
+					</el-col>
+					<el-col :span="12">
+						<el-form-item :label='$t("Public.devicePort")+":"' style="margin-left:-60px;" :prop="'devicelist.'+index+'.a_device_port'" :rules="{required:true,message:$t('Public.selPort'),trigger:'change'}">
+							<el-select v-model='domain.a_device_port' :disabled='seeStatus' style='width: 150px;' @change='selectDevicePort(domain.a_device_port)'>
+								<el-option v-for='(item,it) in aDevicePort'
+									:value='item.id'
+									:label='item.port_no'
+									:key='item.id'
+									>
+									<template>
+										<span>{{item.port_no}}</span>
+										<span :class='[item.color ,"marL60"]'>{{item.status}}</span>
+									</template>
+								</el-option>
+							</el-select>
+						</el-form-item>	
+					</el-col>
+				</el-row>
+			</span>
+			<el-form-item v-show="!seeStatus">
+				<el-button @click='device_port_add'>+</el-button>
+				<el-button  @click='device_port_down(index)'>-</el-button>
+			</el-form-item>
+			<el-form-item :label='$t("Public.a_ip")+"(cidr):"' prop='a_ip'>
+				<el-input v-model='editForm.a_ip' :disabled='seeStatus' class='ipt'></el-input>
+			</el-form-item>
+			<el-form-item :label='$t("Public.a_vlan")+"："' prop='a_vlan'>
+				<el-input v-model='editForm.a_vlan' :disabled='seeStatus' class='ipt'></el-input>
+			</el-form-item>
+			<el-form-item :label='$t("Public.a_des")+"："' prop='a_desc'>
+				<el-input v-model='editForm.a_desc' :disabled='seeStatus' class='ipt'></el-input>
+			</el-form-item>
+			<el-form-item :label='$t("Public.z_PortNode")+"："' prop='z_node_id'>
+				<el-select v-model='editForm.z_node_id'filterable :disabled='seeStatus'@change='selectNodeZ(editForm.z_node_id)'  class='ipt'>
+					<el-option
+						v-for='(item,index) in nodeData'
+						:key='index'
+						:label='item.name'
+						:value='item.id'>
+					</el-option>
+				</el-select>
+			</el-form-item>
+			<!-- Z端 -->
+			<div v-for="(item,index) in editForm.device_zlist" :key="index">
+				<el-row>
+				<el-col :span='12'>
+				<el-form-item :label='$t("Public.zDevice")+":"'  :prop="'device_zlist.'+index+'.z_device'" :rules="{required:true,message:$t('Public.selDeviceZ'),trigger:'change'}">
+					<el-select v-model='item.z_device' style="width:180px;" :disabled='seeStatus'  @change='selectDeviceZ(item)'>
+					<el-option 
+						v-for='(item ,de) in zDevice'
+						:key ='item.id'
+						:label='item.hostname'
+						:value='item.id'
+						></el-option>
+					</el-select>
+				</el-form-item>
+				</el-col>
+				<el-col :span="10">
+				<el-form-item :label='$t("Public.devicePort")+":"' :prop="'device_zlist.'+index+'.z_device_port'" :rules="{required:true,message:$t('Public.selPort'),trigger:'change'}" style="margin-left:-60px;">
+				<el-select v-model='item.z_device_port' style="width:150px;" :disabled='seeStatus'  @change='selectDevicePortZ(item.z_device_port)'>
+					<el-option v-for='(item , ir) in zDevicePort' :key='item.id'
+						:label='item.port_no'
+						:value='item.id'
+						class='ipt'>
+					<template>
+						<span>{{item.port_no}}</span>
+						<span :class='[item.color ,"marL60"]'>{{item.status}}</span>
+					</template>
+					</el-option>
+				</el-select>
+				</el-form-item>
+				</el-col>
+				</el-row>
+			</div>
+			<el-form-item v-show="!seeStatus">
+				<el-button @click='device_port_add_Z'>+</el-button>
+				<el-button  @click='device_port_down_Z(index)'>-</el-button>
+			</el-form-item>
+			<el-form-item :label='$t("Public.z_ip")+"(cidr)："'prop='z_ip'>
+				<el-input v-model='editForm.z_ip':disabled='seeStatus' class='ipt'></el-input>
+			</el-form-item>
+			<el-form-item :label='$t("Public.z_vlan")+"："'prop='z_vlan'>
+				<el-input v-model='editForm.z_vlan':disabled='seeStatus'   class='ipt'></el-input>
+			</el-form-item>
+			<el-form-item :label='$t("Public.z_des")+"："'prop='z_desc'>
+				<el-input v-model='editForm.z_desc':disabled='seeStatus' class='ipt'></el-input>
+			</el-form-item>
+			<el-form-item :label='$t("Public.sysBandwidth")+"："' prop='bandwidth'>
+				<el-input v-model.number='editForm.bandwidth' :disabled='seeStatus' :placeholder="$t('Public.placeNumber')"  class='ipt'></el-input>
+			</el-form-item>
+			<el-form-item :label='$t("Public.phyBandwidth")+"："' prop='physical_bandwidth'>
+				<el-input v-model.number='editForm.physical_bandwidth':placeholder="$t('Public.placeNumber')"   :disabled='seeStatus' class='ipt'></el-input>
+			</el-form-item>
+			<el-form-item :label='$t("Public.linkExpen")+"："' prop='link_cost'>
+				<el-input v-model.number='editForm.link_cost'  :disabled='seeStatus' :placeholder="$t('Public.placeNumber')"  class='ipt'></el-input>
+			</el-form-item>
+			<el-form-item :label='$t("Public.linkCheck")+"："' prop='monitoring'>
+				<el-radio-group v-model='editForm.monitoring' :disabled='seeStatus'>
+						<el-radio 
+							v-for='(item,index) in detectionStatue'
+							:key='index' 
+							:value='item.label'
+							:label='item.label' >{{item.name}}
+						</el-radio>				
+				</el-radio-group>
+			</el-form-item>
+			<el-form-item v-if='detectionStatus' :label='$t("Public.checkType")+"："' prop='monitoring_type'>
+				<el-select v-model='editForm.monitoring_type' :disabled='seeStatus' :placehold='$t("validateMes.placeCh")' class='ipt' >
+					<el-option v-for='(item,index) in detectionType'
+						:value='item.value'
+						:label='item.label'
+						:key='index'></el-option>
+				</el-select>
+			</el-form-item>
+			<el-form-item v-if='detectionStatus' :label='$t("Public.checkParams")+"："' prop='monitoring_param'>
+				<el-input v-model='editForm.monitoring_param':disabled='seeStatus' class='ipt'></el-input>
+			</el-form-item>
+			<el-form-item :label='$t("Public.description")+"："' >
+				<el-input type='textarea'cols="7" v-model='editForm.description' :disabled='seeStatus' class='ipt' ></el-input>
+			</el-form-item>
+			</el-form>
+			<div slot='footer' class='dailog-footer'>
+				<el-button @click.native='dialogFormVisible=false'>{{$t("tabOperation.cancel")}}</el-button>
+				<el-button  v-if="dialogStatus=='update'"type="primary" @click="updateData">
+					{{$t('tabOperation.save')}}
+				</el-button>
+				<el-button  v-else-if="dialogStatus=='creat'"type="primary" @click="creatData">
+					{{$t('tabOperation.save')}}
+				</el-button>		
+			</div>
+		</el-dialog>
 	</div>
 </template>
 
@@ -282,10 +305,12 @@
 
 	
 	import {datedialogFormat , descriptionValue,getTime ,isJust ,isValidIP} from '@/assets/js/index.js'
-
-
+	import deviceport from './clounFile/devicePort';
 	export default{
 		name:'Unknown',
+		components:{
+			deviceport
+		},
 		data(){
 			var isNumber= (rule,value,callback) => {
 				if(!value){
@@ -315,7 +340,6 @@
 				}
 			};
 			return{
-
 				//获取用户的权限token
 				token:sessionStorage.getItem('token'),
 				//顶部分工具栏的搜索部分
@@ -371,8 +395,9 @@
 					z_desc:'',
 					z_device:'',
 					z_device_port:'',
-					
-					
+					a_device_port_ids:'',
+					z_device_port_ids:'',
+
 					bandwidth:'',
 					physical_bandwidth:'',
 					link_cost:'',
@@ -383,8 +408,48 @@
 					status:'',
 					creation_time:'',
 					description:'',
-//					get_speed_key:'',
+					newdevice_a:"",
+					newport_a:'',
+					devicelist:[
+						{
+							a_device:'',
+							a_device_port:'',
+						}
+					],
+					devicelistdesc:[
+						{
+							a_device:'',
+							a_device_port:'',
+						}
+					],
+					device_zlist:[
+						{
+							z_device:'',
+							z_device_port:'',
+							
+						}
+					],
+					device_zlistdesc:[
+						{
+							z_device:'',
+							z_device_port:'',
+							
+						}
+					]
 				},
+				devicelist:[
+						{
+							a_device:'1',
+							a_device_port:'1',
+						}
+				],
+				device_zlist:[
+						{
+							z_device:'1',
+							z_device_port:'1',
+							
+						}
+				],
 				//添加的时候校验规则
 				editFormRules:{
 					a_node_id:[{ required: true, message: this.$t('Public.placeaNode'), trigger: 'change' }],
@@ -393,16 +458,12 @@
 					a_desc:[{required:true, message:this.$t('Public.placeaDes'),trigger:'blur'}],
 					a_device:[{required:true, message:this.$t('Public.selDeviceA'),trigger:'change,blue'}],
 					a_device_port:[{required:true, message:this.$t('Public.selPort'),trigger:'change,blue'}],
-					
-					
-					
 					z_node_id:[{ required:true, message:this.$t('Public.placezNode'),trigger:'change'}],
 					z_ip:[{required:true , validator:zIsIp, trigger:'blur'}],
 					z_vlan:[{ required:true , validator:isNumber,trigger:'blur'}],
 					z_desc:[{ required:true , message:this.$t('Public.placezDes'),trigger:'blur'}],
 					z_device:[{required:true, message:this.$t('Public.selDeviceZ'),trigger:'change ,blue'}],
 					z_device_port:[{required:true, message:this.$t('Public.selPort'),trigger:'change , blue'}],
-					
 					physical_bandwidth:[{ required:true ,validator:isNumber,trigger:'blur'}],
 					bandwidth:[{ required:true , validator:isNumber,trigger:'blur'}],
 					
@@ -472,8 +533,8 @@
 			  		see:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unLink").list, "link@link_info" ).show,//查看详情
 			  		run:this.codeVal(this.recursion( this.$store.state.aside ,"Public.unLink").list,"link@run_link" ).show,//运行
 			  	},
-//			  	linkTotalData:[],//链路和未知链路所有的数据
-//			  	noPort:[],//获取 链路和未知链路  设备下的已经使用过的端口  在选择的时候就不可以在使用
+			  	siDevice_port:true,
+				deviceData:[],
 			}
 		},
 		watch:{
@@ -485,22 +546,68 @@
 					this.detectionStatus=false;
 				}
 			},
+			'editForm.devicelist':{
+				handler(newVal,oldVal){
+					console.log(newVal,oldVal)
+					this.editForm.devicelist=newVal;
+					console.log(newVal)
+				},
+				deep:true
+			},
+			'editForm.device_zlist':{
+			handler(newVal,oldVal){
+				console.log(newVal,oldVal)
+				this.editForm.device_zlist=newVal;
+				console.log(newVal)
+			},
+			deep:true
+			}
 		},
 		created(){
-
 			this.getUsers();
 			this.getNodeData();
-			
+		
 		},
+		
 		methods:{
 			close(){
 				this.$refs['editForm'].resetFields()
 			},
+			clearValidate(formName) {
+			this.$refs[formName].clearValidate();
+			},
+			device_port_add(){
+				console.log(1111)
+				this.editForm.devicelist.push({
+					a_device:'',
+					a_device_port:'',
+				})
+				console.log(this.editForm.devicelist)
+			},
+			device_port_down(index){
+				if(this.editForm.devicelist.length>1){
+					this.editForm.devicelist.pop();
+				}
+			},
+			device_port_add_Z(){
+				this.editForm.device_zlist.push({
+					z_device:'',
+					z_device_port:'',
+				})
+			},
+			device_port_down_Z(index){
+				if(this.editForm.device_zlist.length>1){
+					this.editForm.device_zlist.pop();
+				}
+			},
+			// 节点
 			selectNodeA(id){
 				this.$forceUpdate();
 				this.aDevicePort=[];
-				this.editForm.a_device='';
-				this.editForm.a_device_port='';
+				this.editForm.devicelist.map(it=> {
+					it.a_device='';
+					it.a_device_port='';
+				})
 				this.aDevice=[];
 				//选择A的节点 下的对应的设备
 				this.$ajax.get('/node/node_info/'+id+'?token='+this.token)
@@ -512,16 +619,15 @@
 					}
 				}).catch(e => {console.log(e)})
 			},
-
-			selectDeviceA(id){
+			selectDeviceA(item){
 				this.$forceUpdate();
-				this.editForm.a_device_port='';
+				item.a_device_port='';
 				//筛选可用的设备端口
-
 				var para={
 					search_available:false
 				}
-				this.$ajax.get('/node/device_info/'+id+'/ports'+'?token='+this.token,para)
+				this.editForm.a_device=item.a_device;
+				this.$ajax.get('/node/device_info/'+item.a_device+'/ports'+'?token='+this.token,para)
 				.then(res => {
 					console.log(res)
 					if(res.status == 200){
@@ -537,16 +643,26 @@
 						}
 					}
 				}).catch(e => {console.log(e)})
+			
 			},
 			selectDevicePort(ids){
 				this.$forceUpdate();
+				this.editForm.a_device_port=ids;
+
 			},
+			selectDevicePortZ(ids){
+				this.$forceUpdate();
+				this.editForm.z_device_port=ids;
+			},
+			// 节点
 			selectNodeZ(id){
 				this.$forceUpdate();
 				this.zDevicePort=[];
 				this.zDevice=[];
-				this.editForm.z_device='';
-				this.editForm.z_device_port='';
+				this.editForm.device_zlist.map(it=> {
+					it.z_device='';
+					it.z_device_port='';
+				})
 				//选择Z的节点
 				this.$ajax.get('/node/node_info/'+id+'?token='+this.token)
 				.then(res => {
@@ -558,13 +674,15 @@
 					}
 				}).catch(e => {console.log(e)})
 			},
-			selectDeviceZ(id){
+			selectDeviceZ(item){
 				this.$forceUpdate();
-				this.editForm.z_device_port='';
+				var item = item;
+				item.z_device_port='';
 				var para={
 					search_available:false
 				}
-				this.$ajax.get('/node/device_info/'+id+'/ports'+'?token='+this.token,para)
+				this.editForm.z_device=item.z_device;
+				this.$ajax.get('/node/device_info/'+item.z_device+'/ports'+'?token='+this.token,para)
 				.then(res => {
 					console.log(res)
 					if(res.status === 200){
@@ -580,6 +698,7 @@
 						}
 					}
 				}).catch(e => {console.log(e)})
+				
 			},
 			getNodeData(){
 				//获取节点的数据
@@ -612,7 +731,6 @@
 				this.$refs['filters'].resetFields()
 			},
 			getUsers(){
-//				var this=this;
 				
 				//获取数据和搜索
 				this.loading=true;
@@ -635,13 +753,12 @@
 				}
 				this.$ajax.get('/link/links'+'?token='+this.token,para)
 				.then(res => {
-
+					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
 							this.loading=false;
 							this.total=res.data.data.page.total;
 							res.data.data.items.map(ele => {
-
 								if(ele.monitoring){
 									ele.monitoringText=this.$t("Public.open");									
 								}else if(!ele.monitoring){
@@ -662,14 +779,35 @@
 				this.filters.start_time = this.filters.timeVal[0];
 				this.filters.end_time = this.filters.timeVal[1];
 			},
+			show(newdevice,newport){
+				this.editForm.newdevice_a=newdevice;
+				this.editForm.newport_a=newport;
+				console.log(this.editForm.newdevice_a)
+			},
 			handleAdd(){
 				//添加
+				this.$forceUpdate();
 				this.dialogStatus='creat';
 				this.editFormStatus=false;
 				this.seeStatus=false;
 				//添加位置链路
 				this.dialogFormVisible=true;
+				
 				this.editForm={
+					devicelist:[
+						{
+							a_device:'',
+							a_device_port:'',
+						}
+					],
+					device_zlist:[
+						{
+							z_device:'',
+							z_device_port:'',
+						}
+					],
+					newdevice_a:'',
+					newport_a:'',
 					a_node_id:'',
 					a_ip:'',
 					a_vlan:'',
@@ -684,19 +822,16 @@
 					z_device_port:'',
 					physical_bandwidth:'',
 					bandwidth:'',
-					
 					monitoring:false,
-					
 					monitoring_type:'',
 					monitoring_param:'',
 					link_cost:'',
 					description:'',
-//					get_speed_key:'',
-//					token:this.token
 				};
+				console.log(4444)
+				this.$forceUpdate();
 			},
 			creatData:function(){
-
 				this.$refs.editForm.validate(valid => {
 					if(valid){
 						if(this.editForm.a_ip == this.editForm.z_ip){
@@ -705,20 +840,47 @@
 								type:'warning'
 							})
 						}else{
+							let device_a_arr=[];
+							let device_z_arr=[];
+							this.editForm.devicelist.map(it=> {
+								device_a_arr.push({
+									a_device:it.a_device,
+									a_device_port:it.a_device_port
+								})
+							})
+							this.editForm.device_zlist.map(it=> {
+								device_z_arr.push({
+									z_device:it.z_device,
+									z_device_port:it.z_device_port
+								})
+							})
+							console.log(device_a_arr)
+							let newde=[];
+							device_a_arr.map(v=>{
+								newde.push(v.a_device+'_'+v.a_device_port)
+							})
+							let newdez=[];
+							device_z_arr.map(v=>{
+								newdez.push(v.z_device+'_'+v.z_device_port)
+							})
+							console.log(newde.join())
+							console.log(newdez.join())
+							console.log(device_a_arr)
+							console.log(device_z_arr)
+							// return;
 							let para={
 								a_node_id:this.editForm.a_node_id,
 								a_ip:this.editForm.a_ip,
 								a_vlan:this.editForm.a_vlan,
 								a_desc:this.editForm.a_desc,
-								a_device_id:this.editForm.a_device,
-								a_port_id:this.editForm.a_device_port,
-								
+								// a_device_id:this.editForm.a_device,
+								// a_port_id:this.editForm.a_device_port,
+								a_device_port_ids:newde.join(),
 								z_node_id:this.editForm.z_node_id,
 								z_ip:this.editForm.z_ip,
 								z_vlan:this.editForm.z_vlan,
 								z_desc:this.editForm.z_desc,
-								z_device_id:this.editForm.z_device,
-								z_port_id:this.editForm.z_device_port,
+								z_device_port_ids:newdez.join(),
 								physical_bandwidth:this.editForm.physical_bandwidth,
 								bandwidth:this.editForm.bandwidth,
 								monitoring:this.editForm.monitoring.toString(),
@@ -755,9 +917,25 @@
 				//详情
 				this.dialogStatus='see';
 				this.dialogFormVisible=true;
-//				this.disup=true;
 				this.seeStatus=true;
 				this.editFormStatus=true;
+				this.editForm.devicelist = [];
+				let bodyArr1 = row.a_device_ports;
+				bodyArr1.map(v => {
+					this.editForm.devicelist.push({
+						a_device:v.device.name,
+						a_device_port:v.port.port_no,
+					})
+				})
+				console.log(this.editForm.devicelist)
+				this.editForm.device_zlist = [];
+				let bodyArr2 = row.z_device_ports;
+				bodyArr2.map(v => {
+					this.editForm.device_zlist.push({
+						z_device:v.device.name,
+						z_device_port:v.port.port_no,
+					})
+				})
 
 				this.editForm={
 					id:row.id,
@@ -766,23 +944,25 @@
 					a_ip:row.a_ip,
 					a_vlan:row.a_vlan,
 					a_desc:row.a_desc,
-					a_device:row.a_device.hostname,
-					a_device_id:row.a_device.id,
-					a_device_basic:row.a_device.hostname,//a设备备份
-					a_device_port:row.a_port.port_no,
-					a_device_port_id:row.a_port.id,
-					a_port_basic:row.a_port.port_no,//a端口备份
+					devicelist:this.editForm.devicelist,
+					device_zlist:this.editForm.device_zlist,
+					// a_device:row.a_device.hostname,
+					// a_device_id:row.a_device.id,
+					// a_device_basic:row.a_device.hostname,//a设备备份
+					// a_device_port:row.a_port.port_no,
+					// a_device_port_id:row.a_port.id,
+					// a_port_basic:row.a_port.port_no,//a端口备份
 					z_node_id:row.z_node.id,
 					z_node_name:row.z_node.name,
 					z_ip:row.z_ip,
 					z_vlan:row.z_vlan,
 					z_desc:row.z_desc,
-					z_device:row.z_device.hostname,
-					z_device_id:row.z_device.id,
-					z_device_basic:row.z_device.hostname,//z设备备份
-					z_device_port:row.z_port.port_no,
-					z_device_port_id:row.z_port.id,
-					z_port_basic:row.z_port.port_no,//z端口备份
+					// z_device:row.z_device.hostname,
+					// z_device_id:row.z_device.id,
+					// z_device_basic:row.z_device.hostname,//z设备备份
+					// z_device_port:row.z_port.port_no,
+					// z_device_port_id:row.z_port.id,
+					// z_port_basic:row.z_port.port_no,//z端口备份
 					bandwidth:row.bandwidth,
 					physical_bandwidth:row.physical_bandwidth,
 					link_cost:row.link_cost,
@@ -797,37 +977,70 @@
 				}
 			},
 			handleEdit(index,row){
+				console.log(row)
 				//编辑
 				this.dialogStatus='update';
 				this.dialogFormVisible=true;
 				this.seeStatus=false;
 				//显示时间
 				this.editFormStatus=true;
-
+				//editForm.creation_time
+				this.editForm.devicelist = [];
+				this.editForm.devicelistdesc=[];
+				let bodyArr1 = row.a_device_ports;
+				bodyArr1.map(v => {
+					this.editForm.devicelist.push({
+						a_device:v.device.name,
+						a_device_port:v.port.port_no,
+					})
+					this.editForm.devicelistdesc.push({
+						a_device:v.device.name,
+						a_device_port:v.port.port_no
+					})
+				})
+				this.editForm.device_zlist = [];
+				this.editForm.device_zlistdesc=[];
+				let bodyArr2 = row.z_device_ports;
+				bodyArr2.map(v => {
+					this.editForm.device_zlist.push({
+						z_device:v.device.name,
+						z_device_port:v.port.port_no,
+					})
+					this.editForm.device_zlistdesc.push({
+						z_device:v.device.name,
+						z_device_port:v.port.port_no
+					})
+				})
 				this.editForm={
 					id:row.id,
 					a_node_id:row.a_node.id,
 					a_node_name:row.a_node.name,
+					devicelist:this.editForm.devicelist,
+					device_zlist:this.editForm.device_zlist,
+					a_device_port_ids:row.a_device_port_ids,
 					a_ip:row.a_ip,
 					a_vlan:row.a_vlan,
 					a_desc:row.a_desc,
-					a_device:row.a_device.hostname,
-					a_device_id:row.a_device.id,
-					a_device_basic:row.a_device.hostname,//a设备备份
-					a_device_port:row.a_port.port_no,
-					a_device_port_id:row.a_port.id,
-					a_port_basic:row.a_port.port_no,//a端口备份
+					a_device:'',
+					devicelistdesc:this.editForm.devicelistdesc,
+					device_zlistdesc:this.editForm.device_zlistdesc,
+					z_device_port_ids:row.z_device_port_ids,
+					// a_device_id:row.a_device.id,
+//					a_device_basic:'',//a设备备份
+					// a_device_port:row.a_port.port_no,
+					// a_device_port_id:row.a_port.id,
+					// a_port_basic:row.a_port.port_no,//a端口备份
 					z_node_id:row.z_node.id,
 					z_node_name:row.z_node.name,
 					z_ip:row.z_ip,
 					z_vlan:row.z_vlan,
 					z_desc:row.z_desc,
-					z_device:row.z_device.hostname,
-					z_device_id:row.z_device.id,
-					z_device_basic:row.z_device.hostname,//z设备备份
-					z_device_port:row.z_port.port_no,
-					z_device_port_id:row.z_port.id,
-					z_port_basic:row.z_port.port_no,//z端口备份
+					z_device:'',
+					// z_device_id:row.z_device.id,
+//					z_device_basic:'',//z设备备份
+					// z_device_port:row.z_port.port_no,
+					// z_device_port_id:row.z_port.id,
+					// z_port_basic:row.z_port.port_no,//z端口备份
 					bandwidth:row.bandwidth,
 					physical_bandwidth:row.physical_bandwidth,
 					link_cost:row.link_cost,
@@ -854,21 +1067,58 @@
 								type:'warning'
 							})
 						}else{
+							let device_a_arr=[];
+							let device_z_arr=[];
+							
+							this.editForm.devicelist.map(it=> {
+								device_a_arr.push({
+									a_device:it.a_device,
+									a_device_port:it.a_device_port
+								})
+							})
+							this.editForm.device_zlist.map(it=> {
+								device_z_arr.push({
+									z_device:it.z_device,
+									z_device_port:it.z_device_port
+								})
+							})
+							console.log(device_a_arr)
+							console.log(device_z_arr)
+							let newde=[];
+							device_a_arr.map(v=>{
+								newde.push(v.a_device+'_'+v.a_device_port)
+							})
+							let newdez=[];
+							device_z_arr.map(v=>{
+								newdez.push(v.z_device+'_'+v.z_device_port)
+							})
+								
+							
+						
+							console.log(newde.join())
+							console.log(newdez.join())
+							
+							console.log(device_a_arr)
+							console.log(device_z_arr)
+							console.log(this.editForm.devicelistdesc);
+							console.log(this.editForm.devicelist)
+							console.log(this.editForm.a_device_port_ids)
 							let para={
 								a_node_id:this.editForm.a_node_id,
 								a_ip:this.editForm.a_ip,
 								a_vlan:this.editForm.a_vlan,
 								a_desc:this.editForm.a_desc,
-								a_device_id:this.editForm.a_device == this.editForm.a_device_basic?this.editForm.a_device_id:this.editForm.a_device ,
-								a_port_id:this.editForm.a_device_port==this.editForm.a_port_basic?this.editForm.a_device_port_id:this.editForm.a_device_port,
+								a_device_port_ids:this.editForm.devicelist.toString()==this.editForm.devicelistdesc.toString()?this.editForm.a_device_port_ids:newde.join(),
+								// a_device_id:this.editForm.a_device == this.editForm.a_device_basic?this.editForm.a_device_id:this.editForm.a_device ,
+								// a_port_id:this.editForm.a_device_port==this.editForm.a_port_basic?this.editForm.a_device_port_id:this.editForm.a_device_port,
 								
 								z_node_id:this.editForm.z_node_id,
 								z_ip:this.editForm.z_ip,
 								z_vlan:this.editForm.z_vlan,
 								z_desc:this.editForm.z_desc,
-
-								z_device_id:this.editForm.z_device == this.editForm.z_device_basic?this.editForm.z_device_id:this.editForm.z_device ,
-								z_port_id:this.editForm.z_device_port==this.editForm.z_port_basic?this.editForm.z_device_port_id:this.editForm.z_device_port,
+								z_device_port_ids:	this.editForm.device_zlist.toString()==this.editForm.device_zlistdesc.toString()?this.editForm.z_device_port_ids:newdez.join(),
+								// z_device_id:this.editForm.z_device == this.editForm.z_device_basic?this.editForm.z_device_id:this.editForm.z_device ,
+								// z_port_id:this.editForm.z_device_port==this.editForm.z_port_basic?this.editForm.z_device_port_id:this.editForm.z_device_port,
 								
 								physical_bandwidth:this.editForm.physical_bandwidth,
 								bandwidth:this.editForm.bandwidth,

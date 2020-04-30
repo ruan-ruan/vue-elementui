@@ -153,20 +153,21 @@
 					<el-form-item :label='$t("Public.creation")+"："'>
 						<template>
 							{{ editForm.creation_time | timeFormat }}
-							<!--<span v-text="editForm.creation_time"></span>-->
 						</template>
 					</el-form-item>
 					<el-form-item :label='$t("Public.linkState")+"："'>
 						<template >
-								<span>{{editForm.status}}</span>-
-								<span>{{editForm.maintenance_value}}</span>
+								<span>{{editForm.status}}</span>
+								<!-- -<span>{{editForm.maintenance_value}}</span> -->
 							</template>
 					</el-form-item>
 					<el-form-item :label='$t("Public.aPort")+"："'>
 							<template >
 								<span>{{editForm.a_node.name}}</span>-
-								<span>{{editForm.a_device.hostname}}</span>-
-								<span>{{editForm.a_port.port_no}}</span>-
+								<span v-for='(item,index) in a_device_ports' :key="index">
+									<span>{{item.name}}</span>-
+									<span>{{item.port_no}}</span>
+								</span>
 								<span>{{editForm.a_ip}}</span>-
 								<span>{{editForm.a_vlan}}</span>
 								
@@ -180,11 +181,12 @@
 					<el-form-item :label='$t("Public.zPort")+"："'>
 						<template slot-scope='scope'>
 							<span v-text="editForm.z_node.name"></span>-
-							<span v-text='editForm.z_device.hostname'></span>-
-							<span v-text='editForm.z_port.port_no'></span>-
+									<span v-for='(item,index) in z_device_ports' :key="index">
+									<span>{{item.name}}</span>-
+									<span>{{item.port_no}}</span>
+								</span>
 							<span v-text="editForm.z_ip"></span>-
 							<span v-text="editForm.z_vlan"></span>
-							<!--<span></span>-->
 						</template>
 					</el-form-item>
 					<el-form-item :label='$t("Public.zportDescribe")+"："'>
@@ -299,20 +301,23 @@
 				//当链路的状态的为down的时候，显示删除按钮
 //				LinkStatus:false,
 				//编辑界面的数据
+				a_device_ports:[],
+				z_device_ports:[],
 				editForm:{
 					id:'',
 					a_node:{
 						id:'',
 						name:''
 					},
-					a_device:{
-						hostname:'',
-						id:''
-					},
-					a_port:{
-						port_no:'',
-						id:''
-					},
+				
+					// a_device:{
+					// 	hostname:'',
+					// 	id:''
+					// },
+					// a_port:{
+					// 	port_no:'',
+					// 	id:''
+					// },
 					a_ip:'',
 					a_vlan:'',
 					a_desc:'',
@@ -321,14 +326,14 @@
 						id:'',
 						name:'',
 					},
-					z_device:{
-						hostname:'',
-						id:''
-					},
-					z_port:{
-						port_no:'',
-						id:''
-					},
+					// z_device:{
+					// 	hostname:'',
+					// 	id:''
+					// },
+					// z_port:{
+					// 	port_no:'',
+					// 	id:''
+					// },
 					z_ip:'',
 					z_vlan:'',
 					z_desc:'',
@@ -447,7 +452,6 @@
 				this.$ajax.get('/link/links'+'?token='+this.token,para)
 				.then( res => {
 					if(res.status==200){
-						console.log(res)
 						if(res.data.status==0){
 						this.loading=false;
 
@@ -643,6 +647,23 @@
 						if(res.data.status==0){
 							this.editLoading=false;
 							this.editForm=Object.assign({},res.data.data)
+							console.log(this.editForm)
+							this.a_device_ports=[];
+							this.editForm.a_device_ports.map(it=>{
+								this.a_device_ports.push({
+									name:it.device.name,
+									port:it.port.port_no
+								})
+							})
+							console.log(this.a_device_ports)
+							this.z_device_ports=[];
+								this.editForm.z_device_ports.map(it=>{
+								this.z_device_ports.push({
+									name:it.device.name,
+									port:it.port.port_no
+								})
+							})
+							console.log(this.z_device_ports)
 							if(this.editForm.monitoring==true){
 								this.detectionStatus=true;
 							}else{
@@ -692,7 +713,7 @@
 								monitoring_param:this.editForm.monitoring_param,
 								link_cost:this.editForm.link_cost,
 								description:this.editForm.description,
-//								get_speed_key:this.editForm.get_speed_key,
+								//	get_speed_key:this.editForm.get_speed_key,
 							};
 							this.$ajax.put('/link/edit_link/'+this.editForm.id+'?token='+this.token,para)
 							.then( res => {
@@ -750,8 +771,8 @@
 		    	if(command=='all'){
 		    		//导出所有的数据
 		    		this.$confirm(this.$t('tooltipMes.exportDataAll'),this.$t('confirm.tooltip'),{
-//		    			confirmButtonText:'确定',
-//		    			cancelButtonText:'取消',
+					//		    			confirmButtonText:'确定',
+					//		    			cancelButtonText:'取消',
 		    			type:'warning'
 		    		}).then(() => {
 		    			var para={
@@ -765,8 +786,8 @@
 		    	}else if(command=='current'){
 		    		//导出当前
 		    		this.$confirm(this.$t('tooltipMes.exportDataCurr'),this.$t('confirm.tooltip'),{
-//		    			confirmButtonText:'确定',
-//		    			cancelButtonText:'取消',
+							//		    			confirmButtonText:'确定',
+							//		    			cancelButtonText:'取消',
 		    			type:'warning'
 		    		}).then(() => {
 		    			this.exportData()
