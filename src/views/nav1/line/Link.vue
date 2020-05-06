@@ -164,13 +164,12 @@
 					<el-form-item :label='$t("Public.aPort")+"："'>
 							<template >
 								<span>{{editForm.a_node.name}}</span>-
-								<span v-for='(item,index) in a_device_ports' :key="index">
-									<span>{{item.name}}</span>-
-									<span>{{item.port_no}}</span>
-								</span>
 								<span>{{editForm.a_ip}}</span>-
 								<span>{{editForm.a_vlan}}</span>
-								
+								<div v-for='(item,index) in a_device_ports' :key="index">
+									<span>{{item.name}}</span>-
+									<span>{{item.port}}</span>
+								</div>
 							</template>
 					</el-form-item>
 					<el-form-item :label='$t("Public.aportDescribe")+"："'>
@@ -181,12 +180,13 @@
 					<el-form-item :label='$t("Public.zPort")+"："'>
 						<template slot-scope='scope'>
 							<span v-text="editForm.z_node.name"></span>-
-									<span v-for='(item,index) in z_device_ports' :key="index">
-									<span>{{item.name}}</span>-
-									<span>{{item.port_no}}</span>
-								</span>
 							<span v-text="editForm.z_ip"></span>-
 							<span v-text="editForm.z_vlan"></span>
+							<div v-for='(item,index) in z_device_ports' :key="index" >
+								<span>{{item.name}}</span>-
+								<span>{{item.port}}</span>
+							</div>
+							
 						</template>
 					</el-form-item>
 					<el-form-item :label='$t("Public.zportDescribe")+"："'>
