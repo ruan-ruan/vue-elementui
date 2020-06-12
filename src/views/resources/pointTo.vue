@@ -83,7 +83,7 @@
 					<el-table-column :label='$t("Public.aPort")' min-width='55' align='center'>
 						<template slot-scope='scope'>
 							<span class="cli_spn" @click="handleSeeA(scope.$index,scope.row)">
-	                  {{scope.row.logicPortA}}
+	                  		{{scope.row.logicPortA}}
 	
 	                </span> <br />
 							<span>{{scope.row.vlanHTMLA}}</span>

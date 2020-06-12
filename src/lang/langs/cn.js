@@ -414,6 +414,8 @@ const cn = {
 		next:'下一步',
 		note:'注意：绑定的邮箱号码将用来接收重要的消息提示，请务必实时更新。',
 		noView:'暂无查看权限！',
+		a_device_port:'A端设备端口',
+    	z_device_port:'Z端设备端口',
     },
     
     business:{
@@ -502,6 +504,7 @@ const cn = {
     	plaVlan:'请输入vlan号',
     	plaTrunk:"请重新选择,该逻辑口已经选择trunk模式，不能再选择透传模式!",
     	plaUntag:'该逻辑口已经为UNTAG模式，不可在为该模式！',
+
     	
     	
     },

@@ -55,8 +55,8 @@
 
 			<el-table :data='users' highlight-current-row @selection-change="selsChange" style='width: 100%;' 
 				v-loading='loading'>
-				<el-table-column type='selection' min-width='40'></el-table-column>
-				<el-table-column type='index' min-width='80' :label='$t("Public.index")' align='center'>
+				<el-table-column type='selection' ></el-table-column>
+				<el-table-column type='index'  :label='$t("Public.index")' align='center'>
 					<template slot-scope='scope'>
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
@@ -66,15 +66,15 @@
 						{{scope.row.creation_time | timeFormat }}
 					</template>
 				</el-table-column>				
-				<el-table-column :label='$t("Public.aPort")' min-width='80' align='center'>
+				<el-table-column :label='$t("Public.aPort")' min-width='110' align='center'>
 					<template slot-scope='scope'>
-						<el-tag size='small' type='primary'style='cursor: pointer;'@click='handelSee_aNode(scope.$index,scope.row)'>{{scope.row.a_node.name}}</el-tag>
+						<el-tag size='small' type='primary'class='link_port'@click='handelSee_aNode(scope.$index,scope.row)'>{{scope.row.a_node.name}}</el-tag>
 						-{{scope.row.a_ip}}-{{scope.row.a_vlan}}
 					</template>
 				</el-table-column>
-				<el-table-column  :label='$t("Public.zPort")' align='center' min-width='80'>
+				<el-table-column  :label='$t("Public.zPort")' align='center' min-width='110'>
 					<template slot-scope='scope'>
-						<el-tag size='small' type='primary'style='cursor: pointer;' @click='handelSee_zNode(scope.$index, scope.row)'>{{scope.row.z_node.name}}</el-tag>
+						<el-tag size='small' type='primary'class='link_port' @click='handelSee_zNode(scope.$index, scope.row)'>{{scope.row.z_node.name}}</el-tag>
 						-{{scope.row.z_ip}}-{{scope.row.z_vlan}}
 					</template>
 				</el-table-column>
@@ -82,18 +82,23 @@
 				</el-table-column>
 				<el-table-column prop='physical_bandwidth' :label='$t("Public.phyBandwidth")' align='center' min-width='105'>
 				</el-table-column>
-				<el-table-column  :label='$t("Public.surBandwidth")' align='center' width='105'>
-					<template slot-scope='scope'>{{scope.row.bandwidth-scope.row.physical_bandwidth}}</template>
+				<el-table-column label='入/出(Mbps)' align='center' min-width='105'>
+					<template slot-scope='scope'>
+						{{ scope.row.instant_speed | bbs }}
+					</template>
 				</el-table-column>
+				<!--<el-table-column  :label='$t("Public.surBandwidth")' align='center' width='105'>
+					<template slot-scope='scope'>{{scope.row.bandwidth-scope.row.physical_bandwidth}}</template>
+				</el-table-column>-->
 				<el-table-column prop='link_cost' :label='$t("Public.linkExpen")' align='center' min-width='80'>
 				</el-table-column>
 				<el-table-column prop='monitoringText' :label='$t("Public.linkCheck")' align='center' min-width='80'>
 				</el-table-column>
-				<el-table-column  :label='$t("Public.description")' align='center' min-width='80'>
+				<!--<el-table-column  :label='$t("Public.description")' align='center' min-width='80'>
 					<template slot-scope='scope'>
 						{{scope.row.description | descriptionValue}}
 					</template>
-				</el-table-column>
+				</el-table-column>-->
 				<el-table-column  :label='$t("Public.operation")' align='center' width='180'>
 					<template slot-scope='scope'>
 						<el-button size='mini' type='primary' @click='handleStart(scope.$index, scope.row)' v-if='buttonVal.run'>{{$t('tabOperation.run')}}</el-button>
@@ -187,8 +192,8 @@
 				</el-row>
 			</span>
 			<el-form-item v-show="!seeStatus">
-				<el-button @click='device_port_add'>+</el-button>
-				<el-button  @click='device_port_down(index)'>-</el-button>
+				<el-button @click='device_port_add' type='primary'>+</el-button>
+				<el-button  @click='device_port_down(index)'type='danger'>-</el-button>
 			</el-form-item>
 			<el-form-item :label='$t("Public.a_ip")+"(cidr):"' prop='a_ip'>
 				<el-input v-model='editForm.a_ip' :disabled='seeStatus' class='ipt'></el-input>
@@ -242,8 +247,8 @@
 				</el-row>
 			</div>
 			<el-form-item v-show="!seeStatus">
-				<el-button @click='device_port_add_Z'>+</el-button>
-				<el-button  @click='device_port_down_Z(index)'>-</el-button>
+				<el-button @click='device_port_add_Z' type='primary'>+</el-button>
+				<el-button  @click='device_port_down_Z(index)'type='danger'>-</el-button>
 			</el-form-item>
 			<el-form-item :label='$t("Public.z_ip")+"(cidr)："'prop='z_ip'>
 				<el-input v-model='editForm.z_ip':disabled='seeStatus' class='ipt'></el-input>
@@ -548,19 +553,15 @@
 			},
 			'editForm.devicelist':{
 				handler(newVal,oldVal){
-					console.log(newVal,oldVal)
 					this.editForm.devicelist=newVal;
-					console.log(newVal)
 				},
 				deep:true
 			},
 			'editForm.device_zlist':{
-			handler(newVal,oldVal){
-				console.log(newVal,oldVal)
-				this.editForm.device_zlist=newVal;
-				console.log(newVal)
-			},
-			deep:true
+				handler(newVal,oldVal){
+					this.editForm.device_zlist=newVal;
+				},
+				deep:true
 			}
 		},
 		created(){
@@ -568,7 +569,13 @@
 			this.getNodeData();
 		
 		},
-		
+		filters:{
+			bbs(msg){
+				var ipt=JSON.parse(msg)['input'];
+				var out=JSON.parse(msg)['output'];
+				return Math.round( ipt['bytes'] / (1000*1024) )+'/'+Math.round( out['bytes']/ (1000*1024) );
+			}
+		},
 		methods:{
 			close(){
 				this.$refs['editForm'].resetFields()
@@ -577,12 +584,10 @@
 			this.$refs[formName].clearValidate();
 			},
 			device_port_add(){
-				console.log(1111)
 				this.editForm.devicelist.push({
 					a_device:'',
 					a_device_port:'',
 				})
-				console.log(this.editForm.devicelist)
 			},
 			device_port_down(index){
 				if(this.editForm.devicelist.length>1){
@@ -629,7 +634,6 @@
 				this.editForm.a_device=item.a_device;
 				this.$ajax.get('/node/device_info/'+item.a_device+'/ports'+'?token='+this.token,para)
 				.then(res => {
-					console.log(res)
 					if(res.status == 200){
 						if(res.data.status == 0){
 							res.data.data.items.map(item => {
@@ -666,7 +670,6 @@
 				//选择Z的节点
 				this.$ajax.get('/node/node_info/'+id+'?token='+this.token)
 				.then(res => {
-					console.log(res)
 					if(res.status === 200){
 						if(res.data.status == 0){
 							this.zDevice=res.data.data.devices;
@@ -684,7 +687,7 @@
 				this.editForm.z_device=item.z_device;
 				this.$ajax.get('/node/device_info/'+item.z_device+'/ports'+'?token='+this.token,para)
 				.then(res => {
-					console.log(res)
+
 					if(res.status === 200){
 						if(res.data.status == 0){
 							res.data.data.items.map(item => {
@@ -753,7 +756,6 @@
 				}
 				this.$ajax.get('/link/links'+'?token='+this.token,para)
 				.then(res => {
-					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
 							this.loading=false;
@@ -782,7 +784,6 @@
 			show(newdevice,newport){
 				this.editForm.newdevice_a=newdevice;
 				this.editForm.newport_a=newport;
-				console.log(this.editForm.newdevice_a)
 			},
 			handleAdd(){
 				//添加
@@ -828,7 +829,6 @@
 					link_cost:'',
 					description:'',
 				};
-				console.log(4444)
 				this.$forceUpdate();
 			},
 			creatData:function(){
@@ -854,7 +854,7 @@
 									z_device_port:it.z_device_port
 								})
 							})
-							console.log(device_a_arr)
+
 							let newde=[];
 							device_a_arr.map(v=>{
 								newde.push(v.a_device+'_'+v.a_device_port)
@@ -863,11 +863,7 @@
 							device_z_arr.map(v=>{
 								newdez.push(v.z_device+'_'+v.z_device_port)
 							})
-							console.log(newde.join())
-							console.log(newdez.join())
-							console.log(device_a_arr)
-							console.log(device_z_arr)
-							// return;
+
 							let para={
 								a_node_id:this.editForm.a_node_id,
 								a_ip:this.editForm.a_ip,
@@ -913,7 +909,6 @@
 				})
 			},
 			handleSee(index,row){
-				console.log(row)
 				//详情
 				this.dialogStatus='see';
 				this.dialogFormVisible=true;
@@ -927,16 +922,15 @@
 						a_device_port:v.port.port_no,
 					})
 				})
-				console.log(this.editForm.devicelist)
 				this.editForm.device_zlist = [];
 				let bodyArr2 = row.z_device_ports;
+				
 				bodyArr2.map(v => {
 					this.editForm.device_zlist.push({
 						z_device:v.device.name,
 						z_device_port:v.port.port_no,
 					})
 				})
-
 				this.editForm={
 					id:row.id,
 					a_node_id:row.a_node.id,
@@ -1149,7 +1143,6 @@
 								description:this.editForm.description,	
 //								get_speed_key:this.editForm.get_speed_key
 							}
-							console.log(para);
 							this.$ajax.put('/link/edit_unknown_link/'+this.editForm.id+'?token='+this.token,para)
 							.then( res => {
 								if(res.status==200){
@@ -1171,7 +1164,6 @@
 				})
 			},
 			handleStart(index,row){
-				cosnole.log(row)
 				//运行
 				this.$confirm(this.$t('Public.openLinkSure'),this.$t('confirm.tooltip'),{
 					type:'primary'
@@ -1302,19 +1294,6 @@
 				.catch( () => {})
 			},
 
-			dateFormat(row, column) {
-//				
-		      	let date = new Date(parseInt(row.creation_time) * 1000);
-		      	let Y = date.getFullYear() + "-";
-		      	let M =date.getMonth() + 1 < 10  ? "0" + (date.getMonth() + 1) + "-" : date.getMonth() + 1 + "-";
-		      	let D =  date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + "  ";
-		      	let h = date.getHours() < 10  ? "0" + date.getHours() + ":"  : date.getHours() + ":";
-		        let m = date.getMinutes() < 10  ? "0" + date.getMinutes() + ":"  : date.getMinutes() + ":";
-		        let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-//		        var str=Y + M + D+'<br/>' + h + m + s;
-//		        document.write(str)
-		      return Y + M + D + h + m + s;
-		    },
 		},
 	}
 </script>

@@ -52,8 +52,8 @@
 			
 			<el-table :data='users'highlight-current-row @selection-change="selsChange" style='width: 100%;'
 				 v-loading='loading'>
-				<el-table-column type='selection' min-width='30'></el-table-column>				
-				<el-table-column type='index' min-width='40' align='center' :label='$t("Public.index")'>
+				<el-table-column type='selection' ></el-table-column>				
+				<el-table-column type='index' min-width='20' align='center' :label='$t("Public.index")'>
 					<template slot-scope='scope'>
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
@@ -63,19 +63,19 @@
 						{{scope.row.creation_time | timeFormat}}
 					</template>
 				</el-table-column>
-				<el-table-column  :label='$t("Public.aPort")' align='center' min-width='60' >
+				<el-table-column  :label='$t("Public.aPort")' align='center' min-width='100' >
 					<template slot-scope='scope'>
-						<el-tag size='small' type='primary'style='cursor: pointer;' @click='handleNode_a(scope.$index, scope.row)'>{{scope.row.a_node.name}}</el-tag>
-						{{scope.row.a_ip}}-{{scope.row.a_vlan}}
+						<el-tag size='small' type='primary'class='link_port' @click='handleNode_a(scope.$index, scope.row)'>{{scope.row.a_node.name }}</el-tag><br />
+						{{scope.row.a_ip}} - {{scope.row.a_vlan}}
 					</template>
 				</el-table-column>
-				<el-table-column  :label='$t("Public.zPort")' align='center' min-width='60'>
+				<el-table-column  :label='$t("Public.zPort")' align='center' min-width='100'>
 					<template slot-scope='scope'>
-						<el-tag size='small' type='primary'style='cursor: pointer;' @click='handleNode_z(scope.$index, scope.row)'>{{scope.row.z_node.name}}</el-tag>
+						<el-tag size='small' type='primary'class='link_port'@click='handleNode_z(scope.$index, scope.row)'>{{scope.row.z_node.name}}</el-tag><br />
 						{{scope.row.z_ip}}-{{scope.row.z_vlan}}
 					</template>
 				</el-table-column>
-				<el-table-column prop='status' :label='$t("Public.linkState")' align='center' min-width='50'>
+				<el-table-column prop='status' :label='$t("Public.linkState")' align='center' min-width='60'>
 					<template slot-scope='scope'>
 						<span v-text="scope.row.status" :class='scope.row.color'></span>
 					</template>
@@ -87,24 +87,29 @@
 				</el-table-column>
 				<el-table-column prop='physical_bandwidth' :label='$t("Public.phyBandwidth")' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='idle_bandwidth' :label='$t("Public.surBandwidth")' align='center' min-width='60'>
+				<el-table-column label='入/出(Mbps)' align='center' min-width='60'>
+					<template slot-scope='scope'>
+						{{ scope.row.instant_speed | bbs }}
+					</template>
+				</el-table-column>
+				<!--<el-table-column prop='idle_bandwidth' :label='$t("Public.surBandwidth")' align='center' min-width='60'>
 					<template slot-scope='scope'>
 						{{scope.row.bandwidth-scope.row.physical_bandwidth}}						
 					</template>
-				</el-table-column>
+				</el-table-column>-->
 				<el-table-column prop='link_cost' :label='$t("Public.linkExpen")' align='center' min-width='60'>
 				</el-table-column>
 				<el-table-column prop='monitorHTML' :label='$t("Public.linkCheck")' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='a_desc' :label='$t("Public.aportDescribe")' align='center' min-width='70'>
+				<el-table-column prop='a_desc' :label='$t("Public.aportDescribe")' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column prop='z_desc' :label='$t("Public.zportDescribe")' align='center' min-width='70'>
+				<el-table-column prop='z_desc' :label='$t("Public.zportDescribe")' align='center' min-width='60'>
 				</el-table-column>
-				<el-table-column :label='$t("Public.description")' align='center' min-width='70'>
+				<!--<el-table-column :label='$t("Public.description")' align='center' min-width='70'>
 					<template slot-scope='scope'>
 						{{scope.row.description | descriptionValue}}
 					</template>
-				</el-table-column>
+				</el-table-column>-->
 				<el-table-column  :label='$t("Public.operation")' align='center'  width='190'>
 					<template slot-scope='scope'>
 						<el-button size='mini' type='primary' @click='handleStatus(scope.$index, scope.row)'
@@ -139,8 +144,6 @@
 				     	:page-size='pagesize'
 				     	></el-pagination>
 				</el-col>
-
-			
 			<!--编辑界面操作和详情的操作的界面-->
 			<el-dialog :title='textMap[dialogStatus]':visible.sync='dialogFormVisible':close-on-click-modal="false" v-loading='editLoading'>
 				<el-form :model="editForm" label-width='210px'ref='editForm':rules='ruleEditform'  >
@@ -161,23 +164,48 @@
 								<!-- -<span>{{editForm.maintenance_value}}</span> -->
 							</template>
 					</el-form-item>
-					<el-form-item :label='$t("Public.aPort")+"："'>
-							<template >
-								<span>{{editForm.a_node.name}}</span>-
-								<span>{{editForm.a_ip}}</span>-
-								<span>{{editForm.a_vlan}}</span>
-								<div v-for='(item,index) in a_device_ports' :key="index">
-									<span>{{item.name}}</span>-
-									<span>{{item.port}}</span>
-								</div>
-							</template>
+					<!--<el-form-item :label='$t("Public.aPort")+"："'>
+						<template >
+							<span>{{editForm.a_node.name}}</span> -
+							<span>{{editForm.a_ip}}</span> -
+							<span>{{editForm.a_vlan}}</span> -
+							<div v-for='(item,index) in a_device_ports' :key="index">
+								<span>{{item.name}}</span>-
+								<span>{{item.port}}</span>
+							</div>
+						</template>
+					</el-form-item>-->
+					<!--A端信息-->
+					<el-form-item :label='$t("Public.aPortNode")+"："'>
+						<template>
+							{{editForm.a_node.name}}
+						</template>
+					</el-form-item>
+					<el-form-item :label='$t("Public.a_ip")+"："'>
+						<template>
+							{{editForm.a_ip}}
+						</template>
+					</el-form-item>
+					<el-form-item :label='$t("Public.a_vlan")+"："'>
+						<template>
+							{{editForm.a_vlan}}
+						</template>
+					</el-form-item>
+					<el-form-item :label='$t("Public.a_device_port")+"："'>
+						<template>
+							<div v-for='(item,index) in a_device_ports' :key="index">
+								<span>{{item.name}}</span>-
+								<span>{{item.port}}</span> <br />
+							</div>
+						</template>
 					</el-form-item>
 					<el-form-item :label='$t("Public.aportDescribe")+"："'>
 						<template>
 							<span v-text="editForm.a_desc"></span>
 						</template>
 					</el-form-item>
-					<el-form-item :label='$t("Public.zPort")+"："'>
+					<!--Z端信息-->
+					<!--<el-form-item :label='$t("Public.zPort")+"："'>
 						<template slot-scope='scope'>
 							<span v-text="editForm.z_node.name"></span>-
 							<span v-text="editForm.z_ip"></span>-
@@ -186,7 +214,29 @@
 								<span>{{item.name}}</span>-
 								<span>{{item.port}}</span>
 							</div>
-							
+						</template>
+					</el-form-item>-->
+					<el-form-item :label='$t("Public.z_PortNode")+"："'>
+						<template>
+							{{editForm.z_node.name}}
+						</template>
+					</el-form-item>
+					<el-form-item :label='$t("Public.z_ip")+"："'>
+						<template>
+							{{editForm.z_ip}}
+						</template>
+					</el-form-item>
+					<el-form-item :label='$t("Public.z_vlan")+"："'>
+						<template>
+							{{editForm.z_vlan}}
+						</template>
+					</el-form-item>
+					<el-form-item :label='$t("Public.z_device_port")+"："'>
+						<template>
+							<div v-for='(item,index) in z_device_ports' :key="index">
+								<span>{{item.name}}</span>-
+								<span>{{item.port}}</span> <br />
+							</div>
 						</template>
 					</el-form-item>
 					<el-form-item :label='$t("Public.zportDescribe")+"："'>
@@ -194,8 +244,6 @@
 							<span v-text="editForm.z_desc"></span>
 						</template>
 					</el-form-item>
-					
-					
 					<el-form-item :label='$t("Public.sysBandwidth")+"："' prop='bandwidth'>
 						<el-input v-model='editForm.bandwidth' :disabled='editFormStatue'  class='ipt'></el-input>
 					</el-form-item>
@@ -408,6 +456,16 @@
 			  	}
 			}
 		},
+		filters:{
+			baseNum(num){
+				
+			},
+			bbs(msg){
+				var ipt=JSON.parse(msg)['input'];
+				var out=JSON.parse(msg)['output'];
+				return Math.round( ipt['bytes'] / (1000*1024) )+'/'+Math.round( out['bytes']/ (1000*1024) );
+			}
+		},
 		created(){
 			this.getUsers()			
 		},
@@ -453,6 +511,7 @@
 				.then( res => {
 					if(res.status==200){
 						if(res.data.status==0){
+						console.log(res)
 						this.loading=false;
 
 						_this.users=res.data.data.items;

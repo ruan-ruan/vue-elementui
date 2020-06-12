@@ -1,9 +1,16 @@
 <template>
 	<div>
-		<!--路径里面的需要使用的拓扑图   可根据  id的传值  显示  既可-->
+		
 		<div class="back" id='back_chart'>
+			<!--路径里面的需要使用的拓扑图   可根据  id的传值  显示  既可   coincide_line-->
+		<div class="line_tooltip">
+			<div>指定路径示意图：  <span class="assign_line"></span> </div>
+			<div>真实路径示意图：  <span class="real_line"></span> </div>
+			<div>重合路径示意图：  <span class="coincide_line"></span>
+				<span style='cursor: pointer;' title="重合路径指当前指定路径与真实路径走向一致">?</span> 
+			</div>
+		</div>
 			<svg width="100%" height="100%" v-loading='Loading' ref='chart'></svg>
-			
 		</div>
 	</div> 	
 </template>
@@ -23,7 +30,10 @@
 				Loading:false,
 				select:[],//选择的节点的数据
 				selectNode:[],
-				defsNodes:[],//根据获取当前的节点的数据的长度  来判断节点额的线是否是两个点，起点和终点
+//				defsNodes:[],//根据获取当前的节点的数据的长度  来判断节点额的线是否是两个点，起点和终点
+				assigns:[],//指定路径的集合
+				reals:[],//真实路径的集合
+				coincides:[],//指定路径和真实路径的集合
 			};
 		},
 	
@@ -33,7 +43,6 @@
 		},
 		mounted(){
 			this.nodes();
-
 		},
 		watch:{
 			'selectNode':{
@@ -50,7 +59,6 @@
 			}
 		},
 		methods:{
-			
 			//拓扑图的默认的节点数据和链路数据
 			nodes(){
 				//获取节点的数据
@@ -77,17 +85,6 @@
 				})
 				.catch(err => console.log(err))
 			},
-//			links( nodes ){
-//				let that=this;
-//				that.linksData=[];
-//				that.$ajax.get('/topology/links'+'?token='+that.token)
-//				.then(res => {
-//					if(res.status==200 && res.data.status==0){
-//						that.linksData=res.data.data;	
-//						that.def(nodes , res.data.data );//下面的调用直接传参
-//					}
-//				}).catch(e => {console.log(e)})
-//			},
 			def( nodes , links ){
 				//获取默认的时候的节点的信息   起点  ，终点  在拓扑上显示出来
 				//因为  一个画布内只能存在一个svg矢量图   所以需要在获取起点和终点的信息，并进一步处理数据，然后在渲染
@@ -99,75 +96,122 @@
 					 * 	delete			failure  => path_info
 					 * */
 				var type='';
-
-				if(JSON.stringify(this.currentData) !== "{}" && typeof this.currentData !='undefined'){
-					//存在当前的路径信息
-					var msg=this.currentData;
-					if(msg.action === 'create'){
-						if(msg.status === 'success'){
-							//path_info
-							type='path_info';
-	
-						}else if(msg.status === 'failure'){
-							//默认路径
-							type='default';
-						}
-					}else if(msg.action === 'delete'){
-						if(msg.status === 'success'){
-							//default
-
-							type='default';
-						}else if(msg.status === 'failure'){
-							//path_info
-							type='path_info';
-						}
-					}
-
+				// 这里获取的是指定路径里面的信息数据
+				var msg=this.currentData;
+				if(JSON.stringify(msg) !=='{}' && typeof msg != 'undefined'){//存在指定路径的信息的时候
+					type='assign'
 					this.path_details(type,msg.path.id,nodes,links);	
-				}else{//不存在当前的路径信息  也是默认的A到Z端
-					type='default';
+				}else{//指定路径的信息为空
+					type='real';
 					this.path_details(type,this.id,nodes,links);
 				}
 			},
 			path_details(type,ids,nodes,links){
 				//根据历史路径里面获取的信息       type是要获取的数据的接口数据  地址
-				
-				if(type === 'path_info'){
-					
-					//对应的接口路径   '/vll/path_info/'
+				/**1.当指定路径存在的时候  。根据当前path的id  获取当前指定路径的列表然后在获取真实路径
+				 * 
+				 * 2.当指定路径不存在的时候，直接显示   真实路径
+				 * 
+				 * */
+				if(type === 'assign'){
+					//对应的接口路径   '/vll/path_info/'  
 					this.$ajax.get('/vll/path_info/'+ids+'?token='+this.token)
 					.then(res => { 
 						if(res.status === 200){
 							if(res.data.status === 0){
+								console.log(res)
 								var str=res.data.data;
+								var data=[];
+								res.data.data.nodes.map( (item,j) => {
+//									item.node=item
+									if(j === 0){
+										item.assign_val='起点';
+										item.def_val='起点';
+									}else if(j === res.data.data.nodes.length-1){
+										item.assign_val='终点';
+										item.def_val='终点';
+									}else{
+										item.def_val='途径';
+										item.assign_val='途径';
+									}
+									item.color='assign';
+									let obj={
+										name:item.name,
+										node:item,
+										def_val:item.def_val,
+									};
+									data.push(obj);
+								})
+								this.selectNode=data;//获取指定路径的数据  传输到父组件  展示
+//								this.defsNodes=str.nodes;
+								this.$emit('basic',str.nodes)
+								this.assigns=res.data.data.nodes;
+								return this.$ajax.get('/vll/true_path/'+this.id+'?token='+this.token)
+							}
+						}
+					}).then(res => {// 获取当前的真实的路径数据
+						if(res.status ==200){
+							if(res.data.status == 0){
+								res.data.data.nodes.some( (item,i) => {
+									if(i === 0){
+										item.assign_val=''
+										item.def_val='起点';
+									}else if(i === res.data.data.nodes.length-1){
+										item.def_val ='终点';
+										item.assign_val='';
+									}else {
+										item.def_val='途径';
+										item.assign_val='';
+									}
+									item.color='real';
+									this.assigns.some((assign,j) => {
+										if(item.id === assign.id){
+											item.color='coincide';
+											assign.color='coincide'
+										}
+									})
+								})
+								this.$emit('sendReal',res.data.data.nodes);//向父组件发送真实路径数据
+								//获取真实的路径
+								this.reals=res.data.data.nodes;
+								var assigns=JSON.parse(JSON.stringify(this.assigns));
+								
+								var reals=JSON.parse(JSON.stringify( res.data.data.nodes ));
+								var coincides=[]
+								var json=assigns.concat(reals);
+								for( var item1 of json){
+									let flag=true;
+									for(var item2 of coincides){
+										if( item1.id === item2.id ){
+											flag=false;
+										}
+									}
+									if(flag){
+										coincides.push(item1)
+									}
+								}
+								//获取重合后的数据
+								this.coincides=JSON.parse(JSON.stringify(coincides));
+								//获取所有的数据后  对拓扑图进行修饰显示
+//								this.coincides
+								
 								nodes.some(function(w,j){
 									w.def_val='途径';
 									w.def_type='other';//不是默认的点的时候
-									str.nodes.some(function(v,i){
+									w.assign_val=''
+									coincides.some(function(v,i){
 										var obj={}
 										obj.name=v.name;
 										v.node=obj;
-//										v.def_val='途径';
+										
 										if(w.node.id === v.id){ //在nodes里面  标记起点和终点；
-											w.def_type='default';
-											if(i === 0){
-												v.def_val='起点';
-												w.def_val='起点';
-											}else if(i === str.nodes.length-1){
-												v.def_val='终点';
-												w.def_val='终点';
-											}else{
-												v.def_val='途径';
-												w.def_val='途径';
-											}
+											w.def_type='default';  // 
+											w.def_val=v.def_val;
+											w.color=v.color;
+											w.assign_val=v.assign_val;
 										}
 									})
 								});
-
-								this.selectNode=str.nodes;//展示当前的默认的点的数据
-								this.defsNodes=str.nodes;
-								this.$emit('basic',str.nodes)
-//								//根据链路里面的起点和终点  找到对应的节点信息
 								links.some(function(v, i) {
 							        nodes.some(function(w, j) {
 							            if (v.source_node === w.node.id) {
@@ -178,19 +222,19 @@
 							            }
 							        });
 							        v.index = ++i;
-							 });
-							this.Charts(nodes,links);
+								});
+								this.Charts(nodes,links);
 							}
 						}
 					})
 					.catch(err => {console.log(err)})
 				}
-				if(type === 'default'){  //当路径调整的时候  也是可以进入的 
-
+				if(type === 'real'){  //当时真实路径的时候，指定路径为空  这个时候  在下面点击选择点的时候，设置起点为A端终点为Z端
+					var Data=[];
 					this.$ajax.get('/vll/p2p_vll_info/'+this.id+'?token='+this.token)
 					.then(res => {
-						if(res.status===200){
-							if(res.data.status===0){
+						if(res.status ==200){
+							if(res.data.status == 0){
 								//通过业务里面的路径的调整进入的界面  筛选出来A端(起点)和Z端(终点)里面的节点
 								/**分为三种情况
 								 * 1.点到点  (d2d)
@@ -198,7 +242,6 @@
 								 * 3.云到云  (c2c)
 								 * */
 								var str=res.data.data;
-								var Data=[];
 								if(str.endpoints && str.endpoints.length === 2 ){
 									//d2d  
 									str.endpoints.map(item => {
@@ -221,10 +264,6 @@
 									if(str.endpoints[0].name==='Z端'){
 										Data[1]=str.endpoints[0]
 									}
-//									console.log(Data)
-//									Data.push(str.endpoints[0]);
-//									Data.push(str.cloud_endpoints[0]);
-//									console.log(Data)
 								}
 								if(str.cloud_endpoints && str.cloud_endpoints.length ===2 ){
 									//c2c
@@ -239,31 +278,62 @@
 											Data[1] =item;
 										}
 									})
-//									Data=JSON.parse(JSON.Stringify(str.cloud_endpoints));
 								}
-
-								nodes.some(function(w,j){
+								//当不存在指定路径的时候   直接获取A端，Z端作为起点和终点  assign_val
+								return this.$ajax.get('/vll/true_path/'+this.id+'?token='+this.token)
+							}
+						}
+					}).then(res => {
+						if(res.status == 200){
+							if(res.data.status ==0){
+								nodes.some((w,j ) => {
+									w.assign_val='';
 									w.def_val='途径';
-									w.def_type='other';//不是默认的点的时候
-									Data.some(function(v,i){
-										if(w.node.id === v.node.id){ //在nodes里面  标记起点和终点
-											w.def_type='default';//不是默认的点的时候
-											if(v.name ==='A端'){
+									w.def_type='other';
+									w.color='';
+									Data.some( (v,i) => {
+										if(v.name == 'A端'){
+											if(w.node.id == v.node.id){
+												w.assign_val='起点';
 												w.def_val='起点';
-												v.def_val='起点';
-											}
-											if(v.name === 'Z端'){
-												w.def_val='终点';
-												v.def_val='终点';
-												
 											}
 										}
-									})
-								});
-								this.$emit('basic',Data)
-								this.selectNode=Data;
-								this.defsNodes=Data;
-								//根据链路里面的起点和终点  找到对应的节点信息
+										if(v.name == 'Z端'){
+											if(w.node.id == v.node.id){
+												w.assign_val='终点';
+												w.def_val='终点';
+											}
+										}
+									} )
+								})
+								console.log(nodes)
+								nodes.some(( w,j ) => {
+//									w.def_type='other';
+//									w.color='';
+//									w.def_val='途径';
+									res.data.data.nodes.some( (v,i) => {
+										let obj={};
+										obj.name=v.name;
+										v.node=obj;
+										if(i === 0){
+											v.def_val='起点';
+										}else if(i === res.data.data.nodes.length-1){
+											v.def_val ='终点'
+										}else {
+											v.def_val='途径'
+										}
+										v.color='real';
+										if(w.node.id === v.id){
+											w.def_type='default';  // 
+//											w.def_val=v.def_val;
+											w.color=v.color;
+										}
+									} )
+								})
+								this.reals=res.data.data.nodes;
+								this.$emit('sendReal',res.data.data.nodes);//向父组件发送真实路径数据
+//								this.selectNode=res.data.data.nodes;
+//								this.defsNodes=res.data.data.nodes;
 								links.some(function(v, i) {
 							        nodes.some(function(w, j) {
 							            if (v.source_node === w.node.id) {
@@ -274,18 +344,18 @@
 							            }
 							        });
 							        v.index = ++i;
-							 });
-							this.Charts(nodes,links);
+								});
+								this.Charts(nodes,links);
 							}
 						}
-					}).catch(err => {console.log(err)})
+					})
+
 				}
 				
 			},
 			Charts( nodesData , linksData ){
 				//根据父节点的传值的来绘图
 				//初始化  画布
-//				d3.select('#back_chart').append('svg');
 				
 				d3.select('svg').select('g').remove();
 				
@@ -343,57 +413,26 @@
 				    .attr('id',function(d){ return d.id; })
 		            //线的宽度  调整
 		            function linkVals(d){
-		            	// && d.target_val.def_val ===' 起点' 
-		            	if(that.defsNodes.length == 2){
-		            		//当只有两条数据的时候  这个时候  直接判断当前的数据类型就可以
-		            		if(d.source_val.def_type === 'default' && d.target_val.def_type === 'default'){
-			            		if(d.status=='UP'){
-									return 'defs';
-								}else if(d.status=='DOWN'){
-									return 'defs_down';
-								}else if(d.status=='running'){
-									return 'defs_run';
-								}
-			            	}else{
-			            		if(d.status=='UP'){
-									return 'link_up';
-								}else if(d.status=='DOWN'){
-									return 'link_down';
-								}else if(d.status=='running'){
-									return 'link_run';
-								}
-			            	}
-		            	}else{
-		            		//当不是两条数据的时候  需要对  起点和终点之间的连线进行排除
-		            		if((d.source_val.def_val === '终点' && d.target_val.def_val ==='起点') || (d.source_val.def_val === '起点' && d.target_val.def_val ==='终点')  ){
-			            		if(d.status=='UP'){
-									return 'link_up';
-								}else if(d.status=='DOWN'){
-									return 'link_down';
-								}else if(d.status=='running'){
-									return 'link_run';
-								}
-			            	}else{
-			            		if(d.source_val.def_type === 'default' && d.target_val.def_type === 'default'){
-				            		if(d.status=='UP'){
-										return 'defs';
-									}else if(d.status=='DOWN'){
-										return 'defs_down';
-									}else if(d.status=='running'){
-										return 'defs_run';
-									}
-				            	}else{
-				            		if(d.status=='UP'){
-										return 'link_up';
-									}else if(d.status=='DOWN'){
-										return 'link_down';
-									}else if(d.status=='running'){
-										return 'link_run';
-									}
-				            	}
-			            	}
-		            	}
 		            	
+		            	if( d.status ==='DOWN' ){//当该条线为down的情况下   直接返回对应的颜色值
+		            		return 'defs_down';
+		            	}else { //进入up状态  
+		            		if( d.source_val.def_type === 'default' && d.target_val.def_type === 'default' ){//显示为当前指定或者真实的路径部分
+		            			if(d.source_val.color === 'real' && d.target_val.color==='real'){
+		            				//这个是真实的路径  
+		            				return 'real';
+		            			}else if( d.source_val.color==='assign' && d.target_val.color==='assign' ){
+		            				//这个是指定的路径
+		            				return 'assign';
+		            			}else{
+		            				// 这个是重合的路径
+		            				return 'coincide';
+		            			}
+		            		}else{//显示  原拓扑图
+		            			return 'link_up';
+		            		}
+		            	}
+
 		            }
 		          
 		           
@@ -442,59 +481,33 @@
 		            	if(!that.detail){ //  当详情的参数不存在的时候  进入的路径调整的组件    是可以操控的
 		            		if(isFirst){
 								times++;
-
 								//始终获取数据的里面最后一个值，用来和点前的单击的值  进行对比  
 								var str=unique(sel)[unique(sel).length-1];
-
 								linksData.some(function (v,j){
 									if( str.node.id === v.target_val.node.id  || str.node.id === v.source_val.node.id  ){
-										//找到上一个点相关的数据
-//										if(v.status === 'DOWN'){ 
-//											//如果上个的点选取后  该链路的状态该是dowm的情况下  该点是不可以选择的
-////											if(d.node.id === v.target_val.node.id  ){
-////											//第一次点击的点  是起点   只要有连线  就可以添加到数组里面
-////												cls.style.width=40;
-////												cls.style.height=40;
-////												sel.push(d);
-////											}
-//										}
 										if( v.status !== 'DOWN' ) {
 											if(d.node.id === v.source_val.node.id || d.node.id === v.target_val.node.id  ){
-//												console.log(v)
 												cls.style.width=40;
 												cls.style.height=40;
 												sel.push(d);
+												
 											}
-										}
-//										else{
-//											if(d.node.id === v.source_val.node.id || d.node.id === v.target_val.node.id  ){
-//												alert('当前链路状态DOWN，不可选择')
-//											}
-//										}
+										}else{
+												this.$message({
+													message:'状态为dowm不能选择',
+													type:'warning'
+												})
+											}
 									}
-									
-//									if( str.node.id !== v.target_val.node.id  || str.node.id !== v.source_val.node.id  ){
-//										if(d.node.id === v.source_val.node.id || d.node.id === v.target_val.node.id  ){
-//												alert('只能选择当前相关联的点')
-//										}
-//									}
 								})
 		            		}else {//这个是起点  所以不需要  点击的时候  进行遍历
-		            			isFirst=true;
-			            		if(d.def_val === '起点'){//判断第一次点击的时候是否为起点   是的时候选中   否则  将不选择
+			            		if(d.assign_val === '起点'){//判断第一次点击的时候是否为起点   是的时候选中   否则  将不选择
+			            			isFirst=true;
 			            			cls.style.width=40;
 									cls.style.height=40;
 									sel.push(d);
-//									linksData.some(function (v,j){
-//										if(d.node.id === v.source_val.node.id || d.node.id === v.target_val.node.id  ){
-//											//第一次点击的点  是起点   只要有连线  就可以添加到数组里面
-//											startData.push(v.target_val);
-//											startData.push(v.source_val);
-//										}
-//									})
 			            		}
 		            		}
-//		            		console.log('执行完毕')
 			            	//发送数据到父组件
 			            	that.selectNode=unique(sel)
 			            	that.$emit('sendNode',that.selectNode);
@@ -580,6 +593,49 @@
 </script>
 
 <style >
+	.line_tooltip{
+		position: relative;
+		text-align: left;
+		z-index: 1;
+	}
+	/*图线示意图*/
+	.assign_line{
+		display: inline-block;
+		border: 2px solid #00FF00;
+		border-radius: 20%;
+		background-color: #00FF00;
+		width: 80px;
+		/*height: ;*/
+	}
+	.real_line{
+		display: inline-block;
+		border: 2px solid #3300FF;
+		border-radius: 20%;
+		background-color: #3300FF;
+		width: 80px;
+	}
+	.coincide_line{
+		display: inline-block;
+		border: 2px solid #FF00FF;
+		border-radius: 20%;
+		background-color:#FF00FF;
+		width: 80px;
+	}
+	.real{
+		stroke:#3300FF;
+		/*stroke-dasharray:5,5;
+		border: solid #3300FF ;*/
+	}
+	.assign{
+		stroke:#00FF00;
+		/*stroke-dasharray:5,5;
+		border: dashed #00FF00 ;*/
+	}
+	.coincide{
+		stroke:#FF00FF;
+		/*stroke-dasharray:5,5;
+		border: dashed #FF00FF ;*/
+	}
 	.font{
 		font-size: 6px;
 		color: #000000;
@@ -598,7 +654,6 @@
 		stroke: #1296DB;
 	}
 	.link_vals {
-		/*stroke:#8AD4F8 ;*/
 		stroke-width: 2;
 	}
 	.defs_run{

@@ -431,7 +431,7 @@
 
 </script>
 
-<style >
+<style  scoped>
 	.visHidden{
 		visibility: hidden;
 	}

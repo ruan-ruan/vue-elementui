@@ -44,7 +44,6 @@ const store = new Vuex.Store({
 //          sessionStorage.token = data;
             sessionStorage.setItem('token',data)
             state.token = data;
-            
         },
         [types.LOGOUT]: (state) => {
         	sessionStorage.removeItem("user");

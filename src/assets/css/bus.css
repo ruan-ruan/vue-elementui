@@ -256,3 +256,9 @@
 	color: #fff;
 }
 
+/*链路tabel 端口部分的显示*/
+.link_port{
+	cursor: pointer;
+	white-space: normal;
+	height: 100%;
+}

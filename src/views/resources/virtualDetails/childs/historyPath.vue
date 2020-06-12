@@ -97,20 +97,43 @@
 				</el-row>
 				<el-row class='marT10'>
 					<el-col :span='16'>
-						<charts ref='chart_svg' :currentData='currentData' @sendNode='getNode' :id='id' :detail='id' v-if='bool'></charts>
+						<charts ref='chart_svg'@sendReal='getReals' :currentData='currentData' @sendNode='getNode' :id='id' :detail='id' v-if='bool'></charts>
 					</el-col>
 					<el-col :span='8'>
-						<h3 >路径节点排列表:
+						<h3 >指定路径节点排列表:
+						</h3>
+						<div v-if='Nodes && Nodes.length != 0'>
+							<el-table :data='Nodes ' width='100%'>
+								<el-table-column type='index' label='跳数'align='center' min-width='40'>
+								</el-table-column>
+								<el-table-column prop='node.name' label='节点名称'align='center'min-width='60'></el-table-column>
+								<el-table-column prop='def_val' label='类型'align='center'min-width='40'></el-table-column>
+							</el-table>
+						</div>
+						<div v-else class="path_spa marT20">
+							当前无指定路径，系统按照真实路径走！
+						</div>
+						<div class="marT20">
+							<h3>真实路径节点排列表:</h3>
+							<el-table :data='reals' width='100%'>
+								<el-table-column type='index' label='跳数' align='center' min-width='40'></el-table-column>
+								<el-table-column prop='name' label='节点名称' align='center' min-width='60'></el-table-column>
+								<el-table-column prop='def_val' label='类型' align='center' min-width='40'>
+								</el-table-column>
+								
+							</el-table>
+						</div>
+						<!--<h3 >路径节点排列表:
 						</h3>
 						<el-table :data='Nodes' width='100%'>
 							<el-table-column type='index' label='跳数'align='center' min-width='40'>
 							</el-table-column>
-							<el-table-column prop='node.name' label='节点名称'align='center'min-width='60'></el-table-column>
+							<el-table-column prop='name' label='节点名称'align='center'min-width='60'></el-table-column>
 							<el-table-column prop='def_val' label='类型'align='center'min-width='40'></el-table-column>
 						</el-table>
 						<span class="path_spa marT10" v-if='JSON.stringify(info)!=="{}"? info.action === "create" ? false:true:true'>
 							当前系统默认路径
-						</span>
+						</span>-->
 					</el-col>
 					<el-col :span='24'align='center'>
 						<el-button size='small' type='primary' @click='redeployment '>重新部署</el-button>
@@ -155,6 +178,7 @@
 		props:['id','default'],//default  当前界面的使用的路径的id
 		data(){
 			return {
+				reals:{},
 				token:'',
 				historyData:[],//处理后的数据
 				//分页所需要的参数
@@ -207,6 +231,9 @@
 			}
 		},
 		methods:{
+			getReals(msg){
+				this.reals=JSON.parse(JSON.stringify(msg))
+			},
 			close(){
 				this.$emit('sendChild',false)
 			},

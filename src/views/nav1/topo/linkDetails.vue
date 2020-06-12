@@ -179,7 +179,7 @@
 				}
 			},
 			charts(ids){
-//跳转到流量监控的界面
+				//跳转到流量监控的界面
 				this.$ajax.get('/vll/get_vll_flow/'+ids+'?token='+this.token)
 					.then(res => {
 						if(res.status==200){

@@ -141,9 +141,6 @@
 									sessionStorage.setItem('token',res.data.data.token);
 									
 									return this.$ajax.get('/public/get_menu'+'?token='+res.data.data.token)
-									
-									
-									
 								}
 							}
 						})
@@ -158,7 +155,7 @@
 //										        this.$router.push({
 //										            path: redirect,
 //										        })
-								this.$router.push({
+									this.$router.push({
 							            path: '/message/unreadMessage',
 							        })
 								}

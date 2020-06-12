@@ -7,23 +7,23 @@
 				<el-col :span='14'>
 					
 					<ul >
-						<li>默认路径：{{JSON.stringify(info)!=="{}"? info.action === 'create' ? "否" :'是':'是(无指向路径)'}}</li>
+						<li>有无指定路径：{{JSON.stringify(info)!=="{}"? "有":"无"}}</li>
 						<li>路径更新于：{{info.time}}</li>
 						<li>切换原因：{{info.reason}}</li>
 						<li class="cli_toTip" v-if='selectId'>温馨提示：请从起点开始依次规划路径走向(请先选中起点)</li>
 					</ul>
 				</el-col>
+				<!--进入详情的界面的时候存在的按钮文本-->
 				<el-col :span='10'align='left'>
 					<div v-if='buttonVal.pathCancel'>
-						<div v-if='selectId'>
+						<!--<div v-if='selectId'>
 							<el-button size='mini' type='primary' @click.native='handlePath' 
 								v-if='JSON.stringify(info) !=="{}" ? info.action ==="delete"?false:true :false'
 								>
 								{{btn }}
 							</el-button>
-						</div>
-						<div v-else>
-							<!--进入详情的界面的时候存在的按钮文本-->
+						</div>-->
+						<div v-if='!selectId'>
 							<el-button size='mini' type='primary' @click.native='selectPath' >
 								{{btn}}
 							</el-button>
@@ -43,39 +43,44 @@
 						@sendNode='getNode' 
 						@basic='getBasic'
 						@sendStatus='getStatus'
+						@sendReal='getReals'
 						></charts>
 					<div class="marT10" v-if='selectId'>
-						
-						<el-button @click='newPath'>保存新路径</el-button>
+						<el-button @click='newPath'type='primary'>保存新路径</el-button>
 						<el-button @click='$router.go(-1)'>返回</el-button>
 					</div>
 					
 				</el-col>
 				<el-col :span='8'>
-					
-					<h3 >路径节点排列表:
+					<h3 >指定路径节点排列表:
 						<el-button size='small' type='primary' @click='reduction' v-if='selectId  && !selectStatus'>还原 </el-button>
 					</h3>
-					
-					<el-table :data='Nodes' width='100%'>
-						<el-table-column type='index' label='跳数'align='center' min-width='40'>
-						</el-table-column>
-						<el-table-column prop='node.name' label='节点名称'align='center'min-width='60'></el-table-column>
-						<el-table-column prop='def_val' label='类型'align='center'min-width='40'></el-table-column>
-					</el-table>
-					<span class="path_spa marT10" v-if='JSON.stringify(info)!=="{}"? info.action === "create" ? false:true:true'>
-						当前系统默认路径
-						<span v-if='JSON.stringify(info) ==="{}"'>
-							(无指向路径)
-						</span>
-					</span>
-					
+					<div v-if='Nodes && Nodes.length != 0'>
+						<el-table :data='Nodes ' width='100%'>
+							<el-table-column type='index' label='跳数'align='center' min-width='40'>
+							</el-table-column>
+							<el-table-column prop='node.name' label='节点名称'align='center'min-width='60'></el-table-column>
+							<el-table-column prop='def_val' label='类型'align='center'min-width='40'></el-table-column>
+						</el-table>
+					</div>
+					<div v-else class="path_spa marT20">
+						当前无指定路径，系统按照真实路径走！
+					</div>
+					<div class="marT20">
+						<h3>真实路径节点排列表:</h3>
+						<el-table :data='reals' width='100%'>
+							<el-table-column type='index' label='跳数' align='center' min-width='40'></el-table-column>
+							<el-table-column prop='name' label='节点名称' align='center' min-width='60'></el-table-column>
+							<el-table-column prop='def_val' label='类型' align='center' min-width='40'>
+							</el-table-column>
+							
+						</el-table>
+					</div>
 				</el-col>
 			</el-row>
 			<el-row class='marT10'  v-if='!selectId'>
 				<el-col :span='24'>
 					<history-path :id='ids' v-if='ids' @path_info='path_info' @reduction='reduction' :default='info'@sendChild='sendChild' ></history-path>
-					
 				</el-col>
 			</el-row>
 			
@@ -128,7 +133,9 @@
 				backFormRules:{
 		        	why: [{ required: true, message:'请填写原因' , trigger: "blur" }]
 				},
-				Nodes:[],//节点的列表
+				Nodes:[],//指定路径的列表  根据历史路径里面的第一条数据进行筛选
+				paths:[],//合并指定路径和指定路径的列表集合
+				reals:[],//真实路径列表
 				basicList:[],//备份列表
 				currentData:{},
 				selectStatus:true,
@@ -155,22 +162,26 @@
 			btn(){
 				if(this.titData){
 					return '路径调整'
-				}else{
-					if(JSON.stringify(this.info) !=='{}'){
-						return this.info.action ==='create'?'还原系统默认路径':'';
-					}
 				}
+//				else{
+//					if(JSON.stringify(this.info) !=='{}'){
+//						return this.info.action ==='create'?'还原系统默认路径':'';
+//					}
+//				}
 			},
-
 		},
 
 		created(){
 			this.token=sessionStorage.getItem('token');
 			this.detailInfo(this.ids)
-
+		},
+		mounted(){
+			console.log(this.deal)
 		},
 		methods:{
-
+			getReals(msg){
+				this.reals=JSON.parse(JSON.stringify(msg))
+			},
 			getStatus(msg){
 				this.selectStatus=false;
 			},
@@ -189,19 +200,10 @@
 				this.selectStatus=true;
 			},
 			getNode(msg){
-//				var Data=[]
-//				var str=msg.map((item,index) => {
-//					if(item.def_val === '起点'){
-//						Data.unshift(item)
-//					}else{
-//						Data.push(item)
-//					}
-//				})
+//				var obj={};
+//				obj.name=msg.node.name;
 				this.Nodes=msg;
 			},
-//			getCurren(msg){
-//				this.Nodes=JSON.parse(JSON.stringify(msg));
-//			},
 			getBasic(msg){//数据备份
 				this.basicList=JSON.parse(JSON.stringify(msg))
 			},
@@ -210,23 +212,50 @@
 				.then(res => {
 					if(res.status === 200){
 						if(res.data.status === 0){
+							console.log(res);
+							//获取到指定的路径的数据
 							if(res.data.data.items.length !== 0 ){
 								var str=res.data.data.items[0];
 								for(var key in str){
+									var obj={}
 									if( (!str[key] && typeof (str[key] !=='undefined') && str[key] !== 0) || typeof str[key] ==='undefined' ){
 										str[key] = ''
 									}
-									if(key === 'creation_time') str['time']=datedialogFormat(str[key])
+									if(key === 'creation_time') str['time']=datedialogFormat(str[key]);
+//									obj[key]=str[key];
+//									obj['color']='assign';//指定路的颜色值
+//									this.Nodes.push(obj);
 								}
 								this.currentData=str
 								this.info=JSON.parse(JSON.stringify(str));
 							}
-							
 						}
 					}
 				})
 				.catch(err =>{ console.log(err) })
 			},
+//			real_path(){
+//				this.$ajax.get('/vll/true_path/'+this.ids+'?token='+this.token)
+//				.then(res => {
+//					console.log(res)
+//					if(res.status == 200){
+//						if(res.data.status ==0){
+//							res.data.data.nodes.map((item,index) =>{
+//								item.color='real';//真实路径的颜色值
+//								if(index ==0){
+//									item.type='起点'
+//								}else if(index == res.data.data.nodes.length-1){
+//									item.type='终点'
+//								}else{
+//									item.type='途径'
+//								}
+//							} )
+//							this.real=res.data.data.nodes;
+//						}
+//					}
+//				})
+//				.catch(e => console.log(e))
+//			},
 			handlePath(){
 				//存在两种情况   只有在详情的界面 显示-调整路径-才需要进行路由的跳转      在调整路径界面的时候 显示  -还原默认路径-  信息
 				if(this.info.action ==='create'){//路径调整的时候  显示路径的还原信息
@@ -293,7 +322,6 @@
 						.then(res => {
 							if(res.status === 200){
 								if(res.data.status === 0){
-									console.log(res)
 									this.$message({
 										message:'修改成功',
 										type:'success'
@@ -302,7 +330,6 @@
 									this.$refs["backForm"].resetFields();
 									this.reduction();//执行刷新
 									this.detailInfo(this.ids);
-		
 								}
 								
 							}

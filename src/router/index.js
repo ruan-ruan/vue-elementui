@@ -62,7 +62,7 @@ var router = new Router({
 			},
 			children: [
 				//站内信
-				{path:'/message',component: () => import ('@/views/parent'), name: 'aside.standLetter',leaf:false,meta:{requireAuth:true,name:'站内信'},
+				{path:'/messages',component: () => import ('@/views/parent'), name: 'aside.standLetter',leaf:false,meta:{requireAuth:true,name:'站内信'},
 				children:[
 					{path:'/message/unreadMessage',component: () => import ('@/views/message/unreadMessage'), name: 'aside.unMessage',leaf:true,meta:{requireAuth:true,name:'未知消息'}},
 					{path:'/message/allMessage',component: () => import ('@/views/message/allMessage'), name: 'aside.allMessage',leaf:true,meta:{requireAuth:true,name:'全部消息'} }, 
@@ -135,7 +135,7 @@ var router = new Router({
 				//逻辑端口的详情的界面
 				{ path: '/resource/see/logicalPort', component: () => import ('@/views/resources/details/logicalDetails.vue'), name: 'aside.logicDetails',leaf:true,hidden:true,meta:{ requireAuth:true, name:'逻辑口详情'},},
 				//虚拟专线
-				{path:'/resource/virtualLine',component: () => import ('@/views/parent'), name: 'aside.virtual',leaf:false,meta:{ requireAuth:true, name:'虚拟专线'}, children:[
+				{path:'/virtualLine',component: () => import ('@/views/parent'), name: 'aside.virtual',leaf:false,meta:{ requireAuth:true, name:'虚拟专线'}, children:[
 					{path:'/resource/virtualLine/pointTo',component: () => import ('@/views/resources/pointTo'), name: 'aside.pointSpecial',leaf:true,meta:{ requireAuth:true, name:'点到点'},},
 					{path:'/resource/virtualLine/pointsTos',component: () => import ('@/views/resources/pointsTos'), name: 'aside.virtualSpecial',leaf:true,meta:{ requireAuth:true, name:'虚拟组网'},},
 				]},

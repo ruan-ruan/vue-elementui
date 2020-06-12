@@ -233,11 +233,11 @@ export default {
       },
       cen: this.$router.options.routes,
       tableData: [],
-      tokenkey: ""
+      tokenkey: this.$store.state.token
     };
   },
   mounted() {
-    this.tokenkey = sessionStorage.getItem("token");
+  	console.log(this.$store.state.token)
     var user = sessionStorage.getItem("user");
     if (user) {
       this.sysUserName = user || "";
@@ -484,11 +484,11 @@ export default {
     .tools {
       padding: 0px 10px;
       width: 26px;
-      height: 26px;
-      line-height: 26px;
+      height: 20;
+      /*line-height: 26px;*/
       position: absolute;
-      top: 30px;
-      margin-top: -13px;
+      top: 20px;
+/*      margin-top: -13px;*/
       cursor: pointer;
     }
   }
@@ -501,7 +501,7 @@ export default {
 
     overflow: auto;
     aside {
-      overflow: auto;
+      /*overflow: auto;*/
       flex: 0 0 230px;
       width: 230px;
 

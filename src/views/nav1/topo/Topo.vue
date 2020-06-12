@@ -346,39 +346,40 @@
 						for(var i in d_val[item]){
 							if(i == 'bytes'){
 								if(d_val[item][i]>=1000 && d_val[item][i]< 1000*1024){
-									d_val[item]['bbs']=Math.round( d_val[item][i] / 1000  )  + "KB";
+									d_val[item]['bps']=( d_val[item][i] / 1000  ).toFixed(2)  + "KB";
 								}else if(d_val[item][i]>=1000*1024 && d_val[item][i]<1000*1024*1024){
-									d_val[item]['bbs']=Math.round( d_val[item][i] / (1000*1024)  ) + "MB";
+									d_val[item]['bps']=( d_val[item][i] / (1000*1024)  ).toFixed(2) + "MB";
 								}else if(d_val[item][i]>=1000*1024*1024  && d_val[item][i]<1000*1024*1024*1024){
-									d_val[item]['bbs']=Math.round( d_val[item][i] / (1000*1024*1024)  )  + "GB";
+									d_val[item]['bps']=( d_val[item][i] / (1000*1024*1024)  ).toFixed(2)  + "GB";
 								}else if(d_val[item][i]>=1000*1024*1024*1024 ){
-									d_val[item]['bbs']=Math.round( d_val[item][i] / (1000*1024*1024*1024)  )  + "TB";
+									d_val[item]['bps']=( d_val[item][i] / (1000*1024*1024*1024)  ).toFixed(2)  + "TB";
 								}else{
-									d_val[item]['bbs']=d_val[item][i]
+									d_val[item]['bps']=d_val[item][i]
 								}
 							}else{
-								if(d_val[item][i]>=1000 && d_val[item][i]< 1000*1024){
-									d_val[item]['pps']=Math.round( d_val[item][i] / 1000  )  + "KB";
-								}else if(d_val[item][i]>=1000*1024 && d_val[item][i]<1000*1024*1024){
-									d_val[item]['pps']=Math.round( d_val[item][i] / (1000*1024)  ) + "MB";
-								}else if(d_val[item][i]>=1000*1024*1024  && d_val[item][i]<1000*1024*1024*1024){
-									d_val[item]['pps']=Math.round( d_val[item][i] / (1000*1024*1024)  )  + "GB";
-								}else if(d_val[item][i]>=1000*1024*1024*1024 ){
-									d_val[item]['pps']=Math.round( d_val[item][i] / (1000*1024*1024*1024)  )  + "TB";
-								}else{
-									d_val[item]['pps']=d_val[item][i]
-								}
+								d_val[item]['pps']=Math.round( d_val[item][i] ) 
+//								if(d_val[item][i]>=1000 && d_val[item][i]< 1000*1024){
+//									d_val[item]['pps']=Math.round( d_val[item][i] / 1000  )  + "KB";
+//								}else if(d_val[item][i]>=1000*1024 && d_val[item][i]<1000*1024*1024){
+//									d_val[item]['pps']=Math.round( d_val[item][i] / (1000*1024)  ) + "MB";
+//								}else if(d_val[item][i]>=1000*1024*1024  && d_val[item][i]<1000*1024*1024*1024){
+//									d_val[item]['pps']=Math.round( d_val[item][i] / (1000*1024*1024)  )  + "GB";
+//								}else if(d_val[item][i]>=1000*1024*1024*1024 ){
+//									d_val[item]['pps']=Math.round( d_val[item][i] / (1000*1024*1024*1024)  )  + "TB";
+//								}else{
+//									d_val[item]['pps']=d_val[item][i]
+//								}
 							}
 						}
 					}
 					if(d.bandwidth<1024){
 						d.bandwidthVal=d.bandwidth+'MB'
 					}else if(d.bandwidth>=1024 && d.bandwidth< 1024*1024){
-						d.bandwidthVal= Math.round(d.bandwidth/1024) +'GB'
+						d.bandwidthVal= (d.bandwidth/1024).toFixed(2) +'GB'
 					}else if(d.bandwidth>=1024*1024 && d.bandwidth< 1024*1024*1024){
-						d.bandwidthVal= Math.round(d.bandwidth/1024*1024) +'TB'
+						d.bandwidthVal= (d.bandwidth/(1024*1024)).toFixed(2) +'TB'
 					}
-					return d.instant_speed.input.bbs+'(入)'+'-'+d.instant_speed.output.bbs+'(出)'+'-'+d.bandwidthVal+'(物理带宽)'
+					return d.instant_speed.input.bps+'(入)'+'-'+d.instant_speed.output.bps+'(出)'+'-'+d.bandwidthVal+'(物理带宽)'
 	        })
 				
 	        let link = g.append('g') 

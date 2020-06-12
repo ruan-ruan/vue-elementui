@@ -475,6 +475,8 @@ const en = {
 		next:'Next step',
 		note:'Note: The bound mailbox number will be used to receive important message prompts, please be sure to update in real time.',
 		noView:'No permission to view!',
+		a_device_port:'Device port A',
+    	z_device_port:'Device port Z',
 		
     },
     confirm:{

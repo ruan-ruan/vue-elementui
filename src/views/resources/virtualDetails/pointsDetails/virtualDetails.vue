@@ -167,7 +167,6 @@
 				.then(res =>{
 					if(res.status==200){
 						if(res.data.status==0){
-
 							this.seeLoading=false;
 							var  str=res.data.data;
 							let statusVal='';

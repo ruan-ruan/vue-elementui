@@ -109,7 +109,7 @@
             >
               <template slot-scope="scope">
                 <ul v-for='(item,index) in scope.row.devices' :key='index'>
-                  <li  :class="item.exist_status=='normal'? 'backRun':'backStop' ">{{item.exist_status=='normal'?$t('Public.run') : $t('Public.leave') }}</li>
+                  <li  :class="item.status=='UP'? 'backRun':'backStop' ">{{item.status=='UP'?$t('Public.run') : $t('Public.leave') }}</li>
                 </ul>
               </template>
             </el-table-column>
@@ -368,14 +368,12 @@ export default {
       };
       this.$ajax.get("/node/nodes" + "?token=" + this.token, para)
         .then(res => {
-        	console.log(res)
           _this.loading = false;
           if (res.status == 200) {
             if (res.data.status == 0) {
               let params = res.data.data.items;
 
               params.forEach((ele, index) => {
-
                 //将数据的状态保
                 //根据状态对删除的按钮的显示是否渲染到模板做处理
                 if (ele.status == "运行中") {
@@ -396,7 +394,7 @@ export default {
 				    				ele.devices_ip2='';
 				    				ele.devices_sn2='';
 				    				
-				    				if(str1.exist_status == "normal"){
+				    				if(str1.status == "UP"){
 				    					ele.nodeStatus = this.$t('Public.SingleRun');
 				    					ele.color='backRun'
 				    				}else{
@@ -411,16 +409,17 @@ export default {
 									var str2=ele.devices.find(item => {
 				    					return item.sign =='d2' 
 				    				})
-									
-									if(str1.exist_status == "normal" && str2.exist_status == "normal"){
+//									console.log(str1);
+									if(str1.status == "UP" && str2.status == "UP"){
 				    					ele.nodeStatus= this.$t('Public.run');
 				    					ele.color='backRun'
-				    				}else if( (str1.exist_status == "normal" && str2.exist_status == "found") || (str2.exist_status == "normal" && str1.exist_status == "found") ){
+				    			}else	if( (str1.status == "UP" && str2.status == "DOWN")
+				    			|| (str2.status == "DOWN" && str1.status == "UP")){
 				    					ele.nodeStatus= this.$t('Public.SingleRun');
 				    					ele.color='backRun'
 				    				}else{
-				    						ele.nodeStatus= this.$t('Public.leave');
-				    					ele.color='backStop'
+			    						ele.nodeStatus= this.$t('Public.leave');
+			    						ele.color='backStop'
 				    				}
 				    				ele.devices_name1=str1.hostname
 				    				ele.devices_ip1=str1.ip;

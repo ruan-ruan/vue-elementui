@@ -209,26 +209,18 @@ export var arrayPro={
 			for(var index = new Date(start).getTime()/1000; index < new Date(end).getTime()/1000 ; index +=60){
 				var obj={
 					d1:{
-//						input_bytes: 0,
-//						input_packages: 0,
-//						mac_address: 0,
-//						output_bytes: 0,
-//						output_packages: 0,
-//						total_input_bytes: 0,
-//						total_input_packages: 0,
-//						total_output_bytes: 0,
-//						total_output_packages: 0,
+						input_bytes: 0,
+						input_packages: 0,
+						mac_address: 0,
+						output_bytes: 0,
+						output_packages: 0,
 					},
 					d2:{
-//						input_bytes: 0,
-//						input_packages: 0,
-//						mac_address: 0,
-//						output_bytes: 0,
-//						output_packages: 0,
-//						total_input_bytes: 0,
-//						total_input_packages: 0,
-//						total_output_bytes: 0,
-//						total_output_packages: 0,
+						input_bytes: 0,
+						input_packages: 0,
+						mac_address: 0,
+						output_bytes: 0,
+						output_packages: 0,
 					},
 					time:datedialogFormat(index)
 				};
@@ -238,17 +230,16 @@ export var arrayPro={
 			for(var index = new Date(start).getTime()/1000+60; index < new Date(end).getTime()/1000 ; index +=60){//这个时候  是结束的时间没有找到   因为 所有的flow里面已经包含最后一个值，也就是造册假数据第一个值，冲突，所以需要加一个间隔
 				var obj={
 					d1:{
-//						input_bytes: 0,
-//						input_packages: 0,
-//						output_bytes: 0,
-//						output_packages: 0,
-
+						input_bytes: 0,
+						input_packages: 0,
+						output_bytes: 0,
+						output_packages: 0,
 					},
 					d2:{
-//						input_bytes: 0,
-//						input_packages: 0,
-//						output_bytes: 0,
-//						output_packages: 0,
+						input_bytes: 0,
+						input_packages: 0,
+						output_bytes: 0,
+						output_packages: 0,
 					},
 					time:datedialogFormat(index)
 				};
@@ -329,16 +320,16 @@ export var arrayPro={
 				}else{
 					childObj={
 						d1:{
-//							input_bytes: 0,
-//							input_packages: 0,
-//							output_bytes: 0,
-//							output_packages: 0,
+							input_bytes: 0,
+							input_packages: 0,
+							output_bytes: 0,
+							output_packages: 0,
 						},
 						d2:{
-//							input_bytes: 0,
-//							input_packages: 0,
-//							output_bytes: 0,
-//							output_packages: 0,
+							input_bytes: 0,
+							input_packages: 0,
+							output_bytes: 0,
+							output_packages: 0,
 						},
 						time:arrayPro.datedialogFormat( timeData[val] )
 					}
@@ -380,7 +371,6 @@ export var arrayPro={
 //		console.log(d1);
 //		console.log(d2)
 		//首先判断   d1和d2 内的对象是否为空
-		
 		let avg=0,num=0,obj1={},i=0,newData1=[];
 		for (var index =0;index<d1.length;index ++) {
 			if(JSON.stringify( d1[index] ) == '{}'){
@@ -491,7 +481,7 @@ export var arrayPro={
 				for (var val in str[item]){
 					for(var index in str[item][val]){
 						if( isNaN( str[item][val][index] ) || !isFinite( str[item][val][index] )){//当数据为NaN的时候 获取无穷大的时候  这个时候给一个空的字符
-							str[item][val][index]=null;
+							str[item][val][index]=0;
 						}
 					}
 				}
@@ -536,12 +526,12 @@ export var arrayPro={
 		if(data1  && data2){
 			for(var i=0;i<data1.length;i++){
 				if(isNaN( data1[i] ) || ( !data1[i] && typeof(data1[i]) !='undefined' && data1[i] !=0 ) || data1[i] =='' ){
-					data1[i]=null;
+					data1[i]=0;
 				}
 			}
 			for(var j=0;j<data2.length;j++){
 				if(isNaN( data2[j] ) || ( !data2[j] && typeof(data2[j]) !='undefined' && data2[j] !=0 ) || data2[i] =='' ){
-					data2[j]=null;
+					data2[j]=0;
 				}
 			}
 			
@@ -553,7 +543,7 @@ export var arrayPro={
 				}else if( !(!item && typeof (item) !='undefined' && item !=0 ) && !( !data2[index] && typeof (data2[index]) !='undefined' && data2[index] !=0 )  ){
 					return item + data2[index]
 				}else {
-					return null;
+					return 0;
 				}
 				
 			})
@@ -703,7 +693,6 @@ export function isTest(val){
 	})
 //	console.log(str)
 	str.dataVal=newData;
-//	console.log(str);
 	return str;
 };
 
@@ -819,9 +808,7 @@ export function cloneTopo(data,obj,index,vals,links){
 				return ;
 			}
 		})
-		
 		cloneTopo(data,obj,index,vals,links)
-		
 	}
 	return sel;
 }
@@ -833,7 +820,6 @@ export function cloneTopo(data,obj,index,vals,links){
 
 export function Clone(data){  //角色的详情部分   所有的数据都是不可以点击的
 	data.map(ele => {
-		// console.log(ele)
 		ele.disabled=true;
 		if(ele.list){
 			Clone(ele.list);
@@ -851,7 +837,6 @@ export function CloneVal(data){//当权限是  all的时候   默认的是全部
 				var temp=CloneVal(ele.list)
 				arr=arr.concat(temp)
 			}
-			
 		})
 		return arr
 	}

@@ -11,6 +11,9 @@
 			return{
 				
 			}
+		},
+		created(){
+//			this.$router.push('/')
 		}
 	}
 </script>

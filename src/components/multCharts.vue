@@ -230,6 +230,18 @@
 					.then(res => {
 						if(res.status==200){
 							if(res.data.status==0){
+//								console.log(res)
+//								res.data.data.endpoints.map(fil => {
+//									fil.flow.map(chi => {
+//										for(let chis in chi.d1){
+//											if(chi.d1[chis] < 0){
+//												console.log( chi.d1[chis] );
+//												console.log(chi)
+//											}
+//										}
+//										
+//									})
+//								})
 
 								var endObj={};
 								var endData=[];
@@ -557,7 +569,9 @@
 						end_time=new Date();
 						this.filters.time[0]=Number( this.filters.time[1])-90 * 24 * 3600 * 1000
 						str=60*60*1000;
-					}else if(Number( this.filters.time[1])-Number(this.filters.time[0])  <= 90 * 24 * 3600 * 1000 &&  Number( this.filters.time[1])-Number(this.filters.time[0]>=  24 * 3600 * 1000 ) ) {
+
+					}else if(Number( this.filters.time[1])-Number(this.filters.time[0])  <= 90 * 24 * 3600 * 1000 &&  Number( this.filters.time[1])-Number(this.filters.time[0] )>=  7 * 24 * 3600 * 1000 ) {
+//						大于一周,小于三个月
 						if( Number( this.filters.time[1] ) > Number( new Date() ) ){
 							this.filters.time[1]=new Date();
 							end_time=new Date();
@@ -567,7 +581,21 @@
 							
 						}
 						str=60*60*1000;
-					}else if( (Number( this.filters.time[1])-Number(this.filters.time[0])) < 24 * 3600 * 1000 ){
+
+					}else if( (Number( this.filters.time[1])-Number(this.filters.time[0])) <7* 24 * 3600 * 1000 && (Number( this.filters.time[1])-Number(this.filters.time[0]) )> 3600*1000 ){
+//						大于一小时 ,小于一周
+						if( Number( this.filters.time[1] ) > Number( new Date() ) ){
+							this.filters.time[1]=new Date();
+							end_time=new Date();
+
+						}else if( Number(new Date()) >= Number( this.filters.time[1]) ){
+							end_time=this.filters.time[1];
+							
+						}
+						str=5*60*1000;
+
+					}else{
+//						一个小时以内
 						if( Number( this.filters.time[1] ) > Number( new Date() ) ){
 							this.filters.time[1]=new Date();
 							end_time=new Date();
@@ -592,7 +620,7 @@
 						str=5*60*1000;
 					}else if(type ===this.$t('Public.oneWeek')){//间隔一个小时
 						start_time.setTime(start_time.getTime() - 3600 * 1000 * 24 * 7 );
-						str=60*60*1000;
+						str=5*60*1000;
 					}
 				}
 				//根据时间类型获取不同的额时间的间隔数据
@@ -600,7 +628,6 @@
 				//遍历  获取所有的时间的日期  用来获取数据
 				var timeVal=arrayPro.unique(this.getTimeVal(Number(start_time),Number(end_time),str).send).sort(arrayPro.sortNum);
 				this.sendType=timeVal;
-
 				this.timeInterval=str/(60*1000);
 //获取时间间隔  用来处理数据    单位是分钟
 				

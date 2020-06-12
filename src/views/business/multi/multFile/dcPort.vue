@@ -67,6 +67,15 @@
 						<el-input v-model='portVlan.vlanName'  :placeholder='$t("business.plaVlan")'class='ipt_sels2'></el-input>
 						<el-button size='small' type='primary' @click='getVlan'>{{$t('topFilters.search')}}</el-button>
 					</template>
+					<template>
+						<span>{{$t('business.vlanSection')}}</span>
+						<el-select v-model='portVlan.selVlanVal':placeholder='$t("business.plaVlanSection")'class='details'>
+							<el-option v-for='(item,index) in vlanInterval'
+								:value='item.value'
+								:label='item.label'
+								:key='index'></el-option>
+						</el-select>
+					</template>
 				</el-form-item>
 				<el-form-item >
 					<template slot-scope='scope'>
@@ -94,15 +103,17 @@
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button size='small' @click.native="dialogFormVisible=false">{{$t('tabOperation.cancel')}}</el-button>
-				<el-button size='small' type='primary' @click='creatVlan'>{{$t('tabOperation.save')}}</el-button>
+				 <el-button size='small' @click.native="dialogFormVisible=false">{{$t('tabOperation.cancel')}}</el-button>
+				 <el-button size='small' type='primary' @click='creatVlan'>{{$t('tabOperation.save')}}</el-button>
 			</div>
 		</el-dialog>
+
 	</div>
 </template>
 
 <script>
 
+	
 	import {datedialogFormat,getPortStatus ,isPortStatus} from '@/assets/js/index.js'
 	export default{
 		name:'dcPort',
@@ -151,13 +162,16 @@
 				dialogFormVisible:false,
 				portVlan:{
 					vlanName:'',
+					selVlanVal:'1-600',
 					vlanVal:'',
 				},
 				vlanLoading:false,
 				vlanData:[],//保存选择vlan号区间的所有的数据
 				vlanVal:[],//保存所选取的vlan的区间的前后的字符串
 				portType:[{label:'透传',value:'-1'},{label:'trunk',value:'0'}],
-
+				vlanInterval:[{label:'1-600',value:'1-600'},{label:'601-1200',value:'601-1200'},{label:'1201-1800',value:'1201-1800'},
+				{label:'1801-2400',value:'1801-2400'},{label:'2401-3000',value:'2401-3000'},{label:'3001-3600',value:'3001-3600'},{
+				label:'3601-4094',value:'3601-4094'},],//数据中心互联的是偶是这个区间段  ali和腾讯vlan根据列表进行手添加就可以了
 				timeIndex:null,
 
 				nodeData:[],//获取节点的数据
@@ -180,7 +194,16 @@
 			}
 		},
 		watch:{
+			
+			'portVlan.selVlanVal':function(newVal,oldVal){
+				this.vlanVal=this.portVlan.selVlanVal.split('-');
+				this.vlanData =this.getData(parseInt(this.vlanVal[0]),parseInt(this.vlanVal[1]));
+				this.disVlan=JSON.parse(JSON.stringify(this.conversion(this.vlanData))); 
+				
+				this.tableCopyTableList = JSON.parse(JSON.stringify(this.disVlan));
+				this.disVlan = this.paging(this.size, this.index);
 
+			},
 			editForm:{
 				handler(newVal,oldVal){	
 ////					验证逻辑口
@@ -256,7 +279,6 @@
 
 			sendForm:{
 				handler(newVal,oldVal){
-//					console.log(newVal)
 					this.$emit('sendFormData',newVal)
 					this.$emit('sendFormData_a',newVal)
 					this.$emit('sendFormData_z',newVal)
@@ -266,7 +288,10 @@
 		},
 		created(){
 			this.token=sessionStorage.getItem('token');
-
+			this.vlanVal=this.portVlan.selVlanVal.split('-');
+			this.vlanData=this.getData(parseInt(this.vlanVal[0]),parseInt(this.vlanVal[1]));
+			this.disVlan=JSON.parse(JSON.stringify(this.conversion(this.vlanData))); 
+			
 			this.tableCopyTableList = JSON.parse(JSON.stringify(this.disVlan));
 			this.disVlan = this.paging(this.size, this.index);
 			this.getformData();
@@ -298,16 +323,28 @@
 		      	});
 		      	return tablePush;
 		    },
-			getVlan(){
-				//本地分页的模糊查找
-				this.index =parseInt( this.portVlan.vlanName/this.size ) ;
-				this.handleCurrentChange(this.index)
+			conversion(data){
+				let disData=this.disabeldData
+				var str=data.map(item => {
+					return {value:item,clas:""}
+				})
+				str.forEach(item => {
+					if(disData.indexOf(item['value'])  !==-1){
+						item.clas='active'
+					}
+//					else if(item['value'] == parseInt(this.portVlan.vlanName)){
+//						//执行模糊搜索的时候  具体到某一个值
+//						item.clas='now';
+//					}
+					else{
+						item.clas=''
+					}
+				})
+				return str;
+				
 			},
 			getformData(){
-				var para={
-					search_activated:true
-				}
-				this.$ajax.get('/node/nodes'+'?token='+this.token,para)   //获取节点的数据
+				this.$ajax.get('/node/nodes'+'?token='+this.token)   //获取节点的数据
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
@@ -359,7 +396,6 @@
 			    		}
 			    	}
 			    }).catch(e => {console.log(e)})
-			    
 			    this.cloudLogic=[];
 			    var obj={}
 			    //获取云对接链路里面的数据  cloudLogic
@@ -377,8 +413,7 @@
 			},
 			selectNode(ids){//根据选择的节点获取逻辑口的数据
 				this.editForm.logic=''
-				this.logicPort=[];
-				this.disVlan=[];
+				this.logicPort=[]
 				var para={
 					search_node:ids,
 					search_usable:true,
@@ -434,6 +469,7 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
+
 							let str=res.data.data;
 							for(let item in str){
 								str.portStatus=isPortStatus(str.physical_ports)
@@ -454,19 +490,12 @@
 					this.baseObj=obj1;
 				}
 				//获取逻辑口下的vlan的信息
-				this.$ajax.get('/vll/get_vlan/'+ids+'?token='+this.token)
+				this.$ajax.get('/vll/get_disable_vlan/'+ids+'?token='+this.token)
 				.then(res => {
-					if(res.status == 200){
-						if(res.data.status == 0){
-							this.disVlan=res.data.data;
-							return this.$ajax.get('/vll/get_disable_vlan/'+ids+'?token='+this.token)
-						}
-					}
-				}).then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
 							this.disabeldData=res.data.data;
-							this.disVlan=JSON.parse(JSON.stringify(this.conversion(this.disVlan,this.disabeldData))); 
+							this.disVlan=JSON.parse(JSON.stringify(this.conversion(this.vlanData))); 
 							this.tableCopyTableList = JSON.parse(JSON.stringify(this.disVlan));
 							this.disVlan = this.paging(this.size, this.index);
 						}
@@ -474,19 +503,26 @@
 				}).catch(e =>{
 					console.log(e)
 				})
-			},
-			conversion(data,disData){
-				var str=data.map(item => {
-					return {value:item,clas:""}
-				})
-				str.forEach(item => {
-					if(disData.indexOf(item['value'])  !==-1){
-						item.clas='active'
-					}else{
-						item.clas=''
-					}
-				})
-				return str;
+//				this.$ajax.get('/vll/get_vlan/'+ids+'?token='+this.token)
+//				.then(res => {
+//					if(res.status == 200){
+//						if(res.data.status == 0){
+//							this.disVlan=res.data.data;
+//							return this.$ajax.get('/vll/get_disable_vlan/'+ids+'?token='+this.token)
+//						}
+//					}
+//				}).then(res => {
+//					if(res.status==200){
+//						if(res.data.status==0){
+//							this.disabeldData=res.data.data;
+//							this.disVlan=JSON.parse(JSON.stringify(this.conversion(this.disVlan,this.disabeldData))); 
+//							this.tableCopyTableList = JSON.parse(JSON.stringify(this.disVlan));
+//							this.disVlan = this.paging(this.size, this.index);
+//						}
+//					}
+//				}).catch(e =>{
+//					console.log(e)
+//				})
 				
 			},
 			addVlan(){//选择vlan
@@ -494,10 +530,21 @@
 				this.dialogFormVisible=true;	
 
 			},
+			getData(start,end){
+				//获取选择的vlan的区间的时候转换为数据
+				let strVal=[];
+				for (let i=start;i<end+1;i++) {
+					strVal.push(i)
+				}
+				//将获取的vlan的不可用的区间标识出来
+				
+				return strVal
+			},
 			cliData:function(index,val){//activeCla   disVlan   disabeldData
 				this.disVlan.forEach(ele => {
 					if(ele.value===val && ele.clas !=="active"){
 						ele.clas='activeCla'
+//						this.timeIndex=index;
 						this.portVlan.vlanVal=val;
 						this.editForm.selVlan=val
 						this.editForm.vlan=val;
@@ -508,6 +555,28 @@
 					}
 				})
 
+			},
+
+			getVlan(){
+				//获取所有的vlan区间内的数据  portVlan.vlanName
+				let obj={};
+				let  strVal=[];
+				let numVla=parseInt(this.portVlan.vlanName);
+				let str=['1-600','601-1200','1201-1800','1801-2400','2401-3000','3001-3600','3601-4094'];
+				if(parseInt(this.portVlan.vlanName)>=1&&parseInt(this.portVlan.vlanName)<=4094){
+					for(let index in str){
+						if(numVla>=parseInt(str[index].split('-')[0]) && numVla<=parseInt(str[index].split('-')[1])){
+							this.portVlan.selVlanVal=str[index];
+
+						}
+					}
+
+				}else if(parseInt(this.portVlan.vlanName)<1||parseInt(this.portVlan.vlanName)>4094){
+					this.$message({
+						message:this.$t('business.numIsNot'),
+						type:'warning'
+					})
+				}
 			},
 			creatVlan(){
 				//设置vlan号的时候保存
@@ -544,6 +613,7 @@
 					this.logicObj=Object.assign({},findLogic)
 					return this.logicObj;
 				}
+
 			},
 		}
 	}
@@ -572,4 +642,7 @@
 	.details{
 		width: 150px;
 	}
+	/*.now{
+		color: red;
+	}*/
 </style>
