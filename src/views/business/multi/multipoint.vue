@@ -114,7 +114,7 @@
 						<el-input v-model='editForm.name' class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item :label='$t("Public.tenant")' prop='tenant_id'>
-						<el-select v-model='editForm.tenant_id' class='ipt'>
+						<el-select v-model='editForm.tenant_id' filterable class='ipt'>
 							<el-option v-for='(item,index) in tenantData'
 								:label='item.name'
 								:value='item.id'

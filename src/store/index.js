@@ -27,7 +27,10 @@ const store = new Vuex.Store({
         tenantData:[],
         node_id:'', //拓扑节点id
         nodeID:"",//直接赋值 
-        linkObj:{},
+        linkObj:{
+        	id:'',
+        	type:''
+        },
         filters:{},//接收拓扑图的默认的数据
         statusname:false,
     },
@@ -61,7 +64,13 @@ const store = new Vuex.Store({
             state.node_id = msg
        },
        sendLink(state,msg){//拓扑图点击链路的详情
-       		state.linkObj=msg;
+       	console.log(msg)
+       	state.linkObj={
+       		id:msg.id,
+       		type:msg.type
+       	}
+//     		state.linkObj=msg;
+       		
        },
     },
     actions:{

@@ -1,131 +1,126 @@
 <template>
 	<div>
-		<!--<el-button size='small' @click='unknowgoback' v-if='typeof title != "undefined"? false : typeof editId!="undefined"?false: !unkownBtn'  >
-			{{$t('Public.goback')}}
-		</el-button>-->
 		<goback  v-if='typeof title != "undefined"? false : typeof editId!="undefined"?false: !unkownBtn' ></goback>
 		<section>
-				<el-form style='margin-left: 50px;' :model='seeForm'ref='seeForm' label-width="200px"  v-loading='loading' :rules='rulesForm'>
-					<el-row>
-						<el-col :span='24'>
-							<el-col :span='12'>
-								
-								<el-form-item :label='$t("Public.backboneName")+"："' prop='name'>
-									<el-input v-model='seeForm.name' :disabled='StaEditForm'class='ipt'placeholder='请输入骨干名称'></el-input>
-								</el-form-item>
-								<el-form-item label='Vtep:'prop='vtep'>
-									<el-input v-model='seeForm.vtep' :disabled='StaNot'class='ipt'placeholder='请输入vtep'></el-input>
-								</el-form-item>
-							</el-col>
-							<el-col :span='12'>								
-								<el-form-item :label='$t("Public.dataCen")+"："' prop='dc_id'>
-									<el-input v-model='seeForm.dc_id' :disabled='StaEditForm' v-show='StaEditForm' class='ipt'></el-input>
-									<el-select v-model='seeForm.dc_id' @change="change" filterable class='ipt' v-show='!StaEditForm' placeholder='请选择数据中心'>
-										<el-option v-for='item in itemData'
-											:value='item.id'
-											:key='item.name'
-											:label='item.name'>
-										</el-option>
-									</el-select>
-								</el-form-item>
-								<el-form-item :label='$t("Public.userVlan")+"："' prop='user_vlan'>
-									<el-input v-model='seeForm.user_vlan' :disabled='StaNot'class='ipt'></el-input>
-									<span class='cli_toTip' :title='$t("Public.vlanLen")'>*?</span>
-								</el-form-item>
-							</el-col>
+			<el-form style='margin-left: 50px;' :model='seeForm'ref='seeForm' label-width="200px"  v-loading='loading' :rules='rulesForm'>
+				<el-row>
+					<el-col :span='24'>
+						<el-col :span='12'>
+							<el-form-item :label='$t("Public.backboneName")+"："' prop='name'>
+								<el-input v-model='seeForm.name' :disabled='StaEditForm'class='ipt'placeholder='请输入骨干名称'></el-input>
+							</el-form-item>
+							<el-form-item label='Vtep:'prop='vtep'>
+								<el-input v-model='seeForm.vtep' :disabled='StaNot'class='ipt'placeholder='请输入vtep'></el-input>
+							</el-form-item>
 						</el-col>
-						<!--equStatusTwo = !equStatusTwo-->
-						<el-button size='small' type='success' @click='changeDevice' v-show='addEquipStatus' v-text='equStatusTwo?$t("Public.packUpDeviceTwo"):$t("Public.addphyDeviceTwo")' ></el-button>
-						<el-col :span='24'>		
-							<el-col :span='12' class='equipment'>
-								<h4>{{$t('Public.phyDeviceOne')}}:</h4>
-								<el-form-item :label='$t("Public.deviceName")+"："'prop='devices0_hostname'>
-									<el-input v-model='seeForm.devices0_hostname':disabled='StaNot' class='ipt' :placeholder='$t("validateMes.place")+$t("Public.deviceName")'></el-input>
-								</el-form-item>
-								<el-form-item :label='$t("Public.manageIP")+"："'prop='devices0_ip'>
-									<el-input v-model='seeForm.devices0_ip':disabled='StaNot' class='ipt':placeholder='$t("validateMes.place")+$t("Public.manageIP")'></el-input>
-								</el-form-item>
-								<el-form-item :label='$t("Public.vendor")+"："' prop='devices0_vendor'>
-									<el-input v-model='seeForm.devices0_vendor':disabled='StaNot'class='ipt':placeholder='$t("validateMes.place")+$t("Public.vendor")'></el-input>
-								</el-form-item>
-								<el-form-item :label='$t("Public.snNumber")+"："' prop='devices0_sn'>
-									<el-input v-model='seeForm.devices0_sn':disabled='StaNot'class='ipt':placeholder='$t("validateMes.place")+$t("Public.snNumber")'></el-input>
-								</el-form-item>
-								<el-form-item :label='$t("Public.deviceModel")+"："' prop='devices0_model'>
-									<el-input v-model='seeForm.devices0_model':disabled='StaNot'class='ipt':placeholder='$t("validateMes.place")+$t("Public.deviceModel")'></el-input>
-								</el-form-item>
-								<!--业务端口区间-->
-								<el-form-item :label='$t("Public.portSection")+"："' prop='port_section0'>
-									<template>						
-										<el-input v-model='seeForm.port_section0'class='ipt':disabled='StaEditForm' :placeholder='$t("Public.place1")'></el-input>
-										<span class="cli_toTip":title='portRules'>*?</span>
-									</template>
-								</el-form-item>
-								<el-form-item :label='$t("Public.position")+"："'>
-									<el-input v-model='seeForm.devices0_position':disabled='StaEditForm'class='ipt':placeholder='$t("Public.position")'></el-input>
-								</el-form-item>
-								<el-form-item :label='$t("Public.room")+"："'>
-									<el-input v-model='seeForm.devices0_room':disabled='StaEditForm'class='ipt':placeholder='$t("Public.room")'></el-input>
-								</el-form-item>
-								<el-form-item :label='$t("Public.rack")+"："'>
-									<el-input v-model='seeForm.devices0_rack':disabled='StaEditForm'class='ipt':placeholder='$t("Public.rack")'></el-input>
-								</el-form-item>
-								<el-form-item :label='$t("Public.description")+"："'>
-									<el-input type="textarea" v-model='seeForm.devices0_description'rows='4':disabled='StaEditForm':placeholder='$t("Public.place150")' maxlength='150'class='ipt' ></el-input>
-								</el-form-item>
-							</el-col>
-							<el-col :span='12' class='equipment'v-if='equStatusTwo'>
-								<h4>{{$t("Public.phyDeviceTwo")}}</h4>
-								<el-form-item :label='$t("Public.deviceName")+"："' prop='devices1_hostname'>
-									<el-input v-model='seeForm.devices1_hostname':disabled=' typeof editId!="undefined"?baseData.devices !==undefined && baseData.devices.length ==1 ?false:true:StaNot' class='ipt'  :placeholder='$t("validateMes.place")+$t("Public.deviceName")'></el-input>
-								</el-form-item>
-								<el-form-item :label='$t("Public.manageIP")+"："'prop='devices1_ip'>
-									<el-input v-model='seeForm.devices1_ip':disabled=' typeof editId!="undefined"?baseData.devices !==undefined && baseData.devices.length ==1 ?false:true:StaNot' class='ipt':placeholder='$t("validateMes.place")+$t("Public.manageIP")'></el-input>
-								</el-form-item>
-								<el-form-item :label='$t("Public.vendor")+"："'prop='devices1_vendor'>
-									<el-input v-model='seeForm.devices1_vendor':disabled=' typeof editId!="undefined"?baseData.devices !==undefined && baseData.devices.length ==1 ?false:true:StaNot'class='ipt' :placeholder='$t("validateMes.place")+$t("Public.vendor")'></el-input>
-								</el-form-item>
-								<el-form-item :label='$t("Public.snNumber")+"："' prop='devices1_sn'>
-									<el-input v-model='seeForm.devices1_sn':disabled=' typeof editId!="undefined"?baseData.devices !==undefined && baseData.devices.length ==1 ?false:true:StaNot'class='ipt':placeholder='$t("validateMes.place")+$t("Public.snNumber")'></el-input>
-								</el-form-item>
-								<el-form-item :label='$t("Public.deviceModel")+"："'prop='devices1_model'>
-									<el-input v-model='seeForm.devices1_model':disabled=' typeof editId!="undefined"?baseData.devices !==undefined && baseData.devices.length ==1 ?false:true:StaNot'class='ipt':placeholder='$t("validateMes.place")+$t("Public.deviceModel")'></el-input>
-								</el-form-item>
-								<!--业务端口区间-->
-								<el-form-item :label='$t("Public.portSection")+"："' prop='port_section1'>
-									<template>
-										<el-input v-model='seeForm.port_section1'class='ipt':disabled='typeof editId!="undefined"?false:StaEditForm'  :placeholder='$t("Public.place2")'></el-input>
-										<span class="cli_toTip":title='portRules'>*?</span>
-									</template>
-								</el-form-item>
-								<el-form-item :label='$t("Public.position")+"："'>
-									<el-input v-model='seeForm.devices1_position':disabled='typeof editId!="undefined"?false:StaEditForm'class='ipt':placeholder='$t("Public.position")'></el-input>
-								</el-form-item>
-								<el-form-item :label='$t("Public.room")+"："'>
-									<el-input v-model='seeForm.devices1_room':disabled='typeof editId!="undefined"?false:StaEditForm'class='ipt':placeholder='$t("Public.room")'></el-input>
-								</el-form-item>
-								<el-form-item :label='$t("Public.rack")+"："'>
-									<el-input v-model='seeForm.devices1_rack':disabled='typeof editId!="undefined"?false:StaEditForm'class='ipt':placeholder='$t("Public.rack")'></el-input>
-								</el-form-item>
-								<el-form-item :label='$t("Public.description")+"："'>
-									<el-input type="textarea" v-model='seeForm.devices1_description'rows='4':disabled='typeof editId!="undefined"?false:StaEditForm':placeholder='$t("Public.place150")' maxlength='150'class='ipt' ></el-input>
-								</el-form-item>
-							</el-col>
+						<el-col :span='12'>								
+							<el-form-item :label='$t("Public.dataCen")+"："' prop='dc_id'>
+								<el-input v-model='seeForm.dc_id' :disabled='StaEditForm' v-show='StaEditForm' class='ipt'></el-input>
+								<el-select v-model='seeForm.dc_id' @change="change" filterable class='ipt' v-show='!StaEditForm' placeholder='请选择数据中心'>
+									<el-option v-for='item in itemData'
+										:value='item.id'
+										:key='item.name'
+										:label='item.name'>
+									</el-option>
+								</el-select>
+							</el-form-item>
+							<el-form-item :label='$t("Public.userVlan")+"："' prop='user_vlan'>
+								<el-input v-model='seeForm.user_vlan' :disabled='StaNot'class='ipt'></el-input>
+								<span class='cli_toTip' :title='$t("Public.vlanLen")'>*?</span>
+							</el-form-item>
 						</el-col>
-					</el-row>					
-				</el-form>
-				<div slot='footer' class="dialog-footer footer_right">
-					<el-button size='small' @click='goback' v-if='editFormBtn' >{{$t('Public.goback')}}</el-button>
-					
-					<el-button size='small' @click='unknowgoback' v-if='typeof title != "undefined"? false : unkownBtn'  >{{$t('Public.goback')}}</el-button>
-					<!--节点的编辑保存-->
-					<el-button size='small' v-if='editFormBtn' @click='editForm' type="primary">{{$t('tabOperation.save')}}</el-button>
-					<!--未知节点的添加按钮-->
-					<el-button size='small' v-if='creatFormBtn' @click='creatForm'type='primary'>{{$t('tabOperation.save')}} </el-button>
-					<!--未知节点的编辑按钮-->
-					<el-button size='small' v-if='unknownStatusBtn' @click='unknownEditForm' type='primary'>{{$t('tabOperation.save')}}</el-button>
-				</div>
+					</el-col>
+					<!--equStatusTwo = !equStatusTwo-->
+					<el-button size='small' type='success' @click='changeDevice' v-show='addEquipStatus' v-text='equStatusTwo?$t("Public.packUpDeviceTwo"):$t("Public.addphyDeviceTwo")' ></el-button>
+					<el-col :span='24'>		
+						<el-col :span='12' class='equipment'>
+							<h4>{{$t('Public.phyDeviceOne')}}:</h4>
+							<el-form-item :label='$t("Public.deviceName")+"："'prop='devices0_hostname'>
+								<el-input v-model='seeForm.devices0_hostname':disabled='StaNot' class='ipt' :placeholder='$t("validateMes.place")+$t("Public.deviceName")'></el-input>
+							</el-form-item>
+							<el-form-item :label='$t("Public.manageIP")+"："'prop='devices0_ip'>
+								<el-input v-model='seeForm.devices0_ip':disabled='StaNot' class='ipt':placeholder='$t("validateMes.place")+$t("Public.manageIP")'></el-input>
+							</el-form-item>
+							<el-form-item :label='$t("Public.vendor")+"："' prop='devices0_vendor'>
+								<el-input v-model='seeForm.devices0_vendor':disabled='StaNot'class='ipt':placeholder='$t("validateMes.place")+$t("Public.vendor")'></el-input>
+							</el-form-item>
+							<el-form-item :label='$t("Public.snNumber")+"："' prop='devices0_sn'>
+								<el-input v-model='seeForm.devices0_sn':disabled='StaNot'class='ipt':placeholder='$t("validateMes.place")+$t("Public.snNumber")'></el-input>
+							</el-form-item>
+							<el-form-item :label='$t("Public.deviceModel")+"："' prop='devices0_model'>
+								<el-input v-model='seeForm.devices0_model':disabled='StaNot'class='ipt':placeholder='$t("validateMes.place")+$t("Public.deviceModel")'></el-input>
+							</el-form-item>
+							<!--业务端口区间-->
+							<el-form-item :label='$t("Public.portSection")+"："' prop='port_section0'>
+								<template>						
+									<el-input v-model='seeForm.port_section0'class='ipt':disabled='StaEditForm' :placeholder='$t("Public.place1")'></el-input>
+									<span class="cli_toTip":title='portRules'>*?</span>
+								</template>
+							</el-form-item>
+							<el-form-item :label='$t("Public.position")+"："'>
+								<el-input v-model='seeForm.devices0_position':disabled='StaEditForm'class='ipt':placeholder='$t("Public.position")'></el-input>
+							</el-form-item>
+							<el-form-item :label='$t("Public.room")+"："'>
+								<el-input v-model='seeForm.devices0_room':disabled='StaEditForm'class='ipt':placeholder='$t("Public.room")'></el-input>
+							</el-form-item>
+							<el-form-item :label='$t("Public.rack")+"："'>
+								<el-input v-model='seeForm.devices0_rack':disabled='StaEditForm'class='ipt':placeholder='$t("Public.rack")'></el-input>
+							</el-form-item>
+							<el-form-item :label='$t("Public.description")+"："'>
+								<el-input type="textarea" v-model='seeForm.devices0_description'rows='4':disabled='StaEditForm':placeholder='$t("Public.place150")' maxlength='150'class='ipt' ></el-input>
+							</el-form-item>
+						</el-col>
+						<el-col :span='12' class='equipment'v-if='equStatusTwo'>
+							<h4>{{$t("Public.phyDeviceTwo")}}</h4>
+							<el-form-item :label='$t("Public.deviceName")+"："' prop='devices1_hostname'>
+								<el-input v-model='seeForm.devices1_hostname':disabled=' typeof editId!="undefined"?baseData.devices !==undefined && baseData.devices.length ==1 ?false:true:StaNot' class='ipt'  :placeholder='$t("validateMes.place")+$t("Public.deviceName")'></el-input>
+							</el-form-item>
+							<el-form-item :label='$t("Public.manageIP")+"："'prop='devices1_ip'>
+								<el-input v-model='seeForm.devices1_ip':disabled=' typeof editId!="undefined"?baseData.devices !==undefined && baseData.devices.length ==1 ?false:true:StaNot' class='ipt':placeholder='$t("validateMes.place")+$t("Public.manageIP")'></el-input>
+							</el-form-item>
+							<el-form-item :label='$t("Public.vendor")+"："'prop='devices1_vendor'>
+								<el-input v-model='seeForm.devices1_vendor':disabled=' typeof editId!="undefined"?baseData.devices !==undefined && baseData.devices.length ==1 ?false:true:StaNot'class='ipt' :placeholder='$t("validateMes.place")+$t("Public.vendor")'></el-input>
+							</el-form-item>
+							<el-form-item :label='$t("Public.snNumber")+"："' prop='devices1_sn'>
+								<el-input v-model='seeForm.devices1_sn':disabled=' typeof editId!="undefined"?baseData.devices !==undefined && baseData.devices.length ==1 ?false:true:StaNot'class='ipt':placeholder='$t("validateMes.place")+$t("Public.snNumber")'></el-input>
+							</el-form-item>
+							<el-form-item :label='$t("Public.deviceModel")+"："'prop='devices1_model'>
+								<el-input v-model='seeForm.devices1_model':disabled=' typeof editId!="undefined"?baseData.devices !==undefined && baseData.devices.length ==1 ?false:true:StaNot'class='ipt':placeholder='$t("validateMes.place")+$t("Public.deviceModel")'></el-input>
+							</el-form-item>
+							<!--业务端口区间-->
+							<el-form-item :label='$t("Public.portSection")+"："' prop='port_section1'>
+								<template>
+									<el-input v-model='seeForm.port_section1'class='ipt':disabled='typeof editId!="undefined"?false:StaEditForm'  :placeholder='$t("Public.place2")'></el-input>
+									<span class="cli_toTip":title='portRules'>*?</span>
+								</template>
+							</el-form-item>
+							<el-form-item :label='$t("Public.position")+"："'>
+								<el-input v-model='seeForm.devices1_position':disabled='typeof editId!="undefined"?false:StaEditForm'class='ipt':placeholder='$t("Public.position")'></el-input>
+							</el-form-item>
+							<el-form-item :label='$t("Public.room")+"："'>
+								<el-input v-model='seeForm.devices1_room':disabled='typeof editId!="undefined"?false:StaEditForm'class='ipt':placeholder='$t("Public.room")'></el-input>
+							</el-form-item>
+							<el-form-item :label='$t("Public.rack")+"："'>
+								<el-input v-model='seeForm.devices1_rack':disabled='typeof editId!="undefined"?false:StaEditForm'class='ipt':placeholder='$t("Public.rack")'></el-input>
+							</el-form-item>
+							<el-form-item :label='$t("Public.description")+"："'>
+								<el-input type="textarea" v-model='seeForm.devices1_description'rows='4':disabled='typeof editId!="undefined"?false:StaEditForm':placeholder='$t("Public.place150")' maxlength='150'class='ipt' ></el-input>
+							</el-form-item>
+						</el-col>
+					</el-col>
+				</el-row>					
+			</el-form>
+			<div slot='footer' class="dialog-footer footer_right">
+				<el-button size='small' @click='goback' v-if='editFormBtn' >{{$t('Public.goback')}}</el-button>
 				
+				<el-button size='small' @click='unknowgoback' v-if='typeof title != "undefined"? false : unkownBtn'  >{{$t('Public.goback')}}</el-button>
+				<!--节点的编辑保存-->
+				<el-button size='small' v-if='editFormBtn' @click='editForm' type="primary">{{$t('tabOperation.save')}}</el-button>
+				<!--未知节点的添加按钮-->
+				<el-button size='small' v-if='creatFormBtn' @click='creatForm'type='primary'>{{$t('tabOperation.save')}} </el-button>
+				<!--未知节点的编辑按钮-->
+				<el-button size='small' v-if='unknownStatusBtn' @click='unknownEditForm' type='primary'>{{$t('tabOperation.save')}}</el-button>
+			</div>
 		</section>
 	</div>
 </template>
@@ -281,7 +276,6 @@
 		created(){
 			this.token=sessionStorage.getItem('token');
 			//此处是节点部分的编辑和详情的界面控制
-//			&&  typeof this.title=='undefined'
 			if(typeof this.editId!='undefined'){
 				//此时是节点编辑界面
 				this.StaEditForm=false;
@@ -442,7 +436,6 @@
 								this.equStatusTwo=false;
 //								str=Object.assign([],strData.devices);
 								str=JSON.parse(JSON.stringify(strData.devices))
-								
 								setObj={
 									id:strData.id,
 									name:strData.name,

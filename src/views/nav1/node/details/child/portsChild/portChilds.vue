@@ -16,7 +16,7 @@
 						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop='name'  align='center':label='$t("Public.portName")' >					
+				<el-table-column prop='port_no'  align='center':label='$t("Public.portNum")' >					
 				</el-table-column>
 				<el-table-column prop='status'  align='center':label='$t("Public.poerStatus")' >					
 				</el-table-column>
@@ -42,6 +42,7 @@
 				<el-table-column  align='center':label='$t("Public.operation")' >
 					<template slot-scope='scope'>
 						<el-button size='mini' type='primary'@click="handleEdit(scope.$index, scope.row)">{{$t('tabOperation.edit')}}</el-button>
+						<el-button size='mini' type='success' v-if='scope.row.status === "UP"'@click='handlerFlow(scope.$index,scope.row)'>图表</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -62,25 +63,36 @@
 				</el-pagination>
 			</el-col>
 			<!--编辑部分-->
-			<el-dialog :title='textMap[dialogStatus]' :visible.sync='dialogFormVisible' :close-on-click-modal="false" >
-				<el-form :model='editForm' label-width='40px' ref='editForm' >
-					<el-form-item label='备注'>
-						<el-input type='textarea' v-model='editForm.note' class='ipt_sels'></el-input>
-					</el-form-item>
-				</el-form>
-				<div slot='footer' class="dialog-footer">
-					<el-button @click.native='dialogFormVisible=false' >{{$t('tabOperation.cancel')}}</el-button>
-					<el-button @click='updateData' type='primary'>{{$t('tabOperation.save')}}</el-button>
-				</div>
+			<el-dialog :title='textMap[dialogStatus]' :visible.sync='dialogFormVisible' :close-on-click-modal="false" 
+				@open='open'>
+				<template v-if='dialogStatus === "flow"'>
+					端口号：{{info.port_no}}
+					<port-chart :ports='port':InNode='bool'></port-chart>
+				</template>
+				<template v-else>
+					<el-form :model='editForm' label-width='40px' ref='editForm' >
+						<el-form-item label='备注'>
+							<el-input type='textarea' v-model='editForm.note' class='ipt_sels'></el-input>
+						</el-form-item>
+					</el-form>
+					<div slot='footer' class="dialog-footer">
+						<el-button @click.native='dialogFormVisible=false' >{{$t('tabOperation.cancel')}}</el-button>
+						<el-button @click='updateData' type='primary'>{{$t('tabOperation.save')}}</el-button>
+					</div>
+				</template>
 			</el-dialog>
 		</section>
 	</div>
 </template>
 
 <script>
+	import PortChart from '@/views/nav1/topo/PortChart'
 	export default{
 		name:'childs',
 		props:['titleOne','titleTwo'],  //,'titleOne','titleTwo'  逻辑端口部分
+		components:{
+			PortChart
+		},
 		data(){
 			return{
 				//获取用户的权限
@@ -95,7 +107,8 @@
 				//编辑部分的参数
 				dialogFormVisible:false,
 				textMap:{
-					update:this.$t('tabOperation.edit')
+					update:this.$t('tabOperation.edit'),
+					flow:'流量'
 				},
 				dialogStatus:'',				
 				editForm:{
@@ -107,8 +120,10 @@
 					name:'',
 					ip:'',
 					id:''
-				}
-				
+				},
+				port:[],
+				bool:false,//控制里面的标题的是否显示
+				info:{}
 			}
 		},
 		watch:{
@@ -149,11 +164,11 @@
 				this.title.id=this.titleOne.id;
 				this.title.name=this.titleOne.hostname;
 				this.title.ip=this.titleOne.ip
-				
 			}
 		},
 
 		methods:{
+			
 			handleSizeChange(val){
 
 				this.pagesize=val;
@@ -172,7 +187,6 @@
 				}
 				this.$ajax.get('/node/device_info/'+ids+'/ports'+'?token='+this.token,para)
 				.then(res => {
-					console.log(res)
 					if(res.status==200){
 						if(res.data.status==0){
 							this.users=res.data.data.items;
@@ -183,8 +197,25 @@
 					console.log(e)
 				})
 			},
+			open(){
+				this.$forceUpdate()
+			},
 			getDetails(ids){//获取详情
 				
+			},
+			handlerFlow(index,row){
+				this.port=[];
+				console.log(row)
+				this.dialogStatus='flow';
+				this.dialogFormVisible=true;
+				var para={
+					name:row.port_no,
+					id:row.id
+				};
+				this.port.push({
+					port:para
+				})
+				this.info=row;
 			},
 			handleEdit(index,row){
 	

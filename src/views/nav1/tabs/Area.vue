@@ -67,6 +67,9 @@
 					<el-table-column prop="name" :label='$t("Public.name")' align='center' min-width='120'>
 					</el-table-column>
 					<el-table-column prop="descriptionVal" :label='$t("Public.description")'  align='center' min-width='120'>
+					<template slot-scope='scope'>
+						{{ scope.row.description | descriptionValue}}
+					</template>
 					</el-table-column>
 					<el-table-column :label='$t("Public.operation")'  align='center'  width='140'>
 						<template slot-scope="scope" style="width: 100%;">
@@ -139,7 +142,7 @@
  
 <script>
 
-	import {datedialogFormat,descriptionValue} from '@/assets/js/index.js'
+	import {datedialogFormat} from '@/assets/js/index.js'
 	export default {
 		name:'Area',
 	
@@ -227,12 +230,9 @@
 			      	this.loading=false;
 			      	if(res.status==200){
 			      		if(res.data.status==0){
-							descriptionValue(res.data.data.items)//处理   备注信息
 					        this.total=res.data.data.page.total;
 					        this.pageNum=res.data.data.page.pages;
 							this.users=res.data.data.items;
-							//将区域的数据保存到vuexstate的arae
-//							this.$store.state.area=res.data.data.items;
 			      		}
 			      	}
 			    }).catch(e => {
@@ -369,7 +369,6 @@
 		          	let para = { ids: ids };
 					this.$ajax.del('/location/del_regions'+'?token='+this.token,para)
 		          	.then(res => {
-
 			          	if(res.status=='200'){
 			          		if(res.data.status=='0'){			
 					            this.$message({

@@ -4,7 +4,7 @@
 		<el-row>
 			<el-col :span='24'>
 				<div style="width: 1000px;height:500px;" ref='chart' v-loading='chartLoading'></div>
-				<el-table :data='tabs' highlight-current-row style='margin-left: 15%;width: 600px;' v-loading='chartLoading'>
+				<el-table :data='tabs' highlight-current-row class='chart' v-loading='chartLoading'>
 				 	<el-table-column prop='name'width='140' align='center'></el-table-column>
 				 	<el-table-column prop='now' width='100'label='now' align='center'>
 				 	</el-table-column>
@@ -80,7 +80,7 @@
 		mounted(){
 			var base=null;
 			if(JSON.stringify( this.data) !='{}'){//只有存在数据的时候  
-//				console.log(this.data)
+				console.log(this.data)
 				this.getCharts(this.data);
 			}
 			this.user.map(item => {
@@ -401,3 +401,9 @@
 	
 	
 </script>
+<style type="text/css" soped>
+	.chart{
+		margin: auto;
+		width:600px;
+	}
+</style>

@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-loading='load'>
 		<span class="title_h3"style="font-size: 12px;">{{$t('business.c2ctoDCTitle1')}}</span>
 		<el-row>
 			<el-col :span='24'>
@@ -117,6 +117,7 @@
 				
 				nodeData:[],
 				logicData:[],
+				load:false
 			}
 		},
 		
@@ -191,8 +192,10 @@
 						if(valid){
 							this.$confirm(this.$t('confirm.conAdd'),this.$t('confirm.tooltip'),{})
 							.then(() => {
+								this.loading=true;
 								this.$ajax.post('/vll/add_c2c_vll'+'?token='+this.token,para)
 								.then(res => {
+									this.loading=false;
 									if(res.status==200){
 										if(res.data.status==0){
 											this.$confirm(this.$t('business.busiSubmitS'),this.$t('confirm.tooltip'),{
@@ -209,7 +212,10 @@
 											})
 										}
 									}
-								}).catch(e => {console.log(e)})
+								}).catch(e => {
+									this.loading=false;
+									
+									console.log(e)})
 							}).catch(() => {})
 							
 

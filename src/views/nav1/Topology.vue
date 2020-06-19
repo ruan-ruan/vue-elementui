@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-loading='load'>
 		<!--<!--拓扑视图--> 
 		<section>
 			<el-row>
@@ -50,6 +50,7 @@
 				nodeStatus:false,
 				nodesData:[],
 				linksData:[],
+				load:false
 			}
 		},
 		mounted(){
@@ -85,9 +86,11 @@
 				this.monStatus=!data;
 			},
 			getVal(data){
+				this.load=true
 				this.topoVal = false
 			    this.$nextTick(function(){
-			        this.topoVal = true
+			        this.topoVal = true;
+			        this.load=false
 			    })
 			},
 			getNodesData:function(){//获取topo的节点的数据集合

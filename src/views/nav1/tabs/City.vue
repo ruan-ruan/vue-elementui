@@ -155,7 +155,7 @@
 
 <script>
 	
-	import {descriptionValue ,datedialogFormat} from '@/assets/js/index.js'
+	import { datedialogFormat} from '@/assets/js/index.js'
 	export default{
 		name:'City',
 		data() {
@@ -288,7 +288,6 @@
 		    //查看详情界面
 		    handleSee:function(index,row){
 		    	this.dialogStatus='see';
-//		    	this.dialog=true;
 				this.dialogFormVisible = true;
 		    	this.editLoading=true;
 		    	this.editForm={
@@ -453,10 +452,10 @@
 		    					message:this.$t('tooltipMes.exportSucess'),
 		    					type:'success'
 		    				})
-
-		    				res.data.data.items.forEach(ele => {
-			    					ele.region_name=ele.region.name;
-			    				})
+		    				var arr =res.data.data.item;
+		    				for(let item =0 ;item <arr.length;item ++){
+		    					arr[item].region_name=arr[item].region.name;
+		    				}
 		    				this.excelData=res.data.data.items;
 							this.export2Excel();
 		    			}

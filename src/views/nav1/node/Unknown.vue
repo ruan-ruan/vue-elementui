@@ -251,38 +251,68 @@
 	    			if(res.status==200){
 	    				if(res.data.status==0){
 	    					this.loading=false;
-
-			    			res.data.data.items.map(ele => {
-								
-			    				if(ele.devices.length ==1){
-			    					var str1=ele.devices.find(item => {
-				    					return item['sign'] == 'd1' 
+							var arr = res.data.data.items;
+							for(let item=0 ;item<arr.length;item++){
+								if(arr[item].devices.length ==1){
+			    					var str1=arr[item].devices.find(i => {
+				    					return i['sign'] == 'd1' 
 				    				})
-				    				ele.devices_name1=str1.hostname
-				    				ele.devices_ip1=str1.ip;
-				    				ele.devices_sn1=str1.sn;
+				    				arr[item].devices_name1=str1.hostname
+				    				arr[item].devices_ip1=str1.ip;
+				    				arr[item].devices_sn1=str1.sn;
 				    				
-				    				ele.devices_name2='';
-				    				ele.devices_ip2='';
-				    				ele.devices_sn2='';
-			    				}else if(ele.devices.length ==2){
-			    					var str1=ele.devices.find(item => {
+				    				arr[item].devices_name2='';
+				    				arr[item].devices_ip2='';
+				    				arr[item].devices_sn2='';
+			    				}else if(arr[item].devices.length ==2){
+			    					var str1=arr[item].devices.find(i => {
 
-				    					return item.sign == 'd1' 
+				    					return i.sign == 'd1' 
 				    				})
-			    					var str2=ele.devices.find(item => {
-				    					return item.sign =='d2' 
+			    					var str2=arr[item].devices.find(i => {
+				    					return i.sign =='d2' 
 				    				})
 	    					
-				    				ele.devices_name1=str1.hostname
-				    				ele.devices_ip1=str1.ip;
-				    				ele.devices_sn1=str1.sn;
+				    				arr[item].devices_name1=str1.hostname
+				    				arr[item].devices_ip1=str1.ip;
+				    				arr[item].devices_sn1=str1.sn;
 				    				
-				    				ele.devices_name2=str2.hostname
-				    				ele.devices_ip2=str2.ip;
-				    				ele.devices_sn2=str2.sn;
+				    				arr[item].devices_name2=str2.hostname
+				    				arr[item].devices_ip2=str2.ip;
+				    				arr[item].devices_sn2=str2.sn;
 			    				}
-			    			})
+							}
+//			    			res.data.data.items.map(ele => {
+//								
+//			    				if(ele.devices.length ==1){
+//			    					var str1=ele.devices.find(item => {
+//				    					return item['sign'] == 'd1' 
+//				    				})
+//				    				ele.devices_name1=str1.hostname
+//				    				ele.devices_ip1=str1.ip;
+//				    				ele.devices_sn1=str1.sn;
+//				    				
+//				    				ele.devices_name2='';
+//				    				ele.devices_ip2='';
+//				    				ele.devices_sn2='';
+//			    				}else if(ele.devices.length ==2){
+//			    					var str1=ele.devices.find(item => {
+//
+//				    					return item.sign == 'd1' 
+//				    				})
+//			    					var str2=ele.devices.find(item => {
+//				    					return item.sign =='d2' 
+//				    				})
+//	    					
+//				    				ele.devices_name1=str1.hostname
+//				    				ele.devices_ip1=str1.ip;
+//				    				ele.devices_sn1=str1.sn;
+//				    				
+//				    				ele.devices_name2=str2.hostname
+//				    				ele.devices_ip2=str2.ip;
+//				    				ele.devices_sn2=str2.sn;
+//			    				}
+//			    			})
 							this.users=res.data.data.items
 							this.total = res.data.data.page.total;
 	    				}

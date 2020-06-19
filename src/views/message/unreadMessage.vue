@@ -9,7 +9,7 @@
             <el-input v-model='formList.name'  class="sel" ></el-input>
           </el-form-item>
           <el-form-item  :label="$t('mesModule.unMessage.table.type')" prop='mesType' >
-            <el-select class='ipt_sta'  v-model='formList.mesType'  :placeholder='$t("topFilters.placeholder")'  >
+            <el-select class='ipt_sta' filterable v-model='formList.mesType'  :placeholder='$t("topFilters.placeholder")'  >
               <el-option
                 v-for='(item,index) in mesTypeList'
                 :key='index'
@@ -20,7 +20,7 @@
             </el-select>
           </el-form-item>
           <el-form-item :label="$t('mesModule.unMessage.table.level')" prop='level' >
-            <el-select class='ipt_sta' v-model='formList.level':placeholder='$t("topFilters.placeholder")'>
+            <el-select class='ipt_sta' filterable v-model='formList.level':placeholder='$t("topFilters.placeholder")'>
               <el-option
                 v-for='(vals,index) in levelList'
                 :key='index'

@@ -1,5 +1,5 @@
 <template>
-	<div class='main'>
+	<div class='main' v-loading='topoLoading'>
 		<el-row>
 			<el-col :span='24'>
 				<el-form>
@@ -32,7 +32,6 @@
 				</el-col>
 			</el-col>
 		</el-row>
-
 	</div>
 </template>
 
@@ -99,19 +98,21 @@
 		methods:{
 
 			Save(){//保存布局
+				this.topoLoading=true;
 				let para={
 					locations:this.saveData
 				}
 				this.$ajax.put('/topology/edit_node_location'+'?token='+this.token,para)
 				.then(res => {
-
 					if(res.status==200){
 						if(res.data.status==0){
 							this.$message({
 								message:this.$t('tooltipMes.editSuccess'),
 								type:'success'
 							})
+							this.topoLoading=false
 							this.getNodesData(this.selectForm)
+							this.reset()
 						}
 					}
 				}).catch(e => {
@@ -129,7 +130,6 @@
 
 				var nodeVal=new Array();
 				var linkVal=new Array();
-				console.log(linksData)
 				for(let item in obj){
 
 					if(item ==='checkboxGroup1'){//进入隐藏标签和隐藏流量的控制部分   
@@ -262,7 +262,7 @@
 				//先获取  节点的数据信息  在获取 链路的数据
 				this.$ajax.get('/topology/node_location_list'+'?token='+this.token)
 				.then(res => {
-					this.topoLoading=false;
+					
 					if(res.status==200){
 						if(res.data.status==0){
 							this.nodesData=res.data.data;
@@ -275,6 +275,7 @@
 					//获取链路的数据
 					if(response.status == 200){
 						if(response.data.status ==0){
+							this.topoLoading=false;
 							this.dealForm(obj,this.nodesData,response.data.data)
 						}
 					}
@@ -358,17 +359,6 @@
 								}
 							}else{
 								d_val[item]['pps']=Math.round( d_val[item][i] ) 
-//								if(d_val[item][i]>=1000 && d_val[item][i]< 1000*1024){
-//									d_val[item]['pps']=Math.round( d_val[item][i] / 1000  )  + "KB";
-//								}else if(d_val[item][i]>=1000*1024 && d_val[item][i]<1000*1024*1024){
-//									d_val[item]['pps']=Math.round( d_val[item][i] / (1000*1024)  ) + "MB";
-//								}else if(d_val[item][i]>=1000*1024*1024  && d_val[item][i]<1000*1024*1024*1024){
-//									d_val[item]['pps']=Math.round( d_val[item][i] / (1000*1024*1024)  )  + "GB";
-//								}else if(d_val[item][i]>=1000*1024*1024*1024 ){
-//									d_val[item]['pps']=Math.round( d_val[item][i] / (1000*1024*1024*1024)  )  + "TB";
-//								}else{
-//									d_val[item]['pps']=d_val[item][i]
-//								}
 							}
 						}
 					}
@@ -398,6 +388,7 @@
 			    	}
 			    })
 			    .on('click',function(d){
+			    	console.log(d)
 			    	var cls=document.getElementsByTagName('line');
 			    	for (let index=0;index<cls.length;index++) {
 							cls[index].style.strokeWidth=1.5;
@@ -415,7 +406,8 @@
 		            			type:'cloun'
 		            		}
 		            	}
-		            	that.$emit('sendlink',true)
+		            	that.$emit('sendlink',true);
+		            	console.log(obj);
 		            	that.bus.$emit('sendlink',obj);
 		            	that.$store.commit('sendLink',obj);
 			    })
@@ -511,10 +503,7 @@
 				function tickActions () {
 		            node.attr("x", function(d) { return d.x-img_w/2; })
 				        .attr("y", function(d) { return d.y-img_h/2; });
-//					nodesData.forEach((d,i) => {   //设置边界
-//						d.x= d.x - img_w/2 < 0 ? img_w/2 : d.x;
-//						d.y=d.y - img_h/2 < 0? img_h/2 : d.y;
-//					});
+
 					link.attr("x1", function(d) {
 							if(d.source_val){
 								return d.source_val.x;

@@ -1,146 +1,25 @@
 <template>
 	<div>
-			<section>
-				<!--工具条-->
-				<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-					<el-col :span='24'>
-						<el-form :inline="true" :model="filters" ref='filters'>
-							<el-form-item :label='$t("Public.name")' prop='name'>
-								<el-input v-model="filters.name" :placeholder="$t('validateMes.place')+$t('topFilters.name')"></el-input>
-							</el-form-item>
-							<el-form-item :label='$t("Public.SubordinateArea")' prop='search_region'>
-								<el-select v-model='filters.search_region' filterable :placehoder='$t("topFilters.placeholder")' class='sel' @change='selectArea(filters.search_region)'>
-									<el-option
-										v-for='(item,index) in areaData'
-										:key='index'
-										:label='item.name'
-										:value='item.id'>
-									</el-option>
-								</el-select>
-							</el-form-item>
-							<el-form-item prop='city_id'>
-								<el-select v-model='filters.city_id' class='sel' >
-									<el-option
-										v-for='(item,index) in cityData'
-										:key='index'
-										:label='item.name'
-										:value='item.id'>										
-									</el-option>
-								</el-select>
-							</el-form-item>
-							<el-form-item>
-								<el-button size='small' type="primary" v-on:click="getDatas">
-									<!--查询-->{{$t('topFilters.search')}}
-								</el-button>
-								<el-button size='small' type='info' @click='reset'>
-									<!--重置-->{{$t('topFilters.reset')}}
-								</el-button>
-							</el-form-item>
-						</el-form>	
-					</el-col>
-
-				</el-col>
+		<section>
+			<!--工具条-->
+			<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 				<el-col :span='24'>
-					<el-col :span='4'>
-						<el-button size='small' type="primary" @click="handleAdd" v-if='buttonVal.add'>
-							<!--新增-->{{$t('tabOperation.add')}}
-						</el-button>
-					</el-col>
-					<el-col :span='20' class='table-top'>
-						<el-button size='small' type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0"  v-if='buttonVal.del'>
-							<!--批量删除-->{{$t('tabOperation.batchDel')}}
-						</el-button>
-						<el-dropdown size='small' split-button type='success'@command="handleExport">
-							<!--导出数据-->{{$t('tabOperation.derived.tit')}}
-							<el-dropdown-menu slot='dropdown'>
-								<el-dropdown-item command="current">
-									<!--当前页-->{{$t('tabOperation.derived.currentPage')}}
-								</el-dropdown-item>									
-								<el-dropdown-item command="all">
-									<!--所有页-->{{$t('tabOperation.derived.allPage')}}
-								</el-dropdown-item>																				
-							</el-dropdown-menu>
-						</el-dropdown>
-					</el-col>
-				</el-col>
-
-				<!--列表-->
-				<el-table :data="users" highlight-current-row @selection-change="selsChange" style="width: 100%;"
-					 v-loading='loading'>
-					<el-table-column type="selection" min-width="80" align='center'>
-					</el-table-column>
-					<el-table-column type="index" min-width="100" :label='$t("Public.index")' align='center'>
-						<template slot-scope='scope'>
-							<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
-						</template>
-					</el-table-column>
-					<el-table-column   :label="$t('Public.creation')" align='center' width='80' >
-						<template slot-scope='scope'>
-							{{scope.row.creation_time |  timeFormat}}
-						</template>
-					</el-table-column>
-					<el-table-column prop="name" :label="$t('Public.name')" min-width="120" align='center'>
-					</el-table-column>
-					<el-table-column prop="region.name" :label="$t('Public.region')" min-width="120" align='center'>
-					</el-table-column>
-					<el-table-column prop="city.name" :label="$t('Public.SubordinateArea')" min-width="120"  align='center'>
-					</el-table-column>
-					<el-table-column  :label="$t('Public.description')" align='center' >
-						<template slot-scope='scope'>
-							{{ scope.row.description | descriptionValue }}
-						</template>
-					</el-table-column>
-					<el-table-column :label="$t('Public.operation')" align='center'width='140'>
-						<template slot-scope="scope">
-							<el-button size='mini' type='info' @click='handleSee(scope.$index,scope.row)' v-if='buttonVal.see'>
-								<!--详情-->{{$t('tabOperation.info')}}
-							</el-button>
-							<el-button size="mini"type='success' @click="handleEdit(scope.$index, scope.row)"  v-if='buttonVal.edit'>
-								<!--编辑-->{{$t('tabOperation.edit')}}
-							</el-button>
-							<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)"  v-if='buttonVal.del' >
-								<!--删除-->{{$t('tabOperation.delete')}}
-							</el-button>
-						</template>
-					</el-table-column>
-				</el-table>
-		
-				<!--工具条-->
-				<el-col :span="24" class="toolbar">
-					<el-pagination 
-						:total='total' 
-						layout="total, sizes, prev, pager, next, jumper"
-						@size-change='handleSizeChange' 
-						@current-change="handleCurrentChange" 
-						:page-sizes="[10, 20, 50, 100]"
-						:page-size='pagesize'
-						:page-count='pageNum' 
-						:pager-count="pagecount"
-					    >
-					</el-pagination>
-				</el-col>
-					
-		
-				<!--编辑界面-->
-				<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" 
-					:close-on-click-modal="false" v-loading='editLoading' @close='$refs["editForm"].resetFields()'>
-					<el-form  :model="editForm" label-width="200px" label-ailgn='center' :rules="editFormRules" ref="editForm">
-						<el-form-item label="ID:" prop='id' v-if=' dialogStatus !=="create" '>
-							<el-input v-model="editForm.id" disabled  auto-complete="off" class='ipt_sels'></el-input>
+					<el-form :inline="true" :model="filters" ref='filters'>
+						<el-form-item :label='$t("Public.name")' prop='name'>
+							<el-input v-model="filters.name" :placeholder="$t('validateMes.place')+$t('topFilters.name')"></el-input>
 						</el-form-item>
-						<el-form-item :label="$t('Public.name')+'：'" prop='name'>
-							<el-input v-model="editForm.name" :disabled='dialogStatus=="see" '  auto-complete="off" class='ipt_sels'></el-input>
-						</el-form-item>
-						<el-form-item :label='$t("Public.SubordinateArea")+"："' prop='region_id' >		
-							<el-select  v-model='editForm.region_id'  filterable :disabled='dialogStatus=="see" '   @change='selectAreaDia(editForm.region_id)' class='ipt_sels2' >
+						<el-form-item :label='$t("Public.SubordinateArea")' prop='search_region'>
+							<el-select v-model='filters.search_region' filterable :placehoder='$t("topFilters.placeholder")' class='sel' @change='selectArea(filters.search_region)'>
 								<el-option
 									v-for='(item,index) in areaData'
 									:key='index'
 									:label='item.name'
-									:value='item.id'>	
+									:value='item.id'>
 								</el-option>
 							</el-select>
-							<el-select v-model='editForm.city_id' class='ipt_sels2' :disabled='dialogStatus=="see" ' >
+						</el-form-item>
+						<el-form-item prop='city_id'>
+							<el-select v-model='filters.city_id' filterable class='sel' >
 								<el-option
 									v-for='(item,index) in cityData'
 									:key='index'
@@ -149,35 +28,156 @@
 								</el-option>
 							</el-select>
 						</el-form-item>
-						<el-form-item :label="$t('Public.description')+'：'" prop='description'>
-							<el-input type="textarea" v-model="editForm.description" :disabled='dialogStatus=="see" '  class='ipt_sels'></el-input>
+						<el-form-item>
+							<el-button size='small' type="primary" v-on:click="getDatas">
+								<!--查询-->{{$t('topFilters.search')}}
+							</el-button>
+							<el-button size='small' type='info' @click='reset'>
+								<!--重置-->{{$t('topFilters.reset')}}
+							</el-button>
 						</el-form-item>
-					</el-form>
-					<div slot="footer" class="dialog-footer">
-						 <el-button size='small' @click.native="dialogFormVisible=false">
-						 	<!--取消-->{{$t('tabOperation.cancel')}}
-						 </el-button>
-						<!--添加-->
-						<el-button size='small' v-if="dialogStatus=='create'" type="primary" @click="createData">
-							{{$t('tabOperation.save')}}
+					</el-form>	
+				</el-col>
+
+			</el-col>
+			<el-col :span='24'>
+				<el-col :span='4'>
+					<el-button size='small' type="primary" @click="handleAdd" v-if='buttonVal.add'>
+						<!--新增-->{{$t('tabOperation.add')}}
+					</el-button>
+				</el-col>
+				<el-col :span='20' class='table-top'>
+					<el-button size='small' type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0"  v-if='buttonVal.del'>
+						<!--批量删除-->{{$t('tabOperation.batchDel')}}
+					</el-button>
+					<el-dropdown size='small' split-button type='success'@command="handleExport">
+						<!--导出数据-->{{$t('tabOperation.derived.tit')}}
+						<el-dropdown-menu slot='dropdown'>
+							<el-dropdown-item command="current">
+								<!--当前页-->{{$t('tabOperation.derived.currentPage')}}
+							</el-dropdown-item>									
+							<el-dropdown-item command="all">
+								<!--所有页-->{{$t('tabOperation.derived.allPage')}}
+							</el-dropdown-item>																				
+						</el-dropdown-menu>
+					</el-dropdown>
+				</el-col>
+			</el-col>
+
+			<!--列表-->
+			<el-table :data="users" highlight-current-row @selection-change="selsChange" style="width: 100%;"
+				 v-loading='loading'>
+				<el-table-column type="selection" min-width="80" align='center'>
+				</el-table-column>
+				<el-table-column type="index" min-width="100" :label='$t("Public.index")' align='center'>
+					<template slot-scope='scope'>
+						<span>{{scope.$index+(currentPage-1)*pagesize+1}}</span>
+					</template>
+				</el-table-column>
+				<el-table-column   :label="$t('Public.creation')" align='center' width='80' >
+					<template slot-scope='scope'>
+						{{scope.row.creation_time |  timeFormat}}
+					</template>
+				</el-table-column>
+				<el-table-column prop="name" :label="$t('Public.name')" min-width="120" align='center'>
+				</el-table-column>
+				<el-table-column prop="region.name" :label="$t('Public.region')" min-width="120" align='center'>
+				</el-table-column>
+				<el-table-column prop="city.name" :label="$t('Public.SubordinateArea')" min-width="120"  align='center'>
+				</el-table-column>
+				<el-table-column  :label="$t('Public.description')" align='center' >
+					<template slot-scope='scope'>
+						{{ scope.row.description | descriptionValue }}
+					</template>
+				</el-table-column>
+				<el-table-column :label="$t('Public.operation')" align='center'width='140'>
+					<template slot-scope="scope">
+						<el-button size='mini' type='info' @click='handleSee(scope.$index,scope.row)' v-if='buttonVal.see'>
+							<!--详情-->{{$t('tabOperation.info')}}
 						</el-button>
-						  <!--编辑-->
-			        	<el-button size='small' v-else-if=' dialogStatus=="update" ' type="primary" @click="updateData">
-			        		<!--保存-->{{$t('tabOperation.save')}}
-			        	</el-button>
+						<el-button size="mini"type='success' @click="handleEdit(scope.$index, scope.row)"  v-if='buttonVal.edit'>
+							<!--编辑-->{{$t('tabOperation.edit')}}
+						</el-button>
+						<el-button type="danger" size="mini" @click="handleDel(scope.$index, scope.row)"  v-if='buttonVal.del' >
+							<!--删除-->{{$t('tabOperation.delete')}}
+						</el-button>
+					</template>
+				</el-table-column>
+			</el-table>
+	
+			<!--工具条-->
+			<el-col :span="24" class="toolbar">
+				<el-pagination 
+					:total='total' 
+					layout="total, sizes, prev, pager, next, jumper"
+					@size-change='handleSizeChange' 
+					@current-change="handleCurrentChange" 
+					:page-sizes="[10, 20, 50, 100]"
+					:page-size='pagesize'
+					:page-count='pageNum' 
+					:pager-count="pagecount"
+				    >
+				</el-pagination>
+			</el-col>
+				
+	
+			<!--编辑界面-->
+			<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" 
+				:close-on-click-modal="false" v-loading='editLoading' @close='$refs["editForm"].resetFields()'>
+				<el-form  :model="editForm" label-width="200px" label-ailgn='center' :rules="editFormRules" ref="editForm">
+					<el-form-item label="ID:" prop='id' v-if=' dialogStatus !=="create" '>
+						<el-input v-model="editForm.id" disabled  auto-complete="off" class='ipt_sels'></el-input>
+					</el-form-item>
+					<el-form-item :label="$t('Public.name')+'：'" prop='name'>
+						<el-input v-model="editForm.name" :disabled='dialogStatus=="see" '  auto-complete="off" class='ipt_sels'></el-input>
+					</el-form-item>
+					<el-form-item :label='$t("Public.SubordinateArea")+"："' prop='region_id' >		
+						<el-select  v-model='editForm.region_id'  filterable :disabled='dialogStatus=="see" '   @change='selectAreaDia(editForm.region_id)' class='ipt_sels2' >
+							<el-option
+								v-for='(item,index) in areaData'
+								:key='index'
+								:label='item.name'
+								:value='item.id'>	
+							</el-option>
+						</el-select>
+						<el-select v-model='editForm.city_id' class='ipt_sels2' :disabled='dialogStatus=="see" ' >
+							<el-option
+								v-for='(item,index) in cityData'
+								:key='index'
+								:label='item.name'
+								:value='item.id'>										
+							</el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item :label="$t('Public.description')+'：'" prop='description'>
+						<el-input type="textarea" v-model="editForm.description" :disabled='dialogStatus=="see" '  class='ipt_sels'></el-input>
+					</el-form-item>
+				</el-form>
+				<div slot="footer" class="dialog-footer">
+					 <el-button size='small' @click.native="dialogFormVisible=false">
+					 	<!--取消-->{{$t('tabOperation.cancel')}}
+					 </el-button>
+					<!--添加-->
+					<el-button size='small' v-if="dialogStatus=='create'" type="primary" @click="createData">
+						{{$t('tabOperation.save')}}
+					</el-button>
+					  <!--编辑-->
+		        	<el-button size='small' v-else-if=' dialogStatus=="update" ' type="primary" @click="updateData">
+		        		<!--保存-->{{$t('tabOperation.save')}}
+		        	</el-button>
 
-					</div>
-					
-				</el-dialog>
+				</div>
+				
+			</el-dialog>
 
-			</section>	
+		</section>	
 	</div>
 </template>
 
 
 <script>
 
-	import {descriptionValue} from '@/assets/js/index.js'
+//	import {descriptionValue} from '@/assets/js/index.js'
 	
 	export default{
 		name:'Data',
@@ -341,7 +341,6 @@
 		    handleSee:function(index,row){
 		    	this.dialogStatus='see';
 		    	this.dialogFormVisible = true;
-//		    	this.editLoading = true;
 				this.editForm={
 					id:row.id,
 			        name: row.name,
@@ -496,10 +495,10 @@
 			    	.then(res => {
 			    		if(res.status==200){
 			    			if(res.data.status==0){
-			    				
-			    				res.data.data.items.forEach(ele => {
-			    					ele.region_name=ele.region.name;
-			    				})
+			    				var arr = res.data.data.items;
+			    				for(let item =0 ;item <arr.length;item++){
+			    					arr[item].region_name=arr[item].region.name;
+			    				}
 			    				this.excelData=res.data.data.items;
 								this.export2Excel();
 			    			}

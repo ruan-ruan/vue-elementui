@@ -224,25 +224,11 @@
 					time={
 						search_date :ele.toString(),
 					}
-
 					this.chartLoading=true;
 					this.$ajax.get('/vll/get_vll_flow/'+ids+'?token='+this.token,time)
 					.then(res => {
 						if(res.status==200){
 							if(res.data.status==0){
-//								console.log(res)
-//								res.data.data.endpoints.map(fil => {
-//									fil.flow.map(chi => {
-//										for(let chis in chi.d1){
-//											if(chi.d1[chis] < 0){
-//												console.log( chi.d1[chis] );
-//												console.log(chi)
-//											}
-//										}
-//										
-//									})
-//								})
-
 								var endObj={};
 								var endData=[];
 								//下面对业务类型处理    点到点    和云的额业务     以及组网的数据处理
@@ -548,11 +534,8 @@
 					vlan:strObj.vlan,
 					data:str,
 				}
-
 				return chartObj;//   返回的是  处理完成以后的数组里面的对象    a端和z端所有的数据       下一步是对每一个属性进行  最大值  和最小值进行遍历
 			},
-
-
 			getTimeData(type=this.$t('Public.oneDay')){   //获取时间的间隔所有的数据//时间轴的循环的是按照 秒计算的			
 				let strTime=[];//用来保存的所选时间，的时间间隔 
 				let  end_time='';

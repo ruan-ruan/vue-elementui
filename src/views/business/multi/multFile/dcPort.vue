@@ -267,7 +267,6 @@
 						}
 					}
 					//验证选择的模式
-
 					//下面的form表单的转换 ，是当触发的时候，将需要传的参数放在一个新对象内，以便于，，在监听的是偶向父组件传值
 					this.sendForm.vlan=newVal.vlan;
 					this.sendForm.nodeName=newVal.nodeName;
@@ -540,24 +539,36 @@
 				
 				return strVal
 			},
-			cliData:function(index,val){//activeCla   disVlan   disabeldData
-				this.disVlan.forEach(ele => {
-					if(ele.value===val && ele.clas !=="active"){
-						ele.clas='activeCla'
-//						this.timeIndex=index;
+			cliData:function(index,val){//activeCla   disVlan   disabeldData  
+//				this.disVlan.forEach(ele => {
+//					if(ele.value===val && ele.clas !=="active"){
+//						ele.clas='activeCla'
+////						this.timeIndex=index;
+//						this.portVlan.vlanVal=val;
+//						this.editForm.selVlan=val
+//						this.editForm.vlan=val;
+//					}else if(ele.value!==val && ele.clas !=="active"){
+//						ele.clas=''
+//					}else{
+//						ele.clas='active'
+//					}
+//				})
+				for(var item =0 ;item < this.disVlan.length;item ++){
+					if(this.disVlan[item]['value'] === val && this.disVlan['clas'] !=='active'){
+						this.disVlan[item]['clas']='activeCla';
 						this.portVlan.vlanVal=val;
 						this.editForm.selVlan=val
 						this.editForm.vlan=val;
-					}else if(ele.value!==val && ele.clas !=="active"){
-						ele.clas=''
+					}else if( this.disVlan[item]['value'] !== val && this.disVlan['clas'] !=='active' ){
+						this.disVlan[item]['clas']='';
 					}else{
-						ele.clas='active'
+						this.disVlan[item]['clas']='active';
 					}
-				})
-
+				}
 			},
 
 			getVlan(){
+				// 搜索显示
 				//获取所有的vlan区间内的数据  portVlan.vlanName
 				let obj={};
 				let  strVal=[];
@@ -567,7 +578,10 @@
 					for(let index in str){
 						if(numVla>=parseInt(str[index].split('-')[0]) && numVla<=parseInt(str[index].split('-')[1])){
 							this.portVlan.selVlanVal=str[index];
-
+							//根据搜索的值，和区间的起点的  相比较
+							//获取当前区间需要跳转到第几页
+							var delComment=Math.ceil( ( parseInt(this.portVlan.vlanName)-parseInt(str[index].split('-')[0] )+1 )/100)
+							this.handleCurrentChange( delComment )
 						}
 					}
 

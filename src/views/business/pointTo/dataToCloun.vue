@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-loading='load'>
 		<span class="title_h3"style="font-size: 12px;">{{$t('business.d2ctitle')}}</span>
 		<el-row>
 			<el-col :span='24'>
@@ -97,6 +97,7 @@
 					bandwidth:'',
 					sharedCloun:''
 				},
+				load:false
 			}
 		},
 		created(){
@@ -165,10 +166,11 @@
 						if(valid){
 							this.$confirm(this.$t('confirm.conAdd'),this.$t('confirm.tooltip'),{})
 							.then(() => {
-								
+								this.load=true;
 								this.$ajax.post('/vll/add_d2c_vll'+'?token='+this.token,para)
 								.then(res =>{
-									console.log(res);
+									this.load=false;
+//									console.log(res);
 									if(res.status==200){
 										if(res.data.status==0){
 											this.$confirm(this.$t('business.busiSubmitS'),this.$t('confirm.tooltip'),{
@@ -185,7 +187,9 @@
 											})
 										}
 									}
-								}).catch(e => {console.log(e)})
+								}).catch(e => {
+									this.load=false;
+									console.log(e)})
 							}).catch(() => {})
 						}
 					})

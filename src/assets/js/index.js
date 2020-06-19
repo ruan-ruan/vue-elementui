@@ -5,33 +5,33 @@
  * @return {Array} realRoutes 过滤后的路由
  */
 export function recursionRouter(userRouter = [], allRouter = []) {
-    var realRoutes = []
-    allRouter.forEach((v, i) => {
-        userRouter.forEach((item, index) => {
-            if (item.name === v.name) {
-                if (item.list && item.list.length > 0) {
-                    v.children = recursionRouter(item.list, v.children)
-                }
-                realRoutes.push(v)
-            }
-        })
-    })
+    var realRoutes = [];
+    for(let i =0;i<allRouter.length;i++){
+    	for( let j =0;j< userRouter.length;j++){
+    		if(allRouter[i].name === userRouter[j].name  ){
+    			if(userRouter[j].list && userRouter[j].list.length >0){
+    				allRouter[i].children = recursionRouter(userRouter[j].list, allRouter[i].children)
+    			}
+    			 realRoutes.push(allRouter[i])
+    		}
+    	}
+    }
     return realRoutes
 }
 
 export function fil(total=[],data){//根据name名字进行路由数据的查找   并将后台返回的show的字段的值取反  赋值给前端的路由的hidden   
-//	console.log(total)
 	if(data){
-		total.forEach(item => {
-			data.forEach(ele => {
-				if(ele.list && ele.component){
-					if(item.name === ele.name){
-						item.hidden = !ele.show;
+		for(let item =0 ; item <total.length; item++){
+			for(let ele=0;ele<data.length;ele++ ){
+				if( data[ele].list && data[ele].component ){
+					if( total[item].name === data[ele].name ){
+						total[item].hidden= ! data[ele].show;
 					}
-					fil(item.children,ele.list);
+					fil( total[item].children , data[ele].list)
 				}
-			})
-		})
+				
+			}
+		}
 	}
 }
 
@@ -63,23 +63,15 @@ export function codeVal(data, code) {//这个是根据名称 获取的列表的�
     if (!data) {
         return;
     }
-//  if(data.list){
-//  	data.list.find(item => {
-//  		return item.code === code;
-//  	})
-//  }
 	if(data.length > 0 && data){
 		for (var i = 0; i < data.length; i++) {
 	        let item = data[i];
 	        if(item.code){
 		        if (item.list && item.list.length > 0) {
-
 		          result = recursion(item.list, code);
 		          if(result) return result ;
-		          console.log(results)
 		        }else {
 		        	if(item.code === code) {
-//		        		console.log(item)
 			          result = item;
 			          break;
 			        }
@@ -87,8 +79,6 @@ export function codeVal(data, code) {//这个是根据名称 获取的列表的�
 	        }
 	    }
 	}
-    
-//  console.log(result);
     return result;
 }
 
@@ -125,7 +115,7 @@ export function datedialogFormat(value){
     return Y + M + D + h + m + s;
 }
 export function dealNull(str,property){
-//	console.log(str);
+
 	str.map( item => {
 		if( !item[property] && typeof(item[property]) && item[property] !=0){
 			item[property]=''
@@ -162,7 +152,6 @@ export function isChartTime(value){
 /**
  * 数组去重*/
 export var arrayPro={
-	
 	unique(arr){
 	  	var hash=[];
 	  	for (var i = 0; i < arr.length; i++) {
@@ -186,14 +175,7 @@ export var arrayPro={
 	    return Y + M + D + h + m + s;
 	},
 	findIndex(arr,value){//表格数据里面   ，根据时间轴  开始和结束时间   获取  下标，   用于数组的截取
-//		console.log(new Date(arr[0].time).getTime()/1000   );
-//		console.log(new Date(value).getTime()/1000   );
-//		for(var i=0;i<arr.length;i++){
-//			if(arr[i].time === value){
-//				console.log(i)
-//				return i;//根据时间找到对应的下标位置
-//			}
-//		}
+
 		for(var i=0;i<arr.length;i++){
 			if( new Date(arr[i].time).getTime() === new Date(value).getTime()  ){
 //				console.log(i)
@@ -299,8 +281,8 @@ export var arrayPro={
 	    return newData;
 	},
 	dealTime(Data,start,end){
-		
-		//Data是被处理的数据   start 是开始时间   end是结束时间    因为数据是每分钟一次    为排查中间断点  ，需要获取时间的集合每分钟的间隔集合
+		//Data是被处理的数据   start 是开始时间   end是结束时间   
+		//因为数据是每分钟一次    为排查中间断点  ，需要获取时间的集合每分钟的间隔集合
 		var extractDatatime=[],newData=[];
 		var timeData=[];
 		for(var index=new Date(start).getTime()/1000; index<new Date(end).getTime()/1000; index+=60  ){//获取每分钟的时间的间隔所有的数据
@@ -311,7 +293,6 @@ export var arrayPro={
 
 			var tim=[];//提取时间集合
 			Data[i].flow.map( (item,index) => {
-//				tim.push( item.time  ) //
 				tim.push(new Date(item.time).getTime()/1000)
 			})
 			for(var val=0;val<timeData.length;val++){
@@ -347,7 +328,6 @@ export var arrayPro={
 			
 			newData.push(totalObj)
 		}
-//		console.log(newData);
 		return newData;
 	},
 	test(arr){
@@ -548,22 +528,7 @@ export var arrayPro={
 				
 			})
 		}
-		
-		
-		
-//		if(isNaN(data1[0])  &&   !isNaN(  data2[0]) ){
-//			return data2;
-//		}else if(! isNaN(data1[0]) &&   isNaN(data2[0])){
-//			return data1;
-//		}else if(! isNaN(data1[0]) && !isNaN(  data2[0])){
-//			return data1.map(function(item,index){
-//
-//				return item + data2[index]
-//			})
-//		}else{
-//			return false;
-//		}
-	
+
 	},
 };
 

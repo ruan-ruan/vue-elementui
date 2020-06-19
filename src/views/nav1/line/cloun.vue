@@ -9,7 +9,7 @@
 							<el-input v-model='filters.name' class='ipt_sta'></el-input>
 						</el-form-item>
 						<el-form-item :label='$t("Public.shardCloud")' prop='cloun'>
-							<el-select v-model='filters.cloun' class='sel'>
+							<el-select v-model='filters.cloun' filterable class='sel'>
 								<el-option v-for='(item,index) in clounData'
 									:label='item.label'
 									:value='item.value'
@@ -17,7 +17,7 @@
 							</el-select>
 						</el-form-item>
 						<el-form-item :label='$t("Public.linkState")' prop='status'>
-							<el-select v-model='filters.status' class='sel'>
+							<el-select v-model='filters.status' filterable class='sel'>
 								<el-option v-for='(item,index) in statusData'
 									:label='item.label'
 									:value='item.value'
@@ -215,18 +215,19 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.loading=false;
-							res.data.data.items.map(ele => {
-								ele.portStatus=getPortStatus(ele.logic_port.physical_port)
-								switch( getPortStatus(ele.logic_port.physical_port) ){
+							var arr=res.data.data.items;
+							for(let item =0 ;item <arr.length;arr++){
+								arr[item].portStatus=getPortStatus(arr[item].logic_port.physical_port);
+								switch( getPortStatus(arr[item].logic_port.physical_port) ){
 									case 'UP':
-										ele.color='backRun';
+										arr[item].color='backRun';
 										break;
 									default:
-										ele.color='backWarn';
+										arr[item].color='backWarn';
 										break;
 								}
-								ele.bandwidth=Math.round(ele.bandwidth/1024) 
-							})
+								arr[item].bandwidth=Math.round(arr[item].bandwidth/1024) 
+							}
 							this.users=res.data.data.items;
 							this.total=res.data.data.page.total;
 						}

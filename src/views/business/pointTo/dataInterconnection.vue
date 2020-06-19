@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-loading='load'>
 		<!--数据中心互联-->
 		<span class="title_h3"style="font-size: 12px;">{{$t('business.dataIntertitle')}}</span>
 		<el-row>
@@ -101,7 +101,7 @@
 					details_expiration_time:'',
 					bandwidth:'',
 				},
-
+				load:false
 			}
 		},
 		created(){
@@ -165,7 +165,6 @@
 
 			},
 			submitBtn(){
-
 				let str=[this.$refs.dc_a.$refs.editForm,this.$refs.dc_z.$refs.editForm,this.$refs.newForm.$refs.editForm]
 
 				str.forEach(ele => {
@@ -173,7 +172,7 @@
 						if(valid){
 							this.$confirm(this.$t('confirm.conAdd'),this.$t('confirm.tooltip'),{})
 							.then(() => {
-
+								this.load=true;
 								if(this.editForm.endpoints_logic_port_id_a == this.editForm.endpoints_logic_port_id_z){
 									this.$message({
 										message:this.$t('business.bothPort'),
@@ -206,12 +205,14 @@
 
 								this.$ajax.post('/vll/add_d2d_vll'+'?token='+this.token,para)
 								.then(res => {
+									this.load=false;
 									if(res.status==200){
 										if(res.data.status==0){
 											this.$message({
 												message:res.data.message,
 												type:'success'
 											})
+//											this.$forceUpdate()
 											this.reset();
 											this.$confirm(this.$t('business.busiSubmitS'),this.$t('confirm.tooltip'),{
 								    			cancelButtonText:this.$t('business.continueOpen'),
@@ -223,6 +224,7 @@
 										}
 									}
 								}).catch(e => {
+									this.load=false;
 									console.log(e)
 								})
 								}

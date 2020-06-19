@@ -80,36 +80,68 @@
 				<span v-text='filters.description'></span>
 			</el-form-item>
 		</el-form>
+		
+		<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false" 
+			 v-loading='chartLoading'
+			 @open='open' >
+			<!--节点：{{ a_node.name }}-->
+			<h3 class="marB8">A端</h3>
+			<port-chart :ports='a_port' :InNode='isShow' ></port-chart>
+			<!--节点：{{ z_node.name }}-->
+			<h3 class="marT20 marB8">Z端</h3>
+			<port-chart :ports='z_port' :InNode='isShow'></port-chart>
+		</el-dialog>
 	</div>
 </template>
 
 <script>
 	import {getPortStatus} from'@/assets/js/index.js'
+	import PortChart from './PortChart'
 	export default{
 		name:'linkDetails',
 		props:['seeDetails'],
+		components:{
+			PortChart
+		},
 		data(){
 			return{
 				linkLoading:false,
 				filters:{},
 				formStatus:true,
-
-
-				token:'',
+				token:this.$store.state.token,
+				textMap:{
+					flow:'流量'
+				},
+				dialogFormVisible:false,
+				dialogStatus:'',
+				chartLoading:false,
+				ports:{},
+				isShow:true,
+			}
+		},
+		computed:{
+			a_port(){
+				if(JSON.stringify(this.ports) !=='{}'){
+					console.log(this.ports)
+					return this.ports.a_device_ports
+				}
+			},
+			z_port(){
+				if(JSON.stringify(this.ports) !=='{}'){
+					return  this.ports.z_device_ports
+				}
 				
 			}
 		},
 		watch:{
 			seeDetails:{
 				handler(newVal,oldVal){
-				
 					this.linksData(newVal)
 				},
 				deep:true
 			}
 		},
 		created(){
-			this.token=sessionStorage.getItem('token');
 			this.linksData(this.seeDetails)
 		},
 		methods:{
@@ -118,7 +150,6 @@
 				if(obj.type==='link'){
 					this.formStatus=true;
 					this.linkLoading=true;
-
 					this.$ajax.get('/link/link_info/'+obj.id+'?token='+this.token)
 					.then(res => {
 						if(res.status==200){
@@ -131,7 +162,10 @@
 								}else{
 									obj.sta=this.$t('Public.close')
 								}
+								this.ports=res.data.data;
 								this.filters={
+									a_port_id:str.a_device_ports[0].port.id,
+									z_port_id:str.z_device_ports[0].port.id,
 									id:str.id,
 									status:str.status,
 									bandwidth:str.bandwidth,
@@ -159,6 +193,7 @@
 							if(res.data.status==0){
 								this.linkLoading=false;
 								let str=res.data.data;
+								this.ports=res.data.data;
 								this.filters={
 									id:str.id,
 									name:str.name,
@@ -178,21 +213,37 @@
 					}).catch(e => {console.log(e)})
 				}
 			},
-			charts(ids){
+			open(){
+				this.$forceUpdate()
+			},
+			charts(){
 				//跳转到流量监控的界面
-				this.$ajax.get('/vll/get_vll_flow/'+ids+'?token='+this.token)
-					.then(res => {
-						if(res.status==200){
-							if(res.data.status==0){
-								this.$router.push({
-									path:'/topology/charts',
-									query:{
-										topoId:ids
-									}
-								});
-							}
-						}
-					}).catch(e => {console.log(e)})
+				this.dialogFormVisible=true;
+				this.dialogStatus='flow';
+				//重新打开日志的时候  需要从新获取数据
+				
+//				var a=this.filters.a_port_id;
+//				console.log(this.filters.a_port_id);
+//				var para={
+//					search_date :'20200518'
+//				}
+//				this.$ajax.get('/topology/port_flow/'+a+'?token='+this.token,para)
+//				.then(res => {
+//					console.log(res)
+//				}).catch(err => console.log(err))
+//				this.$ajax.get('/vll/get_vll_flow/'+ids+'?token='+this.token)
+//					.then(res => {
+//						if(res.status==200){
+//							if(res.data.status==0){
+//								this.$router.push({
+//									path:'/topology/charts',
+//									query:{
+//										topoId:ids
+//									}
+//								});
+//							}
+//						}
+//					}).catch(e => {console.log(e)})
 	
 			}
 		}
@@ -200,5 +251,6 @@
 	
 </script>
 
-<style>
+<style scoped>
+	
 </style>

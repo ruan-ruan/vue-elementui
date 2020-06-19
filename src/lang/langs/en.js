@@ -477,6 +477,7 @@ const en = {
 		noView:'No permission to view!',
 		a_device_port:'Device port A',
     	z_device_port:'Device port Z',
+    	portNum:'Port number',
 		
     },
     confirm:{

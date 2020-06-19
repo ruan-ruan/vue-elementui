@@ -119,9 +119,7 @@
 			            };
 			            this.$ajax.post('/login/admin_login',loginParams)
 						.then(res => {
-							console.log(res)
 							this.logining=false;
-							
 							if(res.status==200){
 								if(res.data.status==0){
 									if(this.checked){
@@ -149,7 +147,6 @@
 								if(res.data.status ==0){
 									this.$store.commit('setAside',res.data.data);
 									sessionStorage.setItem('asideList',JSON.stringify(res.data.data));
-//												routerEach(routers,res.data.data);
 									fil(this.$router.options.routes ,res.data.data);
 //												let redirect = decodeURIComponent('/message/unreadMessage' || this.$route.query.redirect);
 //										        this.$router.push({

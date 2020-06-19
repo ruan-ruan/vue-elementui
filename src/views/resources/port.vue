@@ -9,7 +9,7 @@
    	 					<el-input v-model='filters.name' :placeholder="$t('Public.plaName')" class='ipt_sta'></el-input>
    	 				</el-form-item>
    	 				<el-form-item :label='$t("Public.tenant")' prop='nameLogo'>
-   	 					<el-select v-model='filters.nameLogo' class='sel' :placeholder="$t('Public.plaTenant')">
+   	 					<el-select v-model='filters.nameLogo' class='sel'filterable :placeholder="$t('Public.plaTenant')">
    	 						<el-option v-for='(item,index ) in tenantData'
    	 							:value='item.id'
    	 							:label='item.name'
@@ -17,7 +17,7 @@
    	 					</el-select>
    	 				</el-form-item>
    	 				<el-form-item :label='$t("Public.status")' prop='status'>
-   	 					<el-select v-model='filters.status' :placeholder="$t('Public.plaLogicSt')" class='sel'>
+   	 					<el-select v-model='filters.status'filterable :placeholder="$t('Public.plaLogicSt')" class='sel'>
    	 						<el-option v-for=' (item,index) in PortStatus'
    	 							:value='item.value'
    	 							:key='index'
@@ -240,30 +240,32 @@
 					if(res.status==200){
 						if(res.data.status==0){
 							this.total=res.data.data.page.total;
+							var str=res.data.data.items;
+							for(let item = 0 ;item <str.length;item++){
+								
+								str[item].physical_ports_len=str[item].physical_ports.length;
 
-							res.data.data.items.forEach(ele => {
-								ele.physical_ports_len=ele.physical_ports.length;
-
-								if(ele.usable){
+								if(str[item].usable){
 									//根据物理端口下的port的status拼接出来的这个参数，并在不同的状态的时候显示不同的字体格式
 //									ele.usableText=this.getPortStatus(ele.physical_ports);
-									ele.usableText=isPortStatus(ele.physical_ports);
+									str[item].usableText=isPortStatus(str[item].physical_ports);
 									//根据不同的value设置不同的css
-										if(ele.usableText==='UP'){
-											ele.usableTextColor='backRun'
-										}else if(ele.usableText==='DOWN'){
-											ele.usableTextColor='backWarn'
-										}else if(ele.usableText=== '异常'){
-											ele.usableText==='DOWN'
-											ele.usableTextColor='backWarn'
+										if(str[item].usableText==='UP'){
+											str[item].usableTextColor='backRun'
+										}else if(str[item].usableText==='DOWN'){
+											str[item].usableTextColor='backWarn'
+										}else if(str[item].usableText=== '异常'){
+											str[item].usableText==='DOWN'
+											str[item].usableTextColor='backWarn'
 										}	
-									ele.btnStatus=this.$t('Public.Prohibit')
+									str[item].btnStatus=this.$t('Public.Prohibit')
 								}else{
-									ele.usableText='禁用';
-									ele.btnStatus=this.$t('Public.enable');
-									ele.usableTextColor='backStop'
+									str[item].usableText='禁用';
+									str[item].btnStatus=this.$t('Public.enable');
+									str[item].usableTextColor='backStop'
 								}
-							})
+							}
+
 								//对数据状态的遍历  
 							if(this.filters.status !=''){
 									this.users=res.data.data.items.filter(item => {

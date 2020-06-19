@@ -29,7 +29,7 @@
 							</el-form-item>
 							<el-form-item :label='$t("customer.comporateType")+"："'>
 								<template>
-									<el-select v-model='customer.company_type':disabled='!btnStatus'class='ipt_sels'>
+									<el-select v-model='customer.company_type' filterable :disabled='!btnStatus'class='ipt_sels'>
 										<el-option v-for='(item,index) in industryType'
 											:value='item.value'
 											:label='item.label'

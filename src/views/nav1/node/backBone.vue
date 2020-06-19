@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <section>
       <!--工具条-->
       <el-col :span='24' class='toolbar' style='padding-bottom: 0px;'  >
@@ -284,7 +283,7 @@ export default {
     };
   },
   created() {
-		console.log( this.$store.state.aside )
+//		console.log( this.$store.state.aside )
     this.selectData();
     this.getUsers();
 
@@ -371,66 +370,62 @@ export default {
           _this.loading = false;
           if (res.status == 200) {
             if (res.data.status == 0) {
-              let params = res.data.data.items;
-
-              params.forEach((ele, index) => {
-                //将数据的状态保
-                //根据状态对删除的按钮的显示是否渲染到模板做处理
-                if (ele.status == "运行中") {
-                  _this.diStatus = false;
-                } else {
-                  _this.diStatus = true;
-                }
-                
-                if(ele.devices.length ==1){
-									var str1=ele.devices.find(item => {
-				    					return item['sign'] == 'd1' 
+              let arr = res.data.data.items;
+              for(let item =0 ;item<arr.length;item++){
+              	if(arr[item].status == "运行中"){
+              		 _this.diStatus = false;
+              	}else{
+              		 _this.diStatus = true;
+              	}
+              	
+              	if(arr[item].devices.length ==1){
+									var str1=arr[item].devices.find(i => {
+				    					return i['sign'] == 'd1' 
 				    				})
-				    				ele.devices_name1=str1.hostname
-				    				ele.devices_ip1=str1.ip;
-				    				ele.devices_sn1=str1.sn;
+				    				arr[item].devices_name1=str1.hostname
+				    				arr[item].devices_ip1=str1.ip;
+				    				arr[item].devices_sn1=str1.sn;
 				    				
-				    				ele.devices_name2='';
-				    				ele.devices_ip2='';
-				    				ele.devices_sn2='';
+				    				arr[item].devices_name2='';
+				    				arr[item].devices_ip2='';
+				    				arr[item].devices_sn2='';
 				    				
 				    				if(str1.status == "UP"){
-				    					ele.nodeStatus = this.$t('Public.SingleRun');
-				    					ele.color='backRun'
+				    					arr[item].nodeStatus = this.$t('Public.SingleRun');
+				    					arr[item].color='backRun'
 				    				}else{
-				    						ele.nodeStatus= this.$t('Public.leave');
-				    						ele.color='backStop'
+				    						arr[item].nodeStatus= this.$t('Public.leave');
+				    						arr[item].color='backStop'
 				    				}
-								}else if(ele.devices.length ==2){
-									var str1=ele.devices.find(item => {
-				    					return item.sign == 'd1' 
+								}else if(arr[item].devices.length ==2){
+									var str1=arr[item].devices.find(i => {
+				    					return i.sign == 'd1' 
 				    				})
 									
-									var str2=ele.devices.find(item => {
-				    					return item.sign =='d2' 
+									var str2=arr[item].devices.find(i => {
+				    					return i.sign =='d2' 
 				    				})
-//									console.log(str1);
+
 									if(str1.status == "UP" && str2.status == "UP"){
-				    					ele.nodeStatus= this.$t('Public.run');
-				    					ele.color='backRun'
+				    					arr[item].nodeStatus= this.$t('Public.run');
+				    					arr[item].color='backRun'
 				    			}else	if( (str1.status == "UP" && str2.status == "DOWN")
 				    			|| (str2.status == "DOWN" && str1.status == "UP")){
-				    					ele.nodeStatus= this.$t('Public.SingleRun');
-				    					ele.color='backRun'
+				    					arr[item].nodeStatus= this.$t('Public.SingleRun');
+				    					arr[item].color='backRun'
 				    				}else{
-			    						ele.nodeStatus= this.$t('Public.leave');
-			    						ele.color='backStop'
+			    						arr[item].nodeStatus= this.$t('Public.leave');
+			    						arr[item].color='backStop'
 				    				}
-				    				ele.devices_name1=str1.hostname
-				    				ele.devices_ip1=str1.ip;
-				    				ele.devices_sn1=str1.sn;
+				    				arr[item].devices_name1=str1.hostname
+				    				arr[item].devices_ip1=str1.ip;
+				    				arr[item].devices_sn1=str1.sn;
 				    				
-				    				ele.devices_name2=str2.hostname
-				    				ele.devices_ip2=str2.ip;
-				    				ele.devices_sn2=str2.sn;
+				    				arr[item].devices_name2=str2.hostname
+				    				arr[item].devices_ip2=str2.ip;
+				    				arr[item].devices_sn2=str2.sn;
 									}
-              	});
-								
+             }
                _this.users = res.data.data.items;
               _this.total = res.data.data.page.total;
             }

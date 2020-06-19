@@ -9,7 +9,7 @@
 						<el-input v-model='filters.search_name' class='ipt_sta'></el-input>
 					</el-form-item>
 					<el-form-item :label='$t("Public.status")' prop='search_status'>
-						<el-select v-model='filters.search_status' :plachodle='$t("topFilters.placeholder")' class='sel'>
+						<el-select v-model='filters.search_status' filterable :plachodle='$t("topFilters.placeholder")' class='sel'>
 							<el-option
 								v-for='(item,index) in status'
 								:label='item.label'
@@ -92,11 +92,6 @@
 						{{ scope.row.instant_speed | bbs }}
 					</template>
 				</el-table-column>
-				<!--<el-table-column prop='idle_bandwidth' :label='$t("Public.surBandwidth")' align='center' min-width='60'>
-					<template slot-scope='scope'>
-						{{scope.row.bandwidth-scope.row.physical_bandwidth}}						
-					</template>
-				</el-table-column>-->
 				<el-table-column prop='link_cost' :label='$t("Public.linkExpen")' align='center' min-width='60'>
 				</el-table-column>
 				<el-table-column prop='monitorHTML' :label='$t("Public.linkCheck")' align='center' min-width='60'>
@@ -105,11 +100,6 @@
 				</el-table-column>
 				<el-table-column prop='z_desc' :label='$t("Public.zportDescribe")' align='center' min-width='60'>
 				</el-table-column>
-				<!--<el-table-column :label='$t("Public.description")' align='center' min-width='70'>
-					<template slot-scope='scope'>
-						{{scope.row.description | descriptionValue}}
-					</template>
-				</el-table-column>-->
 				<el-table-column  :label='$t("Public.operation")' align='center'  width='190'>
 					<template slot-scope='scope'>
 						<el-button size='mini' type='primary' @click='handleStatus(scope.$index, scope.row)'
@@ -164,17 +154,6 @@
 								<!-- -<span>{{editForm.maintenance_value}}</span> -->
 							</template>
 					</el-form-item>
-					<!--<el-form-item :label='$t("Public.aPort")+"："'>
-						<template >
-							<span>{{editForm.a_node.name}}</span> -
-							<span>{{editForm.a_ip}}</span> -
-							<span>{{editForm.a_vlan}}</span> -
-							<div v-for='(item,index) in a_device_ports' :key="index">
-								<span>{{item.name}}</span>-
-								<span>{{item.port}}</span>
-							</div>
-						</template>
-					</el-form-item>-->
 					<!--A端信息-->
 					<el-form-item :label='$t("Public.aPortNode")+"："'>
 						<template>
@@ -205,17 +184,6 @@
 						</template>
 					</el-form-item>
 					<!--Z端信息-->
-					<!--<el-form-item :label='$t("Public.zPort")+"："'>
-						<template slot-scope='scope'>
-							<span v-text="editForm.z_node.name"></span>-
-							<span v-text="editForm.z_ip"></span>-
-							<span v-text="editForm.z_vlan"></span>
-							<div v-for='(item,index) in z_device_ports' :key="index" >
-								<span>{{item.name}}</span>-
-								<span>{{item.port}}</span>
-							</div>
-						</template>
-					</el-form-item>-->
 					<el-form-item :label='$t("Public.z_PortNode")+"："'>
 						<template>
 							{{editForm.z_node.name}}
@@ -266,7 +234,7 @@
 						</el-radio-group>
 					</el-form-item>
 					<el-form-item v-if='detectionStatus' :label='$t("Public.checkType")+"："' prop='monitoring_type'>
-						<el-select v-model='editForm.monitoring_type' :disabled='editFormStatue' class='ipt'>
+						<el-select v-model='editForm.monitoring_type' filterable :disabled='editFormStatue' class='ipt'>
 							<el-option v-for='(item,index) in detectionType'
 								:value='item.value'
 								:label='item.label'
@@ -324,7 +292,6 @@
 				filters:{
 					search_name:'',
 					search_status:'',
-//					line:'',
 					start_time:'',
 					end_time:'',
 					//接收总的时间
@@ -343,11 +310,6 @@
 				currentPage:1,
 				pageNum:1,
 				pagecount:5,
-				
-				//设置维护
-//				maintenanceStatus:true,
-				//当链路的状态的为down的时候，显示删除按钮
-//				LinkStatus:false,
 				//编辑界面的数据
 				a_device_ports:[],
 				z_device_ports:[],
@@ -357,15 +319,6 @@
 						id:'',
 						name:''
 					},
-				
-					// a_device:{
-					// 	hostname:'',
-					// 	id:''
-					// },
-					// a_port:{
-					// 	port_no:'',
-					// 	id:''
-					// },
 					a_ip:'',
 					a_vlan:'',
 					a_desc:'',
@@ -374,14 +327,6 @@
 						id:'',
 						name:'',
 					},
-					// z_device:{
-					// 	hostname:'',
-					// 	id:''
-					// },
-					// z_port:{
-					// 	port_no:'',
-					// 	id:''
-					// },
 					z_ip:'',
 					z_vlan:'',
 					z_desc:'',
@@ -517,42 +462,35 @@
 						_this.users=res.data.data.items;
 						_this.total=res.data.data.page.total;	
 						//控制删除按钮的显示与隐藏
-						
 						if(res.data.data.items){
-							res.data.data.items.map(ele => {
+							var arr=res.data.data.items;
+							for( let item =0 ; item < arr.length;item ++ ){
 								//添加新的属性，作为是否维护和故障的字段
-								if(!ele.monitoring){
-									ele.monitorHTML=this.$t('Public.close');									
-//									ele.monitorHTML='关闭'
-								}else if(ele.monitoring){
-									ele.monitorHTML=this.$t('Public.open')
-//									ele.monitorHTML='开启';
+								if(!arr[item].monitoring){
+									arr[item].monitorHTML=this.$t('Public.close');									
+								}else if(arr[item].monitoring){
+									arr[item].monitorHTML=this.$t('Public.open')
 								}
-								if(ele.status=='UP'){
-									ele.color='backRun';
-									if(ele.maintain_type){
-										ele.maintenance_value=='';
-										ele.maintenanceBtn=this.$t('Public.openMain');										
-//										ele.maintenanceBtn='开启维护';
+								if(arr[item].status=='UP'){
+									arr[item].color='backRun';
+									if(arr[item].maintain_type){
+										arr[item].maintenance_value=='';
+										arr[item].maintenanceBtn=this.$t('Public.openMain');										
 									}else{
-										ele.maintenance_value=='';
-										ele.maintenanceBtn=this.$t('Public.openMain');										
-										
-//										ele.maintenanceBtn='开启维护';
+										arr[item].maintenance_value=='';
+										arr[item].maintenanceBtn=this.$t('Public.openMain');										
 									}
-								}else if(ele.status=='DOWN'){
-									ele.color='backWarn'
-									if(!ele.maintain_type){
-										ele.maintenanceBtn=this.$t('Public.maintain');										
-										ele.maintenanceBtn=this.$t('Public.closeMain');	
-//										ele.maintenance_value='维护'
-//										ele.maintenanceBtn='关闭维护'
+								}else if(arr[item].status=='DOWN'){
+									arr[item].color='backWarn'
+									if(!arr[item].maintain_type){
+										arr[item].maintenanceBtn=this.$t('Public.maintain');										
+										arr[item].maintenanceBtn=this.$t('Public.closeMain');	
 									}else{
-										ele.maintenanceBtn=this.$t('Public.fau');	
+										arr[item].maintenanceBtn=this.$t('Public.fau');	
 
 									}
 								}	
-							})
+							}
 						}
 						
 						}
@@ -706,7 +644,6 @@
 						if(res.data.status==0){
 							this.editLoading=false;
 							this.editForm=Object.assign({},res.data.data)
-							console.log(this.editForm)
 							this.a_device_ports=[];
 							this.editForm.a_device_ports.map(it=>{
 								this.a_device_ports.push({
@@ -714,7 +651,6 @@
 									port:it.port.port_no
 								})
 							})
-							console.log(this.a_device_ports)
 							this.z_device_ports=[];
 								this.editForm.z_device_ports.map(it=>{
 								this.z_device_ports.push({
@@ -722,7 +658,6 @@
 									port:it.port.port_no
 								})
 							})
-							console.log(this.z_device_ports)
 							if(this.editForm.monitoring==true){
 								this.detectionStatus=true;
 							}else{
@@ -751,50 +686,44 @@
 				this.editLoading=true;
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-							let para={
-//								id:this.edtiForm.id,
-								a_node_id:this.editForm.a_node.id,
-								a_ip:this.editForm.a_ip,
-								a_vlan:this.editForm.a_vlan,
-								a_desc:this.editForm.a_desc,
-								a_device:this.editForm.a_device.id,
-								a_port:this.editForm.a_port.id,
-								z_node_id:this.editForm.z_node.id,
-								z_ip:this.editForm.z_ip,
-								z_vlan:this.editForm.z_vlan,
-								z_desc:this.editForm.z_desc,
-								z_device:this.editForm.z_device.id,
-								z_port:this.editForm.z_port.id,
-								physical_bandwidth:	this.editForm.physical_bandwidth,
-								bandwidth:this.editForm.bandwidth,
-								monitoring:this.editForm.monitoring.toString(),
-								monitoring_type:this.editForm.monitoring_type,
-								monitoring_param:this.editForm.monitoring_param,
-								link_cost:this.editForm.link_cost,
-								description:this.editForm.description,
-								//	get_speed_key:this.editForm.get_speed_key,
-							};
-							this.$ajax.put('/link/edit_link/'+this.editForm.id+'?token='+this.token,para)
-							.then( res => {
-								
-								if(res.status==200){
-									
-									this.editLoading=false;
-									if(res.data.status==0){
-										this.$message({
-											message: this.$t('tooltipMes.editSuccess'),
-											type:'success'
-										})
-									}
-									this.$refs["editForm"].resetFields();
-									this.dialogFormVisible = false;
-									this.getUsers();
-								}else {
-									this.editLoading=false;
-									
+						let para={
+							id:this.editForm.id,
+							a_node_id:this.editForm.a_node.id,
+							a_ip:this.editForm.a_ip,
+							a_vlan:this.editForm.a_vlan,
+							a_desc:this.editForm.a_desc,
+							a_device_port_ids:this.editForm.a_device_port_ids,
+//								a_port:this.editForm.a_port.id,
+							z_node_id:this.editForm.z_node.id,
+							z_ip:this.editForm.z_ip,
+							z_vlan:this.editForm.z_vlan,
+							z_desc:this.editForm.z_desc,
+							z_device_port_ids:this.editForm.z_device_port_ids,
+//								z_port:this.editForm.z_port.id,
+							physical_bandwidth:	this.editForm.physical_bandwidth,
+							bandwidth:this.editForm.bandwidth,
+							monitoring:this.editForm.monitoring.toString(),
+							monitoring_type:this.editForm.monitoring_type,
+							monitoring_param:this.editForm.monitoring_param,
+							link_cost:this.editForm.link_cost,
+							description:this.editForm.description,
+							//	get_speed_key:this.editForm.get_speed_key,
+						};
+						this.$ajax.put('/link/edit_link/'+this.editForm.id+'?token='+this.token,para)
+						.then( res => {
+							this.editLoading=false;
+							if(res.status==200){
+								if(res.data.status==0){
+									this.$message({
+										message: this.$t('tooltipMes.editSuccess'),
+										type:'success'
+									})
 								}
-									
-							})
+								this.$refs["editForm"].resetFields();
+								this.dialogFormVisible = false;
+							}
+							this.getUsers();	
+						}).catch(err => console.log(err))
 					}
 					
 				})
@@ -830,8 +759,6 @@
 		    	if(command=='all'){
 		    		//导出所有的数据
 		    		this.$confirm(this.$t('tooltipMes.exportDataAll'),this.$t('confirm.tooltip'),{
-					//		    			confirmButtonText:'确定',
-					//		    			cancelButtonText:'取消',
 		    			type:'warning'
 		    		}).then(() => {
 		    			var para={
@@ -845,8 +772,6 @@
 		    	}else if(command=='current'){
 		    		//导出当前
 		    		this.$confirm(this.$t('tooltipMes.exportDataCurr'),this.$t('confirm.tooltip'),{
-							//		    			confirmButtonText:'确定',
-							//		    			cancelButtonText:'取消',
 		    			type:'warning'
 		    		}).then(() => {
 		    			this.exportData()

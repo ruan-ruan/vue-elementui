@@ -38,7 +38,7 @@
 									<el-col :span='10'>
 										<ul>
 											<li>状态:{{item.status_type}}</li>
-											<li>路径更新于:{{item.time}}</li>
+											<li>路径更新于:{{item.time |timeFormat}}</li>
 											<li>切换原因:{{item.reason}}</li>
 										</ul>
 									</el-col>
@@ -90,7 +90,7 @@
 					<el-col :span='24'>
 						<ul>
 							<li>默认路径:{{info.action ==='delete'?'是':'否'}}</li>
-							<li>路径更新于:{{info.time}}</li>
+							<li>路径更新于:{{info.time |timeFormat}}</li>
 							<li>切换原因:{{info.reason}}</li>
 						</ul>
 					</el-col>
@@ -172,6 +172,7 @@
 	import * as d3 from'd3';
 	import {datedialogFormat} from '@/assets/js/index.js'
 
+
 	import charts from '@/views/resources/virtualDetails/childs/charts'
 	export default{
 		name:'history',
@@ -241,6 +242,7 @@
 				this.Nodes=JSON.parse(JSON.stringify(msg));
 			},
 			open(){
+				this.$forceUpdate()
 				this.bool=false;
 				d3.select('svg').remove()
 				setTimeout(() => {
@@ -281,7 +283,7 @@
 						if(res.data.status ===0){
 
 							res.data.data.items.map(item => {
-								item.time =datedialogFormat(item.creation_time);
+//								item.time =datedialogFormat(item.creation_time);
 								if(item.action ==='delete'){
 									if(item.status ==='success'){
 										item.status_type='删除成功'

@@ -416,6 +416,7 @@ const cn = {
 		noView:'暂无查看权限！',
 		a_device_port:'A端设备端口',
     	z_device_port:'Z端设备端口',
+    	portNum:'端口号',
     },
     
     business:{

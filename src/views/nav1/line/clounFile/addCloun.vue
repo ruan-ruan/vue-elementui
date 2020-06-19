@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<section>
-
 			<el-form :model='editForm' ref='editForm' :rules='editFormRules' v-loading='editLoading' label-width='210px'>
 				<el-row>
 					<el-col :span='24'>
@@ -40,7 +39,7 @@
 							</el-form-item>
 							<h3 class="tit_h3" v-if='clounStatus'>{{$t('Public.clDock')}}</h3>
 							<el-form-item :label='$t("Public.dockName")' prop='node_id'>
-								<el-select v-model='editForm.node_id'class='ipt':disabled='!clounStatus' @change='selNode(editForm.node_id)'>
+								<el-select v-model='editForm.node_id' filterable class='ipt':disabled='!clounStatus' @change='selNode(editForm.node_id)'>
 									<el-option v-for='(item,index) in clounData'
 										:label='item.name'
 										:value='item.id'
@@ -48,7 +47,7 @@
 								</el-select>
 							</el-form-item>
 							<el-form-item :label='$t("Public.dockLogic")' prop='logic_port_id'>
-								<el-select v-model='editForm.logic_port_id'class='ipt':disabled='!clounStatus'>
+								<el-select v-model='editForm.logic_port_id' filterable class='ipt':disabled='!clounStatus'>
 									<el-option v-for='(item,index) in logicData'
 										:value='item.id'
 										:key='index'
@@ -66,7 +65,7 @@
 							</el-form-item>
 							<h3 class="tit_h3" v-if='clounStatus'>{{$t('Public.clParams')}}</h3>
 							<el-form-item :label='$t("Public.interface_driver")' prop='interface_driver'>
-								<el-select v-model='editForm.interface_driver'class='ipt':disabled='!clounStatus'>
+								<el-select v-model='editForm.interface_driver' filterable class='ipt':disabled='!clounStatus'>
 									<el-option v-for='(item,index) in driveData'
 										:label='item'
 										:value='item'
@@ -168,13 +167,11 @@
 					node_id:[ { required: true, message: this.$t('Public.plChNode'), trigger: 'blur' }],
 					logic_port_id:[ { required: true, message: this.$t('Public.plChLogic'), trigger: 'blur' }],
 					interface_driver:[ { required: true, message: this.$t('Public.plChInter'), trigger: 'blur' }],
-
 				},
 				btnStatus:true,
 				bakcUpData:{},
 				clounStatus:false,//云的详情控制下面的操作按钮以及界面的显示 以及配置title
 				pointLogic:[],//将点的的逻辑口的数据,点到多点的逻辑口的数据
-//				multiLogic:[],//
 			}
 		},
 		created(){
@@ -229,33 +226,57 @@
 				//获取点到点 ，点到多点所有使用过的逻辑口   在这个对接逻辑口的时候 就不能再使用
 				this.$ajax.get('/vll/p2p_vlls'+'?token='+this.token)
 				.then(res => {//点到点数据
-					res.data.data.items.map(ele => {
-						if(ele.endpoints){
-							ele.endpoints.forEach(item => {
-								this.pointLogic.push(item.logic_port)
-							})
-						}else if(ele.cloud_endpoints){
-							ele.cloud_endpoints.map(item => {
-								this.pointLogic.push(item.cloud_config.logic_port)
-							})
+					var arr = res.data.data.items;
+					for(let item =0;item<arr.length;item++){
+						if(arr[item].endpoints){
+							for(let w=0;w<arr[item].endpoints.length;w++){
+								this.pointLogic.push(arr[item]['endpoints'][w].logic_port)
+							}
+						}else if(arr[item].cloud_endpoints){
+							for(let k=0;k<arr[item]['cloud_endpoints'].length;k++){
+								this.pointLogic.push(arr[item]['cloud_endpoints'][k].cloud_config.logic_port)
+							}
 						}
-						
-					})
+					}
+//					res.data.data.items.map(ele => {
+//						if(ele.endpoints){
+//							ele.endpoints.forEach(item => {
+//								this.pointLogic.push(item.logic_port)
+//							})
+//						}else if(ele.cloud_endpoints){
+//							ele.cloud_endpoints.map(item => {
+//								this.pointLogic.push(item.cloud_config.logic_port)
+//							})
+//						}
+//						
+//					})
 				}).catch(e => {console.log(e)})
 				this.$ajax.get('/vll/multi_vlls'+'?token='+this.token)
 				.then(res => {//获取点到多点的里面所有的逻辑口
-					res.data.data.items.map(ele => {
-						if(ele.endpoints){
-							ele.endpoints.forEach(item => {
-								this.pointLogic.push(item.logic_port)
-							})
-						}else if(ele.cloud_endpoints){
-							ele.cloud_endpoints.map(item => {
-								this.pointLogic.push(item.cloud_config.logic_port)
-							})
+					var arr = res.data.data.items;
+					for(let item =0;item<arr.length;item++){
+						if(arr[item].endpoints){
+							for(let w=0;w<arr[item].endpoints.length;w++){
+								this.pointLogic.push(arr[item]['endpoints'][w].logic_port)
+							}
+						}else if(arr[item].cloud_endpoints){
+							for(let k=0;k<arr[item]['cloud_endpoints'].length;k++){
+								this.pointLogic.push(arr[item]['cloud_endpoints'][k].cloud_config.logic_port)
+							}
 						}
-						
-					})
+					}
+//					res.data.data.items.map(ele => {
+//						if(ele.endpoints){
+//							ele.endpoints.forEach(item => {
+//								this.pointLogic.push(item.logic_port)
+//							})
+//						}else if(ele.cloud_endpoints){
+//							ele.cloud_endpoints.map(item => {
+//								this.pointLogic.push(item.cloud_config.logic_port)
+//							})
+//						}
+//						
+//					})
 				}).catch(e =>{console.log(e)})
 			},
 			selNode(ids){//根据所选取的节点获取逻辑口
@@ -301,8 +322,6 @@
 								let idList=logic.map(v => v.id);
 								return  !idList.includes(item.id)
 							})
-							
-//							console.log(this.logicData)
 						}
 					}
 				}).catch(e => {console.log(e)})
@@ -454,5 +473,3 @@
 	}
 </script>
 
-<style>
-</style>

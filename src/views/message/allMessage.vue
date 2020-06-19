@@ -28,6 +28,7 @@
             prop='mesType'
           >
             <el-select
+            	filterable
               class='ipt_sta'
               v-model='formList.mesType'
               :placeholder='$t("topFilters.placeholder")' 
@@ -46,6 +47,7 @@
             prop='level'
           >
             <el-select
+            	filterable
               class='ipt_sta'
               v-model='formList.level'
               :placeholder='$t("topFilters.placeholder")' 
@@ -125,7 +127,6 @@
         ></el-table-column>
         <el-table-column
           type='index'
-          
           align='center'
           :label= "$t('mesModule.unMessage.table.serial')"
         >
@@ -137,7 +138,6 @@
           :label=" $t('mesModule.unMessage.table.title') "
           prop='title'
           align='left'
-          
         >
           <template slot-scope="scope">
             <el-popover
@@ -145,9 +145,10 @@
               placement="right"
               trigger="hover"
             >
-              <span class="warptitle" v-html='scope.row.content'>
+              <span class="warptitle"v-html='scope.row.content ' >
+              	<!--{{ scope.row.content | filText }}-->
+              	<!--v-html='scope.row.content'-->
               </span>
-
               <span
                 style="margin-left: 5px;"
                 class='cli_spn'
@@ -307,6 +308,12 @@ export default {
       tableDatas: []
     };
   },
+  filters:{
+  	filText(msg){
+  		console.log(msg)
+  		return msg.replace(/\\n/g ,' <br/> ')
+  	}
+  },
   created() {
     this.getData();
   },
@@ -429,7 +436,6 @@ export default {
       this.$ajax
         .get("/public/get_news" + "?token=" + this.token, para)
         .then(res => {
-        	console.log(res)
           _this.loading = false;
           if (res.status == 200) {
             if (res.data.status == 0) {
@@ -483,7 +489,6 @@ export default {
     },
     // 消息详情-弹窗
     handleClick(index, row) {
-    	console.log(row)
     	this.mesdetail={
     		dialogVisible:true,
     		header:row.title,

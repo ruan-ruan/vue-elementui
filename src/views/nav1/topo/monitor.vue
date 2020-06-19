@@ -15,7 +15,6 @@
 						<label> 
 								<!--类型-->
 								{{$t('Public.type')+'：'}}
-								
 							</label>
 							<span v-text='item.type'></span>
 					</li>
@@ -70,7 +69,7 @@
 		mounted(){
 			this.interVal=setInterval( () => {
 				this.getData()
-			},10000)
+			},5000)
 		},
 		beforeDestroy(){
 			clearInterval(this.interVal)
@@ -87,15 +86,10 @@
 
 							if(res.data.data.items.length > 7){
 								this.tit=this.$t('topology.details.notDatatip');
-
-//								this.tit='更多数据请到信息列表中查看';
 							}else if(res.data.data.items.length<7 && res.data.data.items.length>0){
-//								this.status=false;
 								this.tit=''
 							}else if(res.data.data.items.length ==0) {
 								this.tit=this.$t('topology.details.noData');
-//								this.status=true;
-//								this.tit='暂无报警信息'
 							}
 							res.data.data.items.map(item => {
 								item.time=datedialogFormat(item.time);

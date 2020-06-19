@@ -8,7 +8,7 @@
 						<el-input v-model='filters.search_name' class='ipt_sta'></el-input>
 					</el-form-item>
 					<el-form-item :label='$t("Public.status")' prop='search_status'>
-						<el-select v-model='filters.search_status' :plachodle='$t("topFilters.placeholder")' class='sel'>
+						<el-select v-model='filters.search_status' filterable :plachodle='$t("topFilters.placeholder")' class='sel'>
 							<el-option v-for='(item,index) in status'
 								:label='item.label'
 								:key='index'
@@ -87,18 +87,10 @@
 						{{ scope.row.instant_speed | bbs }}
 					</template>
 				</el-table-column>
-				<!--<el-table-column  :label='$t("Public.surBandwidth")' align='center' width='105'>
-					<template slot-scope='scope'>{{scope.row.bandwidth-scope.row.physical_bandwidth}}</template>
-				</el-table-column>-->
 				<el-table-column prop='link_cost' :label='$t("Public.linkExpen")' align='center' min-width='80'>
 				</el-table-column>
 				<el-table-column prop='monitoringText' :label='$t("Public.linkCheck")' align='center' min-width='80'>
 				</el-table-column>
-				<!--<el-table-column  :label='$t("Public.description")' align='center' min-width='80'>
-					<template slot-scope='scope'>
-						{{scope.row.description | descriptionValue}}
-					</template>
-				</el-table-column>-->
 				<el-table-column  :label='$t("Public.operation")' align='center' width='180'>
 					<template slot-scope='scope'>
 						<el-button size='mini' type='primary' @click='handleStart(scope.$index, scope.row)' v-if='buttonVal.run'>{{$t('tabOperation.run')}}</el-button>
@@ -164,7 +156,7 @@
 					<el-col :span="12">
 						<el-form-item :label='$t("Public.aDevice")+":"' :prop="'devicelist.'+index+'.a_device'" :rules="{required:true,message:$t('Public.selDeviceA'),trigger:'change'}">
 							<template>
-								<el-select v-model='domain.a_device' style='width: 180px;' :disabled='seeStatus'  @change='selectDeviceA(domain)'>
+								<el-select v-model='domain.a_device' style='width: 180px;' :disabled='seeStatus' filterable  @change='selectDeviceA(domain)'>
 									<el-option v-for='item in aDevice'
 										:value='item.id'
 										:label='item.hostname'
@@ -175,7 +167,7 @@
 					</el-col>
 					<el-col :span="12">
 						<el-form-item :label='$t("Public.devicePort")+":"' style="margin-left:-60px;" :prop="'devicelist.'+index+'.a_device_port'" :rules="{required:true,message:$t('Public.selPort'),trigger:'change'}">
-							<el-select v-model='domain.a_device_port' :disabled='seeStatus' style='width: 150px;' @change='selectDevicePort(domain.a_device_port)'>
+							<el-select v-model='domain.a_device_port' :disabled='seeStatus' filterable style='width: 150px;' @change='selectDevicePort(domain.a_device_port)'>
 								<el-option v-for='(item,it) in aDevicePort'
 									:value='item.id'
 									:label='item.port_no'
@@ -219,7 +211,7 @@
 				<el-row>
 				<el-col :span='12'>
 				<el-form-item :label='$t("Public.zDevice")+":"'  :prop="'device_zlist.'+index+'.z_device'" :rules="{required:true,message:$t('Public.selDeviceZ'),trigger:'change'}">
-					<el-select v-model='item.z_device' style="width:180px;" :disabled='seeStatus'  @change='selectDeviceZ(item)'>
+					<el-select v-model='item.z_device' style="width:180px;"  filterable:disabled='seeStatus'  @change='selectDeviceZ(item)'>
 					<el-option 
 						v-for='(item ,de) in zDevice'
 						:key ='item.id'
@@ -231,7 +223,7 @@
 				</el-col>
 				<el-col :span="10">
 				<el-form-item :label='$t("Public.devicePort")+":"' :prop="'device_zlist.'+index+'.z_device_port'" :rules="{required:true,message:$t('Public.selPort'),trigger:'change'}" style="margin-left:-60px;">
-				<el-select v-model='item.z_device_port' style="width:150px;" :disabled='seeStatus'  @change='selectDevicePortZ(item.z_device_port)'>
+				<el-select v-model='item.z_device_port' style="width:150px;" filterable :disabled='seeStatus'  @change='selectDevicePortZ(item.z_device_port)'>
 					<el-option v-for='(item , ir) in zDevicePort' :key='item.id'
 						:label='item.port_no'
 						:value='item.id'
@@ -690,13 +682,14 @@
 
 					if(res.status === 200){
 						if(res.data.status == 0){
-							res.data.data.items.map(item => {
-								if(item.status === 'UP'){
-									item.color='statusUP'
+							var arr =res.data.data.items;
+							for(let item =0 ;item <arr.length;item ++){
+								if(arr[item].status === 'UP'){
+									arr[item].color='statusUP'
 								}else{
-									item.color='statusDOWN'
+									arr[item].color='statusDOWN'
 								}
-							})
+							}
 							this.zDevicePort=res.data.data.items;
 						}
 					}
@@ -760,13 +753,14 @@
 						if(res.data.status==0){
 							this.loading=false;
 							this.total=res.data.data.page.total;
-							res.data.data.items.map(ele => {
-								if(ele.monitoring){
-									ele.monitoringText=this.$t("Public.open");									
-								}else if(!ele.monitoring){
-									ele.monitoringText=this.$t('Public.close');									
+							var arr =res.data.data.items;
+							for(let item =0 ;item <arr.length;item ++){
+								if(arr[item].monitoring){
+									arr[item].monitoringText=this.$t("Public.open");									
+								}else if(!arr[item].monitoring){
+									arr[item].monitoringText=this.$t('Public.close');									
 								}
-							})
+							}
 							this.total=res.data.data.page.total;
 							this.users=res.data.data.items;
 						}
@@ -854,7 +848,6 @@
 									z_device_port:it.z_device_port
 								})
 							})
-
 							let newde=[];
 							device_a_arr.map(v=>{
 								newde.push(v.a_device+'_'+v.a_device_port)
@@ -886,7 +879,6 @@
 								description:this.editForm.description,	
 //								get_speed_key:this.editForm.get_speed_key,
 							}
-							console.log(para)
 							this.$ajax.post('/link/add_unknown_link'+'?token='+this.token,para)
 							.then( res => {
 								if(res.status==200){
@@ -940,23 +932,13 @@
 					a_desc:row.a_desc,
 					devicelist:this.editForm.devicelist,
 					device_zlist:this.editForm.device_zlist,
-					// a_device:row.a_device.hostname,
-					// a_device_id:row.a_device.id,
-					// a_device_basic:row.a_device.hostname,//a设备备份
-					// a_device_port:row.a_port.port_no,
-					// a_device_port_id:row.a_port.id,
-					// a_port_basic:row.a_port.port_no,//a端口备份
+
 					z_node_id:row.z_node.id,
 					z_node_name:row.z_node.name,
 					z_ip:row.z_ip,
 					z_vlan:row.z_vlan,
 					z_desc:row.z_desc,
-					// z_device:row.z_device.hostname,
-					// z_device_id:row.z_device.id,
-					// z_device_basic:row.z_device.hostname,//z设备备份
-					// z_device_port:row.z_port.port_no,
-					// z_device_port_id:row.z_port.id,
-					// z_port_basic:row.z_port.port_no,//z端口备份
+
 					bandwidth:row.bandwidth,
 					physical_bandwidth:row.physical_bandwidth,
 					link_cost:row.link_cost,
@@ -1019,22 +1001,12 @@
 					devicelistdesc:this.editForm.devicelistdesc,
 					device_zlistdesc:this.editForm.device_zlistdesc,
 					z_device_port_ids:row.z_device_port_ids,
-					// a_device_id:row.a_device.id,
-//					a_device_basic:'',//a设备备份
-					// a_device_port:row.a_port.port_no,
-					// a_device_port_id:row.a_port.id,
-					// a_port_basic:row.a_port.port_no,//a端口备份
 					z_node_id:row.z_node.id,
 					z_node_name:row.z_node.name,
 					z_ip:row.z_ip,
 					z_vlan:row.z_vlan,
 					z_desc:row.z_desc,
 					z_device:'',
-					// z_device_id:row.z_device.id,
-//					z_device_basic:'',//z设备备份
-					// z_device_port:row.z_port.port_no,
-					// z_device_port_id:row.z_port.id,
-					// z_port_basic:row.z_port.port_no,//z端口备份
 					bandwidth:row.bandwidth,
 					physical_bandwidth:row.physical_bandwidth,
 					link_cost:row.link_cost,
@@ -1054,7 +1026,7 @@
 				this.editLoading=true;
 				this.$refs.editForm.validate(valid => {
 					if(valid){
-						this.editLoading=false;
+						
 						if(this.editForm.a_ip == this.editForm.z_ip){
 							this.$message({
 								message:this.$t('PUblic.a_zEqual'),
@@ -1089,8 +1061,6 @@
 									z_device_port:it.z_device_port
 								})
 							})
-							console.log(device_a_arr)
-							console.log(device_z_arr)
 							let newde=[];
 							device_a_arr.map(v=>{
 								newde.push(v.a_device+'_'+v.a_device_port)
@@ -1108,15 +1078,7 @@
 							device_z_new.map(v=>{
 								new_des_z.push(v.z_device+'_'+v.z_device_port)
 							})
-						
-							console.log(newde.join())
-							console.log(newdez.join())
-							
-							console.log(device_a_arr)
-							console.log(device_z_arr)
-							console.log(this.editForm.devicelistdesc);
-							console.log(this.editForm.devicelist)
-							console.log(this.editForm.a_device_port_ids)
+
 							let para={
 								a_node_id:this.editForm.a_node_id,
 								a_ip:this.editForm.a_ip,
@@ -1145,6 +1107,7 @@
 							}
 							this.$ajax.put('/link/edit_unknown_link/'+this.editForm.id+'?token='+this.token,para)
 							.then( res => {
+								this.editLoading=false;
 								if(res.status==200){
 									if(res.data.status==0){
 										this.$message({

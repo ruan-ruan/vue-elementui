@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<!--创建的逻辑端口-->
-		<section>
+		<section v-loading='Load'>
 			<h3 class="title_h3" v-text="seePortDetails?seeTopTitle: editTopTitle" ></h3>
 			<el-form :model='filters' ref='filters' :rules='filtersRules' label-width='200px'>
 				<el-row>
@@ -14,7 +14,7 @@
 								<el-input v-model='filters.name'placeholder="请输入逻辑口名称" class='ipt':disabled='addPortStatus'></el-input>
 							</el-form-item>
 							<el-form-item :label='$t("Public.tenant") +"：" ' prop='tenant_id'>
-								<el-select v-model='filters.tenant_id' class='ipt' :disabled='addPortStatus' filterable>
+								<el-select v-model='filters.tenant_id' filterable class='ipt' :disabled='addPortStatus' filterable>
 									<el-option v-for='(item,index) in tenantLogo'
 										:value='item.id'
 										:label='item.name'
@@ -118,10 +118,10 @@
 				<el-button size='small' type="primary" @click="updateData" v-if='!createStatus'>{{$t('tabOperation.save')}}</el-button>
 			</div>
 			<!--关联端口的日志部分-->
-			<el-dialog :title='textMap[dialogStatus]':visible.sync='dialogFormVisible' :close-on-click-modal="false" v-loading='editLoading'>
+			<el-dialog :title='textMap[dialogStatus]':visible.sync='dialogFormVisible' :close-on-click-modal="false" v-loading='editLoading' @open='$forceUpdate()'>
 				<el-form :model='editForm' label-width='230px' ref='editForm':rules='editFormRules'>
 					<el-form-item :label='$t("Public.backboneNode")'prop='node_id'>
-						<el-select v-model='editForm.node_id' :disabled='disabeldSee'class='ipt' @change='selectNode(editForm.node_id)'>
+						<el-select v-model='editForm.node_id'filterable :disabled='disabeldSee'class='ipt' @change='selectNode(editForm.node_id)'>
 							<el-option v-for='(item,index) in backNodes'
 								:value='item.id'
 								:label='item.name'
@@ -129,7 +129,7 @@
 						</el-select>
 					</el-form-item>
 					<el-form-item :label='$t("Public.networkEqu")' prop='device_id'>
-						<el-select v-model='editForm.device_id' :disabled='disabeldSee'class='ipt' @change='selectDevice(editForm.device_id)'>
+						<el-select v-model='editForm.device_id'filterable :disabled='disabeldSee'class='ipt' @change='selectDevice(editForm.device_id)'>
 							<el-option v-for='(item,index) in equipmentData'
 								:value='item.id'
 								:label='item.hostname'
@@ -137,7 +137,7 @@
 						</el-select>
 					</el-form-item>
 					<el-form-item :label='$t("Public.NnetworkPort")'prop='port_id'>
-						<el-select v-model='editForm.port_id' :disabled='disabeldSee' class='ipt' @change='selectPort(editForm.port_id)'>
+						<el-select v-model='editForm.port_id'filterable :disabled='disabeldSee' class='ipt' @change='selectPort(editForm.port_id)'>
 							<el-option v-for='(item,index) in netwotkPortData'
 								:value='item.id'
 								:label='item.port_no'
@@ -157,7 +157,7 @@
 						<el-input v-model='editForm.position':disabled='disabeldSee'class='ipt'></el-input>
 					</el-form-item>
 					<el-form-item :label='$t("Public.userDevType")' prop='device_type'>
-						<el-select v-model='editForm.device_type':disabled='disabeldSee'class='ipt'>
+						<el-select v-model='editForm.device_type'filterable :disabled='disabeldSee'class='ipt'>
 							<el-option v-for='(item,index) in deviceType'
 								:key='index'
 								:value='item.value'
@@ -165,7 +165,7 @@
 						</el-select>
 					</el-form-item>
 					<el-form-item :label='$t("Public.portType")' prop='port_type'>
-						<el-select v-model='editForm.port_type':disabled='disabeldSee'class='ipt'>
+						<el-select v-model='editForm.port_type'filterable :disabled='disabeldSee'class='ipt'>
 							<el-option v-for='(item,index) in portType'
 								:key='index'
 								:value='item.value'
@@ -197,6 +197,7 @@
 
 		data(){
 			return{
+				Load:false,
 				//详情的界面的部分表格数据的显示操作和里面的操作按钮
 				seePortDetails:false,
 				seeTitle:this.$t('Public.phyList'),
@@ -442,6 +443,7 @@
 			},
 			selectNode(ids){
 				//筛选  获取骨干节点的信息
+				this.$forceUpdate()
 				this.editForm.device_id='';
 				this.editForm.port_id='';
 				let items=ids;
@@ -472,6 +474,8 @@
 				}).catch(e => {console.log(e)})
 			},
 			selectDevice(ids){
+				this.$forceUpdate()
+				
 				this.editForm.port_id=''
 				//筛选  选择对应的id的name
 				let items=ids;
@@ -505,6 +509,7 @@
 				})
 			},
 			selectPort(ids){
+				this.$forceUpdate()
 				//获取设备的端口的下选择的id  并且获取对应的name
 				//筛选  选择对应的id的name
 				let items=ids;
@@ -529,8 +534,6 @@
 					})
 					return new Error(this.$t('Public.plaAccPhy'))
 				}else{
-
-					
 					this.$refs.filters.validate(valid => {
 						let str=[];
 						this.physical_ports.map(ele => {
@@ -556,7 +559,6 @@
 							access_type:this.filters.access_type,
 							physical_ports:str
 						}
-//						debug
 						if(valid){
 							this.$ajax.post('/port/add_logic_port'+'?token='+this.token,para)
 							.then(res => {
@@ -572,8 +574,6 @@
 									}
 								}
 							}).catch(e => {console.log(e)})
-						}else{
-							return
 						}
 					})
 				}
@@ -589,6 +589,7 @@
 				}else if(this.physical_ports.length>0){
 					this.$refs.filters.validate(valid => {
 						if(valid){
+							this.Load=true;
 							let obj={};
 							let str=[]
 							this.physical_ports.map(ele => {
@@ -615,10 +616,9 @@
 								access_type:this.filters.access_type,
 								physical_ports:str
 							}
-							
-//								debug
 							this.$ajax.put('/port/edit_logic_port/'+this.filters.id+'?token='+this.token,para)
 							.then(res => {
+								this.Load=false;
 								if(res.status==200){
 									if(res.data.status==0){
 										this.$message({
@@ -639,20 +639,23 @@
 				//编辑和详情的界面的数据
 				//获取所有的列表和详情的时候的界面的数据
 				let that=this
-				
+				this.loading=true
 				setTimeout(function(){
 					that.$ajax.get('/port/logic_port_info/'+id+'?token='+that.token)
 					.then(res =>{
-						
+						this.loading=false
 						if(res.status==200){
 							if(res.data.status==0){
-								res.data.data.physical_ports.map(item => {
-									var findVal=that.backNodes.find(j => {
-										return j.id == item.node.id
-										
-									})
-									item.dc_name=findVal.dc.name
-								})
+								var sli=res.data.data;
+								for(let item =0 ;item <sli.physical_ports.length;item ++){
+									for(let j =0 ;j<that.backNodes.length;j++){
+										if(j.id ===sli.physical_ports[item]['node']['id'] ){
+											sli.physical_ports[item]['dc_name']=that.backNodes[j]['dc']['name']
+										}
+									}
+								}
+								
+								
 								that.filters=Object.assign({},res.data.data);
 								if(res.data.data.usable){
 									that.filters.status=that.$t('Public.enable');//启用
