@@ -37,8 +37,7 @@
                 v-for='(item,index) in mesTypeList'
                 :key='index'
                 :label='item.name'
-                :value='item.value'
-              >
+                :value='item.value'>
               </el-option>
             </el-select>
           </el-form-item>
@@ -240,7 +239,7 @@ export default {
       formList: {
         name: "",
         mesType: "",
-        level: "",
+        level: "",//  展示纤细的类型
         start_time: "",
         end_time: "",
         //选择时间
@@ -261,36 +260,32 @@ export default {
       sels: [],
       //类型
       mesTypeList: [
-        {
+	      {
+	      	name:'端口类型',
+	      	value:'port'
+	      },
+	      {
+	      	name:'节点类型',
+	      	value:'node'
+	      },
+	      {
+	      	name:'设备类型',
+	      	value:'device'
+	      },
+	      {
+	      	name:'业务类型',
+	      	value:'vll'
+	      }
+      ],
+      //状态的转换
+      levelList: [
+         {
           name: this.$t('mesModule.sea.mesTypeList.product'),
           value: "notice"
         },
         {
           name:this.$t('mesModule.sea.mesTypeList.police'),
           value: "warning"
-        }
-      ],
-      //状态的转换
-      levelList: [
-         {
-          name: this.$t('mesModule.sea.lea.one'),
-          value: "1"
-        },
-        {
-          name:this.$t('mesModule.sea.lea.two'),
-          value: "2"
-        },
-        {
-          name:this.$t('mesModule.sea.lea.three'),
-          value: "3"
-        },
-        {
-          name:this.$t('mesModule.sea.lea.four'),
-          value: "4"
-        },
-        {
-          name:this.$t('mesModule.sea.lea.five'),
-          value: "5"
         }
       ],
       //时间戳的转换
@@ -428,7 +423,7 @@ export default {
         page: this.currentPage,
         per_page: this.pagesize,
         search_title: this.formList.name,
-        search_type: this.formList.mesType,
+        search_type: this.formList.mesType,// 展示消息是端口还是节点的数据类型
         search_level: this.formList.level,
         search_start_time: getTime(this.formList.start_time),
         search_end_time: getTime(this.formList.end_time)
@@ -441,9 +436,7 @@ export default {
             if (res.data.status == 0) {
               _this.tableData = res.data.data.items;
               _this.total = res.data.data.page.total;
-              this.tableDatas = res.data.data.items
-                ? res.data.data.items.slice(0, 5)
-                : [];
+              this.tableDatas = res.data.data.items? res.data.data.items.slice(0, 5): [];
               Utils.$emit("demo", this.tableDatas);
             }
           }

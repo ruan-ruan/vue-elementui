@@ -673,10 +673,16 @@
 			exportData:function(params){
 				this.$ajax.get('/admin/admins'+'?token='+this.token,params)
 				.then(res => {
-					res.data.data.items.map(item => {
-						item.creation_time=datedialogFormat(item.creation_time)
-					})
-					this.excelData=res.data.data.items
+					if(res.status == 200){
+						if(res.data.status ==0){
+							var arr =res.data.data.items;
+							for(let item =0 ;item <arr.length;item++){
+								arr[item]['creation_time']=datedialogFormat( arr[item]['creation_time'] )
+								arr[item]['role_name']=arr[item]['role']['name']
+							}
+						}
+					}
+					this.excelData=arr;
 					this.export2Excel();
 				}).catch(e => {
 					console.log(e)
@@ -686,8 +692,22 @@
 				let that=this;
 				require.ensure([] ,() => {
 					const {export_json_to_excel} = require('@/excel/export2Excel')
-					const tHeader=[this.$t('Public.creation'),this.$t('Public.name'),this.$t('customer.phone'),this.$t('customer.email'),this.$t('Public.description'),this.$t('roles.role')];
-					const filterVal=['creation_time','name','mobile','email','description','roles.name'];
+					const tHeader=[
+					this.$t('Public.creation'),
+					this.$t('Public.name'),
+					this.$t('Public.fullName'),
+					this.$t('roles.roleName'),
+					this.$t('customer.email'),
+					this.$t('customer.phone'),
+					this.$t('Public.description')];
+					const filterVal=[
+					'creation_time',
+					'name',
+					'real_name',
+					'role_name',
+					'email',
+					'mobile',
+					'description'];
 					const list=that.excelData;
 					const data=that.formatJson(filterVal,list);
 					export_json_to_excel(tHeader,data,this.$t('tooltipMes.download')+'excel')

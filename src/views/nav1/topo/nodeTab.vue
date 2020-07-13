@@ -22,7 +22,6 @@
 <script>
 	import {datedialogFormat} from'@/assets/js/index.js'
 	import detailsNode from '@/views/nav1/topo/detailsNode'
-	
 	export default{
 		name:'nodeTab',
 		components:{detailsNode},
@@ -104,7 +103,7 @@
 
 <style >
 	.err_no{
-
+		cursor: pointer;
 		cursor: pointer;
 	}
 	.el-tabs{

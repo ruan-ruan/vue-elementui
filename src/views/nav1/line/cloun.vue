@@ -127,7 +127,7 @@
 </template>
 
 <script>
-	import {getPortStatus } from '@/assets/js/index.js'
+	import {getPortStatus ,datedialogFormat } from '@/assets/js/index.js'
 	
 	export default{
 		name:'cloun',
@@ -348,10 +348,21 @@
 			},
 			exportData(params){
 			
-				this.$ajax.get('/'+'?token='+this.token,params)
+				this.$ajax.get('/link/cloud_links'+'?token='+this.token,params)
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
+							var arr=res.data.data.items;
+							for(let item =0 ;item<arr.length;item++){
+								arr[item]['logic_port_name']=arr[item]['logic_port']['name'];
+								var physicals=[];
+								for(let w=0;w<arr[item]['logic_port']['physical_port'].length;w++){
+									physicals.push( arr[item]['logic_port']['physical_port'][w]['port_no'] )
+								}
+								arr[item]['physical_port']=physicals;
+								arr[item]['dc_name']=arr[item]['node']['name'];
+								arr[item]['creation_time']=datedialogFormat(arr[item]['creation_time'])
+							}
 							this.excelData=res.data.data.items;
 							this.export2Excel();
 						}
@@ -364,8 +375,17 @@
 				let that=this;
 				require.ensure([] ,() => {
 					const {export_json_to_excel} = require('@/excel/export2Excel')
-					const tHeader=[this.$t('Public.creation'),this.$t('Public.dataCen'),this.$t('Public.deviceID'),this.$t('Public.manageIP'),this.$t('Public.description')];
-					const filterVal=['creation_time','dc_name','id','ip','description'];
+					const tHeader=[this.$t('Public.creation'),this.$t('Public.dataCen'),
+					'id',this.$t('Public.cloudName'),this.$t('Public.region'),this.$t('Public.accessPoint'),
+					this.$t('Public.bandwidth'),this.$t('Public.interface_driver'),this.$t('Public.shardCloud'),
+					this.$t('Public.logName'),this.$t('Public.phyPort'),this.$t('Public.par'),
+					
+					'api_url','api_token','api_uuid',this.$t('Public.description')];
+					
+					const filterVal=['creation_time','dc_name','id','name',
+					'region','access_point','bandwidth','interface_driver','type','logic_port_name','physical_port',
+					
+					'extension','api_url','api_token','api_uuid','description'];
 					const list=that.excelData;
 					const data=that.formatJson(filterVal,list);
 					export_json_to_excel(tHeader,data,this.$t('tooltipMes.download')+'excel')

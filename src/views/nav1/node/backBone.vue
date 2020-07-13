@@ -221,7 +221,7 @@
 <script>
 
 	
-import {descriptionValue,getTime,sortVal} from '@/assets/js/index.js'
+import {descriptionValue,getTime,sortVal,datedialogFormat} from '@/assets/js/index.js'
 
 export default {
   name: "Service",
@@ -555,7 +555,75 @@ export default {
         .then(res => {
           if (res.status == 200) {
             if (res.data.status == 0) {
-              this.excelData = res.data.data.items;
+              
+              var arr=res.data.data.items;
+              for(let item =0 ;item<arr.length;item++){
+              	if(arr[item].devices.length ===1){
+              		arr[item]={
+              			id:arr[item]['id'],
+              			creation_time:arr[item]['creation_time'],
+              			user_vlan:arr[item]['user_vlan'],
+              			vtep:arr[item]['vtep'],
+              			description:arr[item]['description'],
+
+	              		dc_name:arr[item].dc.name,
+	              		creation_time:datedialogFormat(arr[item].creation_time),
+	              		device1_ip:arr[item]['devices'][0]['ip'],
+	              		device1_sn:arr[item]['devices'][0]['sn'],
+	              		device1_hostname:arr[item]['devices'][0]['hostname'],
+	              		device1_id:arr[item]['devices'][0]['id'],
+	              		device1_model:arr[item]['devices'][0]['model'],
+	              		device1_port_section:arr[item]['devices'][0]['port_section'],
+	              		device1_vendor:arr[item]['devices'][0]['vendor'],
+	              		device1_room:arr[item]['devices'][0]['room'],
+	              		device1_rack:arr[item]['devices'][0]['rack'],
+	              		device1_status:arr[item]['devices'][0]['status'],
+	              		
+	              		device2_ip:'',
+	              		device2_sn:'',
+	              		device2_hostname:'',
+	              		device2_id:'',
+	              		device2_model:'',
+	              		device2_port_section:'',
+	              		device2_vendor:'',
+	              		device2_room:'',
+	              		device2_rack:'',
+	              		device2_status:'',
+	              	}
+              	}else{
+              		arr[item]={
+              			id:arr[item]['id'],
+              			creation_time:arr[item]['creation_time'],
+              			user_vlan:arr[item]['user_vlan'],
+              			vtep:arr[item]['vtep'],
+              			description:arr[item]['description'],
+	              		dc_name:arr[item].dc.name,
+	              		creation_time:datedialogFormat(arr[item].creation_time),
+	              		device1_ip:arr[item]['devices'][0]['ip'],
+	              		device1_sn:arr[item]['devices'][0]['sn'],
+	              		device1_hostname:arr[item]['devices'][0]['hostname'],
+	              		device1_id:arr[item]['devices'][0]['id'],
+	              		device1_model:arr[item]['devices'][0]['model'],
+	              		device1_port_section:arr[item]['devices'][0]['port_section'],
+	              		device1_vendor:arr[item]['devices'][0]['vendor'],
+	              		device1_room:arr[item]['devices'][0]['room'],
+	              		device1_rack:arr[item]['devices'][0]['rack'],
+	              		device1_status:arr[item]['devices'][0]['status'],
+	              		
+	              		device2_ip:arr[item]['devices'][1]['ip'],
+	              		device2_sn:arr[item]['devices'][1]['sn'],
+	              		device2_hostname:arr[item]['devices'][1]['hostname'],
+	              		device2_id:arr[item]['devices'][1]['id'],
+	              		device2_model:arr[item]['devices'][1]['model'],
+	              		device2_port_section:arr[item]['devices'][1]['port_section'],
+	              		device2_vendor:arr[item]['devices'][1]['vendor'],
+	              		device2_room:arr[item]['devices'][1]['room'],
+	              		device2_rack:arr[item]['devices'][1]['rack'],
+	              		device2_status:arr[item]['devices'][1]['status'],
+	              	}
+              	}
+              }
+              this.excelData = arr;
               this.export2Excel();
             }
           }
@@ -568,13 +636,33 @@ export default {
       let that = this;
       require.ensure([], () => {
         const { export_json_to_excel } = require("@/excel/export2Excel");
-        const tHeader = [this.$t('Public.creation'), this.$t('Public.dataCen'), this.$t('Public.id'), this.$t('Public.manageIP'), this.$t('Public.description')];
+        const tHeader = [this.$t('Public.creation'), 
+        'user_vlan','vtep',this.$t('Public.dataCen'), 
+        this.$t('Public.id'),  this.$t('Public.description'),
+        
+        '(1)'+this.$t('Public.deviceName'),'(1)'+this.$t('Public.deviceStatus'),
+        '(1)'+this.$t('Public.snNumber'),'(1)'+this.$t('Public.manageIP'),
+        '(1)'+this.$t('Public.vendor'),'(1)'+this.$t('Public.deviceModel'),
+        '(1)'+this.$t('Public.portSection'),'(1)'+this.$t('Public.room'),
+        '(1)'+this.$t('Public.rack'),'(1)'+this.$t('Public.deviceID'),
+        
+        '(2)'+this.$t('Public.deviceName'),'(2)'+this.$t('Public.deviceStatus'),
+        '(2)'+this.$t('Public.snNumber'),'(2)'+this.$t('Public.manageIP'),
+        '(2)'+this.$t('Public.vendor'),'(2)'+this.$t('Public.deviceModel'),
+        '(2)'+this.$t('Public.portSection'),'(2)'+this.$t('Public.room'),
+        '(2)'+this.$t('Public.rack'),'(2)'+this.$t('Public.deviceID')
+        ];
         const filterVal = [
-          "creation_time",
-          "dc_name",
-          "id",
-          "ip",
-          "description"
+          "creation_time",'user_vlan','vtep', "dc_name", "id","description",
+          
+          'device1_hostname',
+          'device1_status','device1_sn', 'device1_ip', 'device1_vendor',   'device1_model',
+	        'device1_port_section', 'device1_room', 'device1_rack', 'device1_id',
+          
+          
+          'device2_hostname',
+          'device2_status','device2_sn', 'device2_ip', 'device2_vendor',   'device2_model',
+	        'device2_port_section', 'device2_room', 'device2_rack', 'device2_id',
         ];
         const list = that.excelData;
         const data = that.formatJson(filterVal, list);

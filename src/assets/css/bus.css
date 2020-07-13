@@ -18,6 +18,24 @@
 .marB8{
 	margin-bottom: 8px;
 }
+.marB10{
+	margin-bottom: 10px;
+}
+.textR{
+	display: inline-block;
+	width: 50px;
+	height: 22px;
+	line-height: 22px;
+	vertical-align: middle;
+	text-align: justify;
+	text-align-last: justify;
+	text-align: right !important; 
+	/*font-size: 12px;*/
+}
+.text{
+	/*font-size: 12px;*/
+}
+
 .marB15{
 	margin-bottom: 15px;
 	padding-left: 120px;

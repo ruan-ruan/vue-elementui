@@ -963,8 +963,7 @@
 								this.exportData();
 							})
 							.catch(() => {});
-					} else if(command == " current") {
-	
+					} else if(command == "current") {
 						this.$confirm(this.$t('tooltipMes.exportDataCurr'), this.$t('confirm.tooltip'), {})
 							.then(() => {
 								var para = {
@@ -982,13 +981,90 @@
 						.then(res => {
 							if(res.status == 200) {
 								if(res.data.status == 0) {
-									this.excelData = res.data.data;
+									var arr=res.data.data.items
+									for(let item =0;item<arr.length;item++){
+										/**
+										 * 三种情况数据  取出来所有的数据用于展示
+										 * d2d
+										 * d2c
+										 * c2c
+										 * */
+										arr[item]['creation_time']=datedialogFormat(arr[item]['creation_time']);
+										var a,z;
+										if(arr[item].endpoints && arr[item].endpoints.length ==2){
+											//d2d
+											a=arr[item].endpoints.find(w => w.name==='A端');
+											z=arr[item].endpoints.find(w => w.name==='Z端');
+											arr[item]['a_logic']=a['logic_port']['name'];
+											arr[item]['a_vlan']=a['vlan'];
+											
+
+											arr[item]['z_logic']=z['logic_port']['name'];
+											arr[item]['z_vlan']=z['vlan'];
+										}
+										if(arr[item].endpoints &&  arr[item].endpoints.length ==1){
+											//d2c
+											a=arr[item].cloud_endpoints.find(w => w.name==='A端');
+											z=arr[item].endpoints.find(w => w.name==='Z端');
+											arr[item]['a_logic']=a['cloud_config']['logic_port']['name'];
+											arr[item]['a_vlan']=a['vlan'];
+											
+											arr[item]['z_logic']=z['logic_port']['name'];
+											arr[item]['z_vlan']=z['vlan'];
+										}
+										if(arr[item].cloud_endpoints && arr[item].cloud_endpoints.length ==2){
+											//c2c
+											a=arr[item].cloud_endpoints.find(w => w.name==='A端');
+											z=arr[item].cloud_endpoints.find(w => w.name==='Z端');
+											arr[item]['a_logic']=a['cloud_config']['logic_port']['name'];
+											arr[item]['a_vlan']=a['vlan'];
+											arr[item]['z_logic']=z['cloud_config']['logic_port']['name'];
+											arr[item]['z_vlan']=z['vlan'];
+										}
+										arr[item]['tenant_name']=arr[item]['tenant']['name'];
+									}
+									this.excelData =arr ;
+									this.export2Excel();
 								}
 							}
 						})
 						.catch(e => {
 							console.log(e);
 						});
+				},
+				export2Excel(){
+					let that=this;
+					require.ensure([] ,() => {
+					const {export_json_to_excel} = require('@/excel/export2Excel')
+					const tHeader=[
+						this.$t('Public.creation'),
+						'id',
+						this.$t('Public.specialName'),
+						this.$t('Public.tenantName'),
+						this.$t('Public.logic')+'(A)',
+						'vlan(A)',
+						this.$t('Public.logic')+'(Z)',
+						'vlan(Z)',
+						this.$t('Public.bandwidth'),
+						this.$t('Public.description')];
+						const filterVal=[
+						'creation_time',
+						'id',
+						'name',
+						'tenant_name',
+						'a_logic',
+						'a_vlan',
+						'z_logic',
+						'z_vlan',
+						'bandwidth',
+						'description'];
+						const list=that.excelData;
+						const data=that.formatJson(filterVal,list);
+						export_json_to_excel(tHeader,data,this.$t('addNode.download')+ 'excel')
+					})
+				},
+				formatJson(filterVal,jsonData){
+					return jsonData.map(v => filterVal.map(j => v[j]))
 				},
 				//计费时间和结束时间
 				beginDate() {

@@ -1,26 +1,19 @@
 <template>
-	<div class='main' v-loading='topoLoading'>
-		<el-row>
-			<el-col :span='24'>
-				<el-form>
-					<el-form-item>
-						<template>
-							<el-button @click='Save' v-if='buttonVal.save' >
-								<!--保存布局-->
-								{{$t('topology.topBtn.save')}}
-							</el-button>
-							<el-button @click='reset' id='reset'>
-								<!--还原布局-->
-								{{$t('topology.topBtn.reduction')}}
-								
-							</el-button>
-						</template>
-					</el-form-item>
-				</el-form>
-			</el-col>
+	<div class='main topoContainer' v-loading='topoLoading'>
+		<template style="position: absolute; left: 0px;top: 0px;" v-if='!topoLoading'>
+			<el-button @click='Save' v-if='buttonVal.save' >
+				<!--保存布局-->
+				{{$t('topology.topBtn.save')}}
+			</el-button>
+			<el-button @click='reset' id='reset'>
+				<!--还原布局-->
+				{{$t('topology.topBtn.reduction')}}
+			</el-button>
+		</template>
+		<el-row v-if='!topoLoading'>
 			<el-col :span='24'>
 				<el-col :span='24'class='back'>
-					<ul>
+					<ul style="position: absolute; left: 0px;">
 						<li>
 							<button  class='btn' id='big'>+</button>
 						</li>
@@ -28,7 +21,6 @@
 							<button class='btn' id='small'>-</button>
 						</li>
 					</ul>
-					<svg width="100%" height="100%" v-loading='topoLoading'></svg>
 				</el-col>
 			</el-col>
 		</el-row>
@@ -47,6 +39,7 @@
 		props:['leftData'],
 		data(){
 			return{
+				titStatus:true,
 				svg:null,
 				token:'',
 				nodesData:[],
@@ -295,9 +288,10 @@
 			        });
 			        v.index = ++i;
 			   });
+			   this.bus.$emit('sendBtn',true);
 				d3.select('svg').select('g').remove()
 				var width = 840,
-				  height = 500;
+				  height = 660;
 				var text_dx = -20;
 				var text_dy = 20;
 				var img_w=16,img_h=16;
@@ -322,9 +316,15 @@
 				simulation.on('tick', tickActions)
 
 				
-				var  svg = d3.select('svg')
-	            .attr('width',width)
-	            .attr('height',height)
+//				var  svg = d3.select('svg')
+//	            .attr('width',width)
+//	            .attr('height',height);
+				var svg = d3.select(".topoContainer")
+		            .append("svg")
+		            .attr("preserveAspectRatio", "xMidYMid meet")
+		            .attr("viewBox", "0 0 500 244")
+	            
+	            
 	            var g = svg.append('g');
 
 	            var nodes_text = g.selectAll('.node_text')
@@ -388,7 +388,6 @@
 			    	}
 			    })
 			    .on('click',function(d){
-			    	console.log(d)
 			    	var cls=document.getElementsByTagName('line');
 			    	for (let index=0;index<cls.length;index++) {
 							cls[index].style.strokeWidth=1.5;
@@ -407,7 +406,7 @@
 		            		}
 		            	}
 		            	that.$emit('sendlink',true);
-		            	console.log(obj);
+
 		            	that.bus.$emit('sendlink',obj);
 		            	that.$store.commit('sendLink',obj);
 			    })
@@ -595,8 +594,15 @@
 	}
 </script>
 
-<style>
-
+<style >
+	.topoContainer{
+		width: 100%;
+		height: 100%;
+	}
+	svg{
+		width: 100%;
+		height: 100%;
+	}
 
 	.font{
 		font-size: 6px;

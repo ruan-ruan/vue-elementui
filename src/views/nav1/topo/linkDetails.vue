@@ -1,9 +1,61 @@
 <template>
 	<div>
-		<el-form :model='filters' ref='filters' label-wdith='100px' v-loading='linkLoading' v-if='formStatus'>
+		<!--<template>
+			<ul>
+				<li>
+					<el-button size='mini' type='primary' @click='charts(filters.id)'>
+						{{$t('Public.chart')}}
+					</el-button>
+				</li>
+				<li class="marT5">
+					<label class="textR">{{ $t('Public.linkState')+'：' }}</label>
+					<span class="text">{{filters.status}}</span>
+				</li>
+				<li class="marT5">
+					<label class="textR">{{ $t('Public.sysBandwidth')+'：' }}</label>
+					<span class="text">{{filters.bandwidth}}</span>
+				</li>
+				<li class="marT5">
+					<label class="textR">{{ $t('Public.phyBandwidth')+'：' }}</label>
+					<span class="text">{{filters.physical_bandwidth}}</span>
+				</li>
+				<li class="marT5">
+					<label class="textR">{{ $t('Public.surBandwidth')+'：' }}</label>
+					<span class="text">{{filters.remain_bandwidth}}</span>
+				</li>
+				<li class="marT5">
+					<label class="textR">{{ $t('Public.linkExpen')+'：' }}</label>
+					<span class="text">{{filters.link_cost}}</span>
+				</li>
+				<li class="marT5">
+					<label class="textR">{{ $t('Public.linkCheck')+'：' }}</label>
+					<span class="text">{{filters.monitoring}}</span>
+				</li>
+				<li class="marT5">
+					<label class="textR">{{ $t('Public.aPort')+'：' }}</label>
+					<span class="text">{{filters.aPort}}</span>
+				</li>
+				<li class="marT5">
+					<label class="textR">{{ $t('Public.aportDescribe')+'：' }}</label>
+					<span class="text">{{filters.aDesc}}</span>
+				</li>
+				<li class="marT5">
+					<label class="textR">{{ $t('Public.zPort')+'：' }}</label>
+					<span class="text">{{filters.zPort}}</span>
+				</li>
+				<li class="marT5">
+					<label class="textR">{{ $t('Public.zportDescribe')+'：' }}</label>
+					<span class="text">{{filters.zDesc}}</span>
+				</li>
+				<li class="marT5">
+					<label class="textR">{{ $t('Public.description')+'：' }}</label>
+					<span class="text">{{filters.description}}</span>
+				</li>
+			</ul>
+		</template>-->
+		<el-form :model='filters'label-position='right' ref='filters' label-wdith='100px' v-loading='linkLoading' v-if='formStatus'>
 			<el-form-item>
 				<el-button size='small' type='primary' @click='charts(filters.id)'>
-					<!--图表-->
 					{{$t('Public.chart')}}
 				</el-button>
 			</el-form-item>
@@ -122,7 +174,6 @@
 		computed:{
 			a_port(){
 				if(JSON.stringify(this.ports) !=='{}'){
-					console.log(this.ports)
 					return this.ports.a_device_ports
 				}
 			},

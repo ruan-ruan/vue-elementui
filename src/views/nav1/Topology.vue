@@ -1,14 +1,14 @@
 <template>
 	<div v-loading='load'>
 		<!--<!--拓扑视图--> 
-		<section>
+		<section style="width: 100%;height: 100%;">
 			<el-row>
 				<el-col :span='24'>
 					<el-col :span='24'>
 						<Topo :leftData='nodesData' @sendlink='setLink' @reset='getVal' v-if='topoVal' @parentDelta='setmon' @sendType='getLink'></Topo>
 					</el-col>
 					<el-col :span='6' class='vir'>
-						<monitor v-if='monStatus'></monitor>
+						<monitor v-if='monStatus' ></monitor>
 						<nodeTab v-if='nodeStatus' @goback='closeNode'></nodeTab>
 						<linkTab v-if='linkStatus'@linkBack='closeNode'></linkTab>
 					</el-col>
@@ -53,11 +53,15 @@
 				load:false
 			}
 		},
+		created(){
+			this.load=true;
+		},
 		mounted(){
+			this.$forceUpdate()
 			this.token=sessionStorage.getItem('token');
 			this.getLinksData();
-			this.getNodesData()
-
+			this.getNodesData();
+			this.load=false
 		},
 
 		methods:{
@@ -117,17 +121,6 @@
 					if(res.status==200 && res.data.status==0){
 
 							that.linksData=res.data.data;	
-//							that.backupLink=res.data.data;
-//							this.dealForm(that.selectForm,nodesData,that.linksData)
-							//添加数据的处理setObj={
-//					nodeData:nodesData,
-//					linkData:linksData
-//				}
-
-//						let node=this.dealForm(that.selectForm,nodesData,that.linksData).nodeData;
-//						let link=this.dealForm(that.selectForm,nodesData,that.linksData).linkData
-//						this.setTopo(node,link)
-
 					}
 				}).catch(e => {console.log(e)})
 			},

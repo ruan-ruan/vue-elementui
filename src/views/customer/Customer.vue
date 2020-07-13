@@ -171,7 +171,7 @@
 </template>
 
 <script>
-	
+	import {datedialogFormat } from '@/assets/js/index'
 export default {
   name: "Customer",
   data() {
@@ -456,7 +456,12 @@ export default {
       this.$ajax
         .get("/tenant/tenants" + "?token=" + this.token, params)
         .then(res => {
-          this.excelData = res.data.data.items;
+					var arr =res.data.data.items;
+					for( let item =0 ;item<arr.length;item++ ){
+						arr[item]['creation_time']=datedialogFormat(arr[item]['creation_time']);
+						arr[item]['parent_name']=arr[item]['parent']['name'];
+					}
+          this.excelData = arr;
           this.export2Excel();
         })
         .catch(e => {
@@ -470,24 +475,34 @@ export default {
       require.ensure([], () => {
         const { export_json_to_excel } = require("@/excel/export2Excel");
         const tHeader = [
-          "客户标识",
-          "租户联系人",
-          "邮箱",
-          "手机号",
-          "公司名称",
-          "公司类型",
-          "公司电话",
-          "详细地址",
-          "描述信息"
+        	this.$t('Public.creation'),
+        	'id',
+        	this.$t('Public.tenantName'),
+          this.$t('customer.tenantName'),
+          this.$t('customer.tenantUser'),
+          this.$t('customer.email'),
+          this.$t('customer.phone'),
+          this.$t('customer.corporateType'),
+          this.$t('customer.corporatePho'),
+          this.$t('Public.province'),
+          this.$t('Public.city'),
+          this.$t('Public.county'),
+          this.$t('customer.address'),
+          this.$t('Public.information')
         ];
         const filterVal = [
+        	'creation_time',
+        	'id',
+        	'parent_name',
           "name",
           "contact",
           "email",
           "mobile",
-          "company_name",
           "company_type",
           "phone",
+          'province',
+          'city',
+          'district',
           "extra",
           "description"
         ];

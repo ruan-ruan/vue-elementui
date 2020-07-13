@@ -260,7 +260,7 @@
 
 <script>
 
-	import {getTime , isValidNumber} from '@/assets/js/index.js'
+	import {datedialogFormat,getTime , isValidNumber} from '@/assets/js/index.js'
 
 
 	export default{
@@ -783,7 +783,39 @@
 		    exportData:function(params){
 		    	this.$ajax.get('/link/links'+'?token='+this.token,params)
 		    	.then(res => {
-		    		this.excelData=res.data.data.items;
+		    		console.log(res);
+		    		if(res.status == 200){
+		    			if(res.data.status ==0){
+		    				var arr =res.data.data.items;
+		    				console.log(arr)
+		    				for(let item =0 ;item <arr.length;item ++){
+		    					arr[item]['creation_time']=datedialogFormat(arr[item]['creation_time'])
+								arr[item]['a_node_name']=arr[item]['a_node']['name'];
+								arr[item]['z_node_name']=arr[item]['z_node']['name'];
+								var str1_device=[],str1_port=[];
+								for(let w =0 ;w<arr[item]['a_device_ports'].length;w++){
+									str1_device.push(arr[item]['a_device_ports'][w]['device']['name']);
+									str1_port.push( arr[item]['a_device_ports'][w]['port']['port_no'] )
+//									str1_device+=arr[item]['a_device_ports'][w]['device']['name']+','
+//									str1_port+=arr[item]['a_device_ports'][w]['port']['port_no']+','
+								}
+								arr[item]['a_devices']=str1_device;
+								arr[item]['a_ports']=str1_port;
+								
+								var str2_device=[],str2_port=[];
+								
+								for(let h =0 ;h<arr[item]['z_device_ports'].length;h++){
+									str2_device.push( arr[item]['z_device_ports'][h]['device']['name'] )
+									str2_port.push(arr[item]['z_device_ports'][h]['port']['port_no'])
+//									str2_device+=arr[item]['z_device_ports'][h]['device']['name']+','
+//									str2_port+=arr[item]['z_device_ports'][h]['port']['port_no']+','
+								}
+								arr[item]['z_devices']=str2_device;
+								arr[item]['z_ports']=str2_port
+		    				}
+		    			}
+		    		}
+		    		this.excelData=arr;
 					this.export2Excel();
 		    	}).catch(e => {
 		    		console.log(e)
@@ -794,8 +826,20 @@
 				let that=this;
 				require.ensure([] ,() => {
 					const {export_json_to_excel} = require('@/excel/export2Excel')
-					const tHeader=[ this.$t('Public.creation'),this.$t('Public.dataCen'),this.$t('Public.deviceID'),this.$t('Public.manageIP'),this.$t('Public.description')];
-					const filterVal=['creation_time','dc_name','id','ip','description'];
+					const tHeader=[ 
+					this.$t('Public.creation'),this.$t('Public.linkID'),this.$t('Public.linkState'),
+					this.$t('Public.sysBandwidth'),this.$t('Public.phyBandwidth'),
+					'A'+this.$t('Public.nodeName'),
+					this.$t('Public.aDevice'),'A'+this.$t('Public.port'),this.$t('Public.a_ip'),this.$t('Public.a_vlan'),this.$t('Public.a_des'),
+					
+					'Z'+this.$t('Public.nodeName'),
+					this.$t('Public.zDevice'), 'Z'+this.$t('Public.port') , this.$t('Public.z_ip'),this.$t('Public.z_vlan'),this.$t('Public.z_des'),
+					this.$t('Public.description')];
+					const filterVal=['creation_time','id','status',
+					'bandwidth','physical_bandwidth',
+					'a_node_name','a_devices','a_ports','a_ip','a_vlan','a_desc',
+					'z_node_name','z_devices','z_ports','z_ip','z_vlan','z_desc',
+					'description'];
 					const list=that.excelData;
 					const data=that.formatJson(filterVal,list);
 					export_json_to_excel(tHeader,data,this.$t('tooltipMes.download')+'excel')

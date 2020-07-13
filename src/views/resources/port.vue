@@ -120,7 +120,7 @@
 </template>
 
 <script>
-	import {getPortStatus,isPortStatus,dealNull} from '@/assets/js/index'
+	import {getPortStatus,isPortStatus,dealNull,datedialogFormat} from '@/assets/js/index'
 	export default{
 		name:'port',
 		/**titleOne ， titleTwo  节点里面设备的的详情的id的数据
@@ -405,6 +405,33 @@
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
+							console.log(res)
+							var arr=res.data.data.items;
+							for(let item =0;item<arr.length;item++){
+								
+								var device=[],device_type=[],node=[],port=[],port_type=[],position=[],rack=[];
+								for(let w =0 ;w<arr[item]['physical_ports'].length;w++){
+									device.push( arr[item]['physical_ports'][w]['device']['hostname'] );
+									node.push( arr[item]['physical_ports'][w]['node']['name'] );
+									port.push( arr[item]['physical_ports'][w]['port']['port_no'] );
+									port_type.push( arr[item]['physical_ports'][w]['port_type']);
+									device_type.push( arr[item]['physical_ports'][w]['device_type'] );
+									position.push( arr[item]['physical_ports'][w]['position'] );
+									rack.push( arr[item]['physical_ports'][w]['rack'] );
+								}
+								arr[item]['device']=device;
+								arr[item]['device_type']=device_type;
+								arr[item]['node']=node;
+								arr[item]['port']=port;
+								arr[item]['port_type']=port_type;
+								arr[item]['position']=position;
+								arr[item]['rack']=rack;
+								arr[item]['creation_time']=datedialogFormat(arr[item]['creation_time']);
+								arr[item]['tenant_name']=arr[item]['tenant']['name'];
+								arr[item]['start_time']=datedialogFormat(arr[item]['start_time']);
+								arr[item]['end_time']=datedialogFormat(arr[item]['end_time']);
+								
+							}
 							this.excelData=res.data.data.items;
 							this.export2Excel();
 						}
@@ -417,8 +444,38 @@
 				let that=this;
 				require.ensure([] ,() => {
 					const {export_json_to_excel} = require('@/excel/export2Excel')
-					const tHeader=[this.$t('Public.creation'),this.$t('Public.dataCen'),this.$t('Public.deviceID'),this.$t('Public.manageIP'),this.$t('Public.description')];
-					const filterVal=['creation_time','dc_name','id','ip','description'];
+					const tHeader=[
+						this.$t('Public.creation'),
+						'id',
+						this.$t('Public.logName'),
+						this.$t('Public.tenantName'),
+						this.$t('Public.start'),
+						this.$t('Public.end'),
+						this.$t('Public.userPointer'),
+						this.$t('Public.devicePorts'),
+						this.$t('Public.devices'),
+						this.$t('Public.deviceNodes'),
+						this.$t('Public.devicePortType'),
+						this.$t('Public.deviceTypes'),
+						this.$t('Public.devicePosition'),
+						this.$t('Public.deviceRack'),
+						this.$t('Public.description')];
+					const filterVal=[
+					'creation_time',
+					'id',
+					'name',
+					'tenant_name',
+					'start_time',
+					'end_time',
+					'access_type',
+					'port',
+					'device',
+					'node',
+					'port_type',
+					'device_type',
+					'position',
+					'rack',
+					'description'];
 					const list=that.excelData;
 					const data=that.formatJson(filterVal,list);
 					export_json_to_excel(tHeader,data,this.$t('addNode.download')+ 'excel')

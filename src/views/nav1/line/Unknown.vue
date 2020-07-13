@@ -37,7 +37,6 @@
 					</el-form-item>
 				</el-form>
 			</el-col>
-			
 			<!--列表的数据部分-->
 			<!--列表的数据导出部分-->
 				<el-col :span='24'>
@@ -100,9 +99,7 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			
 			<!--底部数据导航部分-->
-
 			<el-col :span='24' class='toolbar'>
 				<el-pagination
 					:total="total"
@@ -183,6 +180,8 @@
 					</el-col>
 				</el-row>
 			</span>
+			<!--<device-port :label='a' @sendObj='deviceA'></device-port>-->
+			
 			<el-form-item v-show="!seeStatus">
 				<el-button @click='device_port_add' type='primary'>+</el-button>
 				<el-button  @click='device_port_down(index)'type='danger'>-</el-button>
@@ -302,12 +301,12 @@
 
 	
 	import {datedialogFormat , descriptionValue,getTime ,isJust ,isValidIP} from '@/assets/js/index.js'
-	import deviceport from './clounFile/devicePort';
+//	import devicePort from './clounFile/devicePort';
 	export default{
 		name:'Unknown',
-		components:{
-			deviceport
-		},
+//		components:{
+//			devicePort
+//		},
 		data(){
 			var isNumber= (rule,value,callback) => {
 				if(!value){
@@ -556,6 +555,22 @@
 				deep:true
 			}
 		},
+//		computed:{
+//			a(){
+//				return {
+//					device:'A端设备',
+////					port:'设备端口',
+//					deviceList:this.aDevice
+//				}
+//			},
+//			z(){
+//				return {
+//					device:'z设备',
+//					port:'z端口',
+//					id:this.editForm.z_node_id
+//				}
+//			}
+//		},
 		created(){
 			this.getUsers();
 			this.getNodeData();
@@ -568,6 +583,7 @@
 				return Math.round( ipt['bytes'] / (1000*1024) )+'/'+Math.round( out['bytes']/ (1000*1024) );
 			}
 		},
+		
 		methods:{
 			close(){
 				this.$refs['editForm'].resetFields()
@@ -576,6 +592,7 @@
 			this.$refs[formName].clearValidate();
 			},
 			device_port_add(){
+				
 				this.editForm.devicelist.push({
 					a_device:'',
 					a_device_port:'',

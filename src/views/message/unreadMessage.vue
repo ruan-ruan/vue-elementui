@@ -203,6 +203,26 @@ export default {
       //类型
 //    <span>{{$t('mesModule.sea.mesTypeList.product')}}</span>
       mesTypeList: [
+      	{
+	      	name:'端口类型',
+	      	value:'port'
+	      },
+	      {
+	      	name:'节点类型',
+	      	value:'node'
+	      },
+	      {
+	      	name:'设备类型',
+	      	value:'device'
+	      },
+	      {
+	      	name:'业务类型',
+	      	value:'vll'
+	      }
+        
+      ],
+      //状态的转换
+      levelList: [
         {
           name: this.$t('mesModule.sea.mesTypeList.product'),
           value: "notice"
@@ -210,29 +230,6 @@ export default {
         {
           name:this.$t('mesModule.sea.mesTypeList.police'),
           value: "warning"
-        }
-      ],
-      //状态的转换
-      levelList: [
-        {
-          name: this.$t('mesModule.sea.lea.one'),
-          value: "1"
-        },
-        {
-          name:this.$t('mesModule.sea.lea.two'),
-          value: "2"
-        },
-        {
-          name:this.$t('mesModule.sea.lea.three'),
-          value: "3"
-        },
-        {
-          name:this.$t('mesModule.sea.lea.four'),
-          value: "4"
-        },
-        {
-          name:this.$t('mesModule.sea.lea.five'),
-          value: "5"
         }
       ],
       //时间戳的转换

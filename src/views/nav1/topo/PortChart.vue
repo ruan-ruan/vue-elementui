@@ -179,7 +179,8 @@
 							//获取每一个id的数据
 							data.push(...res.data.data);
 						};
-						console.log('根据规定时间内获取完当前一个端口对应的时间戳：'+new Date().getTime())
+//						console.log(data)
+						console.log('数据开始处理时间：'+new Date().getTime())
 						//获取完每个id以后 数据  在下面判断ids是否是是超过两个的数据，用来区别是总的还是单个的数据
 						let obj=this.dealTime( this.dealData(data),this.trafficData,this.mins,this.timeInterval,this.filters.num,this.filters.unit );
 						if(ids&&ids.length < 2){
@@ -196,13 +197,21 @@
 						}
 						
 					}
-					console.log('获取数据完成时间戳：'+new Date().getTime())
+					console.log('数据处理完成时间戳：'+new Date().getTime())
 					this.load=false;
 				} catch(err){
 					console.log(err)
 				}
 			},
 			dealData(data){
+				console.log(data);
+				for( let w =0 ; w<data.length;w++){
+					if(w<4){
+//						console.log( data[w] )
+					}
+				}
+				
+				
 				/**
 				 * 在这里处理数据的值，和时间的为正分钟的情况下获取的数据
 				 * 第一步先处理数据，并查漏补缺，然后根据时间  直接截取即可
@@ -218,7 +227,7 @@
 						}
 						let preTime=new Date(data[i].time).getTime()/1000;
 						let nextTime=new Date(data[j].time).getTime()/1000;
-						let timeInt=nextTime-preTime;
+						let timeInt=nextTime-preTime;//获取前后两值的时间差
 						let inBy=Math.round(
 							(data[j].input.bytes-data[i].input.bytes<0?0:data[j].input.bytes-data[i].input.bytes) /timeInt
 						)
@@ -252,23 +261,22 @@
 					if(nums<copy.length){
 						let preTime=new Date(copy[num].time).getTime()/1000; 
 						let nextTime =new Date(copy[nums].time).getTime()/1000;
-						
 						if(nextTime-preTime>60){
 							//时间间隔超过一分钟了
-							var sliInBy=(copy[nums]['input']['bytes']-copy[num]['input']['bytes'])/ ( nextTime-preTime ) 
-							var sliOuBy=(copy[nums]['output']['bytes']-copy[num]['output']['bytes'])/ ( nextTime-preTime )
-							var sliInPy=(copy[nums]['input']['packets']-copy[num]['input']['packets'])/ ( nextTime-preTime ) 
-							var sliOuPy=(copy[nums]['output']['packets']-copy[num]['output']['packets'])/ ( nextTime-preTime );
+							var sliInBy=copy[num]['input']['bytes']+( (copy[nums]['input']['bytes']-copy[num]['input']['bytes'])/( (nextTime-preTime)/60 ))
+							var sliOuBy=copy[num]['output']['bytes']+  ((copy[nums]['output']['bytes']-copy[num]['output']['bytes'])/( (nextTime-preTime)/60 ))
+							var sliInPy=copy[num]['input']['packets']+( (copy[nums]['input']['packets']-copy[num]['input']['packets'])/( (nextTime-preTime)/60 ) ) 
+							var sliOuPy=copy[num]['output']['packets']+( (copy[nums]['output']['packets']-copy[num]['output']['packets'])/( (nextTime-preTime)/60 )) ;
 							for(var k=preTime+60;k<nextTime;k+=60){
 								var para={
 									time:arrayPro.datedialogFormat(k),//时间间隔是60秒
 									input:{
-										bytes:Math.abs(Math.round(sliInBy/60*8) ) ,
-										packets:Math.abs(Math.round(sliInPy/60*8)  ) 
+										bytes:Math.abs(Math.round(copy[nums]['input']['bytes']*8) ) ,
+										packets:Math.abs(Math.round(copy[nums]['input']['packets']*8)  ) 
 									},
 									output:{
-										bytes: Math.abs( Math.round(sliOuBy/60*8) ) ,
-										packets:Math.abs(Math.round(sliOuPy/60*8)  ) 
+										bytes: Math.abs( Math.round(copy[nums]['output']['bytes']*8) ) ,
+										packets:Math.abs(Math.round(copy[nums]['output']['packets']*8) ) 
 									}
 								}
 								baseData.splice(-(copy.length-nums),0,para);//插入所有的值

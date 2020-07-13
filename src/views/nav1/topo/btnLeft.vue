@@ -1,6 +1,6 @@
 <template>
 	<div >
-		<section>
+		<section v-show='btn'>
 		<el-row >
 			<el-col :span='24'>
 				<el-col :span='2'>
@@ -230,13 +230,13 @@
 				bandwidthData:[this.$t('topology.footerBtn.bandW.showAllbandwidth'),this.$t('topology.footerBtn.bandW.showbandwidth1'),
 				this.$t('topology.footerBtn.bandW.showbandwidth2'),this.$t('topology.footerBtn.bandW.showbandwidth3'),
 				this.$t('topology.footerBtn.bandW.showbandwidth4'),this.$t('topology.footerBtn.bandW.showbandwidth5')],
-				
+				btn:false
 			}
+			
 		},
 		watch:{
 			filters:{//对拓扑图下面的按钮的变化的时候金婷监听
 				handler(newVal,oldVal){
-
 					this.bus.$emit('sendType',newVal);
 				},
 				deep:true,
@@ -245,6 +245,11 @@
 		mounted(){
 //			this.$store.commit('sendFilters',this.filters);
 			this.$store.state.filters=Object.assign({},this.filters)
+			this.bus.$on('sendBtn',(msg) => {
+				let that=this;
+				that.btn=msg
+				console.log(msg)
+			});
 		},
 		methods:{
 			example(){//图例的模板

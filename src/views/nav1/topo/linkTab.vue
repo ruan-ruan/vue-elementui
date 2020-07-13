@@ -1,5 +1,11 @@
 <template>
 	<div>
+		<!--<template>
+			<span @click="goback" class="err_no" >
+				<i class="el-icon-close"></i>
+			</span>
+		</template>-->
+		
 		<el-row>
 			<el-col :span='22'>
 				<el-tabs v-model='activeName' >
@@ -45,6 +51,7 @@
 				}
 			},
 			goback(){
+				console.log('guanbi ')
 				this.$emit('linkBack',false)
 			},
 		}

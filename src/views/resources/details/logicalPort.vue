@@ -639,11 +639,9 @@
 				//编辑和详情的界面的数据
 				//获取所有的列表和详情的时候的界面的数据
 				let that=this
-				this.loading=true
 				setTimeout(function(){
 					that.$ajax.get('/port/logic_port_info/'+id+'?token='+that.token)
 					.then(res =>{
-						this.loading=false
 						if(res.status==200){
 							if(res.data.status==0){
 								var sli=res.data.data;
