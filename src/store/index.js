@@ -33,6 +33,10 @@ const store = new Vuex.Store({
         },
         filters:{},//接收拓扑图的默认的数据
         statusname:false,
+        topoData:{//topo需要的数据
+        	links:[],
+        	nodes:[]
+        },
     },
     mutations:{
     	setAside(state,data){
@@ -43,8 +47,6 @@ const store = new Vuex.Store({
     		state.roles=msg
     	},
 		[types.LOGIN]: (state, data) => {
-//			sessionStorage.setItem('token',data)
-//          sessionStorage.token = data;
             sessionStorage.setItem('token',data)
             state.token = data;
         },
@@ -54,8 +56,6 @@ const store = new Vuex.Store({
         	sessionStorage.removeItem('aside')
             state.token = null;
             state.aside=null;
-//          console.log(state.token);
-//          console.log( sessionStorage.getItem('token') )
         },
         [types.TITLE]: (state, data) => {
             state.title = data;
@@ -69,9 +69,10 @@ const store = new Vuex.Store({
        		id:msg.id,
        		type:msg.type
        	}
-//     		state.linkObj=msg;
-       		
        },
+//     topo(state,msg){
+//     	state.topoData=msg
+//     }
     },
     actions:{
     	setRoles({commit,state},msg){

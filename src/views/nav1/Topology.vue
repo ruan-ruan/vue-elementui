@@ -14,6 +14,7 @@
 					</el-col>
 				</el-col>	
 				<el-col :span='24' style='margin-top: 10px;position: absolute;bottom: 20px;'>
+					<!--topo图的控制按钮-->
 					<btnLeft></btnLeft>
 				</el-col>
 			</el-row>
@@ -30,8 +31,7 @@
 	import nodeTab from '@/views/nav1/topo/nodeTab'
 	import linkTab from '@/views/nav1/topo/linkTab'
 	
-	
-	
+
 	export default {
 		name:'Topology',
 		components:{

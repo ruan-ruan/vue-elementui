@@ -20,14 +20,12 @@ import *as types from '@/api/types'
 import '@/assets/css/bus.css'
 import ajax from '@/api/api'
 
-//import i18n from './lang'
+import '@/assets/js/directives.js'
 import i18n from './lang/i18n';
 import { fil } from '@/assets/js/index.js'
 import {recursion,exportCom,exportIcon,codeVal} from '@/assets/js/index'	
 import *as filters from '@/assets/js/filters.js'
-//多线程处理数据
-import VueWorker from 'vue-worker'
-Vue.use(VueWorker)
+
 //语言处理
 Vue.use(ElementUI,{
 	size:'medium',

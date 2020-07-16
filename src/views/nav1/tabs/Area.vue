@@ -12,7 +12,6 @@
 								{{$t('topFilters.search')}}
 							</el-button>
 							<el-button size='small' type='info' @click='reset'>
-								<!--重置-->
 								{{$t('topFilters.reset')}}
 							</el-button>
 						</el-form-item>
@@ -23,27 +22,21 @@
 				<el-col :span='24'>
 					<el-col :span='4'>
 						<el-button size='small' type="primary" @click="handleAdd" v-if='buttonVal.add'>
-							<!--新增-->
 							{{$t('tabOperation.add')}}
 						</el-button>
 					</el-col>
 					<el-col :span='20'class="table-top"	>
 						<el-button size='small' type="danger" @click="batchRemove(sels)" :disabled="this.sels.length===0" v-if='buttonVal.del'>
-							<!--批量删除-->
 							{{$t('tabOperation.batchDel')}}
 						</el-button>
 						<el-dropdown size='small' split-button type='success'@command="handleExport">
-							<!--导出数据-->
 								{{$t('tabOperation.derived.tit')}}
 							<el-dropdown-menu slot='dropdown'>
 								<el-dropdown-item command="current">
 								{{$t('tabOperation.derived.currentPage')}}
-									
 								</el-dropdown-item>									
 								<el-dropdown-item command="all">
-									<!--所有页-->
 								{{$t('tabOperation.derived.allPage')}}
-									
 								</el-dropdown-item>																				
 							</el-dropdown-menu>
 						</el-dropdown>

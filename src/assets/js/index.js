@@ -29,7 +29,6 @@ export function fil(total=[],data){//根据name名字进行路由数据的查找
 					}
 					fil( total[item].children , data[ele].list)
 				}
-				
 			}
 		}
 	}

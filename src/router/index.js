@@ -49,6 +49,11 @@ var router = new Router({
 	        	name:'未找到',
 	        }
 		},
+//		{
+//			path:'/topo',
+//			component:() => import ('@/views/nav1/topo/portChild/DiaTopo'),
+//			name:'topo'
+//		},
 		{		
 			path: '/',
 			component: Home,

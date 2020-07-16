@@ -1,6 +1,5 @@
 <template>
 	<div class="login">
-		
 		<el-header class="header">
 			<el-row >
 				<el-col :span='24' class='size'>
@@ -30,9 +29,6 @@
 				</el-col>
 			</el-row>
 		</el-header>
-		<!--<section>
-			
-		</section>-->
 	  <el-form :model="ruleForm2"  :rules="rules2"label-position='left' ref="ruleForm2"  label-width="80px" 
 	  	class="demo-ruleForm login-container"v-loading="logining">
 	    <h3 class="title">{{$t('nav.accountLogin')}}</h3>
@@ -42,22 +38,16 @@
 	    <el-form-item prop="checkPass" :label='$t("nav.pwd")' >
 	      <el-input type="password" v-model="ruleForm2.checkPass"  :placeholder='$t("nav.pwd")' @keydown.enter.native='handleSubmit2' show-password></el-input>
 	      <el-checkbox v-model="checked" checked class="remember">{{$t('nav.rememberPwd')}}</el-checkbox>
-	        <!--<el-button size='small' type="primary" @click.native.prevent="handleSubmit2" >{{$t('nav.entry')}}</el-button>
-	      <el-button size='small' type="info" @click="handleReset2" style='margin-left: 40px;'>{{$t('topFilters.reset')}}</el-button>-->
 	    </el-form-item>
 	    <el-form-item style="width:100%;text-align: center;margin-left: -40px;">
 	      <el-button  type="primary" @click.native.prevent="handleSubmit2"style='margin-right: 20px;'  >{{$t('nav.entry')}}</el-button>
 	      <el-button  type="info" @click="handleReset2"style='margin-left: 20px;' >{{$t('topFilters.reset')}}</el-button>
 	    </el-form-item>
 	  </el-form>
-	  <div>
-	  	
-	  </div>
   </div>
 </template>
 
 <script>
-//	import md5 from 'js-md5';
 	import { fil} from'@/assets/js/index'
 	import *as types from '@/api/types'
 	var routers = []
@@ -92,9 +82,6 @@
 	    	};
 	    	
 	    },
-	    mounted(){
-//	    		window.location.reload();
-	    },
 	    methods: {
 	    	Change(e , type) {
 		      	window.location.reload(); //实现项目的刷新
@@ -103,8 +90,8 @@
 		    },
 	      	handleReset2() {
 	      		this.ruleForm2={
-	    			account:localStorage.removeItem('user'),
-	    			checkPass:localStorage.removeItem('psd')
+	    			account:sessionStorage.removeItem('user'),
+	    			checkPass:sessionStorage.removeItem('psd')
 	    		}
 	        	this.$refs['ruleForm2'].resetFields();
 	      	},
@@ -137,7 +124,6 @@
 									sessionStorage.setItem('user',loginParams.name);
 									sessionStorage.setItem('psd', loginParams.password)
 									sessionStorage.setItem('token',res.data.data.token);
-									
 									return this.$ajax.get('/public/get_menu'+'?token='+res.data.data.token)
 								}
 							}
@@ -148,10 +134,6 @@
 									this.$store.commit('setAside',res.data.data);
 									sessionStorage.setItem('asideList',JSON.stringify(res.data.data));
 									fil(this.$router.options.routes ,res.data.data);
-//												let redirect = decodeURIComponent('/message/unreadMessage' || this.$route.query.redirect);
-//										        this.$router.push({
-//										            path: redirect,
-//										        })
 									this.$router.push({
 							            path: '/message/unreadMessage',
 							        })
@@ -177,6 +159,7 @@
 		background-image:url('../assets/background.jpg') ;
 		background-repeat: no-repeat;
 		height:100%;
+		/*height:calc(100%-50px);*/
 		width:100%;
 		background-size:cover;
 

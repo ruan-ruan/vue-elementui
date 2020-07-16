@@ -283,13 +283,10 @@ export default {
     };
   },
   created() {
-//		console.log( this.$store.state.aside )
     this.selectData();
-    this.getUsers();
-
+    this.getUsers()
   },
   methods: {
-
     selectData() {
       this.$ajax
         .get("/location/dcs" + "?token=" + this.token)
@@ -377,7 +374,6 @@ export default {
               	}else{
               		 _this.diStatus = true;
               	}
-              	
               	if(arr[item].devices.length ==1){
 									var str1=arr[item].devices.find(i => {
 				    					return i['sign'] == 'd1' 
@@ -389,9 +385,8 @@ export default {
 				    				arr[item].devices_name2='';
 				    				arr[item].devices_ip2='';
 				    				arr[item].devices_sn2='';
-				    				
 				    				if(str1.status == "UP"){
-				    					arr[item].nodeStatus = this.$t('Public.SingleRun');
+				    					arr[item].nodeStatus = this.$t('Public.run');
 				    					arr[item].color='backRun'
 				    				}else{
 				    						arr[item].nodeStatus= this.$t('Public.leave');

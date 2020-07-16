@@ -9,9 +9,7 @@
       </el-col>
       <el-col  :span="6"  class="userinfo"  >
         <el-row>
-        	
           <el-col :span='24'>
-          	
             <el-col :span='7'>
               <span  style="cursor:pointer;"  @click="tapmes" v-popover:visible > {{ $t('nav.message')}}</span>
               <el-badge  :value="this.$store.state.message"  :max="99" class="item" >
@@ -69,10 +67,9 @@
           <template  v-for="(item,index) in $router.options.routes"  v-if="!item.hidden" >
             <el-submenu  :index="index+''"  v-if="!item.leaf" >
               <template slot="title">
-                <img  :src="item.iconCls"  class='asideLogo' />
+                <img  :src="item.iconCls" class='asideLogo' />
                 <span slot="title">
-                  <!--{{ item.name }}-->
-                  <span>{{$t(item.name)}}</span>
+                  {{$t(item.name)}}
                 </span>
               </template>
               <!--  ：二级菜单  在二级菜单的不能使用el-menu-item-group 标签    因为改标签插件  中间多一个div造成  间隔不同  -->
@@ -81,7 +78,6 @@
                   <template class="child_title ">
                     <span  class="padL10"  slot="title" >
                       <!--改标签   是为了  在调整name未知而定  并无实用-->
-                      <!--{{child.name}}-->
                       {{$t(child.name)}}
                     </span>
                   </template>
@@ -93,7 +89,6 @@
                      v-if="!sun.hidden"
                   >
                     <span slot="title">
-                      <!--{{sun.name}}-->
                       {{$t(sun.name)}}
                     </span>
 
@@ -107,9 +102,7 @@
                   class='padL50'
                 >
                   <span slot="title">
-                    <!--{{child.name}}-->
                     {{$t(child.name)}}
-
                   </span>
                 </el-menu-item>
 
@@ -120,7 +113,6 @@
             <el-menu-item v-if="item.leaf && item.children.length>0"  :index="item.children[0].path" style='padding-left: 10px; ' >
               <img :src="item.iconCls"  class='asideLogo' />
               <span slot="title">
-                <!--{{item.children[0].name}}-->
                 {{$t(item.children[0].name)}}
               </span>
             </el-menu-item>
@@ -128,79 +120,79 @@
         </el-menu>
         <!--导航菜单-折叠后-->
         <ul  class="el-menu el-menu-vertical-demo collapsed" v-show="collapsed"  ref="menuCollapsed"  style="background-color: #EEEEEE;"  >
-          <li  v-for="(item,index) in $router.options.routes"  v-if="!item.hidden"  class="el-submenu item"  >
-            <template v-if="!item.leaf">
-              <div  class="el-submenu__title"  style="padding-left: 20px;"  @mouseover="showMenu(index,true)"  @mouseout="showMenu(index,false)"  >
-                <img  :src="item.iconCls"  class='asideLogo' />
-              </div>
-              <ul  class="el-menu submenu" :class="'submenu-hook-'+index"  @mouseover="showMenu(index,true)"  @mouseout="showMenu(index,false)"  >
-                <li
-                  v-for="child in item.children"
-                  v-if="!child.hidden"
-                  :key="child.path"
-                  class="el-menu-item"
-                  style="padding-left: 40px;"
-                  :class="$route.path==child.path?'is-active':''"
-                  @click="$router.push(child.path)"
-                >
-                  <!--{{child.name}}-->
-                  {{$t(child.name)}}
-                </li>
-              </ul>
-            </template>
-
-            <template v-else>
-          <li class="el-submenu">
-            <div  class="el-submenu__title el-menu-item" style="padding-left: 20px;height: 56px;line-height: 56px;padding-top: 0; "
-              :class="$route.path==item.children[0].path?'is-active':''"  @click="$router.push(item.children[0].path)" >
-              <img :src="item.iconCls" class='asideLogo' />
-            </div>
-          </li>
+          	<li  v-for="(item,index) in $router.options.routes"  v-if="!item.hidden"  class="el-submenu item"  >
+	            <template v-if="!item.leaf">
+	              <div  class="el-submenu__title"  style="padding-left: 20px;"  @mouseover="showMenu(index,true)"  @mouseout="showMenu(index,false)"  >
+	                <img  :src="item.iconCls"  class='asideLogo' />
+	              </div>
+	              <ul  class="el-menu submenu" :class="'submenu-hook-'+index"  @mouseover="showMenu(index,true)"  @mouseout="showMenu(index,false)"  >
+	                <li
+	                  v-for="child in item.children"
+	                  v-if="!child.hidden"
+	                  :key="child.path"
+	                  class="el-menu-item"
+	                  style="padding-left: 40px;"
+	                  :class="$route.path==child.path?'is-active':''"
+	                  @click="$router.push(child.path)"
+	                >
+	                  {{$t(child.name)}}
+	                </li>
+	                
+	              </ul>
+	            </template>
+	
+	            <template v-else>
+		          <li class="el-submenu">
+		            <div  class="el-submenu__title el-menu-item" style="padding-left: 20px;height: 56px;line-height: 56px;padding-top: 0; "
+		              :class="$route.path==item.children[0].path?'is-active':''"  @click="$router.push(item.children[0].path)" >
+		              <img :src="item.iconCls" class='asideLogo' />
+		            </div>
+		          </li>
 				</template>
 			</li>
 		</ul>
 	</aside>
 
-<section class="content-container">
-  <div class="grid-content bg-purple-light">
+<section class="content-container" >
+  <div class="grid-content bg-purple-light right-container" >
     <el-col
       :span="24"
       class="breadcrumb-container marB8"
     >
       <h2 class="title"> 
-      	<!--{{$route.name}}-->
          {{$t($route.name)}}
-      
       </h2>
       <el-breadcrumb
         separator="/"
         class="breadcrumb-inner"
       >
-        <el-breadcrumb-item
-          v-for="item in $route.matched"
-          :key="item.path"
-        >
+        <el-breadcrumb-item v-for="item in $route.matched" :key="item.path" >
         {{$t(item.name)}}
-          <!--{{ item.name }}-->
         </el-breadcrumb-item>
       </el-breadcrumb>
     </el-col>
     <el-col
       :span="24"
-      class="content-wrapper"
+      class="content-wrapper "
     >
+    
       <transition
         name="fade"
         mode="out-in"
+        
       >
         <router-view></router-view>
       </transition>
+    </el-col>
+    <el-col :span='24' class='par_foo'>
+    	<el-footer  >
+		  	Copyright © 2020 天弛网络 Ver 1.3.1 tianchic.com 版权所有
+		  </el-footer>
     </el-col>
   </div>
 </section>
 
 </el-col>
-
 
 
 </el-row>
@@ -423,11 +415,23 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
+
 @import "~scss_vars";
 /*@import '~scss_vars';*/
 .el-popover__title {
   font-weight: 700;
 }
+.par_foo{
+	position: fixed;
+	bottom:0px ;
+	right: 50px;
+	text-align: right;
+	color: rgba(46,46,46,.35);
+	height: 40px !important;
+	line-height: 40px;
+}
+
 .container {
   position: absolute;
   top: 0px;
@@ -535,10 +539,16 @@ export default {
 
     .content-container {
       flex: 1;
-
+	/*height: 100%;*/
+	/*min-height: 100%;*/
+	/*position: relative;*/
       overflow-y: scroll;
       padding: 20px;
-
+		.right-container{
+			position: relative;
+			height: 100%;
+			min-height: 100%;
+		}
       .breadcrumb-container {
         .title {
           width: 230px;
@@ -552,6 +562,7 @@ export default {
       .content-wrapper {
         background-color: #fff;
         box-sizing: border-box;
+        padding-bottom: 30px;
       }
     }
   }
