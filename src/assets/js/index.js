@@ -670,7 +670,7 @@ export function isJust(str){
 	return reg.test(str);
 }
 
-//逻辑口的状态的判断
+//逻辑口的状态的判断   根据设备status判断
 export 	function getPortStatus(arr){
 	let statusVal='';
 	if(arr.length>1){
@@ -692,7 +692,7 @@ export 	function getPortStatus(arr){
 	}
 	return statusVal
 }
-
+// 根据设备里面端口port的status判断
 export function isPortStatus(arr){//针对于 单个逻辑口内的时候数据处理
 	let statusVal='';
 	if(arr.length>1){

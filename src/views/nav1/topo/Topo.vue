@@ -1,6 +1,6 @@
 <template>
 	<div class='main topoContainer' v-loading='topoLoading'>
-		<template style="position: absolute; left: 0px;top: 0px;" v-if='!topoLoading'>
+		<template style="position: absolute; left: 0px;top: 0px;">
 			<el-button @click='Save' v-if='buttonVal.save' >
 				<!--保存布局-->
 				{{$t('topology.topBtn.save')}}
@@ -8,12 +8,11 @@
 			<el-button @click='reset' id='reset'>
 				<!--还原布局-->
 				{{$t('topology.topBtn.reduction')}}
+				
 			</el-button>
-			<el-button @click='see'>
-				topo
-			</el-button>
+			<el-button @click='see'>topo</el-button>
 		</template>
-		<el-row v-if='!topoLoading'>
+		<el-row>
 			<el-col :span='24'>
 				<el-col :span='24'class='back'>
 					<ul style="position: absolute; left: 0px;">
@@ -24,6 +23,7 @@
 							<button class='btn' id='small'>-</button>
 						</li>
 					</ul>
+					
 				</el-col>
 			</el-col>
 		</el-row>
@@ -38,22 +38,24 @@
 			:modal='false'
 			v-dialogDrag
 			>
-			<!--v-dialogDrag是否可拖拽--> 
 			<dia-topo :datas='base' ></dia-topo>
 		</el-dialog>
 	</div>
 </template>
 
 <script>
+
+
+
 	import DiaTopo from './portChild/DiaTopo'
 	import * as d3 from 'd3' 	
 	import {isTopo} from '@/assets/js/index'
 	export default{
 		name:'Topo',
-		props:['leftData'],
 		components:{
 			DiaTopo
 		},
+		props:['leftData'],
 		data(){
 			return{
 				text:{
@@ -61,9 +63,8 @@
 				},
 				dialogFormVisible:false,
 				dialogTitle:'',
-				titStatus:true,
 				svg:null,
-				token:sessionStorage.getItem('token'),
+				token:'',
 				nodesData:[],
 				linksData:[],
 				//用来保存移动后的值
@@ -92,47 +93,35 @@
 				buttonData:this.recursion( this.$store.state.aside , 'aside.topoView'),//获取区域内的所有的按钮的权限
 				buttonVal:{//获取权限列表的内按钮   控制页面内的权限按钮的显示和隐藏
 		      		save:this.codeVal(this.recursion( this.$store.state.aside , 'aside.topoView').list,"topology@edit_node_location").show,//保存布局
-		      	},
-				base:{//用来保存数据
+		      },
+		      base:{//用来保存数据
 					links:[],
 					nodes:[],
 				},
-				delaData:{
-					links:[],
-					nodes:[],
-					obj:{}
-				}
 			}
 		},
 		created(){
+			//aside.topoView
+
+			this.token=sessionStorage.getItem('token');
 			this.getNodesData(this.selectForm);
+
 		},
 		mounted(){
+			let that=this;
 			this.bus.$on('sendType',(msg) => {
-				this.selectForm=msg;
-				this.getNodesData(msg);
+				that.selectForm=msg;
+				that.getNodesData(msg);
 			})
-		},
-		watch:{
-			base:{
-				handler:function(newVal,oldVal){
-//					this.$store.commit('topo',newVal)
-				},
-				deep:true
-			}
+
 		},
 		methods:{
 			see(){
 				console.log();
 				this.dialogTitle='topo'
 				this.dialogFormVisible=true;
-//				this.$router.push({
-//					path:'/topo',
-//					params:{
-//						data:this.base
-//					}
-//				})
 			},
+
 			Save(){//保存布局
 				this.topoLoading=true;
 				let para={
@@ -147,7 +136,7 @@
 								type:'success'
 							})
 							this.topoLoading=false
-							this.getNodesData()//重新获取数据
+							this.getNodesData(this.selectForm)
 							this.reset()
 						}
 					}
@@ -159,7 +148,6 @@
 				this.$emit('reset',this.dis)
 			},
 			dealForm(obj,nodeVals,linkVals){//处理  传值过来的对象 obj   对象   node节点的数据  link线路的数据
-				console.log(obj)
 				let newNode=JSON.parse(JSON.stringify(nodeVals))
 				let newLink=JSON.parse(JSON.stringify(linkVals))  //上面的这两 用来保存  
 				let nodesData=JSON.parse(JSON.stringify(nodeVals))
@@ -230,6 +218,9 @@
 							linkVal=linksData;
 						}
 					}
+						
+					
+					
 					if(item ==='bandwidth'){//筛选带宽的显示和隐藏
 						let str=obj['bandwidth']
 						if(str === this.$t('topology.footerBtn.bandW.showAllbandwidth') ){
@@ -288,6 +279,7 @@
 					nodeData:nodeVal,
 					linkData:linkVal
 				}
+
 				this.setTopo(nodeVal,linkVal)
 			},
 			getNodesData:function(obj){//获取topo的节点的数据集合
@@ -300,6 +292,8 @@
 						if(res.data.status==0){
 							this.nodesData=res.data.data;
 							this.base.nodes=res.data.data;
+							
+//							this.getLinksData(this.nodesData,obj);
 							return this.$ajax.get('/topology/links'+'?token='+this.token)
 						}
 					}
@@ -310,6 +304,7 @@
 						if(response.data.status ==0){
 							this.topoLoading=false;
 							this.base.links=response.data.data;
+							
 							this.dealForm(obj,this.nodesData,response.data.data)
 						}
 					}
@@ -318,6 +313,7 @@
 			},
 			setTopo:function(nodesData,linksData){//设置拓扑图的展示
 				//对数据的里面的匹配进行处理
+				this.bus.$emit('sendBtn',true);
 				linksData.some(function(v, i) {
 			        nodesData.some(function(w, j) {
 			            if (v.source_node === w.node.id) {
@@ -329,8 +325,9 @@
 			        });
 			        v.index = ++i;
 			   });
-			   this.bus.$emit('sendBtn',true);
 				d3.select('.topoContainer').select('svg').remove()
+			   
+//				d3.select('svg').select('g').remove()
 				var width = 840,
 				  height = 660;
 				var text_dx = -20;
@@ -359,13 +356,11 @@
 				
 //				var  svg = d3.select('svg')
 //	            .attr('width',width)
-//	            .attr('height',height);
+//	            .attr('height',height)
 				var svg = d3.select(".topoContainer")
 		            .append("svg")
 		            .attr("preserveAspectRatio", "xMidYMid meet")
 		            .attr("viewBox", "0 0 500 244")
-	            
-	            
 	            var g = svg.append('g');
 
 	            var nodes_text = g.selectAll('.node_text')
@@ -573,7 +568,8 @@
 //				            rx = bbox.x+bbox.width/2;
 //				            ry = bbox.y+bbox.height/2;
 //				            return 'rotate(180 '+rx+' '+ry+')';
-//				        } else {
+//				        }
+//				        else {
 //				            return 'rotate(0)';
 //				        }
 //				   });
@@ -587,7 +583,7 @@
 		                		return (d.source_val.y+d.target_val.y)/2;
 		                	}
 		                })
-			   }
+			   	}
 				function nodeTypeImage(nodes){
 					if(nodes.type==='node'){
 						return require('../../../assets/images/newTopo/node.png')
@@ -610,15 +606,16 @@
 						return require('../../../assets/images/newTopo/ali.png')					
 					}else if(nodes.type==='腾讯云'){
 						return require('../../../assets/images/newTopo/tencent.png')
+						
 					}else if(nodes.type==='华为云'){
-						return require('../../../assets/images/newTopo/huawei.png')	
+						return require('../../../assets/images/newTopo/huawei.png')
+									
 					}else if(nodes.type==='UCloud'){
 						return require('../../../assets/images/newTopo/ucloud.png')	
 					}else{
 						return require('../../../assets/images/newTopo/other.png')
 					}
 				}
-				
 		        function dragStart (d) {
 			      if (!d3.event.active) simulation.alphaTarget(0.3).restart()
 			      d.fx = d.x
@@ -648,8 +645,8 @@
 	}
 </script>
 
-<style >
-	.topoContainer{
+<style>
+.topoContainer{
 		width: 100%;
 		height: 100%;
 	}

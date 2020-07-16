@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<!--节点的详情-->
-		<el-form :model='seeForm' ref='seeForm'label-wdith='80px'  v-loading='seeLoading' >
+		<el-form :model='seeForm' ref='seeForm'label-wdith='80px'  v-loading='load' >
 			<el-form-item :label='$t("Public.creatime")+"："'>
 				<span v-text="seeForm.time"></span>
 			</el-form-item>
@@ -32,11 +32,21 @@
 	
 	export default{
 		mame:'datailsNode',
-		props:['see'],
+		props:{
+			see:{
+				type:Object,
+				default:function(){
+					return {}
+				}
+			},
+			load:{
+				type:Boolean,
+				default:true
+			}
+		},
 		data(){
 			return{
 				token:'',	
-				
 				seeForm:{
 					time:'',
 					name:'',
@@ -45,20 +55,25 @@
 					Vtep:'',
 					id:''
 				},
-				seeLoading:false,
+				seeLoading:this.load,
 			}
 		},
 		watch:{
 			see:{
 				handler(newVal,oldVal){
-		
-					this.seeForm={
-						time:newVal.time,
-						name:newVal.name,
-						vtep:newVal.vtep,
-						data:newVal.data,
-						id:newVal.id
+//					this.load=true;
+					if(newVal){
+//						this.load=false
+						this.seeForm={
+							time:newVal.time,
+							name:newVal.name,
+							vtep:newVal.vtep,
+							data:newVal.data,
+							id:newVal.id,
+							status:newVal.status
+						}
 					}
+					
 				},
 				deep:true
 			}

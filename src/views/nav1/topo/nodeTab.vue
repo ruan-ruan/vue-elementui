@@ -4,7 +4,7 @@
 			<el-col :span='22'>
 				<el-tabs v-model='activeName' >
 					<el-tab-pane :label='$t("Public.nodeDetails")' name='first'>
-						<details-node :see='seeForm'></details-node>
+						<details-node :see='seeForm':load='seeLoading'></details-node>
 					</el-tab-pane>
 				</el-tabs>
 			</el-col>
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-	import {datedialogFormat} from'@/assets/js/index.js'
+	import {datedialogFormat , getPortStatus} from'@/assets/js/index.js'
 	import detailsNode from '@/views/nav1/topo/detailsNode'
 	export default{
 		name:'nodeTab',
@@ -44,7 +44,6 @@
 		created(){
 			this.token=sessionStorage.getItem('token');
 			this.bus.$on('sendNodeID',(data) =>{
-
 				this.nodeId=data;
 				this.getData(data)
 			})
@@ -59,12 +58,12 @@
 				this.$emit('goback',false)
 			},
 			getData(ids){
+				console.log(ids)
 				this.seeLoading=true;
 				this.$ajax.get('/node/node_info/'+ids+'?token='+this.token)
 				.then(res => {
 					if(res.status==200){
 						if(res.data.status==0){
-
 							this.seeLoading=false;
 
 							let str=res.data.data;
@@ -78,10 +77,10 @@
 							this.seeForm={
 								time:datedialogFormat(str.creation_time),
 								name:str.name,
-//								status:str.status,
 								vtep:str.vtep,
 								data:dc_name,
-								id:str.id
+								id:str.id,
+								status:getPortStatus(str.devices)
 							}
 
 						}
